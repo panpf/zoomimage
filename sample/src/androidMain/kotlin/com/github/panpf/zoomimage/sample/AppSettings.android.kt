@@ -22,7 +22,6 @@ import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.isDebugMode
-import com.github.panpf.zoomimage.sample.util.stateCombine
 import com.github.panpf.zoomimage.sample.util.stateMap
 import com.github.panpf.zoomimage.sample.util.stringSettingsStateFlow
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
@@ -126,16 +125,13 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
     actual val scalesMultiple: SettingsStateFlow<String> by lazy {
         stringSettingsStateFlow(context, "scalesMultiple", ScalesCalculator.MULTIPLE.toString())
     }
-    actual val scalesCalculator: StateFlow<ScalesCalculator> =
-        stateCombine(listOf(scalesCalculatorName, scalesMultiple)) {
-            val scalesCalculatorName: String = it[0]
-            val scalesMultiple: Float = it[1].toFloat()
-            if (scalesCalculatorName == "Dynamic") {
-                ScalesCalculator.dynamic(scalesMultiple)
-            } else {
-                ScalesCalculator.fixed(scalesMultiple)
-            }
-        }
+    // stateCombine will cause UI lag
+//    actual val scalesCalculator: StateFlow<ScalesCalculator> =
+//        stateCombine(listOf(scalesCalculatorName, scalesMultiple)) {
+//            val scalesCalculatorName: String = it[0]
+//            val scalesMultiple: Float = it[1].toFloat()
+//            buildScalesCalculator(scalesCalculatorName, scalesMultiple)
+//        }
 
     actual val disabledGestureTypes: SettingsStateFlow<Int> by lazy {
         intSettingsStateFlow(context, "disabledGestureTypes", 0)

@@ -59,6 +59,7 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_info
@@ -107,7 +108,12 @@ fun <T : ZoomState> BaseZoomImageSample(
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
     val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
-    val scalesCalculator by settingsService.scalesCalculator.collectAsState()
+//    val scalesCalculator by settingsService.scalesCalculator.collectAsState()
+    val scalesCalculatorName by settingsService.scalesCalculatorName.collectAsState()
+    val scalesMultiple by settingsService.scalesMultiple.collectAsState()
+    val scalesCalculator = remember(scalesCalculatorName, scalesMultiple) {
+        buildScalesCalculator(scalesCalculatorName, scalesMultiple.toFloat())
+    }
     val pausedContinuousTransformTypes by settingsService.pausedContinuousTransformTypes.collectAsState()
     val disabledGestureTypes by settingsService.disabledGestureTypes.collectAsState()
     val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()

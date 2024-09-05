@@ -57,7 +57,8 @@ expect class AppSettings(context: PlatformContext) {
 
     val scalesCalculatorName: SettingsStateFlow<String>
     val scalesMultiple: SettingsStateFlow<String>
-    val scalesCalculator: StateFlow<ScalesCalculator>
+    // stateCombine will cause UI lag
+//    val scalesCalculator: StateFlow<ScalesCalculator>
 
     val disabledGestureTypes: SettingsStateFlow<Int>
 
@@ -96,4 +97,12 @@ expect class AppSettings(context: PlatformContext) {
     val debugLog: SettingsStateFlow<Boolean>
 
     val pagerGuideShowed: SettingsStateFlow<Boolean>
+}
+
+fun buildScalesCalculator(scalesCalculatorName: String, scalesMultiple: Float): ScalesCalculator {
+    return if (scalesCalculatorName == "Dynamic") {
+        ScalesCalculator.dynamic(scalesMultiple)
+    } else {
+        ScalesCalculator.fixed(scalesMultiple)
+    }
 }

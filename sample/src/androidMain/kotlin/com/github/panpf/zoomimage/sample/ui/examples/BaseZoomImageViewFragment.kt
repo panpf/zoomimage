@@ -32,6 +32,7 @@ import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
@@ -118,9 +119,23 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.rubberBandScale.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it
                 }
-                appSettings.scalesCalculator
+//                appSettings.scalesCalculator
+//                    .collectWithLifecycle(viewLifecycleOwner) {
+//                        scalesCalculatorState.value = it
+//                    }
+                appSettings.scalesCalculatorName
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        scalesCalculatorState.value = it
+                        scalesCalculatorState.value = buildScalesCalculator(
+                            appSettings.scalesCalculatorName.value,
+                            appSettings.scalesMultiple.value.toFloat()
+                        )
+                    }
+                appSettings.scalesMultiple
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        scalesCalculatorState.value = buildScalesCalculator(
+                            appSettings.scalesCalculatorName.value,
+                            appSettings.scalesMultiple.value.toFloat()
+                        )
                     }
                 appSettings.limitOffsetWithinBaseVisibleRect
                     .collectWithLifecycle(viewLifecycleOwner) {
