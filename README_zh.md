@@ -8,7 +8,7 @@
 
 翻译：[English](README.md)
 
-ZoomImage 是为 Compose Multiplatform 和 Android View 设计的用于手势缩放查看图像的库，它有以下特点和功能：
+ZoomImage 是一个专为 Compose Multiplatform 和 Android View 设计的手势缩放查看图片的库，它有以下特点和功能：
 
 * `Compose Multiplatform`. 支持 Compose Multiplatform，可在 Android、macOS、Windows、Linux 等平台使用
 * `功能齐全`. 支持双击缩放、双指缩放、单指缩放、鼠标滚轮缩放、键盘缩放、单指拖动、惯性滑动、键盘拖动等基础功能

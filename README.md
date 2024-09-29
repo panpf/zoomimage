@@ -8,8 +8,8 @@
 
 Translations: [简体中文](README_zh.md)
 
-ZoomImage is a library designed for Compose Multiplatform and Android View for gesture scale viewing
-of images. It has the following features and functions:
+ZoomImage is an gesture zoom viewing of images library specially designed for Compose Multiplatform
+and Android View. It has the following features and functions:
 
 * `Compose Multiplatform`. Support for Compose Multiplatform, which can be used on Android, macOS,
   Windows, Linux and other platforms
