@@ -88,7 +88,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
 
         binding.bgImage.requestState.loadState.repeatCollectWithLifecycle(
             viewLifecycleOwner,
-            State.STARTED
+            State.CREATED
         ) {
             if (it is LoadState.Success) {
                 photoPaletteViewModel.setPhotoPalette(
@@ -178,7 +178,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
 
         photoPaletteViewModel.photoPaletteState.repeatCollectWithLifecycle(
             owner = viewLifecycleOwner,
-            state = State.STARTED
+            state = State.CREATED
         ) { photoPalette ->
             listOf(
                 binding.backImage,

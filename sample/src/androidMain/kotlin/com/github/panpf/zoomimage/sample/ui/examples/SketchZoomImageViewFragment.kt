@@ -55,7 +55,7 @@ class SketchZoomImageViewFragment : BaseZoomImageViewFragment<SketchZoomImageVie
         zoomView.requestState.loadState
             .repeatCollectWithLifecycle(
                 owner = viewLifecycleOwner,
-                state = Lifecycle.State.STARTED
+                state = Lifecycle.State.CREATED
             ) {
                 if (it is LoadState.Error) {
                     binding.stateView.error {

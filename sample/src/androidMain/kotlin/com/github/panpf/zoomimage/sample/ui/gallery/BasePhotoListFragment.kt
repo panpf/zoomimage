@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -62,7 +61,7 @@ abstract class BasePhotoListFragment : BaseBindingFragment<FragmentPhotoListBind
         binding.layoutImage.apply {
             val appSettings = context.appSettings
             appSettings.staggeredGridMode
-                .repeatCollectWithLifecycle(viewLifecycleOwner, State.STARTED) {
+                .repeatCollectWithLifecycle(viewLifecycleOwner, State.CREATED) {
                     val iconResId =
                         if (it) R.drawable.ic_layout_grid else R.drawable.ic_layout_grid_staggered
                     setImageResource(iconResId)
@@ -91,7 +90,7 @@ abstract class BasePhotoListFragment : BaseBindingFragment<FragmentPhotoListBind
             appSettings.staggeredGridMode
                 .repeatCollectWithLifecycle(
                     viewLifecycleOwner,
-                    Lifecycle.State.STARTED
+                    State.CREATED
                 ) { staggeredGridMode ->
                     val (layoutManager1, itemDecoration) =
                         newLayoutManagerAndItemDecoration(staggeredGridMode)

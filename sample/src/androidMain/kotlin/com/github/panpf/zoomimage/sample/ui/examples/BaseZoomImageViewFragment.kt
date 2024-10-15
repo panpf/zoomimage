@@ -227,7 +227,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 }
             }
             zoomImageView.zoomable.transformState
-                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.CREATED) {
                     val zoomIn =
                         zoomImageView.zoomable.getNextStepScale() > zoomImageView.zoomable.transformState.value.scaleX
                     if (zoomIn) {
@@ -251,7 +251,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 zoomImageView.zoomable.minScaleState,
                 zoomImageView.zoomable.maxScaleState
             ).merge()
-                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.CREATED) {
                     val minScale = zoomImageView.zoomable.minScaleState.value
                     val maxScale = zoomImageView.zoomable.maxScaleState.value
                     val scale = zoomImageView.zoomable.transformState.value.scaleX
@@ -266,7 +266,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     }
                 }
             zoomImageView.zoomable.transformState
-                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.CREATED) {
                     val minScale = zoomImageView.zoomable.minScaleState.value
                     val maxScale = zoomImageView.zoomable.maxScaleState.value
                     val scale = it.scaleX
@@ -343,13 +343,13 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         }
 
         zoomImageView.zoomable.transformState
-            .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+            .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.CREATED) {
                 updateInfo(zoomImageView, binding)
             }
 
         photoPaletteViewModel.photoPaletteState.repeatCollectWithLifecycle(
             owner = viewLifecycleOwner,
-            state = Lifecycle.State.STARTED
+            state = Lifecycle.State.CREATED
         ) { photoPalette ->
             listOf(
                 binding.zoomOut,
