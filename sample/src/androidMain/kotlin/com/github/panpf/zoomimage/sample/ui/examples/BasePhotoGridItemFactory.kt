@@ -31,6 +31,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.model.photoSize
 import kotlin.math.roundToInt
 
 abstract class BasePhotoGridItemFactory :

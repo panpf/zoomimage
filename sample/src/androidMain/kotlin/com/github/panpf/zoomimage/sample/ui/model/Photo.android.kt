@@ -22,11 +22,9 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Serializable
 @Parcelize
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual data class Photo actual constructor(
     @SerialName("originalUrl") actual val originalUrl: String,
     @SerialName("mediumUrl") actual val mediumUrl: String?,
@@ -41,9 +39,8 @@ actual data class Photo actual constructor(
 
     @IgnoredOnParcel
     actual val detailPreviewUrl: String = mediumUrl ?: originalUrl
-
-    @IgnoredOnParcel
-    @Transient
-    val photoSize: Size? = if (width != null && height != null)
-        Size(width, height) else null
 }
+
+val Photo.photoSize: Size?
+    get() = if (width != null && height != null)
+        Size(width, height) else null
