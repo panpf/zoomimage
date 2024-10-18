@@ -50,7 +50,7 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
             if (dataSource is FileDataSource) {
                 if (http2ByteArray) {
                     withContext(ioCoroutineDispatcher()) {
-                        val bytes = dataSource.sketch.fileSystem.source(dataSource.path).buffer()
+                        val bytes = dataSource.fileSystem.source(dataSource.path).buffer()
                             .use { it.readByteArray() }
                         ImageSource.fromByteArray(bytes)
                     }

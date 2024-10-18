@@ -62,7 +62,7 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
     private fun setImage(binding: FragmentPhotoViewBinding) {
         binding.photoView.loadImage(args.imageUri) {
             crossfade()
-            registerListener(
+            addListener(
                 onStart = {
                     binding.stateView.loading()
                 },

@@ -30,13 +30,13 @@ google-material = "1.12.0"
 jetbrains-compose = "1.6.11"
 jetbrains-lifecycle = "2.8.0"
 
-kotlin = "2.0.0"
-kotlinx-atomicfu = "0.24.0" # sync with kotlin version
+kotlin = "2.0.21"
+kotlinx-atomicfu = "0.25.0" # sync with kotlin version
 kotlinx-collections-immutable = "0.3.7"
 kotlinx-coroutines = "1.8.1"
 kotlinx-cover = "0.8.3"
 kotlinx-serialization-json = "1.7.0"
-ktor = "2.3.11"
+ktor = "2.3.12"
 ktor-wasm = "3.0.0-wasm2"   # TODO Currently only versions with the '-wasm2' suffix support wasm
 
 leakcanary = "2.14"
@@ -46,7 +46,7 @@ okio = "3.9.0"
 
 panpf-assemblyadapter4 = "4.1.0"
 panpf-sketch3 = "3.3.2"
-panpf-sketch4 = "4.0.0-alpha07"
+panpf-sketch4 = "4.0.0-beta01"
 panpf-tools4a = "1.0.0"
 panpf-tools4j = "1.0.0"
 panpf-tools4k = "1.0.0"
@@ -122,16 +122,14 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
-#ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-contentNegotiation-wasm = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor-wasm" }
-#ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-#ktor-client-core-wasm = { module = "io.ktor:ktor-client-core", version.ref = "ktor-wasm" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
-#ktor-client-ios = { module = "io.ktor:ktor-client-ios", version.ref = "ktor" }
-#ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 #ktor-client-logging={ module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-#ktor-client-wasmJs = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor-wasm" }
+ktor-client-wasmJs = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor-wasm" }
 ktor-serialization-kotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-serialization-kotlinxJson-wasm = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor-wasm" }
 
@@ -157,7 +155,7 @@ panpf-sketch4-compose-resources = { module = "io.github.panpf.sketch4:sketch-com
 panpf-sketch4-extensions-compose = { module = "io.github.panpf.sketch4:sketch-extensions-compose", version.ref = "panpf-sketch4" }
 panpf-sketch4-extensions-view = { module = "io.github.panpf.sketch4:sketch-extensions-view", version.ref = "panpf-sketch4" }
 panpf-sketch4-extensions-viewability = { module = "io.github.panpf.sketch4:sketch-extensions-viewability", version.ref = "panpf-sketch4" }
-panpf-sketch4-http-ktor = { module = "io.github.panpf.sketch4:sketch-http-ktor", version.ref = "panpf-sketch4" }
+panpf-sketch4-http-ktor2 = { module = "io.github.panpf.sketch4:sketch-http-ktor2", version.ref = "panpf-sketch4" }
 panpf-sketch4-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref = "panpf-sketch4" }
 panpf-sketch4-singleton = { module = "io.github.panpf.sketch4:sketch-singleton", version.ref = "panpf-sketch4" }
 panpf-sketch4-view = { module = "io.github.panpf.sketch4:sketch-view", version.ref = "panpf-sketch4" }

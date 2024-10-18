@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.SingletonSketch
+import com.github.panpf.sketch.asPainter
 import com.github.panpf.sketch.painter.AnimatablePainter
-import com.github.panpf.sketch.painter.asPainter
 import com.github.panpf.sketch.painter.startWithLifecycle
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult

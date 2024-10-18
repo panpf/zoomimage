@@ -18,12 +18,14 @@ import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
+import com.github.panpf.sketch.asPainter
 import com.github.panpf.sketch.cache.CachePolicy.DISABLED
 import com.github.panpf.sketch.fetch.Fetcher
-import com.github.panpf.sketch.painter.asPainter
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult.Success
+import com.github.panpf.sketch.request.RequestContext
 import com.github.panpf.sketch.request.execute
+import com.github.panpf.sketch.util.Size
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -48,8 +50,9 @@ suspend fun sketchImageUriToZoomImageImageSource(
     imageUri: String,
     http2ByteArray: Boolean = false
 ): ImageSource.Factory? {
-    val imageRequest = ImageRequest(sketch.context, imageUri)
-    val fetcher = sketch.components.newFetcherOrThrow(imageRequest)
+    val request = ImageRequest(sketch.context, imageUri)
+    val requestContext = RequestContext(sketch, request, Size.Empty)
+    val fetcher = sketch.components.newFetcherOrThrow(requestContext)
     return sketchFetcherToZoomImageImageSource(sketch.context, fetcher, http2ByteArray)
 }
 

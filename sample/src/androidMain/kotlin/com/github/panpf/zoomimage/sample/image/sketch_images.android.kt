@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.sample.image
 
-import com.github.panpf.sketch.AndroidDrawableImage
+import com.github.panpf.sketch.DrawableImage
 import com.github.panpf.sketch.Image
 import com.github.panpf.sketch.PainterImage
 import com.github.panpf.sketch.drawable.ResizeDrawable
@@ -17,7 +17,7 @@ actual val Image.realSize: Size
         } else {
             Size(width, height)
         }
-    } else if (this is AndroidDrawableImage) {
+    } else if (this is DrawableImage) {
         val drawable = drawable
         if (drawable is ResizeDrawable) {
             drawable.drawable!!.let {

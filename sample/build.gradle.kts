@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     id("com.android.application")
-    id("kotlinx-atomicfu")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.parcelize")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlinx.atomicfu")
     id("androidx.navigation.safeargs.kotlin")      // Must be after kotlin plugin
 }
 
@@ -77,7 +77,7 @@ kotlin {
             implementation(libs.panpf.sketch4.animated)
             implementation(libs.panpf.sketch4.compose.resources)
             implementation(libs.panpf.sketch4.extensions.compose)
-            implementation(libs.panpf.sketch4.http.ktor)
+            implementation(libs.panpf.sketch4.http.ktor2)
             implementation(libs.panpf.sketch4.svg)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.screenModel)
@@ -91,6 +91,7 @@ kotlin {
             implementation(projects.zoomimageViewSketch)
             implementation(compose.preview) // Only available on Android and desktop platforms
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.android)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.constraintlayout)
@@ -124,6 +125,7 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.preview) // Only available on Android and desktop platforms
+            implementation(libs.ktor.client.java)
         }
         iosMain {
             // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
@@ -131,6 +133,7 @@ kotlin {
             resources.srcDirs("../internal/images/files")
             dependencies {
                 implementation(libs.moko.permissions)
+                implementation(libs.ktor.client.darwin)
             }
         }
         nonJsCommonMain.dependencies {
@@ -138,7 +141,11 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.cashapp.paging.compose.common)
         }
+        jsMain.dependencies {
+            implementation(libs.ktor.client.js)
+        }
         wasmJsMain.dependencies {
+            implementation(libs.ktor.client.wasmJs)
             implementation(libs.ktor.client.contentNegotiation.wasm)
             implementation(libs.ktor.serialization.kotlinxJson.wasm)
         }

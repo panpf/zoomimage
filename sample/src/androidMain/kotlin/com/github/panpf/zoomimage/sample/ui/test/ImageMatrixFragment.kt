@@ -242,7 +242,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
             val maxSize =
                 min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) / 4
             addTransformations(BitmapScaleTransformation(maxSize))
-            registerListener(
+            addListener(
                 onSuccess = { _, _ ->
                     updateMatrix(binding)
                 },

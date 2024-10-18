@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.asDrawableOrThrow
+import com.github.panpf.sketch.asDrawable
 import com.github.panpf.sketch.drawable.startWithLifecycle
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageRequest
@@ -56,7 +56,7 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
             val sketch = requireContext().sketch
             val result = sketch.execute(request)
             if (result is ImageResult.Success) {
-                val drawable = result.image.asDrawableOrThrow()
+                val drawable = result.image.asDrawable()
                 if (drawable is Animatable) {
                     drawable.startWithLifecycle(viewLifecycleOwner.lifecycle)
                 }

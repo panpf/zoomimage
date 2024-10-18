@@ -22,7 +22,6 @@ import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
-import com.github.panpf.sketch.request.composableError
 import com.github.panpf.sketch.resize.LongImagePrecisionDecider
 import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.state.rememberIconPainterStateImage
@@ -61,7 +60,7 @@ fun SketchPhotoGridItem(
                 iconTint = colorScheme.onPrimaryContainer
             )
         )
-        composableError(
+        error(
             rememberIconPainterStateImage(
                 icon = Res.drawable.ic_image_broken_outline,
                 background = colorScheme.primaryContainer,

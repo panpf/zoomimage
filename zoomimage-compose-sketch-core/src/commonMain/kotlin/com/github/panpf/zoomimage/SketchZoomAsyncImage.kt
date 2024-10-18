@@ -39,6 +39,7 @@ import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PainterState
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.internal.AsyncImageContent
+import com.github.panpf.sketch.name
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
@@ -224,10 +225,12 @@ private fun onPainterState(
     sketch: Sketch,
     zoomState: SketchZoomState,
     request: ImageRequest,
-    loadState: PainterState,
+    loadState: PainterState?,
 ) {
-    zoomState.zoomable.logger.d { "SketchZoomAsyncImage. onPainterState. state=${loadState.name}. uri='${request.uri}'" }
-    val painterSize = loadState.painter
+    zoomState.zoomable.logger.d {
+        "SketchZoomAsyncImage. onPainterState. state=${loadState?.name}. uri='${request.uri}'"
+    }
+    val painterSize = loadState?.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
         ?.roundToIntSize()
@@ -245,14 +248,6 @@ private fun onPainterState(
         }
     }
 }
-
-private val PainterState.name: String
-    get() = when (this) {
-        is PainterState.Loading -> "Loading"
-        is PainterState.Success -> "Success"
-        is PainterState.Error -> "Error"
-        is PainterState.Empty -> "Empty"
-    }
 
 private fun Size.roundToIntSize(): IntSize {
     return IntSize(width.roundToInt(), height.roundToInt())
