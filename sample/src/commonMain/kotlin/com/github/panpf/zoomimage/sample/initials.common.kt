@@ -4,9 +4,6 @@ import coil3.ImageLoader
 import coil3.util.DebugLogger
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.decode.supportSvg
-import com.github.panpf.sketch.fetch.supportComposeResources
-import com.github.panpf.sketch.http.KtorStack
 import com.github.panpf.sketch.util.Logger
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import kotlinx.coroutines.GlobalScope
@@ -15,12 +12,6 @@ import kotlinx.coroutines.launch
 fun newSketch(context: PlatformContext): Sketch {
     val appSettings = context.appSettings
     return Sketch.Builder(context).apply {
-        httpStack(KtorStack())
-        components {
-            supportSvg()
-            supportComposeResources()
-        }
-
         // For print the Sketch initialization log
         logger(level = if (appSettings.debugLog.value) Logger.Level.Debug else Logger.Level.Info)
 
