@@ -32,7 +32,7 @@ import kotlinx.atomicfu.locks.synchronized
  */
 class TileDecoder(
     val logger: Logger,
-    val rootDecodeHelper: DecodeHelper,
+    val decodeHelper: DecodeHelper,
 ) : AutoCloseable {
 
     private var closed = false
@@ -42,12 +42,12 @@ class TileDecoder(
     val decoderPoolSize: Int
         get() = decoderPool.size
 
-    val imageInfo: ImageInfo = rootDecodeHelper.imageInfo
+    val imageInfo: ImageInfo = decodeHelper.imageInfo
 
-    val imageSource: ImageSource = rootDecodeHelper.imageSource
+    val imageSource: ImageSource = decodeHelper.imageSource
 
     init {
-        decoderPool.add(rootDecodeHelper)
+        decoderPool.add(decodeHelper)
     }
 
     @WorkerThread
@@ -65,7 +65,7 @@ class TileDecoder(
             if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }
         if (decodeHelper == null) {
-            decodeHelper = rootDecodeHelper.copy()
+            decodeHelper = this.decodeHelper.copy()
         }
 
         val tileBitmap = block(decodeHelper)
@@ -86,7 +86,7 @@ class TileDecoder(
         val closed = synchronized(poolSyncLock) { this@TileDecoder.closed }
         if (!closed) {
             this@TileDecoder.closed = true
-            logger.d { "TileDecoder. close. $rootDecodeHelper" }
+            logger.d { "TileDecoder. close. $decodeHelper" }
             synchronized(poolSyncLock) {
                 decoderPool.forEach { it.close() }
                 decoderPool.clear()
@@ -95,6 +95,6 @@ class TileDecoder(
     }
 
     override fun toString(): String {
-        return "TileDecoder($rootDecodeHelper)"
+        return "TileDecoder($decodeHelper)"
     }
 }
