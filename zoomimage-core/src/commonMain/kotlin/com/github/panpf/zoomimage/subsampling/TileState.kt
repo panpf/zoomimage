@@ -52,12 +52,9 @@ annotation class TileState {
 
 const val TILE_COLOR_RED: Int = 0xFFFF0000.toInt()
 const val TILE_COLOR_GREEN: Int = 0xFF00FF00.toInt()
-const val TILE_COLOR_YELLOW_GREEN: Int = 0xFF9ACD32.toInt()
-const val TILE_COLOR_BLUE: Int = 0xFF0000FF.toInt()
 const val TILE_COLOR_YELLOW: Int = 0xFFFFFF00.toInt()
-const val TILE_COLOR_CYAN: Int = 0xFF00FFFF.toInt()
-const val TILE_COLOR_MAGENTA: Int = 0xFFFF00FF.toInt()
 const val TILE_COLOR_SKY_BLUE: Int = 0xFF00CCFF.toInt()
+const val TILE_COLOR_LIGHT_GRAY: Int = 0xFFCCCCCC.toInt()
 
 /**
  * Get the color of the tile according to the state
@@ -69,14 +66,14 @@ fun tileStateColor(
     withinLoadArea: Boolean,
     bitmapFrom: BitmapFrom,
 ): Int = when {
-    !withinLoadArea -> TILE_COLOR_SKY_BLUE
+    !withinLoadArea -> TILE_COLOR_LIGHT_GRAY
     state == TileState.STATE_LOADED -> {
         when (bitmapFrom) {
             BitmapFrom.MEMORY_CACHE -> TILE_COLOR_GREEN
-            BitmapFrom.LOCAL -> TILE_COLOR_YELLOW_GREEN
+            BitmapFrom.LOCAL -> TILE_COLOR_SKY_BLUE
         }
     }
 
-    state == TileState.STATE_LOADING -> TILE_COLOR_CYAN
+    state == TileState.STATE_LOADING -> TILE_COLOR_YELLOW
     else -> TILE_COLOR_RED
 }
