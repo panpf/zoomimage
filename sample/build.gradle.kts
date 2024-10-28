@@ -1,5 +1,6 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     id("com.android.application")
@@ -40,7 +41,6 @@ kotlin {
         binaries.executable()
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
         browser {
@@ -180,7 +180,8 @@ compose.desktop {
             )
         }
         buildTypes.release.proguard {
-//            obfuscate.set(true) // Obfuscate the code
+            obfuscate.set(true) // Obfuscate the code
+            optimize.set(true) // proguard optimization, enabled by default
             configurationFiles.from(project.file("compose-desktop.pro"))
         }
     }
