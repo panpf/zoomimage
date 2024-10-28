@@ -68,8 +68,6 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
-//            implementation(libs.coil.svg)
-//            implementation(libs.coil.gif)
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
@@ -91,7 +89,6 @@ kotlin {
             implementation(projects.zoomimageViewSketch)
             implementation(compose.preview) // Only available on Android and desktop platforms
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.ktor.client.android)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.constraintlayout)
@@ -125,7 +122,6 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.preview) // Only available on Android and desktop platforms
-            implementation(libs.ktor.client.java)
         }
         iosMain {
             // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
@@ -133,7 +129,6 @@ kotlin {
             resources.srcDirs("../internal/images/files")
             dependencies {
                 implementation(libs.moko.permissions)
-                implementation(libs.ktor.client.darwin)
             }
         }
         nonJsCommonMain.dependencies {
@@ -141,11 +136,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.cashapp.paging.compose.common)
         }
-        jsMain.dependencies {
-            implementation(libs.ktor.client.js)
-        }
         wasmJsMain.dependencies {
-            implementation(libs.ktor.client.wasmJs)
             implementation(libs.ktor.client.contentNegotiation.wasm)
             implementation(libs.ktor.serialization.kotlinxJson.wasm)
         }

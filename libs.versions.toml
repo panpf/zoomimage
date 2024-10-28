@@ -97,8 +97,6 @@ coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
-coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
-coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil" }
 
 coil2 = { module = "io.coil-kt:coil", version.ref = "coil2" }
@@ -122,14 +120,9 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
-ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-contentNegotiation-wasm = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor-wasm" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
-#ktor-client-logging={ module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-ktor-client-wasmJs = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor-wasm" }
 ktor-serialization-kotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-serialization-kotlinxJson-wasm = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor-wasm" }
 
@@ -144,8 +137,6 @@ panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panp
 panpf-sketch3-compose = { module = "io.github.panpf.sketch3:sketch-compose", version.ref = "panpf-sketch3" }
 panpf-sketch3-core = { module = "io.github.panpf.sketch3:sketch-core", version.ref = "panpf-sketch3" }
 panpf-sketch3-compose-core = { module = "io.github.panpf.sketch3:sketch-compose-core", version.ref = "panpf-sketch3" }
-#panpf-sketch3-extensions-view = { module = "io.github.panpf.sketch3:sketch-extensions-view", version.ref = "panpf-sketch3" }
-#panpf-sketch3-extensions-compose = { module = "io.github.panpf.sketch3:sketch-extensions-compose", version.ref = "panpf-sketch3" }
 panpf-sketch3-viewability = { module = "io.github.panpf.sketch3:sketch-viewability", version.ref = "panpf-sketch3" }
 panpf-sketch4-animated-gif = { module = "io.github.panpf.sketch4:sketch-animated-gif", version.ref = "panpf-sketch4" }
 panpf-sketch4-core = { module = "io.github.panpf.sketch4:sketch-core", version.ref = "panpf-sketch4" }
