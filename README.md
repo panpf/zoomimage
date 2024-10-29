@@ -56,13 +56,13 @@ Compose multiplatform:
 
 ```kotlin
 // Provides the SketchZoomAsyncImage component adapted to the Sketch v4+ image loader (recommended)
-implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
+implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch4:${LAST_VERSION}")
 
 // Provides SketchZoomAsyncImage component adapted to the old Sketch v3 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch3:${LAST_VERSION}")
 
 // Provides the CoilZoomAsyncImage component adapted to the Coil v3+ image loader
-implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}")
+implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:${LAST_VERSION}")
 
 // Provides CoilZoomAsyncImage component adapted to the old Coil v2 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil2:${LAST_VERSION}")
@@ -92,13 +92,13 @@ Android view:
 
 ```kotlin
 // Provides the SketchZoomImageView component adapted to the Sketch v4+ image loader (recommended)
-implementation("io.github.panpf.zoomimage:zoomimage-view-sketch:${LAST_VERSION}")
+implementation("io.github.panpf.zoomimage:zoomimage-view-sketch4:${LAST_VERSION}")
 
 // Provides SketchZoomImageView component adapted to the old Sketch v3 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch3:${LAST_VERSION}")
 
 // Provides the CoilZoomImageView component adapted to the Coil v3+ image loader
-implementation("io.github.panpf.zoomimage:zoomimage-view-coil:${LAST_VERSION}")
+implementation("io.github.panpf.zoomimage:zoomimage-view-coil3:${LAST_VERSION}")
 
 // Provides CoilZoomImageView component adapted to the old Coil v2 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil2:${LAST_VERSION}")

@@ -384,9 +384,9 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
 
-[CoilModelToImageSource]: ../../zoomimage-core-coil/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
+[CoilModelToImageSource]: ../../zoomimage-core-coil3/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
 
-[CoilModelToImageSourceImpl]: ../../zoomimage-core-coil/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
+[CoilModelToImageSourceImpl]: ../../zoomimage-core-coil3/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
 
 [CoilModelToImageSource2]: ../../zoomimage-core-coil2/src/main/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
 

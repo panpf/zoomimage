@@ -60,15 +60,15 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.internal.images)
-            implementation(projects.internal.utilsCoil)
+            implementation(projects.internal.utilsCoil3)
             implementation(projects.zoomimageCompose)
-            implementation(projects.zoomimageComposeCoil)
+            implementation(projects.zoomimageComposeCoil3)
             implementation(projects.zoomimageComposeResources)
-            implementation(projects.zoomimageComposeSketch)
+            implementation(projects.zoomimageComposeSketch4)
             implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
-            implementation(libs.coil.network.ktor)
+            implementation(libs.coil3.network.ktor)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.kotlinx.collections.immutable)
@@ -83,10 +83,10 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(projects.zoomimageComposeGlide)
-            implementation(projects.zoomimageViewCoil)
+            implementation(projects.zoomimageViewCoil3)
             implementation(projects.zoomimageViewGlide)
             implementation(projects.zoomimageViewPicasso)
-            implementation(projects.zoomimageViewSketch)
+            implementation(projects.zoomimageViewSketch4)
             implementation(compose.preview) // Only available on Android and desktop platforms
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.androidx.activity.compose)

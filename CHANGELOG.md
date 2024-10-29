@@ -8,6 +8,18 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: SubsamplingState.tileBitmapCache rename to tileImageCache
 * change: SubsamplingEngine.disabledTileBitmapCacheState rename to disabledTileImageCacheState
 * change: SubsamplingEngine.tileBitmapCacheState rename to tileImageCacheState
+* change: sketch-compose-coil module renamed to sketch-compose-coil3
+* change: sketch-compose-coil-core module renamed to sketch-compose-coil3-core
+* change: sketch-compose-sketch module renamed to sketch-compose-sketch4
+* change: sketch-compose-sketch-core module renamed to sketch-compose-sketch4-core
+* change: sketch-core-coil module renamed to sketch-core-coil3
+* change: sketch-core-coil-core module renamed to sketch-core-coil3-core
+* change: sketch-core-sketch module renamed to sketch-core-sketch4
+* change: sketch-core-sketch-core module renamed to sketch-core-sketch4-core
+* change: sketch-view-coil module renamed to sketch-view-coil3
+* change: sketch-view-coil-core module renamed to sketch-view-coil3-core
+* change: sketch-view-sketch module renamed to sketch-view-sketch4
+* change: sketch-view-sketch-core module renamed to sketch-view-sketch4-core
 * remove: Remove BitmapFrom
 
 ## 1.1.0-beta01

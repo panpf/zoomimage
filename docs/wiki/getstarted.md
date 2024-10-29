@@ -231,11 +231,11 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[CoilZoomAsyncImage]: ../../zoomimage-compose-coil/src/commonMain/kotlin/com/github/panpf/zoomimage/SingletonCoilZoomAsyncImage.kt
+[CoilZoomAsyncImage]: ../../zoomimage-compose-coil3/src/commonMain/kotlin/com/github/panpf/zoomimage/SingletonCoilZoomAsyncImage.kt
 
 [GlideZoomAsyncImage]: ../../zoomimage-compose-glide/src/main/kotlin/com/github/panpf/zoomimage/GlideZoomAsyncImage.kt
 
-[SketchZoomAsyncImage]: ../../zoomimage-compose-sketch/src/commonMain/kotlin/com/github/panpf/zoomimage/SingletonSketchZoomAsyncImage.kt
+[SketchZoomAsyncImage]: ../../zoomimage-compose-sketch4/src/commonMain/kotlin/com/github/panpf/zoomimage/SingletonSketchZoomAsyncImage.kt
 
 [ZoomImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageSample.kt
 
@@ -247,13 +247,13 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[CoilZoomImageView]: ../../zoomimage-view-coil-core/src/main/kotlin/com/github/panpf/zoomimage/CoilZoomImageView.kt
+[CoilZoomImageView]: ../../zoomimage-view-coil3-core/src/main/kotlin/com/github/panpf/zoomimage/CoilZoomImageView.kt
 
 [GlideZoomImageView]: ../../zoomimage-view-glide/src/main/kotlin/com/github/panpf/zoomimage/GlideZoomImageView.kt
 
 [PicassoZoomImageView]: ../../zoomimage-view-picasso/src/main/kotlin/com/github/panpf/zoomimage/PicassoZoomImageView.kt
 
-[SketchZoomImageView]: ../../zoomimage-view-sketch-core/src/main/kotlin/com/github/panpf/zoomimage/SketchZoomImageView.kt
+[SketchZoomImageView]: ../../zoomimage-view-sketch4-core/src/main/kotlin/com/github/panpf/zoomimage/SketchZoomImageView.kt
 
 [ZoomImageViewFragment]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageViewFragment.kt
 

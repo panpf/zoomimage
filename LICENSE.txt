@@ -202,7 +202,7 @@
    limitations under the License.
 
    -----------------------------------------------------------------------------
-   License for module zoomimage-compose-coil-core, zoomimage-compose-coil
+   License for module zoomimage-compose-coil[2|3]-core, zoomimage-compose[2|3]-coil
 
    Copyright 2023 Coil Contributors
 

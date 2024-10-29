@@ -8,6 +8,18 @@
 * change: SubsamplingState.tileBitmapCache 重命名为 tileImageCache
 * change: SubsamplingEngine.disabledTileBitmapCacheState 重命名为 disabledTileImageCacheState
 * change: SubsamplingEngine.tileBitmapCacheState 重命名为 tileImageCacheState
+* change: sketch-compose-coil 模块重命名为 sketch-compose-coil3
+* change: sketch-compose-coil-core 模块重命名为 sketch-compose-coil3-core
+* change: sketch-compose-sketch 模块重命名为 sketch-compose-sketch4
+* change: sketch-compose-sketch-core 模块重命名为 sketch-compose-sketch4-core
+* change: sketch-core-coil 模块重命名为 sketch-core-coil3
+* change: sketch-core-coil-core 模块重命名为 sketch-core-coil3-core
+* change: sketch-core-sketch 模块重命名为 sketch-core-sketch4
+* change: sketch-core-sketch-core 模块重命名为 sketch-core-sketch4-core
+* change: sketch-view-coil 模块重命名为 sketch-view-coil3
+* change: sketch-view-coil-core 模块重命名为 sketch-view-coil3-core
+* change: sketch-view-sketch 模块重命名为 sketch-view-sketch4
+* change: sketch-view-sketch-core 模块重命名为 sketch-view-sketch4-core
 * remove: 移除 BitmapFrom
 
 ## 1.1.0-beta01
