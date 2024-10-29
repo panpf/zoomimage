@@ -49,7 +49,7 @@ import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlin.math.roundToInt
 
@@ -181,7 +181,7 @@ fun SketchZoomAsyncImage(
     zoomState.zoomable.alignment = alignment
 
     LaunchedEffect(zoomState.subsampling) {
-        zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
+        zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
     }
     LaunchedEffect(Unit) {
         snapshotFlow { state.painterState }.collect {

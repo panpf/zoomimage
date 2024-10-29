@@ -16,25 +16,24 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.BitmapFrom
+import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.SkiaBitmap
-import com.github.panpf.zoomimage.subsampling.SkiaCanvas
-import com.github.panpf.zoomimage.subsampling.SkiaImage
-import com.github.panpf.zoomimage.subsampling.SkiaRect
-import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.toSkiaRect
 import okio.buffer
 import okio.use
+import org.jetbrains.skia.Bitmap
+import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Codec
 import org.jetbrains.skia.Data
+import org.jetbrains.skia.Image
+import org.jetbrains.skia.Rect
 import org.jetbrains.skia.impl.use
 import kotlin.math.ceil
 
 /**
- * Use [SkiaImage] to decode the image
+ * Use [Image] to decode the image
  *
  * *Not thread safe*
  *
@@ -45,33 +44,33 @@ class SkiaDecodeHelper(
     override val imageInfo: ImageInfo,
     override val supportRegion: Boolean,
     val bytes: ByteArray,
-    val skiaImage: SkiaImage,
+    val image: Image,
 ) : DecodeHelper {
 
     override fun decodeRegion(
         key: String,
         region: IntRectCompat,
         sampleSize: Int
-    ): SkiaTileBitmap {
-        // SkiaImage will parse exif orientation and does not support closing
+    ): BitmapTileImage {
+        // Image will parse exif orientation and does not support closing
         val widthValue = region.width / sampleSize.toDouble()
         val heightValue = region.height / sampleSize.toDouble()
         val bitmapWidth: Int = ceil(widthValue).toInt()
         val bitmapHeight: Int = ceil(heightValue).toInt()
-        val skiaBitmap = SkiaBitmap().apply {
+        val bitmap = Bitmap().apply {
             allocN32Pixels(bitmapWidth, bitmapHeight)
         }
-        val canvas = SkiaCanvas(skiaBitmap)
+        val canvas = Canvas(bitmap)
         canvas.drawImageRect(
-            image = skiaImage,
+            image = image,
             src = region.toSkiaRect(),
-            dst = SkiaRect.makeWH(bitmapWidth.toFloat(), bitmapHeight.toFloat())
+            dst = Rect.makeWH(bitmapWidth.toFloat(), bitmapHeight.toFloat())
         )
-        return SkiaTileBitmap(skiaBitmap, key, BitmapFrom.LOCAL)
+        return BitmapTileImage(bitmap, key, fromCache = false)
     }
 
     override fun close() {
-        skiaImage.close()
+        image.close()
     }
 
     override fun copy(): DecodeHelper {
@@ -80,7 +79,7 @@ class SkiaDecodeHelper(
             imageInfo = imageInfo,
             supportRegion = supportRegion,
             bytes = bytes,
-            skiaImage = SkiaImage.makeFromEncoded(bytes)
+            image = Image.makeFromEncoded(bytes)
         )
     }
 
@@ -92,26 +91,26 @@ class SkiaDecodeHelper(
 
         override fun create(imageSource: ImageSource): SkiaDecodeHelper {
             val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
-            val skiaImage = SkiaImage.makeFromEncoded(bytes)
-            val imageInfo = readImageInfo(bytes, skiaImage)
+            val image = Image.makeFromEncoded(bytes)
+            val imageInfo = readImageInfo(bytes, image)
             val supportRegion = checkSupportSubsamplingByMimeType(imageInfo.mimeType)
             return SkiaDecodeHelper(
                 imageSource = imageSource,
                 imageInfo = imageInfo,
                 supportRegion = supportRegion,
                 bytes = bytes,
-                skiaImage = skiaImage
+                image = image
             )
         }
 
-        private fun readImageInfo(bytes: ByteArray, skiaImage: SkiaImage): ImageInfo {
+        private fun readImageInfo(bytes: ByteArray, image: Image): ImageInfo {
             val encodedImageFormat = Codec.makeFromData(Data.makeFromBytes(bytes)).use {
                 it.encodedImageFormat
             }
             val mimeType = "image/${encodedImageFormat.name.lowercase()}"
             return ImageInfo(
-                width = skiaImage.width,
-                height = skiaImage.height,
+                width = image.width,
+                height = image.height,
                 mimeType = mimeType
             )
         }

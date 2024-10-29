@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-import com.github.panpf.zoomimage.subsampling.internal.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 
@@ -29,7 +28,7 @@ data class TileSnapshot(
     val coordinate: IntOffsetCompat,
     val srcRect: IntRectCompat,
     val sampleSize: Int,
-    val tileBitmap: TileBitmap?,
+    val tileImage: TileImage?,
     @TileState val state: Int,
     val alpha: Int,
 )
@@ -43,7 +42,7 @@ fun Tile.toSnapshot(): TileSnapshot = TileSnapshot(
     coordinate = coordinate,
     srcRect = srcRect,
     sampleSize = sampleSize,
-    tileBitmap = tileBitmap,
+    tileImage = tileImage,
     state = state,
     alpha = animationState.alpha
 )

@@ -51,7 +51,7 @@ interface ImageSource {
     /**
      * Wrapper factory
      *
-     * @see com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testWrapperFactory
+     * @see com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest
      */
     class WrapperFactory(val imageSource: ImageSource) : Factory {
 

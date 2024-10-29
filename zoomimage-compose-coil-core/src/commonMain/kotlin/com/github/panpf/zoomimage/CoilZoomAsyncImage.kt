@@ -41,7 +41,7 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.AsyncImagePainter.State
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
+import com.github.panpf.zoomimage.coil.CoilTileImageCache
 import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
 import com.github.panpf.zoomimage.compose.coil.internal.ConstraintsSizeResolver
 import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
@@ -209,7 +209,7 @@ fun CoilZoomAsyncImage(
     zoomState.zoomable.alignment = alignment
 
     LaunchedEffect(zoomState.subsampling) {
-        zoomState.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
+        zoomState.subsampling.tileImageCache = CoilTileImageCache(imageLoader)
     }
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.

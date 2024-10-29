@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
 import kotlinx.atomicfu.locks.SynchronizedObject
@@ -32,7 +32,7 @@ import kotlinx.atomicfu.locks.synchronized
  */
 class TileDecoder(
     val logger: Logger,
-    val decodeHelper: DecodeHelper,
+    private val decodeHelper: DecodeHelper,
 ) : AutoCloseable {
 
     private var closed = false
@@ -51,7 +51,7 @@ class TileDecoder(
     }
 
     @WorkerThread
-    fun decode(key: String, srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
+    fun decode(key: String, srcRect: IntRectCompat, sampleSize: Int): TileImage? {
         val closed = synchronized(poolSyncLock) { closed }
         check(!closed) { "TileDecoder is closed" }
         return useDecoder { decoder -> decoder.decodeRegion(key, srcRect, sampleSize) }
@@ -59,8 +59,8 @@ class TileDecoder(
 
     @WorkerThread
     private fun useDecoder(
-        block: (decoder: DecodeHelper) -> TileBitmap?
-    ): TileBitmap? {
+        block: (decoder: DecodeHelper) -> TileImage?
+    ): TileImage? {
         var decodeHelper: DecodeHelper? = synchronized(poolSyncLock) {
             if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }
@@ -68,7 +68,7 @@ class TileDecoder(
             decodeHelper = this.decodeHelper.copy()
         }
 
-        val tileBitmap = block(decodeHelper)
+        val tileImage = block(decodeHelper)
 
         synchronized(poolSyncLock) {
             if (!closed) {
@@ -78,7 +78,7 @@ class TileDecoder(
             }
         }
 
-        return tileBitmap
+        return tileImage
     }
 
     @WorkerThread

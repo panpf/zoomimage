@@ -40,7 +40,7 @@ import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 expect suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>>
@@ -112,7 +112,7 @@ class ImageSourceTestScreen : BaseScreen() {
             val context = LocalPlatformContext.current
             val sketch = SingletonSketch.get(context)
             LaunchedEffect(Unit) {
-                zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
+                zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
             }
 
             var myLoadState by remember { mutableStateOf<MyPageState>(None) }

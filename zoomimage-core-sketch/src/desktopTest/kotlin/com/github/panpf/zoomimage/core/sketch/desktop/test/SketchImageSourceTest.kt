@@ -4,10 +4,10 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.subsampling.SkiaImage
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.runBlocking
 import okio.buffer
+import org.jetbrains.skia.Image
 import org.jetbrains.skia.impl.use
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -99,7 +99,7 @@ class SketchImageSourceTest {
             imageSourceFactory.create()
         }
         val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
-        val imageSize = SkiaImage.makeFromEncoded(bytes).use { IntSizeCompat(it.width, it.height) }
+        val imageSize = Image.makeFromEncoded(bytes).use { IntSizeCompat(it.width, it.height) }
         assertEquals(expected = IntSizeCompat(2832, 4240), actual = imageSize)
         assertNotEquals(
             illegal = null,

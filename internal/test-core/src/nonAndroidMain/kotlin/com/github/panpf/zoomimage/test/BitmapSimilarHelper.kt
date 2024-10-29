@@ -1,9 +1,9 @@
 package com.github.panpf.zoomimage.test
 
-import com.github.panpf.zoomimage.subsampling.SkiaCanvas
-import com.github.panpf.zoomimage.subsampling.SkiaImage
-import com.github.panpf.zoomimage.subsampling.SkiaRect
 import org.jetbrains.skia.Bitmap
+import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.Image
+import org.jetbrains.skia.Rect
 import kotlin.math.pow
 
 /**
@@ -76,14 +76,14 @@ private fun createThumbnail(source: Bitmap, width: Int, height: Int): Bitmap {
     val newBitmap = Bitmap().apply {
         allocN32Pixels(width, height)
     }
-    val canvas = SkiaCanvas(newBitmap)
-    val skiaImage = SkiaImage.makeFromBitmap(source)
+    val canvas = Canvas(newBitmap)
+    val image = Image.makeFromBitmap(source)
     canvas.drawImageRect(
-        image = skiaImage,
-        src = SkiaRect(0f, 0f, source.width.toFloat(), source.height.toFloat()),
-        dst = SkiaRect(0f, 0f, newBitmap.width.toFloat(), newBitmap.height.toFloat()),
+        image = image,
+        src = Rect(0f, 0f, source.width.toFloat(), source.height.toFloat()),
+        dst = Rect(0f, 0f, newBitmap.width.toFloat(), newBitmap.height.toFloat()),
     )
-    skiaImage.close()
+    image.close()
     return newBitmap
 }
 

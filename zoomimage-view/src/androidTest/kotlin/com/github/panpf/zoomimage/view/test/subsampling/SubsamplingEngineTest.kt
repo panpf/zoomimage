@@ -10,7 +10,7 @@ import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.TestImageSource
-import com.github.panpf.zoomimage.test.TestTileBitmapCache
+import com.github.panpf.zoomimage.test.TestTileImageCache
 import com.github.panpf.zoomimage.test.delayUntil
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
 import com.github.panpf.zoomimage.test.toImageSource
@@ -58,28 +58,28 @@ class SubsamplingEngineTest {
     }
 
     @Test
-    fun testTileBitmapCache() {
+    fun testTileImageCache() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         val subsampling = SubsamplingEngine(zoomable)
-        assertEquals(expected = null, actual = subsampling.tileBitmapCacheState.value)
+        assertEquals(expected = null, actual = subsampling.tileImageCacheState.value)
 
-        val testTileBitmapCache = TestTileBitmapCache()
-        subsampling.tileBitmapCacheState.value = testTileBitmapCache
-        assertSame(expected = testTileBitmapCache, actual = subsampling.tileBitmapCacheState.value)
+        val testTileImageCache = TestTileImageCache()
+        subsampling.tileImageCacheState.value = testTileImageCache
+        assertSame(expected = testTileImageCache, actual = subsampling.tileImageCacheState.value)
     }
 
     @Test
-    fun testDisabledTileBitmapCache() {
+    fun testDisabledTileImageCache() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         val subsampling = SubsamplingEngine(zoomable)
-        assertEquals(expected = false, actual = subsampling.disabledTileBitmapCacheState.value)
+        assertEquals(expected = false, actual = subsampling.disabledTileImageCacheState.value)
 
-        subsampling.disabledTileBitmapCacheState.value = true
-        assertEquals(expected = true, actual = subsampling.disabledTileBitmapCacheState.value)
+        subsampling.disabledTileImageCacheState.value = true
+        assertEquals(expected = true, actual = subsampling.disabledTileImageCacheState.value)
     }
 
     @Test

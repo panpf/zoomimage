@@ -23,7 +23,7 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
 
@@ -79,8 +79,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
             val sketch = SketchUtils.getSketch(this)
             val result = SketchUtils.getResult(this)
             _subsamplingEngine?.apply {
-                if (tileBitmapCacheState.value == null && sketch != null) {
-                    tileBitmapCacheState.value = SketchTileBitmapCache(sketch)
+                if (tileImageCacheState.value == null && sketch != null) {
+                    tileImageCacheState.value = SketchTileImageCache(sketch)
                 }
                 setImageSource(newImageSource(sketch, result))
             }

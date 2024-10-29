@@ -2,8 +2,6 @@ package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.SkiaBitmap
-import com.github.panpf.zoomimage.subsampling.SkiaImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaDecodeHelper
 import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.current
@@ -12,6 +10,7 @@ import com.github.panpf.zoomimage.test.produceFingerPrint
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntRectCompat
 import org.jetbrains.skia.Bitmap
+import org.jetbrains.skia.Image
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -116,10 +115,10 @@ class SkiaDecoderHelperTest {
 
     @Test
     fun testToString() {
-        val bitmap = SkiaBitmap().apply {
+        val bitmap = Bitmap().apply {
             allocN32Pixels(width = 100, height = 100, opaque = true)
         }
-        val image = SkiaImage.makeFromBitmap(bitmap)
+        val image = Image.makeFromBitmap(bitmap)
         val bytes = image.encodeToData()!!.bytes
         assertEquals(
             expected = "SkiaDecodeHelper(imageSource=KotlinResourceImageSource('huge_card.jpg'), imageInfo=ImageInfo(size=1100x5321, mimeType='image/jpeg'), supportRegion=true)",
@@ -128,7 +127,7 @@ class SkiaDecoderHelperTest {
                 imageInfo = ImageInfo(1100, 5321, "image/jpeg"),
                 supportRegion = true,
                 bytes = bytes,
-                SkiaImage.makeFromEncoded(bytes)
+                Image.makeFromEncoded(bytes)
             ).toString()
         )
     }

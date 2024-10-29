@@ -180,7 +180,7 @@ fun <T : ZoomState> BaseZoomImageSample(
                 if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
         }
         LaunchedEffect(tileMemoryCache) {
-            subsampling.disabledTileBitmapCache = !tileMemoryCache
+            subsampling.disabledTileImageCache = !tileMemoryCache
         }
     }
     val infoDialogState = rememberMyDialogState()

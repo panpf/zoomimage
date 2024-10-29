@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
+import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.launch
 
@@ -45,7 +46,9 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
         get() = args.imageUri
 
     override fun createZoomImageView(context: Context): ZoomImageView {
-        return ZoomImageView(context)
+        return ZoomImageView(context).apply {
+            subsampling.tileImageCacheState.value = SketchTileImageCache(sketch)
+        }
     }
 
     override fun loadImage(zoomView: ZoomImageView, stateView: StateView) {

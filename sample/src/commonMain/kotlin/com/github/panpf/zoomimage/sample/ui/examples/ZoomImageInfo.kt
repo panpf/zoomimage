@@ -68,13 +68,13 @@ fun ZoomImageInfo(photo: Photo, zoomState: ZoomState) {
                 add(InfoItem("Display&Visible：", displayAndVisibleInfo))
 
                 val foregroundTiles = subsampling.foregroundTiles
-                val loadedTileCount = foregroundTiles.count { it.tileBitmap != null }
+                val loadedTileCount = foregroundTiles.count { it.tileImage != null }
                 val loadedTileBytes =
-                    foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
+                    foregroundTiles.sumOf { it.tileImage?.byteCount ?: 0 }.formatFileSize()
                 val backgroundTiles = subsampling.backgroundTiles
-                val backgroundTilesLoadedCount = backgroundTiles.count { it.tileBitmap != null }
+                val backgroundTilesLoadedCount = backgroundTiles.count { it.tileImage != null }
                 val backgroundTilesLoadedBytes =
-                    backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
+                    backgroundTiles.sumOf { it.tileImage?.byteCount ?: 0 }.formatFileSize()
                 val tileGridSizeMapString = subsampling.tileGridSizeMap.entries
                     .joinToString(prefix = "[", postfix = "]", separator = ", ") {
                         "${it.key}:${it.value.toShortString()}"

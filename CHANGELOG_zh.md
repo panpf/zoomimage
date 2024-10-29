@@ -2,6 +2,14 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+* change: SubsamplingState.disabledTileBitmapCache 重命名为 disabledTileImageCache
+* change: SubsamplingState.tileBitmapCache 重命名为 tileImageCache
+* change: SubsamplingEngine.disabledTileBitmapCacheState 重命名为 disabledTileImageCacheState
+* change: SubsamplingEngine.tileBitmapCacheState 重命名为 tileImageCacheState
+* remove: 移除 BitmapFrom
+
 ## 1.1.0-beta01
 
 * change: ZoomableState 和 ZoomableEngine 的 `contentSize` 属性现在为空时不再返回 `containerSize`

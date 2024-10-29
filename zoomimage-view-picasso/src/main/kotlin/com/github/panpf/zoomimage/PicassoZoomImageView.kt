@@ -21,7 +21,7 @@ import android.net.Uri
 import android.util.AttributeSet
 import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
 import com.github.panpf.zoomimage.picasso.PicassoDataToImageSourceImpl
-import com.github.panpf.zoomimage.picasso.PicassoTileBitmapCache
+import com.github.panpf.zoomimage.picasso.PicassoTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
 import com.squareup.picasso.Callback
@@ -166,10 +166,10 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 
     private fun resetImageSource(error: Boolean, data: Any?) {
         _subsamplingEngine?.apply {
-            // In order to be consistent with other ZoomImageViews, TileBitmapCache is also configured here,
+            // In order to be consistent with other ZoomImageViews, TileImageCache is also configured here,
             // although it can be set in the constructor
-            if (tileBitmapCacheState.value == null) {
-                tileBitmapCacheState.value = PicassoTileBitmapCache(Picasso.get())
+            if (tileImageCacheState.value == null) {
+                tileImageCacheState.value = PicassoTileImageCache(Picasso.get())
             }
             // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
             @Suppress("OPT_IN_USAGE")

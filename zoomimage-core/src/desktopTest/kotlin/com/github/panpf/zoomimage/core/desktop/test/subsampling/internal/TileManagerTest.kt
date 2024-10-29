@@ -5,11 +5,11 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
+import com.github.panpf.zoomimage.subsampling.TileImageCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.TileImageCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
@@ -523,7 +523,7 @@ class TileManagerTest {
         private val logger = Logger("Test").apply {
             level = Logger.Level.Debug
         }
-        private val tileBitmapCacheHelper = TileBitmapCacheHelper(TileBitmapCacheSpec())
+        private val tileImageCacheHelper = TileImageCacheHelper(TileImageCacheSpec())
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
@@ -535,8 +535,8 @@ class TileManagerTest {
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
-            tileBitmapConvertor = null,
-            tileBitmapCacheHelper = tileBitmapCacheHelper,
+            tileImageConvertor = null,
+            tileImageCacheHelper = tileImageCacheHelper,
             imageInfo = imageInfo,
             preferredTileSize = preferredTileSize,
             contentSize = contentSize,

@@ -23,12 +23,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.subsampling.TileBitmapCache
-import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
+import com.github.panpf.zoomimage.subsampling.TileImageCache
+import com.github.panpf.zoomimage.subsampling.TileImageCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.TileImageCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
@@ -68,8 +68,8 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     private var imageSourceFactory: ImageSource.Factory? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
-    private val tileBitmapCacheSpec = TileBitmapCacheSpec()
-    private var tileBitmapCacheHelper = TileBitmapCacheHelper(tileBitmapCacheSpec)
+    private val tileImageCacheSpec = TileImageCacheSpec()
+    private var tileImageCacheHelper = TileImageCacheHelper(tileImageCacheSpec)
     private var resetTileDecoderJob: Job? = null
     private val refreshTilesFlow = MutableSharedFlow<String>()
     private val preferredTileSizeState = MutableStateFlow(IntSizeCompat.Zero)
@@ -95,14 +95,14 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     /* *********************************** Configurable properties ****************************** */
 
     /**
-     * Set up the TileBitmap memory cache container
+     * Set up the TileImage memory cache container
      */
-    val tileBitmapCacheState = MutableStateFlow<TileBitmapCache?>(null)
+    val tileImageCacheState = MutableStateFlow<TileImageCache?>(null)
 
     /**
-     * If true, disabled TileBitmap memory cache
+     * If true, disabled TileImage memory cache
      */
-    val disabledTileBitmapCacheState = MutableStateFlow(false)
+    val disabledTileImageCacheState = MutableStateFlow(false)
 
     /**
      * The animation spec for tile animation
@@ -250,13 +250,13 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
             }
         }
         coroutineScope.launch {
-            tileBitmapCacheState.collect {
-                tileBitmapCacheSpec.tileBitmapCache = it
+            tileImageCacheState.collect {
+                tileImageCacheSpec.tileImageCache = it
             }
         }
         coroutineScope.launch {
-            disabledTileBitmapCacheState.collect {
-                tileBitmapCacheSpec.disabled = it
+            disabledTileImageCacheState.collect {
+                tileImageCacheSpec.disabled = it
             }
         }
         coroutineScope.launch {
@@ -443,10 +443,10 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
-            tileBitmapConvertor = null,
+            tileImageConvertor = null,
             preferredTileSize = preferredTileSize,
             contentSize = contentSize,
-            tileBitmapCacheHelper = tileBitmapCacheHelper,
+            tileImageCacheHelper = tileImageCacheHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
                 if (this@SubsamplingEngine.tileManager == manager) {

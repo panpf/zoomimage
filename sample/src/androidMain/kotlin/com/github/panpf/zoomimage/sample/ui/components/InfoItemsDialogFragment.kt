@@ -116,13 +116,13 @@ fun buildZoomImageViewInfos(
     add(InfoItem(title = "Display&Visible: ", content = displayAndVisibleInfo))
 
     val foregroundTiles = subsampling.foregroundTilesState.value
-    val loadedTileCount = foregroundTiles.count { it.tileBitmap != null }
+    val loadedTileCount = foregroundTiles.count { it.tileImage != null }
     val loadedTileBytes =
-        foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
+        foregroundTiles.sumOf { it.tileImage?.byteCount ?: 0 }.formatFileSize()
     val backgroundTiles = subsampling.backgroundTilesState.value
-    val backgroundTilesLoadedCount = backgroundTiles.count { it.tileBitmap != null }
+    val backgroundTilesLoadedCount = backgroundTiles.count { it.tileImage != null }
     val backgroundTilesLoadedBytes =
-        backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
+        backgroundTiles.sumOf { it.tileImage?.byteCount ?: 0 }.formatFileSize()
     val tileGridSizeMapString = subsampling.tileGridSizeMapState.value.entries
         .joinToString(prefix = "[", postfix = "]", separator = ", ") {
             "${it.key}:${it.value.toShortString()}"

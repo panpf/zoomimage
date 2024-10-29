@@ -17,9 +17,11 @@ kotlin {
 
         commonTest.dependencies {
             implementation(projects.internal.testCore)
+            implementation(libs.panpf.sketch4.http.ktor2)
         }
         androidInstrumentedTest.dependencies {
             implementation(projects.internal.testCore)
+            implementation(libs.panpf.sketch4.http.ktor2)
         }
     }
 }

@@ -1,13 +1,12 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling
 
-import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.TILE_COLOR_GREEN
 import com.github.panpf.zoomimage.subsampling.TILE_COLOR_LIGHT_GRAY
 import com.github.panpf.zoomimage.subsampling.TILE_COLOR_RED
 import com.github.panpf.zoomimage.subsampling.TILE_COLOR_SKY_BLUE
 import com.github.panpf.zoomimage.subsampling.TILE_COLOR_YELLOW
 import com.github.panpf.zoomimage.subsampling.TileState
-import com.github.panpf.zoomimage.subsampling.tileStateColor
+import com.github.panpf.zoomimage.subsampling.tileColor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -32,73 +31,73 @@ class TileStateTest {
     }
 
     @Test
-    fun testTileStateColor() {
+    fun testTileColor() {
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_NONE, withinLoadArea = false, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_NONE, withinLoadArea = false, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_NONE, withinLoadArea = false, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_NONE, withinLoadArea = false, fromCache = true)
         )
         assertEquals(
             expected = TILE_COLOR_RED,
-            actual = tileStateColor(TileState.STATE_NONE, withinLoadArea = true, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_NONE, withinLoadArea = true, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_RED,
-            actual = tileStateColor(TileState.STATE_NONE, withinLoadArea = true, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_NONE, withinLoadArea = true, fromCache = true)
         )
 
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_LOADING, withinLoadArea = false, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_LOADING, withinLoadArea = false, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_LOADING, withinLoadArea = false, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_LOADING, withinLoadArea = false, fromCache = true)
         )
         assertEquals(
             expected = TILE_COLOR_YELLOW,
-            actual = tileStateColor(TileState.STATE_LOADING, withinLoadArea = true, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_LOADING, withinLoadArea = true, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_YELLOW,
-            actual = tileStateColor(TileState.STATE_LOADING, withinLoadArea = true, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_LOADING, withinLoadArea = true, fromCache = true)
         )
 
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_LOADED, withinLoadArea = false, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_LOADED, withinLoadArea = false, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_LOADED, withinLoadArea = false, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_LOADED, withinLoadArea = false, fromCache = true)
         )
         assertEquals(
             expected = TILE_COLOR_SKY_BLUE,
-            actual = tileStateColor(TileState.STATE_LOADED, withinLoadArea = true, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_LOADED, withinLoadArea = true, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_GREEN,
-            actual = tileStateColor(TileState.STATE_LOADED, withinLoadArea = true, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_LOADED, withinLoadArea = true, fromCache = true)
         )
 
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_ERROR, withinLoadArea = false, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_ERROR, withinLoadArea = false, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_LIGHT_GRAY,
-            actual = tileStateColor(TileState.STATE_ERROR, withinLoadArea = false, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_ERROR, withinLoadArea = false, fromCache = true)
         )
         assertEquals(
             expected = TILE_COLOR_RED,
-            actual = tileStateColor(TileState.STATE_ERROR, withinLoadArea = true, bitmapFrom = BitmapFrom.LOCAL)
+            actual = tileColor(TileState.STATE_ERROR, withinLoadArea = true, fromCache = false)
         )
         assertEquals(
             expected = TILE_COLOR_RED,
-            actual = tileStateColor(TileState.STATE_ERROR, withinLoadArea = true, bitmapFrom = BitmapFrom.MEMORY_CACHE)
+            actual = tileColor(TileState.STATE_ERROR, withinLoadArea = true, fromCache = true)
         )
     }
 }

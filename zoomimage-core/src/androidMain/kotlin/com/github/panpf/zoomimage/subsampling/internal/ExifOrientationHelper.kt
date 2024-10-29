@@ -21,7 +21,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
-import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -119,16 +119,16 @@ class ExifOrientationHelper(val exifOrientation: Int) {
         }
     }
 
-    fun applyToTileBitmap(
-        tileBitmap: AndroidTileBitmap,
+    fun applyToTileImage(
+        tileImage: BitmapTileImage,
         reverse: Boolean = false,
-    ): AndroidTileBitmap {
+    ): BitmapTileImage {
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!isFlipped && !isRotated) {
-            return tileBitmap
+            return tileImage
         }
 
-        val bitmap = tileBitmap.bitmap!!
+        val bitmap = tileImage.bitmap
 
         val matrix = Matrix().apply {
             if (!reverse) {
@@ -159,7 +159,7 @@ class ExifOrientationHelper(val exifOrientation: Int) {
         val canvas = Canvas(outBitmap)
         val paint = Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG)
         canvas.drawBitmap(bitmap, matrix, paint)
-        return AndroidTileBitmap(outBitmap, tileBitmap.key, tileBitmap.bitmapFrom)
+        return BitmapTileImage(outBitmap, tileImage.key, tileImage.fromCache)
     }
 
     override fun equals(other: Any?): Boolean {

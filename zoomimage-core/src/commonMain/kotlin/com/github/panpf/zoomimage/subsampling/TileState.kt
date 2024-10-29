@@ -59,19 +59,16 @@ const val TILE_COLOR_LIGHT_GRAY: Int = 0xFFCCCCCC.toInt()
 /**
  * Get the color of the tile according to the state
  *
- * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest.testTileStateColor
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest.testTileColor
  */
-fun tileStateColor(
+fun tileColor(
     @TileState state: Int,
     withinLoadArea: Boolean,
-    bitmapFrom: BitmapFrom,
+    fromCache: Boolean,
 ): Int = when {
     !withinLoadArea -> TILE_COLOR_LIGHT_GRAY
     state == TileState.STATE_LOADED -> {
-        when (bitmapFrom) {
-            BitmapFrom.MEMORY_CACHE -> TILE_COLOR_GREEN
-            BitmapFrom.LOCAL -> TILE_COLOR_SKY_BLUE
-        }
+        if (fromCache) TILE_COLOR_GREEN else TILE_COLOR_SKY_BLUE
     }
 
     state == TileState.STATE_LOADING -> TILE_COLOR_YELLOW

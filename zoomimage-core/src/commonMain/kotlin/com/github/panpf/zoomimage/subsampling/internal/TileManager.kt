@@ -19,8 +19,9 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.toSnapshot
@@ -52,8 +53,8 @@ import kotlinx.coroutines.withContext
 class TileManager(
     private val logger: Logger,
     private val tileDecoder: TileDecoder,
-    private val tileBitmapConvertor: TileBitmapConvertor?,
-    private val tileBitmapCacheHelper: TileBitmapCacheHelper,
+    private val tileImageConvertor: TileImageConvertor?,
+    private val tileImageCacheHelper: TileImageCacheHelper,
     private val imageInfo: ImageInfo,
     private val contentSize: IntSizeCompat,
     private val preferredTileSize: IntSizeCompat,
@@ -382,7 +383,7 @@ class TileManager(
 
     @MainThread
     private fun loadTile(tile: Tile): Boolean {
-        if (tile.tileBitmap != null) {
+        if (tile.tileImage != null) {
             logger.d {
                 "TileManager. loadTile. skipped, loaded. $tile. '${imageSource.key}'"
             }
@@ -401,16 +402,16 @@ class TileManager(
         tile.loadJob = coroutineScope.async {
             val tileKey =
                 "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
-            val cachedValue = tileBitmapCacheHelper.get(tileKey)
+            val cachedValue = tileImageCacheHelper.get(tileKey)
             if (cachedValue != null) {
-                val convertedTileBitmap: TileBitmap =
-                    tileBitmapConvertor?.convert(cachedValue) ?: cachedValue
-                tile.setTileBitmap(convertedTileBitmap, allowAnimate = true)
+                val convertedTileImage: TileImage =
+                    tileImageConvertor?.convert(cachedValue) ?: cachedValue
+                tile.setTileImage(convertedTileImage, allowAnimate = true)
                 tile.state = TileState.STATE_LOADED
                 logger.d { "TileManager. loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
                 updateTileSnapshotList("loadTile:fromMemory")
             } else {
-                tile.cleanTileBitmap()
+                tile.cleanTileImage()
                 tile.state = TileState.STATE_LOADING
                 updateTileSnapshotList("loadTile:loading")
 
@@ -420,40 +421,40 @@ class TileManager(
                     }
                 }
 
-                val tileBitmap = decodeResult.getOrNull()
+                val tileImage = decodeResult.getOrNull()
                 when {
                     decodeResult.isFailure -> {
-                        tile.cleanTileBitmap()
+                        tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
                         logger.e("TileManager. loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${imageSource.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
-                    tileBitmap == null -> {
-                        tile.cleanTileBitmap()
+                    tileImage == null -> {
+                        tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
                         logger.e("TileManager. loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
-                    tile.sampleSize == 1 && (tile.srcRect.width != tileBitmap.width || tile.srcRect.height != tileBitmap.height) -> {
-                        tile.cleanTileBitmap()
+                    tile.sampleSize == 1 && (tile.srcRect.width != tileImage.width || tile.srcRect.height != tileImage.height) -> {
+                        tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileBitmap. '${imageSource.key}'")
-                        tileBitmap.recycle()
+                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileImage. '${imageSource.key}'")
+                        tileImage.recycle()
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     isActive -> {
-                        val cacheTileBitmap: TileBitmap = tileBitmapCacheHelper.put(
+                        val cacheTileImage: TileImage = tileImageCacheHelper.put(
                             key = tileKey,
-                            tileBitmap = tileBitmap,
+                            tileImage = tileImage,
                             imageUrl = imageSource.key,
                             imageInfo = imageInfo,
-                        ) ?: tileBitmap
-                        val convertedTileBitmap: TileBitmap =
-                            tileBitmapConvertor?.convert(cacheTileBitmap) ?: cacheTileBitmap
-                        tile.setTileBitmap(convertedTileBitmap, allowAnimate = true)
+                        ) ?: tileImage
+                        val convertedTileImage: TileImage =
+                            tileImageConvertor?.convert(cacheTileImage) ?: cacheTileImage
+                        tile.setTileImage(convertedTileImage, allowAnimate = true)
                         tile.state = TileState.STATE_LOADED
                         logger.d { "TileManager. loadTile. successful. $tile. '${imageSource.key}'" }
                         updateTileSnapshotList("loadTile:successful")
@@ -461,11 +462,11 @@ class TileManager(
 
                     else -> {
                         logger.d {
-                            "TileManager. loadTile. canceled. bitmap=${tileBitmap}, $tile. '${imageSource.key}'"
+                            "TileManager. loadTile. canceled. image=${tileImage}, $tile. '${imageSource.key}'"
                         }
-                        tile.cleanTileBitmap()
+                        tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        tileBitmap.recycle()
+                        tileImage.recycle()
                         updateTileSnapshotList("loadTile:canceled")
                     }
                 }
@@ -489,10 +490,10 @@ class TileManager(
             tile.loadJob = null
         }
 
-        val tileBitmap = tile.tileBitmap
-        if (tileBitmap != null) {
+        val tileImage = tile.tileImage
+        if (tileImage != null) {
             logger.d { "TileManager. freeTile. $tile. '${imageSource.key}'" }
-            tile.cleanTileBitmap()
+            tile.cleanTileImage()
         }
 
         if (!skipNotify) {

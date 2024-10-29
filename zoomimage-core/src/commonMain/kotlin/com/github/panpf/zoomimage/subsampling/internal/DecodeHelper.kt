@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 
 interface DecodeHelper : AutoCloseable {
@@ -31,7 +31,7 @@ interface DecodeHelper : AutoCloseable {
     val supportRegion: Boolean
 
     @WorkerThread
-    fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileBitmap
+    fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileImage
 
     fun copy(): DecodeHelper
 

@@ -313,7 +313,7 @@ repeated decoding and improve performance
 Components that integrate the image loading library can use the memory caching feature without any
 additional work, while components that do not integrate the image loading library need to implement
 their own first
-[TileBitmapCache] Then set the `tileBitmapCache` property to use the memory cache feature
+[TileImageCache] Then set the `tileImageCache` property to use the memory cache feature
 
 example:
 
@@ -321,7 +321,7 @@ example:
 val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
+  zoomState.subsampling.tileImageCache = MyTileImageCache()
 }
 
 ZoomImage(
@@ -332,9 +332,9 @@ ZoomImage(
 )
 ```
 
-After setting the tileBitmapCache property, the memory caching function is turned on, and it can be
-passed without modifying the tileBitmapCache property
-The `disabledTileBitmapCache` property controls the use of the memory cache feature
+After setting the tileImageCache property, the memory caching function is turned on, and it can be
+passed without modifying the tileImageCache property
+The `disabledTileImageCache` property controls the use of the memory cache feature
 
 example:
 
@@ -343,9 +343,9 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // Disable memory caching
-    zoomState.subsampling.disabledTileBitmapCache = true
+  zoomState.subsampling.disabledTileImageCache = true
     // Memory caching is allowed
-    zoomState.subsampling.disabledTileBitmapCache = false
+  zoomState.subsampling.disabledTileImageCache = false
 }
 
 ZoomImage(
@@ -396,7 +396,7 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[TileBitmapCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapCache.kt
+[TileImageCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileImageCache.kt
 
 [SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 

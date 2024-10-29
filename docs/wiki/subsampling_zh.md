@@ -286,7 +286,7 @@ SketchZoomAsyncImage(
 子采样功能支持内存缓存，可以将 Bitmap 缓存在内存中，这样可以避免重复解码，提高性能
 
 集成了图片加载库的组件无需任何额外的工作即可使用内存缓存功能，而没有集成图片加载库的组件需要先实现自己的
-[TileBitmapCache] 然后设置 `tileBitmapCache` 属性才能使用内存缓存功能
+[TileImageCache] 然后设置 `tileImageCache` 属性才能使用内存缓存功能
 
 示例：
 
@@ -294,7 +294,7 @@ SketchZoomAsyncImage(
 val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
+  zoomState.subsampling.tileImageCache = MyTileImageCache()
 }
 
 ZoomImage(
@@ -305,8 +305,8 @@ ZoomImage(
 )
 ```
 
-设置了 tileBitmapCache 属性后就开启了内存缓存功能，还可以在不修改 tileBitmapCache 属性的情况下通过
-`disabledTileBitmapCache` 属性控制使用内存缓存功能
+设置了 tileImageCache 属性后就开启了内存缓存功能，还可以在不修改 tileImageCache 属性的情况下通过
+`disabledTileImageCache` 属性控制使用内存缓存功能
 
 示例：
 
@@ -315,9 +315,9 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // 禁用内存缓存
-    zoomState.subsampling.disabledTileBitmapCache = true
+  zoomState.subsampling.disabledTileImageCache = true
     // 允许使用内存缓存
-    zoomState.subsampling.disabledTileBitmapCache = false
+  zoomState.subsampling.disabledTileImageCache = false
 }
 
 ZoomImage(
@@ -364,7 +364,7 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[TileBitmapCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapCache.kt
+[TileImageCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileImageCache.kt
 
 [SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 

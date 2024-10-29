@@ -25,7 +25,7 @@ import com.bumptech.glide.internalModel
 import com.bumptech.glide.request.SingleRequest
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
-import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
+import com.github.panpf.zoomimage.glide.GlideTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
 import kotlinx.coroutines.launch
@@ -91,10 +91,10 @@ open class GlideZoomImageView @JvmOverloads constructor(
             val coroutineScope = coroutineScope!!
             val request = getRequestFromView(this@GlideZoomImageView)
             _subsamplingEngine?.apply {
-                // In order to be consistent with other ZoomImageViews, TileBitmapCache is also configured here,
+                // In order to be consistent with other ZoomImageViews, TileImageCache is also configured here,
                 // although it can be set in the constructor
-                if (tileBitmapCacheState.value == null) {
-                    tileBitmapCacheState.value = GlideTileBitmapCache(Glide.get(context))
+                if (tileImageCacheState.value == null) {
+                    tileImageCacheState.value = GlideTileImageCache(Glide.get(context))
                 }
                 coroutineScope.launch {
                     setImageSource(newImageSource(request))

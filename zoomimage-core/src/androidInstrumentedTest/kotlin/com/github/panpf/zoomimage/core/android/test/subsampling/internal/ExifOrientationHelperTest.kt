@@ -2,8 +2,7 @@ package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
 import android.graphics.BitmapFactory
 import com.githb.panpf.zoomimage.images.ResourceImages
-import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
-import com.github.panpf.zoomimage.subsampling.BitmapFrom
+import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.test.produceFingerPrint
 import com.github.panpf.zoomimage.test.toImageSource
@@ -205,10 +204,10 @@ class ExifOrientationHelperTest {
             val exifOrientation = ExifOrientationHelper(exifOrientationInt)
             val message = "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}"
 
-            val appliedBitmap = exifOrientation.applyToTileBitmap(
-                tileBitmap = AndroidTileBitmap(inBitmap, "", BitmapFrom.LOCAL),
+            val appliedBitmap = exifOrientation.applyToTileImage(
+                tileImage = BitmapTileImage(inBitmap, "", fromCache = false),
                 reverse = false
-            ).bitmap!!
+            ).bitmap
             if (change) {
                 assertNotEquals(
                     illegal = produceFingerPrint(source = inBitmap),
@@ -216,8 +215,8 @@ class ExifOrientationHelperTest {
                     message = message,
                 )
 
-                val reversedBitmap = exifOrientation.applyToTileBitmap(
-                    tileBitmap = AndroidTileBitmap(appliedBitmap, "", BitmapFrom.LOCAL),
+                val reversedBitmap = exifOrientation.applyToTileImage(
+                    tileImage = BitmapTileImage(appliedBitmap, "", fromCache = false),
                     reverse = true
                 ).bitmap
                 assertEquals(

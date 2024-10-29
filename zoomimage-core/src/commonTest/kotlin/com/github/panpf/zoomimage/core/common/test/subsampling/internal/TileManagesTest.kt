@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.internal.Tile
+import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.internal.calculateGridSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateMaxGridSize

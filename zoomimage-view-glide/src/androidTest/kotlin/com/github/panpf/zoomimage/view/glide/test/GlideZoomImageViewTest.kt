@@ -65,33 +65,33 @@ class GlideZoomImageViewTest {
 
             assertEquals(
                 expected = 0,
-                actual = (glideZoomImageView.getFieldValue("convertors")!! as List<GlideModelToImageSource>).size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
             )
 
             val convertor1 = TestGlideModelToImageSource()
             glideZoomImageView.registerModelToImageSource(convertor1)
             assertEquals(
                 expected = 1,
-                actual = (glideZoomImageView.getFieldValue("convertors")!! as List<GlideModelToImageSource>).size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
             )
 
             val convertor2 = TestGlideModelToImageSource()
             glideZoomImageView.registerModelToImageSource(convertor2)
             assertEquals(
                 expected = 2,
-                actual = (glideZoomImageView.getFieldValue("convertors")!! as List<GlideModelToImageSource>).size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
             )
 
             glideZoomImageView.unregisterModelToImageSource(convertor2)
             assertEquals(
                 expected = 1,
-                actual = (glideZoomImageView.getFieldValue("convertors")!! as List<GlideModelToImageSource>).size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
             )
 
             glideZoomImageView.unregisterModelToImageSource(convertor1)
             assertEquals(
                 expected = 0,
-                actual = (glideZoomImageView.getFieldValue("convertors")!! as List<GlideModelToImageSource>).size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
             )
         }
     }
@@ -112,7 +112,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
             assertNull(actual = getRequestFromView(glideZoomImageView))
-            assertNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -125,7 +125,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
             assertTrue(actual = getRequestFromView(glideZoomImageView)?.isComplete == true)
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = glideZoomImageView.subsampling.readyState.value)
         }
 
@@ -143,7 +143,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
             assertNull(actual = getRequestFromView(glideZoomImageView))
-            assertNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -156,7 +156,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
             assertNotNull(actual = getRequestFromView(glideZoomImageView))
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = glideZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -167,7 +167,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
             assertTrue(actual = getRequestFromView(glideZoomImageView)?.isComplete == true)
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
         }
 
@@ -185,7 +185,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
             assertNull(actual = getRequestFromView(glideZoomImageView))
-            assertNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -199,7 +199,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
             assertTrue(actual = getRequestFromView(glideZoomImageView)?.isComplete != true)
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
         }
 
@@ -217,7 +217,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
             assertNull(actual = getRequestFromView(glideZoomImageView))
-            assertNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -230,7 +230,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
             assertNotNull(actual = getRequestFromView(glideZoomImageView))
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = glideZoomImageView.subsampling.readyState.value)
 
             val thumbnail = glideZoomImageView.drawable
@@ -242,7 +242,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
             assertTrue(actual = getRequestFromView(glideZoomImageView)?.isComplete == true)
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -253,7 +253,7 @@ class GlideZoomImageViewTest {
             assertFalse(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
             assertTrue(actual = getRequestFromView(glideZoomImageView)?.isComplete == true)
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
 
 
@@ -265,7 +265,7 @@ class GlideZoomImageViewTest {
             assertFalse(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
             assertTrue(actual = getRequestFromView(glideZoomImageView)?.isComplete == true)
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = glideZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -277,7 +277,7 @@ class GlideZoomImageViewTest {
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
             assertTrue(actual = getRequestFromView(glideZoomImageView)?.isComplete == true)
-            assertNotNull(actual = glideZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = glideZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = glideZoomImageView.subsampling.readyState.value)
         }
     }

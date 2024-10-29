@@ -67,33 +67,33 @@ class CoilZoomImageViewTest {
 
             assertEquals(
                 expected = 0,
-                actual = (coilZoomImageView.getFieldValue("convertors")!! as List<CoilModelToImageSource>).size
+                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
             )
 
             val convertor1 = TestCoilModelToImageSource()
             coilZoomImageView.registerModelToImageSource(convertor1)
             assertEquals(
                 expected = 1,
-                actual = (coilZoomImageView.getFieldValue("convertors")!! as List<CoilModelToImageSource>).size
+                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
             )
 
             val convertor2 = TestCoilModelToImageSource()
             coilZoomImageView.registerModelToImageSource(convertor2)
             assertEquals(
                 expected = 2,
-                actual = (coilZoomImageView.getFieldValue("convertors")!! as List<CoilModelToImageSource>).size
+                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
             )
 
             coilZoomImageView.unregisterModelToImageSource(convertor2)
             assertEquals(
                 expected = 1,
-                actual = (coilZoomImageView.getFieldValue("convertors")!! as List<CoilModelToImageSource>).size
+                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
             )
 
             coilZoomImageView.unregisterModelToImageSource(convertor1)
             assertEquals(
                 expected = 0,
-                actual = (coilZoomImageView.getFieldValue("convertors")!! as List<CoilModelToImageSource>).size
+                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
             )
         }
     }
@@ -115,7 +115,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.drawable)
             assertNull(actual = CoilUtils.result(coilZoomImageView))
             assertNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             coilZoomImageView.load(ResourceImages.hugeCard.uri)
@@ -125,7 +125,7 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = coilZoomImageView.drawable)
             assertTrue(actual = CoilUtils.result(coilZoomImageView) is SuccessResult)
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = coilZoomImageView.subsampling.readyState.value)
         }
 
@@ -144,7 +144,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.drawable)
             assertNull(actual = CoilUtils.result(coilZoomImageView))
             assertNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             coilZoomImageView.load(ResourceImages.hugeCard.uri)
@@ -154,7 +154,7 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = coilZoomImageView.drawable)
             assertNotNull(actual = CoilUtils.result(coilZoomImageView))
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = coilZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -166,7 +166,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.drawable)
             assertTrue(actual = CoilUtils.result(coilZoomImageView) is SuccessResult)
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
         }
 
@@ -185,7 +185,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.drawable)
             assertNull(actual = CoilUtils.result(coilZoomImageView))
             assertNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             coilZoomImageView.load(ResourceImages.hugeCard.uri + "1") {
@@ -197,7 +197,7 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = coilZoomImageView.drawable)
             assertTrue(actual = CoilUtils.result(coilZoomImageView) is ErrorResult)
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
         }
 
@@ -216,7 +216,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.drawable)
             assertNull(actual = CoilUtils.result(coilZoomImageView))
             assertNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             coilZoomImageView.load(ResourceImages.hugeCard.uri)
@@ -226,7 +226,7 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = coilZoomImageView.drawable)
             assertNotNull(actual = CoilUtils.result(coilZoomImageView))
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = coilZoomImageView.subsampling.readyState.value)
 
             val thumbnail = coilZoomImageView.drawable
@@ -239,7 +239,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.drawable)
             assertTrue(actual = CoilUtils.result(coilZoomImageView) is SuccessResult)
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -251,7 +251,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.drawable)
             assertTrue(actual = CoilUtils.result(coilZoomImageView) is SuccessResult)
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
 
@@ -264,7 +264,7 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = coilZoomImageView.drawable)
             assertTrue(actual = CoilUtils.result(coilZoomImageView) is SuccessResult)
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -277,7 +277,7 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = coilZoomImageView.drawable)
             assertTrue(actual = CoilUtils.result(coilZoomImageView) is SuccessResult)
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
-            assertNotNull(actual = coilZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = coilZoomImageView.subsampling.readyState.value)
         }
     }

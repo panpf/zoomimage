@@ -29,7 +29,7 @@ internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
 
 
 /**
- * Checks whether the specified image type supports subsampling, on the non Android platform, it mainly depends on the types supported by SkiaImage.
+ * Checks whether the specified image type supports subsampling, on the non Android platform, it mainly depends on the types supported by Image.
  *
  * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testCheckSupportSubsamplingByMimeType
  */

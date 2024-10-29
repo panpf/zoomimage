@@ -25,7 +25,7 @@ import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 
 @Composable
 fun BasicZoomImageSample(
@@ -42,7 +42,7 @@ fun BasicZoomImageSample(
         val context = LocalPlatformContext.current
         val sketch = SingletonSketch.get(context)
         LaunchedEffect(Unit) {
-            zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
+            zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
         }
 
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }

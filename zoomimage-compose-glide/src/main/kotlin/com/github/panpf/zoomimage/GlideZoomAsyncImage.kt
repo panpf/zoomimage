@@ -49,7 +49,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
+import com.github.panpf.zoomimage.glide.GlideTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -150,7 +150,7 @@ fun GlideZoomAsyncImage(
     val context = LocalContext.current
     val glide = Glide.get(context)
     LaunchedEffect(zoomState.subsampling) {
-        zoomState.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
+        zoomState.subsampling.tileImageCache = GlideTileImageCache(glide)
     }
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.

@@ -67,33 +67,33 @@ class PicassoZoomImageViewTest {
 
             assertEquals(
                 expected = 0,
-                actual = (picassoZoomImageView.getFieldValue("convertors")!! as List<PicassoDataToImageSource>).size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
             )
 
             val convertor1 = TestPicassoDataToImageSource()
             picassoZoomImageView.registerDataToImageSource(convertor1)
             assertEquals(
                 expected = 1,
-                actual = (picassoZoomImageView.getFieldValue("convertors")!! as List<PicassoDataToImageSource>).size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
             )
 
             val convertor2 = TestPicassoDataToImageSource()
             picassoZoomImageView.registerDataToImageSource(convertor2)
             assertEquals(
                 expected = 2,
-                actual = (picassoZoomImageView.getFieldValue("convertors")!! as List<PicassoDataToImageSource>).size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
             )
 
             picassoZoomImageView.unregisterDataToImageSource(convertor2)
             assertEquals(
                 expected = 1,
-                actual = (picassoZoomImageView.getFieldValue("convertors")!! as List<PicassoDataToImageSource>).size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
             )
 
             picassoZoomImageView.unregisterDataToImageSource(convertor1)
             assertEquals(
                 expected = 0,
-                actual = (picassoZoomImageView.getFieldValue("convertors")!! as List<PicassoDataToImageSource>).size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
             )
         }
     }
@@ -113,7 +113,7 @@ class PicassoZoomImageViewTest {
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)
-            assertNull(actual = picassoZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = picassoZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -126,7 +126,7 @@ class PicassoZoomImageViewTest {
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNotNull(actual = picassoZoomImageView.drawable)
-            assertNotNull(actual = picassoZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = picassoZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = picassoZoomImageView.subsampling.readyState.value)
         }
 
@@ -143,7 +143,7 @@ class PicassoZoomImageViewTest {
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)
-            assertNull(actual = picassoZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = picassoZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -156,7 +156,7 @@ class PicassoZoomImageViewTest {
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNotNull(actual = picassoZoomImageView.drawable)
-            assertNotNull(actual = picassoZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = picassoZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -166,7 +166,7 @@ class PicassoZoomImageViewTest {
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)
-            assertNotNull(actual = picassoZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = picassoZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
         }
 
@@ -183,7 +183,7 @@ class PicassoZoomImageViewTest {
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)
-            assertNull(actual = picassoZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = picassoZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -197,7 +197,7 @@ class PicassoZoomImageViewTest {
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNotNull(actual = picassoZoomImageView.drawable)
-            assertNotNull(actual = picassoZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = picassoZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
         }
     }

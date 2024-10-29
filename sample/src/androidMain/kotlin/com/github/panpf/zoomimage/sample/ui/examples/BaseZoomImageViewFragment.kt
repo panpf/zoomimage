@@ -198,7 +198,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }
                 appSettings.tileMemoryCache.collectWithLifecycle(viewLifecycleOwner) {
-                    disabledTileBitmapCacheState.value = !it
+                    disabledTileImageCacheState.value = !it
                 }
                 appSettings.pausedContinuousTransformTypes.collectWithLifecycle(viewLifecycleOwner) {
                     pausedContinuousTransformTypesState.value = it

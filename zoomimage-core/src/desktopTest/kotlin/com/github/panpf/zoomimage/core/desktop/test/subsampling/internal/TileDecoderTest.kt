@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
-import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelper
 import com.github.panpf.zoomimage.test.toImageSource
@@ -34,7 +34,7 @@ class TileDecoderTest {
             assertEquals(1, tileDecoder.decoderPoolSize)
 
             val results = runBlocking {
-                val jobs = mutableListOf<Deferred<TileBitmap?>>()
+                val jobs = mutableListOf<Deferred<TileImage?>>()
                 repeat(20) {
                     val job = scope.async {
                         withContext(dispatcher) {

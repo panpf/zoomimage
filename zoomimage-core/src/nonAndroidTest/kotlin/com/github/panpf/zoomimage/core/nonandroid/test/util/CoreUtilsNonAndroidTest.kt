@@ -1,7 +1,9 @@
 package com.github.panpf.zoomimage.core.nonandroid.test.util
 
+import com.github.panpf.zoomimage.subsampling.toLogString
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.toSkiaRect
+import org.jetbrains.skia.Bitmap
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -28,5 +30,19 @@ class CoreUtilsNonAndroidTest {
 
         assertNotEquals(illegal = rect1, actual = rect2)
         assertNotEquals(illegal = skiRect1, actual = skiRect2)
+    }
+
+    @Test
+    fun testToLogString() {
+        val bitmap = Bitmap().apply {
+            allocN32Pixels(100, 100, opaque = false)
+        }
+        assertEquals(
+            expected = "Bitmap@${
+                bitmap.hashCode().toString(16)
+            }(${bitmap.width.toFloat()}x${bitmap.height.toFloat()},${bitmap.colorType},null)",
+            actual = bitmap.toLogString()
+        )
+        bitmap.close()
     }
 }

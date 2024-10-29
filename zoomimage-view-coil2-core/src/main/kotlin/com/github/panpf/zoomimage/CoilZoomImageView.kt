@@ -25,7 +25,7 @@ import coil.request.SuccessResult
 import coil.util.CoilUtils
 import com.github.panpf.zoomimage.coil.CoilModelToImageSource
 import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
-import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
+import com.github.panpf.zoomimage.coil.CoilTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
@@ -93,8 +93,8 @@ open class CoilZoomImageView @JvmOverloads constructor(
             val imageLoader = CoilUtils.getImageLoader(this@CoilZoomImageView)
             val result = CoilUtils.result(this)
             _subsamplingEngine?.apply {
-                if (tileBitmapCacheState.value == null && imageLoader != null) {
-                    tileBitmapCacheState.value = CoilTileBitmapCache(imageLoader)
+                if (tileImageCacheState.value == null && imageLoader != null) {
+                    tileImageCacheState.value = CoilTileImageCache(imageLoader)
                 }
                 coroutineScope.launch {
                     setImageSource(newImageSource(imageLoader, result))

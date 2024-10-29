@@ -16,16 +16,25 @@
 
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.subsampling.SkiaRect
+import org.jetbrains.skia.Bitmap
+import org.jetbrains.skia.Rect
 
 /**
- * Convert [IntRectCompat] to [SkiaRect]
+ * Convert [IntRectCompat] to [Rect]
  *
  * @see com.github.panpf.zoomimage.core.nonandroid.test.util.CoreUtilsNonAndroidTest.testToSkiaRect
  */
-internal fun IntRectCompat.toSkiaRect(): SkiaRect = SkiaRect(
+internal fun IntRectCompat.toSkiaRect(): Rect = Rect(
     left = left.toFloat(),
     top = top.toFloat(),
     right = right.toFloat(),
     bottom = bottom.toFloat(),
 )
+
+/**
+ * Convert SkiaBitmap to a log string
+ *
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.util.CoreUtilsNonAndroidTest.testToLogString
+ */
+internal fun Bitmap.toLogString(): String =
+    "Bitmap@${hashCode().toString(16)}(${width.toFloat()}x${height.toFloat()},${colorType},${colorSpace})"

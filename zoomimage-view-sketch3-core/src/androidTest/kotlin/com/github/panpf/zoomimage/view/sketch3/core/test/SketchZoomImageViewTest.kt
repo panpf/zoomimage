@@ -68,7 +68,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.drawable)
             assertNull(actual = SketchUtils.getResult(sketchZoomImageView))
             assertNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             sketchZoomImageView.displayImage(convertAssetUri(ResourceImages.hugeCard.uri))
@@ -78,7 +78,7 @@ class SketchZoomImageViewTest {
             assertNotNull(actual = sketchZoomImageView.drawable)
             assertTrue(actual = SketchUtils.getResult(sketchZoomImageView) is ImageResult.Success)
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = sketchZoomImageView.subsampling.readyState.value)
         }
 
@@ -97,7 +97,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.drawable)
             assertNull(actual = SketchUtils.getResult(sketchZoomImageView))
             assertNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             sketchZoomImageView.displayImage(convertAssetUri(ResourceImages.hugeCard.uri))
@@ -107,7 +107,7 @@ class SketchZoomImageViewTest {
             assertNotNull(actual = sketchZoomImageView.drawable)
             assertNotNull(actual = SketchUtils.getResult(sketchZoomImageView))
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = sketchZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -119,7 +119,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.drawable)
             assertTrue(actual = SketchUtils.getResult(sketchZoomImageView) is ImageResult.Success)
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
         }
 
@@ -138,7 +138,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.drawable)
             assertNull(actual = SketchUtils.getResult(sketchZoomImageView))
             assertNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             sketchZoomImageView.displayImage(convertAssetUri(ResourceImages.hugeCard.uri) + "1") {
@@ -150,7 +150,7 @@ class SketchZoomImageViewTest {
             assertNotNull(actual = sketchZoomImageView.drawable)
             assertTrue(actual = SketchUtils.getResult(sketchZoomImageView) is ImageResult.Error)
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
         }
 
@@ -169,7 +169,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.drawable)
             assertNull(actual = SketchUtils.getResult(sketchZoomImageView))
             assertNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             sketchZoomImageView.displayImage(convertAssetUri(ResourceImages.hugeCard.uri))
@@ -179,7 +179,7 @@ class SketchZoomImageViewTest {
             assertNotNull(actual = sketchZoomImageView.drawable)
             assertNotNull(actual = SketchUtils.getResult(sketchZoomImageView))
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = sketchZoomImageView.subsampling.readyState.value)
 
             val thumbnail = sketchZoomImageView.drawable
@@ -192,7 +192,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.drawable)
             assertTrue(actual = SketchUtils.getResult(sketchZoomImageView) is ImageResult.Success)
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -204,7 +204,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.drawable)
             assertTrue(actual = SketchUtils.getResult(sketchZoomImageView) is ImageResult.Success)
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
 
@@ -217,7 +217,7 @@ class SketchZoomImageViewTest {
             assertNotNull(actual = sketchZoomImageView.drawable)
             assertTrue(actual = SketchUtils.getResult(sketchZoomImageView) is ImageResult.Success)
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
@@ -230,7 +230,7 @@ class SketchZoomImageViewTest {
             assertNotNull(actual = sketchZoomImageView.drawable)
             assertTrue(actual = SketchUtils.getResult(sketchZoomImageView) is ImageResult.Success)
             assertNotNull(actual = SketchUtils.getSketch(sketchZoomImageView))
-            assertNotNull(actual = sketchZoomImageView.subsampling.tileBitmapCacheState.value)
+            assertNotNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = sketchZoomImageView.subsampling.readyState.value)
         }
     }

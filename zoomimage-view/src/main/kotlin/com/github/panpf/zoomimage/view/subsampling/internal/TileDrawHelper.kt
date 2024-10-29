@@ -24,7 +24,7 @@ import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import android.graphics.RectF
 import android.view.View
-import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
@@ -131,9 +131,9 @@ class TileDrawHelper(
         contentSize: IntSizeCompat,
         tileSnapshot: TileSnapshot
     ): Boolean {
-        val tileBitmap = tileSnapshot.tileBitmap?.takeIf { !it.isRecycled } ?: return false
+        val tileImage = tileSnapshot.tileImage?.takeIf { !it.isRecycled } ?: return false
         val bitmap =
-            (tileBitmap as AndroidTileBitmap).bitmap?.takeIf { !it.isRecycled } ?: return false
+            (tileImage as BitmapTileImage).bitmap.takeIf { !it.isRecycled } ?: return false
 
         val tileDrawSrcRect = cacheRect2.apply {
             set(0, 0, bitmap.width, bitmap.height)
@@ -179,7 +179,7 @@ class TileDrawHelper(
         }
 
         val tileBoundsPaint = boundsPaint
-        val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
+        val bitmapNoRecycled = tileSnapshot.tileImage?.isRecycled == false
         val boundsColor = when {
             bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
             tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
