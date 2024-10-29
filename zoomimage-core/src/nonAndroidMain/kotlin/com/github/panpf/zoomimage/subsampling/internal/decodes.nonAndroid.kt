@@ -34,4 +34,4 @@ internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
  * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testCheckSupportSubsamplingByMimeType
  */
 internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
-    !"image/gif".equals(mimeType, true)
+    !"image/gif".equals(mimeType, true) // TODO Unknown types are supported

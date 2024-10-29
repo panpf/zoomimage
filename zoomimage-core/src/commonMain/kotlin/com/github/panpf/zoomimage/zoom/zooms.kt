@@ -700,6 +700,7 @@ fun calculateUserOffsetBounds(
     userScale: Float,
     limitBaseVisibleRect: Boolean,
 ): RectCompat {
+    // TODO Supports full and partial release of restrictions
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container

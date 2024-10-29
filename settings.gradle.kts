@@ -27,11 +27,11 @@ include(":zoomimage-compose-sketch3")
 include(":zoomimage-compose-sketch3-core")
 include(":zoomimage-compose-sketch-core")
 include(":zoomimage-core")
-include(":zoomimage-core-coil")
+include(":zoomimage-core-coil")  // TODO rename to coil3
 include(":zoomimage-core-coil2")
 include(":zoomimage-core-glide")
 include(":zoomimage-core-picasso")
-include(":zoomimage-core-sketch")
+include(":zoomimage-core-sketch")  // TODO rename to sketch4
 include(":zoomimage-core-sketch3")
 include(":zoomimage-view")
 include(":zoomimage-view-coil")
@@ -55,7 +55,7 @@ include(":internal:test-coil")
 include(":internal:test-coil2")
 //include(":internal:test-compose-screenshot")    // TODO screenshot test
 include(":internal:test-core")
-include(":internal:test-sketch")
+include(":internal:test-sketch")    // TODO rename to sketch4
 include(":internal:test-sketch3")
 include(":internal:test-view")
 include(":internal:test-compose")

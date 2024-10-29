@@ -19,7 +19,7 @@ androidx-test-runner = "1.6.1"
 appdirs = "1.2.2"
 cashapp-paging = "3.3.0-alpha02-0.5.1"
 
-coil = "3.0.0-alpha07"
+coil = "3.0.0-alpha07" # TODO coil 3.0.0-rc01
 coil2 = "2.4.0"
 
 glide = "4.15.1"
@@ -37,7 +37,7 @@ kotlinx-coroutines = "1.8.1" # ktor 3.0.0-wasm2 versions do not compatible 1.9.0
 kotlinx-cover = "0.8.3"
 kotlinx-serialization-json = "1.7.0"
 ktor = "2.3.12"
-ktor-wasm = "3.0.0-wasm2"   # TODO Currently only versions with the '-wasm2' suffix support wasm
+ktor-wasm = "3.0.0-wasm2"   # TODO ktor 2.* version does not support wasm, this version can only be used on the wasm platform
 
 leakcanary = "2.14"
 mavenpublish = "0.29.0"

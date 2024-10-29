@@ -44,6 +44,7 @@ internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
  */
 @SuppressLint("ObsoleteSdkInt")
 internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
+    // TODO Unknown types are supported
     "image/jpeg".equals(mimeType, true)
             || "image/png".equals(mimeType, true)
             || "image/webp".equals(mimeType, true)
