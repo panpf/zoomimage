@@ -34,6 +34,8 @@ class ZoomsTest5 {
         val rotation = 0
         val readMode: ReadMode? = null
         val scalesCalculator = ScalesCalculator.Dynamic
+        val limitOffsetWithinBaseVisibleRect = false
+        val containerWhitespaceMultiple = 0f
 
         checkParamsChanges(
             containerSize = containerSize,
@@ -44,6 +46,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize,
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -52,6 +56,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(0, this)
         }
@@ -64,6 +70,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(),
             lastContentSize = contentSize.copy(),
             lastContentOriginSize = contentOriginSize.copy(),
@@ -72,6 +80,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(0, this)
         }
@@ -85,6 +95,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -93,6 +105,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(1, this)
         }
@@ -105,6 +119,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(height = containerSize.height + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -113,6 +129,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(1, this)
         }
@@ -126,6 +144,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize.copy(width = contentSize.width + 1),
             lastContentOriginSize = contentOriginSize,
@@ -134,6 +154,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -146,6 +168,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize.copy(width = contentOriginSize.width + 1),
@@ -154,6 +178,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -166,6 +192,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -174,6 +202,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -186,6 +216,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -194,6 +226,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -206,6 +240,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -214,6 +250,8 @@ class ZoomsTest5 {
             lastRotation = rotation + 90,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -226,6 +264,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -234,9 +274,12 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = ReadMode(ReadMode.SIZE_TYPE_HORIZONTAL),
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
+
         checkParamsChanges(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -246,6 +289,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize.copy(width = containerSize.width + 1),
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -254,6 +299,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = ScalesCalculator.Fixed,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -267,6 +314,58 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
+            lastContainerSize = containerSize.copy(width = containerSize.width + 1),
+            lastContentSize = contentSize,
+            lastContentOriginSize = contentOriginSize,
+            lastContentScale = contentScale,
+            lastAlignment = alignment,
+            lastRotation = rotation,
+            lastReadMode = readMode,
+            lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = true,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
+        ).apply {
+            assertEquals(-1, this)
+        }
+
+        checkParamsChanges(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            readMode = readMode,
+            scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
+            lastContainerSize = containerSize.copy(width = containerSize.width + 1),
+            lastContentSize = contentSize,
+            lastContentOriginSize = contentOriginSize,
+            lastContentScale = contentScale,
+            lastAlignment = alignment,
+            lastRotation = rotation,
+            lastReadMode = readMode,
+            lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = 0.5f,
+        ).apply {
+            assertEquals(-1, this)
+        }
+
+        checkParamsChanges(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            readMode = readMode,
+            scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = IntSizeCompat.Zero,
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -275,6 +374,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -288,6 +389,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize,
             lastContentSize = IntSizeCompat.Zero,
             lastContentOriginSize = contentOriginSize,
@@ -296,6 +399,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -309,6 +414,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize,
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -317,6 +424,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }
@@ -330,6 +439,8 @@ class ZoomsTest5 {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = containerSize,
             lastContentSize = contentSize,
             lastContentOriginSize = contentOriginSize,
@@ -338,6 +449,8 @@ class ZoomsTest5 {
             lastRotation = rotation,
             lastReadMode = readMode,
             lastScalesCalculator = scalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = containerWhitespaceMultiple,
         ).apply {
             assertEquals(-1, this)
         }

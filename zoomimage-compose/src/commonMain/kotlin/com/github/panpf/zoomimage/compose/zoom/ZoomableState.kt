@@ -305,6 +305,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
     private var lastRotation: Int = rotation
     private var lastReadMode: ReadMode? = readMode
     private var lastScalesCalculator: ScalesCalculator = scalesCalculator
+    private var lastLimitOffsetWithinBaseVisibleRect: Boolean = limitOffsetWithinBaseVisibleRect
+    private var lastContainerWhitespaceMultiple: Float = containerWhitespaceMultiple
 
 
     /* ********************************* Interact with consumers ******************************** */
@@ -325,6 +327,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         val readMode = readMode
         val rotation = rotation
         val scalesCalculator = scalesCalculator
+        val limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+        val containerWhitespaceMultiple = containerWhitespaceMultiple
         val lastContainerSize = lastContainerSize
         val lastContentSize = lastContentSize
         val lastContentOriginSize = lastContentOriginSize
@@ -333,6 +337,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         val lastReadMode = lastReadMode
         val lastRotation = lastRotation
         val lastScalesCalculator = lastScalesCalculator
+        val lastLimitOffsetWithinBaseVisibleRect = lastLimitOffsetWithinBaseVisibleRect
+        val lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple
 
         val paramsChanges = checkParamsChanges(
             containerSize = containerSize.toCompat(),
@@ -343,6 +349,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
             lastContainerSize = lastContainerSize.toCompat(),
             lastContentSize = lastContentSize.toCompat(),
             lastContentOriginSize = lastContentOriginSize.toCompat(),
@@ -351,6 +359,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             lastRotation = lastRotation,
             lastReadMode = lastReadMode,
             lastScalesCalculator = lastScalesCalculator,
+            lastLimitOffsetWithinBaseVisibleRect = lastLimitOffsetWithinBaseVisibleRect,
+            lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple,
         )
         if (paramsChanges == 0) {
             logger.d { "ZoomableState. reset:$caller. All parameters unchanged" }
@@ -439,6 +449,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         baseTransform = newBaseTransform.toPlatform()
         updateUserTransform(newUserTransform.toPlatform())
 
+        // TODO Improve it. Create a special parameter class to encapsulate it
         this@ZoomableState.lastInitialUserTransform = newInitialZoom.userTransform.toPlatform()
         this@ZoomableState.lastContainerSize = containerSize
         this@ZoomableState.lastContentSize = contentSize
@@ -448,6 +459,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         this@ZoomableState.lastReadMode = readMode
         this@ZoomableState.lastRotation = rotation
         this@ZoomableState.lastScalesCalculator = scalesCalculator
+        this@ZoomableState.lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+        this@ZoomableState.lastContainerWhitespaceMultiple = containerWhitespaceMultiple
     }
 
     /**
@@ -789,6 +802,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         coroutineScope.launch {
             snapshotFlow { limitOffsetWithinBaseVisibleRect }.collect {
                 reset("limitOffsetWithinBaseVisibleRectChanged")
+            }
+        }
+        coroutineScope.launch {
+            snapshotFlow { containerWhitespaceMultiple }.collect {
+                reset("containerWhitespaceMultipleChanged")
             }
         }
     }
