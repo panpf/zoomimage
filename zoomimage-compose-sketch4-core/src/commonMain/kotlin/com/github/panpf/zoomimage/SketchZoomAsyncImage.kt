@@ -239,6 +239,8 @@ private fun onPainterState(
 
     when (loadState) {
         is PainterState.Success -> {
+            // TODO Set imageType and originContentSize at the same time to avoid user operation of scaling during decoding,
+            //  and reset the scaling when originContentSize is set after decoding is completed.
             val imageSource = SketchImageSource.Factory(sketch, request.uri.toString())
             zoomState.setImageSource(imageSource)
         }
