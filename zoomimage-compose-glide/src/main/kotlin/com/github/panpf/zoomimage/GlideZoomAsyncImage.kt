@@ -239,7 +239,7 @@ private class ResetListener(
         zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
         coroutineScope.launch {
-            zoomState.setImageSource(newImageSource(resource, model))
+            zoomState.setImage(newImageSource(resource, model))
         }
     }
 
@@ -256,6 +256,7 @@ private class ResetListener(
         if (imageSource == null) {
             zoomState.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
         }
+        // TODO filter animatable painter
         return imageSource
     }
 }

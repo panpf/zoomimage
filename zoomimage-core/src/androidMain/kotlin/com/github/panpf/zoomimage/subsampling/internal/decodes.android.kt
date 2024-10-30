@@ -16,10 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -29,27 +26,13 @@ import okio.buffer
 import okio.use
 
 /**
- * Create a [DecodeHelper] instance using [ImageSource], on the Android platform, [BitmapRegionDecoderDecodeHelper] will be used
+ * Create a [DecodeHelper].Factory
  *
- * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCreateDecodeHelper
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCreateDecodeHelperFactory
  */
-internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
-    return BitmapRegionDecoderDecodeHelper.Factory().create(imageSource)
+actual fun createDecodeHelperFactory(): DecodeHelper.Factory {
+    return BitmapRegionDecoderDecodeHelper.Factory()
 }
-
-/**
- * Checks whether the specified image type supports subsampling, on the Android platform, it mainly depends on the types supported by BitmapRegionDecoder.
- *
- * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCheckSupportSubsamplingByMimeType
- */
-@SuppressLint("ObsoleteSdkInt")
-internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
-    // TODO Unknown types are supported
-    "image/jpeg".equals(mimeType, true)
-            || "image/png".equals(mimeType, true)
-            || "image/webp".equals(mimeType, true)
-            || ("image/heic".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
-            || ("image/heif".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
 
 /**
  * Decode the Exif orientation of the image

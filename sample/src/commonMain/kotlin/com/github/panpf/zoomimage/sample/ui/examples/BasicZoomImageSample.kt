@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 
 @Composable
 fun BasicZoomImageSample(
@@ -64,7 +65,16 @@ fun BasicZoomImageSample(
                 imageUri = photo.originalUrl,
                 http2ByteArray = false
             )
-            zoomState.setImageSource(imageSource)
+            val imageInfo = if (imageResult is ImageResult.Success) {
+                ImageInfo(
+                    imageResult.imageInfo.width,
+                    imageResult.imageInfo.height,
+                    imageResult.imageInfo.mimeType
+                )
+            } else {
+                null
+            }
+            zoomState.setImage(imageSource, imageInfo)
         }
 
         val imagePainter1 = imagePainter

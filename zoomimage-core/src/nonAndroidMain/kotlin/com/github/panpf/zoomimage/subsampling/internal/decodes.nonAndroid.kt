@@ -16,22 +16,11 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.ImageSource
-
 /**
- * Create a [DecodeHelper] instance using [ImageSource], on the non Android platform, [SkiaDecodeHelper] will be used
+ * Create a [DecodeHelper].Factory
  *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testCreateDecodeHelper
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testCreateDecodeHelperFactory
  */
-internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
-    return SkiaDecodeHelper.Factory().create(imageSource)
+actual fun createDecodeHelperFactory(): DecodeHelper.Factory {
+    return SkiaDecodeHelper.Factory()
 }
-
-
-/**
- * Checks whether the specified image type supports subsampling, on the non Android platform, it mainly depends on the types supported by Image.
- *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testCheckSupportSubsamplingByMimeType
- */
-internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
-    !"image/gif".equals(mimeType, true) // TODO Unknown types are supported

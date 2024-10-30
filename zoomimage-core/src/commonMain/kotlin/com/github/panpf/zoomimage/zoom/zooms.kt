@@ -383,6 +383,8 @@ fun checkParamsChanges(
     rotation: Int,
     readMode: ReadMode?,
     scalesCalculator: ScalesCalculator,
+    limitOffsetWithinBaseVisibleRect: Boolean,
+    containerWhitespaceMultiple: Float,
     lastContainerSize: IntSizeCompat,
     lastContentSize: IntSizeCompat,
     lastContentOriginSize: IntSizeCompat,
@@ -391,6 +393,8 @@ fun checkParamsChanges(
     lastRotation: Int,
     lastReadMode: ReadMode?,
     lastScalesCalculator: ScalesCalculator,
+    lastLimitOffsetWithinBaseVisibleRect: Boolean,
+    lastContainerWhitespaceMultiple: Float,
 ): Int {
     return if (
         lastContainerSize.isNotEmpty()
@@ -404,6 +408,8 @@ fun checkParamsChanges(
         && lastRotation == rotation
         && lastReadMode == readMode
         && lastScalesCalculator == scalesCalculator
+        && lastLimitOffsetWithinBaseVisibleRect == limitOffsetWithinBaseVisibleRect
+        && lastContainerWhitespaceMultiple == containerWhitespaceMultiple
     ) {
         if (lastContainerSize == containerSize) 0 else 1
     } else {

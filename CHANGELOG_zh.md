@@ -21,6 +21,8 @@
 * change: sketch-view-sketch 模块重命名为 sketch-view-sketch4
 * change: sketch-view-sketch-core 模块重命名为 sketch-view-sketch4-core
 * remove: 移除 BitmapFrom
+* improve: 改进 sketch
+  系列组件，子采样初始化完成后不会再重置变焦。 [#50](https://github.com/panpf/zoomimage/issues/50)
 * new: 新增 `containerWhitespaceMultiple`
   参数用于在图像边缘和容器边缘之间留出空白区域。 [#45](https://github.com/panpf/zoomimage/issues/45)
 

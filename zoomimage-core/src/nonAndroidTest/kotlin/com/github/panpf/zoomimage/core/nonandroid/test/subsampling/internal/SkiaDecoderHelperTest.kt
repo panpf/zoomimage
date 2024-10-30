@@ -37,7 +37,7 @@ class SkiaDecoderHelperTest {
         SkiaDecodeHelper.Factory().create(animImageSource).apply {
             assertSame(animImageSource, imageSource)
             assertEquals(animImageFile.size, imageInfo.size)
-            assertEquals(false, supportRegion)
+            assertEquals(true, supportRegion)
         }
 
         val exifRotate180ImageFile = ResourceImages.exifRotate180
@@ -55,6 +55,20 @@ class SkiaDecoderHelperTest {
             assertEquals(exifTransposeImageFile.size, imageInfo.size)
             assertEquals(true, supportRegion)
         }
+    }
+
+    @Test
+    fun testFactoryCheckSupport() {
+        val factory = SkiaDecodeHelper.Factory()
+        assertEquals(true, factory.checkSupport("image/jpeg"))
+        assertEquals(true, factory.checkSupport("image/png"))
+        assertEquals(true, factory.checkSupport("image/webp"))
+        assertEquals(true, factory.checkSupport("image/bmp"))
+        assertEquals(null, factory.checkSupport("image/heic"))
+        assertEquals(null, factory.checkSupport("image/heif"))
+        assertEquals(null, factory.checkSupport("image/gif"))
+        assertEquals(null, factory.checkSupport("image/avif"))
+        assertEquals(null, factory.checkSupport("image/fake"))
     }
 
     @Test

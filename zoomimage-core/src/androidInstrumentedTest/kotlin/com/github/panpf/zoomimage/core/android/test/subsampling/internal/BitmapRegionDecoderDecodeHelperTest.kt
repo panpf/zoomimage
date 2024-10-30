@@ -1,6 +1,8 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
 import android.graphics.Bitmap
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.internal.BitmapRegionDecoderDecodeHelper
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
@@ -67,6 +69,33 @@ class BitmapRegionDecoderDecodeHelperTest {
     }
 
     @Test
+    fun testFactoryCheckSupport() {
+        val factory = BitmapRegionDecoderDecodeHelper.Factory()
+        assertEquals(true, factory.checkSupport("image/jpeg"))
+        assertEquals(true, factory.checkSupport("image/png"))
+        assertEquals(true, factory.checkSupport("image/webp"))
+        assertEquals(false, factory.checkSupport("image/bmp"))
+        assertEquals(false, factory.checkSupport("image/gif"))
+        assertEquals(false, factory.checkSupport("image/svg+xml"))
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.O_MR1) {
+            assertEquals(true, factory.checkSupport("image/heic"))
+        } else {
+            assertEquals(false, factory.checkSupport("image/heic"))
+        }
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.O_MR1) {
+            assertEquals(true, factory.checkSupport("image/heif"))
+        } else {
+            assertEquals(false, factory.checkSupport("image/heif"))
+        }
+        if (Build.VERSION.SDK_INT > 34) {
+            assertEquals(null, factory.checkSupport("image/avif"))
+        } else {
+            assertEquals(false, factory.checkSupport("image/avif"))
+        }
+        assertEquals(null, factory.checkSupport("image/fake"))
+    }
+
+    @Test
     fun test() {
         val imageSource1 = ResourceImages.exifNormal.toImageSource()
         val decodeHelper1 = BitmapRegionDecoderDecodeHelper.Factory().create(imageSource1)
@@ -76,7 +105,7 @@ class BitmapRegionDecoderDecodeHelperTest {
                 key = "",
                 region = IntRectCompat(100, 200, 300, 300),
                 sampleSize = 1
-            ).bitmap!!
+            ).bitmap
             bitmap11.apply {
                 assertEquals(200, width)
                 assertEquals(100, height)
@@ -86,7 +115,7 @@ class BitmapRegionDecoderDecodeHelperTest {
                 key = "",
                 region = IntRectCompat(100, 200, 300, 300),
                 sampleSize = 4
-            ).bitmap!!
+            ).bitmap
             bitmap12.apply {
                 assertEquals(50, width)
                 assertEquals(25, height)
@@ -104,7 +133,7 @@ class BitmapRegionDecoderDecodeHelperTest {
                     key = "",
                     region = IntRectCompat(100, 200, 300, 300),
                     sampleSize = 1
-                ).bitmap!!
+                ).bitmap
             bitmap2.apply {
                 assertEquals(200, width)
                 assertEquals(100, height)

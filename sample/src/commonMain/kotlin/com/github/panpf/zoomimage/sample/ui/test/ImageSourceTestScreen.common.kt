@@ -22,7 +22,7 @@ import com.github.panpf.sketch.asPainter
 import com.github.panpf.sketch.cache.CachePolicy.DISABLED
 import com.github.panpf.sketch.fetch.Fetcher
 import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.request.ImageResult.Success
+import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.RequestContext
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.util.Size
@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 expect suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>>
@@ -123,7 +124,7 @@ class ImageSourceTestScreen : BaseScreen() {
                     memoryCachePolicy(DISABLED)
                 }
                 val imageResult = imageRequest.execute()
-                myLoadState = if (imageResult is Success) {
+                myLoadState = if (imageResult is ImageResult.Success) {
                     None
                 } else {
                     Error()
@@ -135,7 +136,16 @@ class ImageSourceTestScreen : BaseScreen() {
                     imageUri = sketchImageUri,
                     http2ByteArray = true
                 )
-                zoomState.setImageSource(imageSource)
+                val imageInfo = if (imageResult is ImageResult.Success) {
+                    ImageInfo(
+                        imageResult.imageInfo.width,
+                        imageResult.imageInfo.height,
+                        imageResult.imageInfo.mimeType
+                    )
+                } else {
+                    null
+                }
+                zoomState.setImage(imageSource, imageInfo)
             }
 
             val imagePainter1 = imagePainter

@@ -43,6 +43,7 @@ import com.github.panpf.sketch.name
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -50,6 +51,7 @@ import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlin.math.roundToInt
 
@@ -184,8 +186,8 @@ fun SketchZoomAsyncImage(
         zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
     }
     LaunchedEffect(Unit) {
-        snapshotFlow { state.painterState }.collect {
-            onPainterState(sketch, zoomState, request, it)
+        snapshotFlow { state.loadState }.collect { loadState ->
+            onState(sketch, zoomState, request, loadState, state.painterState)
         }
     }
 
@@ -221,33 +223,34 @@ fun SketchZoomAsyncImage(
     }
 }
 
-private fun onPainterState(
+private fun onState(
     sketch: Sketch,
     zoomState: SketchZoomState,
     request: ImageRequest,
-    loadState: PainterState?,
+    loadState: LoadState?,
+    painterState: PainterState?,
 ) {
     zoomState.zoomable.logger.d {
-        "SketchZoomAsyncImage. onPainterState. state=${loadState?.name}. uri='${request.uri}'"
+        "SketchZoomAsyncImage. onPainterState. state=${painterState?.name}. uri='${request.uri}'"
     }
-    val painterSize = loadState?.painter
+    val painterSize = painterState?.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
         ?.roundToIntSize()
         ?.takeIf { it.isNotEmpty() }
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
-    when (loadState) {
-        is PainterState.Success -> {
-            // TODO Set imageType and originContentSize at the same time to avoid user operation of scaling during decoding,
-            //  and reset the scaling when originContentSize is set after decoding is completed.
-            val imageSource = SketchImageSource.Factory(sketch, request.uri.toString())
-            zoomState.setImageSource(imageSource)
-        }
-
-        else -> {
-            zoomState.setImageSource(null as ImageSource?)
-        }
+    if (loadState is LoadState.Success && painterState is PainterState.Success) {
+        val imageSource = SketchImageSource.Factory(sketch, request.uri.toString())
+        val imageInfo = ImageInfo(
+            width = loadState.result.imageInfo.width,
+            height = loadState.result.imageInfo.height,
+            mimeType = loadState.result.imageInfo.mimeType
+        )
+        // TODO filter animatable painter
+        zoomState.setImage(imageSource, imageInfo)
+    } else {
+        zoomState.setImage(null as ImageSource?)
     }
 }
 

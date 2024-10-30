@@ -174,12 +174,13 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
             @Suppress("OPT_IN_USAGE")
             GlobalScope.launch(Dispatchers.Main) {
-                _subsamplingEngine?.setImageSource(newImageSource(error, data))
+                _subsamplingEngine?.setImage(newImageSource(error, data))
             }
         }
     }
 
     private suspend fun newImageSource(error: Boolean, data: Any?): ImageSource.Factory? {
+        // TODO filter animatable drawable
         if (error) {
             logger.d { "PicassoZoomImageView. Can't use Subsampling, load error" }
             return null

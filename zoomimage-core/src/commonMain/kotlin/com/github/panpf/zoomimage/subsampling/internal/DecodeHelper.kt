@@ -22,6 +22,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 
+// TODO rename to RegionDecoder
 interface DecodeHelper : AutoCloseable {
 
     val imageSource: ImageSource
@@ -36,6 +37,9 @@ interface DecodeHelper : AutoCloseable {
     fun copy(): DecodeHelper
 
     interface Factory {
+
+        fun checkSupport(mimeType: String): Boolean?
+
         fun create(imageSource: ImageSource): DecodeHelper
     }
 }

@@ -24,6 +24,7 @@ import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
 
@@ -82,7 +83,16 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 if (tileImageCacheState.value == null && sketch != null) {
                     tileImageCacheState.value = SketchTileImageCache(sketch)
                 }
-                setImageSource(newImageSource(sketch, result))
+                val imageInfo = if (result is ImageResult.Success) {
+                    ImageInfo(
+                        width = result.imageInfo.width,
+                        height = result.imageInfo.height,
+                        mimeType = result.imageInfo.mimeType
+                    )
+                } else {
+                    null
+                }
+                setImage(newImageSource(sketch, result), imageInfo)
             }
         }
     }
@@ -96,6 +106,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
             logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is null" }
             return null
         }
+        // TODO filter animatable drawable
         if (sketch == null) {
             logger.d { "SketchZoomImageView. Can't use Subsampling, sketch is null" }
             return null

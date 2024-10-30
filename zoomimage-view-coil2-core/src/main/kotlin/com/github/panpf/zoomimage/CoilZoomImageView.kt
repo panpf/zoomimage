@@ -97,7 +97,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
                     tileImageCacheState.value = CoilTileImageCache(imageLoader)
                 }
                 coroutineScope.launch {
-                    setImageSource(newImageSource(imageLoader, result))
+                    setImage(newImageSource(imageLoader, result))
                 }
             }
         }
@@ -112,6 +112,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is null" }
             return null
         }
+        // TODO filter animatable drawable
         if (imageLoader == null) {
             logger.d { "CoilZoomImageView. Can't use Subsampling, imageLoader is null" }
             return null

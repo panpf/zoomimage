@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling.internal
+package com.github.panpf.zoomimage.subsampling
 
-/**
- * Create a [DecodeHelper].Factory
- */
-// TODO Can be set by the user
-expect fun createDecodeHelperFactory(): DecodeHelper.Factory
+fun SubsamplingImage(
+    imageSource: ImageSource.Factory?,
+    imageInfo: ImageInfo? = null
+): SubsamplingImage? {
+    return imageSource?.let { SubsamplingImage(it, imageInfo) }
+}
+
+fun SubsamplingImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): SubsamplingImage? {
+    return imageSource?.let { SubsamplingImage(ImageSource.WrapperFactory(it), imageInfo) }
+}
+
+data class SubsamplingImage(val imageSource: ImageSource.Factory, val imageInfo: ImageInfo?) {
+    val key: String by lazy { "${imageSource.key}&imageInfo=$imageInfo" }
+}

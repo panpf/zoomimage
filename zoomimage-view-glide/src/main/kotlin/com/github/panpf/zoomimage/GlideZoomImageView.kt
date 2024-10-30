@@ -97,13 +97,14 @@ open class GlideZoomImageView @JvmOverloads constructor(
                     tileImageCacheState.value = GlideTileImageCache(Glide.get(context))
                 }
                 coroutineScope.launch {
-                    setImageSource(newImageSource(request))
+                    setImage(newImageSource(request))
                 }
             }
         }
     }
 
     private suspend fun newImageSource(request: SingleRequest<*>?): ImageSource.Factory? {
+        // TODO filter animatable drawable
         if (request == null) {
             logger.d { "GlideZoomImageView. Can't use Subsampling, request is null" }
             return null

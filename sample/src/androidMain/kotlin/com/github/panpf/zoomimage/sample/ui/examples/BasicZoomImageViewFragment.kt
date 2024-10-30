@@ -35,6 +35,7 @@ import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.launch
 
@@ -69,10 +70,15 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
                     imageUri = sketchImageUri,
                     http2ByteArray = false
                 )
-                zoomView.setImageSource(imageSource)
+                val imageInfo = ImageInfo(
+                    width = result.imageInfo.width,
+                    height = result.imageInfo.height,
+                    mimeType = result.imageInfo.mimeType
+                )
+                zoomView.setImage(imageSource, imageInfo)
                 stateView.gone()
             } else if (result is ImageResult.Error) {
-                zoomView.setImageSource(null as ImageSource?)
+                zoomView.setImage(null as ImageSource?)
                 stateView.error {
                     message(result.throwable)
                     retryAction {

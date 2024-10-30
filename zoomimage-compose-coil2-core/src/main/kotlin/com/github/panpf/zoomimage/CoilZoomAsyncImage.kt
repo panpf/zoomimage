@@ -296,12 +296,13 @@ private fun onState(
                 if (imageSource == null) {
                     zoomState.subsampling.logger.w { "CoilZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
                 }
-                zoomState.setImageSource(imageSource)
+                // TODO filter animatable painter
+                zoomState.setImage(imageSource)
             }
         }
 
         else -> {
-            zoomState.setImageSource(null as ImageSource?)
+            zoomState.setImage(null as ImageSource?)
         }
     }
 }

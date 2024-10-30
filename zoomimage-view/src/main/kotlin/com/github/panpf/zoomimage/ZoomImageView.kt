@@ -26,6 +26,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.findViewTreeLifecycleOwner
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -156,15 +157,39 @@ open class ZoomImageView @JvmOverloads constructor(
     /**
      * Set up an image source from which image tile are loaded
      */
-    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
-        return subsampling.setImageSource(imageSource)
+    fun setImage(imageSource: ImageSource.Factory?, imageInfo: ImageInfo? = null): Boolean {
+        return subsampling.setImage(imageSource, imageInfo)
     }
 
     /**
      * Set up an image source from which image tile are loaded
      */
+    fun setImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
+        return subsampling.setImage(imageSource, imageInfo)
+    }
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    @Deprecated(
+        message = "Use setImage(ImageSource?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setImage(imageSource)"),
+        level = DeprecationLevel.WARNING
+    )
+    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
+        return subsampling.setImage(imageSource)
+    }
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    @Deprecated(
+        message = "Use setImage(ImageSource?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setImage(imageSource)"),
+        level = DeprecationLevel.WARNING
+    )
     fun setImageSource(imageSource: ImageSource?): Boolean {
-        return subsampling.setImageSource(imageSource)
+        return subsampling.setImage(imageSource)
     }
 
 

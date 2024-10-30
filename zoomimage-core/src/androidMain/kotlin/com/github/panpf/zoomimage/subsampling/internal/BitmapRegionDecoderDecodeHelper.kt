@@ -108,12 +108,20 @@ class BitmapRegionDecoderDecodeHelper(
 
     class Factory : DecodeHelper.Factory {
 
+        override fun checkSupport(mimeType: String): Boolean? = when (mimeType) {
+            "image/jpeg", "image/png", "image/webp" -> true
+            "image/gif", "image/bmp", "image/svg+xml" -> false
+            "image/heic", "image/heif" -> VERSION.SDK_INT >= VERSION_CODES.O_MR1
+            "image/avif" -> if (VERSION.SDK_INT <= 34) false else null
+            else -> null
+        }
+
         override fun create(imageSource: ImageSource): BitmapRegionDecoderDecodeHelper {
             val imageInfo = imageSource.decodeImageInfo()
             val exifOrientation = imageSource.decodeExifOrientation()
             val exifOrientationHelper = ExifOrientationHelper(exifOrientation)
             val correctedImageInfo = exifOrientationHelper.applyToImageInfo(imageInfo)
-            val supportRegion = checkSupportSubsamplingByMimeType(imageInfo.mimeType)
+            val supportRegion = checkSupport(imageInfo.mimeType) ?: true
             return BitmapRegionDecoderDecodeHelper(
                 imageSource = imageSource,
                 imageInfo = correctedImageInfo,

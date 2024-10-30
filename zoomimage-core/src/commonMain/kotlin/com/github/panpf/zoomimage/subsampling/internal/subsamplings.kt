@@ -37,37 +37,58 @@ fun createTileDecoder(
     thumbnailSize: IntSizeCompat,
 ): Result<TileDecoder> = runCatching {
     val decodeHelper = try {
-        createDecodeHelper(imageSource)
+        createDecodeHelperFactory().create(imageSource)
     } catch (e: Exception) {
         throw CreateTileDecoderException(
-            -1,
-            false,
-            "Create DecodeHelper failed: ${e.message}",
-            null
+            code = -1,
+            skipped = false,
+            message = "Create DecodeHelper failed: ${e.message}",
+            imageInfo = null
         )
     }
     val imageInfo = decodeHelper.imageInfo
     if (imageInfo.size.isEmpty()) {
         decodeHelper.close()
         val message = "image width or height is error: ${imageInfo.width}x${imageInfo.height}"
-        throw CreateTileDecoderException(-2, true, message, imageInfo)
+        throw CreateTileDecoderException(
+            code = -2,
+            skipped = true,
+            message = message,
+            imageInfo = imageInfo
+        )
     }
+    // TODO No need. If it is not supported, an exception will be thrown.
     if (!decodeHelper.supportRegion) {
         decodeHelper.close()
         val message = "Image type not support subsampling"
-        throw CreateTileDecoderException(-3, true, message, imageInfo)
+        throw CreateTileDecoderException(
+            code = -3,
+            skipped = true,
+            message = message,
+            imageInfo = imageInfo
+        )
     }
     if (thumbnailSize.width >= imageInfo.width || thumbnailSize.height >= imageInfo.height) {
         decodeHelper.close()
         val message = "The thumbnail size is greater than or equal to the original image"
-        throw CreateTileDecoderException(-4, true, message, imageInfo)
+        throw CreateTileDecoderException(
+            code = -4,
+            skipped = true,
+            message = message,
+            imageInfo = imageInfo
+        )
     }
     if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
         decodeHelper.close()
         val message =
             "The aspect ratio of the thumbnail is too different from that of the original image. " +
                     "Please refer to the canUseSubsamplingByAspectRatio() function to correct the thumbnail size."
-        throw CreateTileDecoderException(-5, false, message, imageInfo)
+        throw CreateTileDecoderException(
+            code = -5,
+            skipped = false,
+            message = message,
+            imageInfo = imageInfo
+        )
     }
     TileDecoder(logger, decodeHelper)
 }

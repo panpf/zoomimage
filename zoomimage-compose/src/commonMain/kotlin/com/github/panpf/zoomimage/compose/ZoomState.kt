@@ -23,6 +23,7 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.Logger.Level
@@ -66,16 +67,40 @@ open class ZoomState(
 ) {
 
     /**
-     * Set up an image source from which image tile are loaded
+     * Set subsampling image
      */
-    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
-        return subsampling.setImageSource(imageSource)
+    fun setImage(imageSource1: ImageSource.Factory?, imageInfo: ImageInfo? = null): Boolean {
+        return subsampling.setImage(imageSource1, imageInfo)
     }
 
     /**
-     * Set up an image source from which image tile are loaded
+     * Set subsampling image
      */
+    fun setImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
+        return subsampling.setImage(imageSource, imageInfo)
+    }
+
+    /**
+     * Set subsampling image
+     */
+    @Deprecated(
+        message = "Use setImage(ImageSource.Factory?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setImage(imageSource)"),
+        level = DeprecationLevel.WARNING
+    )
+    fun setImageSource(imageSource1: ImageSource.Factory?): Boolean {
+        return subsampling.setImage(imageSource1)
+    }
+
+    /**
+     * Set subsampling image
+     */
+    @Deprecated(
+        message = "Use setImage(ImageSource?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setImage(imageSource)"),
+        level = DeprecationLevel.WARNING
+    )
     fun setImageSource(imageSource: ImageSource?): Boolean {
-        return subsampling.setImageSource(imageSource)
+        return subsampling.setImage(imageSource)
     }
 }

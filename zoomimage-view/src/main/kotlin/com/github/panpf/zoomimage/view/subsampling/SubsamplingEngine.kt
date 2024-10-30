@@ -22,6 +22,7 @@ import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileImageCache
 import com.github.panpf.zoomimage.subsampling.TileImageCacheSpec
@@ -33,6 +34,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.checkNewPreferredTileSize
+import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelperFactory
 import com.github.panpf.zoomimage.subsampling.internal.createTileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -65,7 +67,7 @@ import kotlin.math.roundToInt
 class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
 
     private var coroutineScope: CoroutineScope? = null
-    private var imageSourceFactory: ImageSource.Factory? = null
+    private var subsamplingImage: SubsamplingImage? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
     private val tileImageCacheSpec = TileImageCacheSpec()
@@ -89,7 +91,8 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     val logger: Logger = zoomableEngine.logger
     val view: View = zoomableEngine.view
 
-    var imageKey: String? = null
+    val imageKey: String?
+        get() = subsamplingImage?.key
 
 
     /* *********************************** Configurable properties ****************************** */
@@ -211,25 +214,55 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     /* ********************************* Interact with consumers ******************************** */
 
     /**
-     * Set up an image source from which image tile are loaded
+     * Set subsampling image
      */
-    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
-        if (this.imageSourceFactory == imageSource) return false
-        logger.d { "SubsamplingEngine. setImageSource. '${this.imageSourceFactory?.key}' -> '${imageSource?.key}'" }
-        clean("setImageSource")
-        this.imageSourceFactory = imageSource
-        imageKey = imageSource?.key
+    private fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+        if (this.subsamplingImage == subsamplingImage) return false
+        logger.d { "SubsamplingEngine. setImage. '${this.subsamplingImage}' -> '${subsamplingImage}'" }
+        clean("setImage")
+        this.subsamplingImage = subsamplingImage
         if (view.isAttachedToWindow) {
-            resetTileDecoder("setImageSource")
+            resetTileDecoder("setImage")
         }
         return true
     }
 
     /**
+     * Set subsampling image
+     */
+    fun setImage(imageSource: ImageSource.Factory?, imageInfo: ImageInfo? = null): Boolean {
+        return setImage(SubsamplingImage(imageSource, imageInfo))
+    }
+
+    /**
+     * Set subsampling image
+     */
+    fun setImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
+        return setImage(SubsamplingImage(imageSource, imageInfo))
+    }
+
+    /**
      * Set up an image source from which image tile are loaded
      */
+    @Deprecated(
+        message = "Use setImage(ImageSource.Factory?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setImage(imageSource)"),
+        level = DeprecationLevel.WARNING
+    )
+    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
+        return setImage(imageSource)
+    }
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    @Deprecated(
+        message = "Use setImage(ImageSource?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setImage(imageSource)"),
+        level = DeprecationLevel.WARNING
+    )
     fun setImageSource(imageSource: ImageSource?): Boolean {
-        return setImageSource(imageSource?.let { ImageSource.WrapperFactory(it) })
+        return setImage(imageSource)
     }
 
 
@@ -305,23 +338,6 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         }
 
         coroutineScope.launch {
-            readyState.collect { ready ->
-                val imageInfo = imageInfoState.value
-                val imageSize = if (ready && imageInfo != null)
-                    imageInfo.size else IntSizeCompat.Zero
-                zoomableEngine.contentOriginSizeState.value = imageSize
-            }
-        }
-        coroutineScope.launch {
-            imageInfoState.collect { imageInfo ->
-                val ready = readyState.value
-                val imageSize = if (ready && imageInfo != null)
-                    imageInfo.size else IntSizeCompat.Zero
-                zoomableEngine.contentOriginSizeState.value = imageSize
-            }
-        }
-
-        coroutineScope.launch {
             refreshTilesFlow.collect {
                 refreshTiles(
                     contentVisibleRect = zoomableEngine.contentVisibleRectState.value,
@@ -373,21 +389,39 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         cleanTileManager("resetTileDecoder:$caller")
         cleanTileDecoder("resetTileDecoder:$caller")
 
-        val imageSourceFactory = imageSourceFactory
+        val subsamplingImage = subsamplingImage
         val contentSize = contentSizeState.value
-        if (imageSourceFactory == null || contentSize.isEmpty()) {
+        if (subsamplingImage == null || contentSize.isEmpty()) {
             logger.d {
-                "SubsamplingEngine. resetTileDecoder:$caller. failed. " +
-                        "imageSource=${imageSourceFactory}, " +
+                "SubsamplingEngine. resetTileDecoder:$caller. " +
+                        "skipped, parameters are not ready yet. " +
+                        "subsamplingImage=${subsamplingImage}, " +
                         "contentSize=${contentSize.toShortString()}. " +
                         "'${imageKey}'"
             }
             return
         }
 
+        val decodeHelperFactory = createDecodeHelperFactory()
+        val userImageInfo = subsamplingImage.imageInfo
+        val supportRegion = userImageInfo?.mimeType?.let { decodeHelperFactory.checkSupport(it) }
+        if (supportRegion == false) {
+            logger.d {
+                "SubsamplingEngine. resetTileDecoder:$caller. " +
+                        "skipped, Image type not support subsampling. " +
+                        "contentSize: ${contentSize.toShortString()}. " +
+                        "'${imageKey}'"
+            }
+            return
+        }
+
+        if (supportRegion == true) {
+            this@SubsamplingEngine._imageInfoState.value = userImageInfo
+            zoomableEngine.contentOriginSizeState.value = userImageInfo.size
+        }
         resetTileDecoderJob = coroutineScope?.launch(Dispatchers.Main) {
             val result = withContext(ioCoroutineDispatcher()) {
-                val imageSource = imageSourceFactory.create()
+                val imageSource = subsamplingImage.imageSource.create()
                 createTileDecoder(
                     logger = logger,
                     imageSource = imageSource,
@@ -401,7 +435,8 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
                 val level = if (exception.skipped) Logger.Level.Debug else Logger.Level.Error
                 val type = if (exception.skipped) "skipped" else "error"
                 logger.log(level) {
-                    "SubsamplingEngine. resetTileDecoder:$caller. $type, ${exception.message}. " +
+                    "SubsamplingEngine. resetTileDecoder:$caller. " +
+                            "$type, ${exception.message}. " +
                             "contentSize: ${contentSize.toShortString()}, " +
                             "imageInfo: ${exception.imageInfo?.toShortString()}. " +
                             "'${imageKey}'"
@@ -409,15 +444,18 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
                 return@launch
             }
 
-            val imageInfo = newTileDecoder.imageInfo
+            val decodeImageInfo = newTileDecoder.imageInfo
             logger.d {
                 "SubsamplingEngine. resetTileDecoder:$caller. success. " +
                         "contentSize=${contentSize.toShortString()}, " +
-                        "imageInfo=${imageInfo.toShortString()}. " +
+                        "decodeImageInfo=${decodeImageInfo.toShortString()}. " +
                         "'${imageKey}'"
             }
             this@SubsamplingEngine.tileDecoder = newTileDecoder
-            this@SubsamplingEngine._imageInfoState.value = imageInfo
+            if (supportRegion == null) {
+                this@SubsamplingEngine._imageInfoState.value = decodeImageInfo
+                zoomableEngine.contentOriginSizeState.value = decodeImageInfo.size
+            }
             resetTileManager(caller)
         }
     }
@@ -533,6 +571,7 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
             refreshReadyState("cleanTileDecoder:$caller")
         }
         _imageInfoState.value = null
+        zoomableEngine.contentOriginSizeState.value = IntSizeCompat.Zero
     }
 
     private fun cleanTileManager(caller: String) {

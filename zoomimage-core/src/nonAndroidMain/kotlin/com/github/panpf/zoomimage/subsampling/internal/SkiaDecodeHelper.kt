@@ -89,11 +89,19 @@ class SkiaDecodeHelper(
 
     class Factory : DecodeHelper.Factory {
 
+        override fun checkSupport(mimeType: String): Boolean? = when (mimeType) {
+            "image/jpeg", "image/png", "image/webp", "image/bmp" -> true
+            "image/svg+xml" -> false
+            // TODO Get the skiko version and return false directly.
+            //  "image/heic", "image/heif", "image/avif" -> false
+            else -> null
+        }
+
         override fun create(imageSource: ImageSource): SkiaDecodeHelper {
             val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
             val image = Image.makeFromEncoded(bytes)
             val imageInfo = readImageInfo(bytes, image)
-            val supportRegion = checkSupportSubsamplingByMimeType(imageInfo.mimeType)
+            val supportRegion = checkSupport(imageInfo.mimeType) ?: true
             return SkiaDecodeHelper(
                 imageSource = imageSource,
                 imageInfo = imageInfo,
