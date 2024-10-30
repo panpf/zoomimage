@@ -20,6 +20,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.github.panpf.sketch.PlatformContext
@@ -70,6 +71,14 @@ actual fun intSettingsStateFlow(
     initialize: Int,
 ): SettingsStateFlow<Int> = DataStoreSettingsStateFlowImpl(
     adapter = IntDataStoreAdapter(context.dataStore, key, initialize)
+)
+
+actual fun floatSettingsStateFlow(
+    context: PlatformContext,
+    key: String,
+    initialize: Float,
+): SettingsStateFlow<Float> = DataStoreSettingsStateFlowImpl(
+    adapter = FloatDataStoreAdapter(context.dataStore, key, initialize)
 )
 
 actual fun <E : Enum<E>> enumSettingsStateFlow(
@@ -252,6 +261,42 @@ private class IntDataStoreAdapter(
     }
 
     override fun setValue(value: Int?) {
+        if (value != null) {
+            state.value = value
+            coroutineScope.launch {
+                dataStore.edit {
+                    it[preferencesKey] = value
+                }
+            }
+        } else {
+            state.value = initialize
+            coroutineScope.launch {
+                dataStore.edit {
+                    it.remove(preferencesKey)
+                }
+            }
+        }
+    }
+}
+
+private class FloatDataStoreAdapter(
+    private val dataStore: DataStore<Preferences>,
+    key: String,
+    private val initialize: Float
+) : DataStoreAdapter<Float> {
+
+    private val preferencesKey = floatPreferencesKey(key)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    override val state = MutableStateFlow(initialize)
+
+    init {
+        // Make sure you get the value immediately
+        state.value = runBlocking {
+            dataStore.data.map { it[preferencesKey] }.first() ?: initialize
+        }
+    }
+
+    override fun setValue(value: Float?) {
         if (value != null) {
             state.value = value
             coroutineScope.launch {

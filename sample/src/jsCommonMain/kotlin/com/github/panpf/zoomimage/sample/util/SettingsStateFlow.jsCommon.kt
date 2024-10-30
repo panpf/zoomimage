@@ -40,6 +40,12 @@ actual fun intSettingsStateFlow(
     initialize: Int,
 ): SettingsStateFlow<Int> = SettingsStateFlowImpl(initialize)
 
+actual fun floatSettingsStateFlow(
+    context: PlatformContext,
+    key: String,
+    initialize: Float,
+): SettingsStateFlow<Float> = SettingsStateFlowImpl(initialize)
+
 actual fun <E : Enum<E>> enumSettingsStateFlow(
     context: PlatformContext,
     key: String,
@@ -47,7 +53,7 @@ actual fun <E : Enum<E>> enumSettingsStateFlow(
     convert: (name: String) -> E,
 ): SettingsStateFlow<E> = SettingsStateFlowImpl(initialize)
 
-private class SettingsStateFlowImpl<T>(private val initialize: T) : SettingsStateFlow<T> {
+private class SettingsStateFlowImpl<T>(initialize: T) : SettingsStateFlow<T> {
     private val state = MutableStateFlow(initialize)
 
     override var value: T

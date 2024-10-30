@@ -183,6 +183,18 @@ class ZoomImageSettingsViewModel(
             )
         )
 
+        add(
+            DropdownMenu(
+                title = "Container Whitespace Multiple",
+                desc = null,
+                values = listOf(0f, 0.5f, 1f, 2f).map { it.toString() },
+                getValue = { appSettings.containerWhitespaceMultiple.value.toString() },
+                onSelected = { _, value ->
+                    appSettings.containerWhitespaceMultiple.value = value.toFloat()
+                }
+            )
+        )
+
         add(MenuDivider())
 
         add(

@@ -699,8 +699,8 @@ fun calculateUserOffsetBounds(
     rotation: Int,
     userScale: Float,
     limitBaseVisibleRect: Boolean,
+    containerWhitespaceMultiple: Float
 ): RectCompat {
-    // TODO Supports full and partial release of restrictions
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -711,7 +711,10 @@ fun calculateUserOffsetBounds(
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }
-    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    require(rotation % 90 == 0) { "rotation must be multiple of 90, rotation=$rotation" }
+    require(containerWhitespaceMultiple >= 0f) {
+        "containerWhitespaceMultiple must be greater than or equal to 0, containerWhitespaceMultiple=$containerWhitespaceMultiple"
+    }
 
     val rotatedContentSize = contentSize.rotate(rotation)
     val rotatedContentBaseDisplayRect = calculateContentBaseDisplayRect(
@@ -765,12 +768,28 @@ fun calculateUserOffsetBounds(
         }
 
     val offsetBounds = RectCompat(
-        left = horizontalBounds.start,
-        top = verticalBounds.start,
-        right = horizontalBounds.endInclusive,
-        bottom = verticalBounds.endInclusive
+        left = horizontalBounds.start.filterNegativeZeros(),
+        top = verticalBounds.start.filterNegativeZeros(),
+        right = horizontalBounds.endInclusive.filterNegativeZeros(),
+        bottom = verticalBounds.endInclusive.filterNegativeZeros(),
     )
-    return offsetBounds
+    val containerWhitespaceOffsetBounds = if (containerWhitespaceMultiple > 0f) {
+        val containerWhitespaceWidth = containerSize.width * containerWhitespaceMultiple
+        val containerWhitespaceHeight = containerSize.height * containerWhitespaceMultiple
+        val horPaddingSpace =
+            (containerSize.width - scaledRotatedContentBaseDisplayRect.width).coerceAtLeast(0f) / 2
+        val verPaddingSpace =
+            (containerSize.height - scaledRotatedContentBaseDisplayRect.height).coerceAtLeast(0f) / 2
+        RectCompat(
+            left = (offsetBounds.left - containerWhitespaceWidth + horPaddingSpace).filterNegativeZeros(),
+            top = (offsetBounds.top - containerWhitespaceHeight + verPaddingSpace).filterNegativeZeros(),
+            right = (offsetBounds.right + containerWhitespaceWidth - horPaddingSpace).filterNegativeZeros(),
+            bottom = (offsetBounds.bottom + containerWhitespaceHeight - verPaddingSpace).filterNegativeZeros(),
+        )
+    } else {
+        offsetBounds
+    }
+    return containerWhitespaceOffsetBounds
 }
 
 /**
@@ -871,7 +890,7 @@ fun calculateTransformOffset(
     val targetRestoreScaleCurrentOffset =
         (restoreScaleCurrentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
     val targetOffset = targetRestoreScaleCurrentOffset * newScale * -1f
-    return targetOffset
+    return targetOffset.filterNegativeZeros()
 }
 
 /**
@@ -1240,4 +1259,15 @@ fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
 
 private fun Float.aboutEquals(other: Float, delta: Float, scale: Int): Boolean {
     return abs(this - other).format(scale) <= delta
+}
+
+private fun Float.filterNegativeZeros(): Float {
+    return if (this == -0f) 0f else this
+}
+
+private fun OffsetCompat.filterNegativeZeros(): OffsetCompat {
+    if (this.x == -0f || this.y == -0f) {
+        return OffsetCompat(this.x.filterNegativeZeros(), this.y.filterNegativeZeros())
+    }
+    return this
 }

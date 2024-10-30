@@ -190,6 +190,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
     var limitOffsetWithinBaseVisibleRect: Boolean by mutableStateOf(false)
 
     /**
+     * Add whitespace around containers based on container size
+     */
+    var containerWhitespaceMultiple: Float by mutableStateOf(0f)
+
+    /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
      *
      * @see com.github.panpf.zoomimage.zoom.GestureType
@@ -1028,6 +1033,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             rotation = rotation,
             userScale = userScale,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
         ).round().toPlatformRect()    // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -1110,6 +1116,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             rotation = rotation,
             userScale = userTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            containerWhitespaceMultiple = containerWhitespaceMultiple,
         )
         this.userOffsetBounds = userOffsetBounds.roundToPlatform()
 

@@ -141,6 +141,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     .collectWithLifecycle(viewLifecycleOwner) {
                         limitOffsetWithinBaseVisibleRectState.value = it
                     }
+                appSettings.containerWhitespaceMultiple
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        containerWhitespaceMultipleState.value = it
+                    }
                 appSettings.readModeEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     val sizeType = if (appSettings.readModeAcceptedBoth.value) {
                         ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL

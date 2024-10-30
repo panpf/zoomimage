@@ -163,6 +163,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     val limitOffsetWithinBaseVisibleRectState = MutableStateFlow(false)
 
     /**
+     * Add whitespace around containers based on container size
+     */
+    var containerWhitespaceMultipleState = MutableStateFlow(0f)
+
+    /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
      *
      * @see com.github.panpf.zoomimage.zoom.GestureType
@@ -937,6 +942,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
+            containerWhitespaceMultiple = containerWhitespaceMultipleState.value,
         ).let {
             Rect(
                 /* left = */ it.left.roundToInt(),
@@ -1015,6 +1021,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             rotation = rotation,
             userScale = userScale,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
+            containerWhitespaceMultiple = containerWhitespaceMultipleState.value,
         ).round().toRect()      // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -1102,6 +1109,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             rotation = rotation,
             userScale = userTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
+            containerWhitespaceMultiple = containerWhitespaceMultipleState.value,
         )
         this._userOffsetBoundsState.value = userOffsetBounds.round()
 

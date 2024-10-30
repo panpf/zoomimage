@@ -179,6 +179,15 @@ fun ZoomImageSettingList() {
             state = appSettings.limitOffsetWithinBaseVisibleRect,
         )
 
+        val containerWhitespaceMultiples = remember {
+            listOf(0f, 0.5f, 1f, 2f)
+        }
+        DropdownSettingItem(
+            title = "Container Whitespace Multiple",
+            values = containerWhitespaceMultiples,
+            state = appSettings.containerWhitespaceMultiple
+        )
+
         DividerSettingItem()
 
         SwitchSettingItem(

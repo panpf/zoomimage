@@ -21,6 +21,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: sketch-view-sketch module renamed to sketch-view-sketch4
 * change: sketch-view-sketch-core module renamed to sketch-view-sketch4-core
 * remove: Remove BitmapFrom
+* new: New `containerWhitespaceMultiple` parameter is added to leave a white space between the edge
+  of the image and the edge of the container. [#45](https://github.com/panpf/zoomimage/issues/45)
 
 ## 1.1.0-beta01
 

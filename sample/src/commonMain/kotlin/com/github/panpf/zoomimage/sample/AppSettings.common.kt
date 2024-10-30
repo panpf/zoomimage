@@ -64,6 +64,8 @@ expect class AppSettings(context: PlatformContext) {
 
     val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean>
 
+    val containerWhitespaceMultiple: SettingsStateFlow<Float>
+
     val readModeEnabled: SettingsStateFlow<Boolean>
 
     val readModeAcceptedBoth: SettingsStateFlow<Boolean>

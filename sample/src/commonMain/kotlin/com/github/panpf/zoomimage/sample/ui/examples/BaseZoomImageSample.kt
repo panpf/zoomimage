@@ -108,6 +108,7 @@ fun <T : ZoomState> BaseZoomImageSample(
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
     val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
+    val containerWhitespaceMultiple by settingsService.containerWhitespaceMultiple.collectAsState()
 //    val scalesCalculator by settingsService.scalesCalculator.collectAsState()
     val scalesCalculatorName by settingsService.scalesCalculatorName.collectAsState()
     val scalesMultiple by settingsService.scalesMultiple.collectAsState()
@@ -159,6 +160,9 @@ fun <T : ZoomState> BaseZoomImageSample(
         }
         LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
             zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+        }
+        LaunchedEffect(containerWhitespaceMultiple) {
+            zoomable.containerWhitespaceMultiple = containerWhitespaceMultiple
         }
         LaunchedEffect(readMode) {
             zoomable.readMode = readMode

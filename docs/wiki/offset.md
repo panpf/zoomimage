@@ -132,7 +132,7 @@ two fingers to view the entire content of the image
 
 If you want the image to be moved only within the area restricted
 by [ContentScale] and [Alignment], and not the entire content, you can modify the
-limitOffsetWithinBaseVisibleRect parameter to true to achieve this
+`limitOffsetWithinBaseVisibleRect parameter` to true to achieve this
 
 example：
 
@@ -146,6 +146,31 @@ LaunchEffect(zoomState.zommable) {
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
+  modifier = Modifier.fillMaxSize(),
+  zoomState = zoomState,
+)
+```
+
+### Container Whitespace
+
+By default, ZoomImage always aligns the edge of the image with the edge of the container when
+dragging the image, and there will be no white space between them (except in the initial state of
+the image). When you need to leave a white space between the image and the container, you can pass
+To achieve this, set the `containerWhitespaceMultiple` parameter to
+
+example：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+
+LaunchEffect(zoomState.zommable) {
+  // Leave 50% of the container size white space between the edge of the image and the edge of the container
+  zoomState.zommable.containerWhitespaceMultiple = 0.5f
+}
+
+SketchZoomAsyncImage(
+  imageUri = "https://sample.com/sample.jpeg",
+  contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
 )

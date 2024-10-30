@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.sample.util.ParamLazy
 import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
+import com.github.panpf.zoomimage.sample.util.floatSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.isDebugMode
 import com.github.panpf.zoomimage.sample.util.stateMap
@@ -139,6 +140,10 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
 
     actual val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "limitOffsetWithinBaseVisibleRect", false)
+    }
+
+    actual val containerWhitespaceMultiple: SettingsStateFlow<Float> by lazy {
+        floatSettingsStateFlow(context, "containerWhitespaceMultiple1", 0f)
     }
 
     actual val readModeEnabled: SettingsStateFlow<Boolean> by lazy {

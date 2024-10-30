@@ -37,6 +37,12 @@ expect fun intSettingsStateFlow(
     initialize: Int,
 ): SettingsStateFlow<Int>
 
+expect fun floatSettingsStateFlow(
+    context: PlatformContext,
+    key: String,
+    initialize: Float,
+): SettingsStateFlow<Float>
+
 expect fun <E : Enum<E>> enumSettingsStateFlow(
     context: PlatformContext,
     key: String,
