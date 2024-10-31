@@ -31,9 +31,9 @@ import platform.Foundation.NSURL
 /**
  * Convert coil model to [ImageSource.Factory] for iOS platform
  *
- * @see com.github.panpf.zoomimage.core.coil3.ios.test.internal.CoilCoreUtilsIosTest.testModelToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.ios.test.internal.CoilCoreUtilsIosTest.testDataToImageSource
  */
-actual suspend fun modelToImageSource(
+actual suspend fun dataToImageSource(
     context: PlatformContext,
     imageLoader: ImageLoader,
     model: Any

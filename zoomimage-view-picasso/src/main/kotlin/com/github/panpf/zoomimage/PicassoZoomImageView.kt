@@ -177,14 +177,14 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
         @Suppress("OPT_IN_USAGE")
         GlobalScope.launch(Dispatchers.Main) {
-            // TODO filter animatable drawable
             val drawable = drawable
             if (data != null && drawable != null) {
-                val generateResult =
-                    subsamplingImageGenerators.plus(EnginePicassoSubsamplingImageGenerator())
-                        .firstNotNullOfOrNull {
-                            it.generateImage(context, Picasso.get(), data, drawable)
-                        }
+                val generateResult = subsamplingImageGenerators
+                    // TODO filter animatable drawable
+                    .plus(EnginePicassoSubsamplingImageGenerator())
+                    .firstNotNullOfOrNull {
+                        it.generateImage(context, Picasso.get(), data, drawable)
+                    }
                 if (generateResult is SubsamplingImageGenerateResult.Error) {
                     logger.d {
                         "PicassoZoomImageView. ${generateResult.message}. data='$data'"

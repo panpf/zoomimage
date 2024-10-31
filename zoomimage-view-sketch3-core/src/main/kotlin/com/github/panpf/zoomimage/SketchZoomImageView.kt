@@ -98,15 +98,16 @@ open class SketchZoomImageView @JvmOverloads constructor(
             val result = SketchUtils.getResult(this)
             val drawable = drawable
             if (sketch != null && result is DisplayResult.Success && drawable != null) {
-                // TODO filter animatable drawable
-                val generateResult =
-                    subsamplingImageGenerators.plus(EngineSketchViewSubsamplingImageGenerator())
-                        .firstNotNullOfOrNull {
-                            it.generateImage(sketch, result.request, result, drawable)
-                        }
+                val request = result.request
+                val generateResult = subsamplingImageGenerators
+                    // TODO filter animatable drawable
+                    .plus(EngineSketchViewSubsamplingImageGenerator())
+                    .firstNotNullOfOrNull {
+                        it.generateImage(sketch, request, result, drawable)
+                    }
                 if (generateResult is SubsamplingImageGenerateResult.Error) {
                     logger.d {
-                        "SketchZoomImageView. ${generateResult.message}. uri='${result.request.uriString}'"
+                        "SketchZoomImageView. ${generateResult.message}. uri='${request.uriString}'"
                     }
                 }
                 if (generateResult is SubsamplingImageGenerateResult.Success) {

@@ -38,9 +38,9 @@ import java.nio.ByteBuffer
 /**
  * Convert coil model to [ImageSource.Factory] for desktop platform
  *
- * @see com.github.panpf.zoomimage.core.coil3.desktop.test.internal.CoilCoreUtilsDesktopTest.testModelToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.desktop.test.internal.CoilCoreUtilsDesktopTest.testDataToImageSource
  */
-actual suspend fun modelToImageSource(
+actual suspend fun dataToImageSource(
     context: PlatformContext,
     imageLoader: ImageLoader,
     model: Any

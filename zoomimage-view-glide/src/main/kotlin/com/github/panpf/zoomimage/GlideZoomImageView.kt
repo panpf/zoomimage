@@ -102,12 +102,12 @@ open class GlideZoomImageView @JvmOverloads constructor(
             val model: Any? = request?.internalModel
             if (request != null && request.isComplete && model != null) {
                 coroutineScope.launch {
-                    // TODO filter animatable painter
-                    val generateResult = subsamplingImageGenerators.plus(
-                        EngineGlideSubsamplingImageGenerator()
-                    ).firstNotNullOfOrNull {
-                        it.generateImage(context, Glide.get(context), model, drawable)
-                    }
+                    val generateResult = subsamplingImageGenerators
+                        // TODO filter animatable painter
+                        .plus(EngineGlideSubsamplingImageGenerator())
+                        .firstNotNullOfOrNull {
+                            it.generateImage(context, Glide.get(context), model, drawable)
+                        }
                     if (generateResult is SubsamplingImageGenerateResult.Error) {
                         logger.d {
                             "GlideZoomImageView. ${generateResult.message}. model='$model'"

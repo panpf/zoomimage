@@ -21,12 +21,12 @@ import coil3.PlatformContext
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 /**
- * @see com.github.panpf.zoomimage.core.coil3.android.test.internal.CoilCoreUtilsAndroidTest.testModelToImageSource
- * @see com.github.panpf.zoomimage.core.coil3.desktop.test.internal.CoilCoreUtilsDesktopTest.testModelToImageSource
- * @see com.github.panpf.zoomimage.core.coil3.ios.test.internal.CoilCoreUtilsIosTest.testModelToImageSource
- * @see com.github.panpf.zoomimage.core.coil3.jscommon.test.internal.CoilCoreUtilsJsCommonTest.testModelToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.android.test.internal.CoilCoreUtilsAndroidTest.testDataToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.desktop.test.internal.CoilCoreUtilsDesktopTest.testDataToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.ios.test.internal.CoilCoreUtilsIosTest.testDataToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.jscommon.test.internal.CoilCoreUtilsJsCommonTest.testDataToImageSource
  */
-expect suspend fun modelToImageSource(
+expect suspend fun dataToImageSource(
     context: PlatformContext,
     imageLoader: ImageLoader,
     model: Any

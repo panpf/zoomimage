@@ -823,7 +823,7 @@ fun calculateLocateUserOffset(
     val containerCenter = containerSize.center.toOffset()
     val toCenterScaledContainerPoint = scaledContainerPoint - containerCenter
     val locateOffset = toCenterScaledContainerPoint * -1f
-    return locateOffset
+    return locateOffset.filterNegativeZeros()
 }
 
 /**

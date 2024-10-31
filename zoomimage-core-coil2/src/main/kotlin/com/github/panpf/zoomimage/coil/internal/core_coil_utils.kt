@@ -22,9 +22,9 @@ import java.io.File
 import java.nio.ByteBuffer
 
 /**
- * @see com.github.panpf.zoomimage.core.coil2.test.CoreCoilUtilsTest.testModelToImageSource
+ * @see com.github.panpf.zoomimage.core.coil2.test.CoreCoilUtilsTest.testDataToImageSource
  */
-suspend fun modelToImageSource(
+suspend fun dataToImageSource(
     context: Context,
     imageLoader: ImageLoader,
     model: Any

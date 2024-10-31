@@ -134,7 +134,7 @@ CoilAsyncZoomImage(
 )
 
 val coilZoomImageView = CoilZoomImageView(context)
-coilZoomImageView.registerModelToImageSource(MyCoilModelToImageSource())
+coilZoomImageView.registerSubsamplingImageGenerator(MyCoilModelToImageSource())
 
 /*
  * Glide
@@ -157,7 +157,7 @@ GlideAsyncZoomImage(
 )
 
 val glideZoomImageView = GlideZoomImageView(context)
-glideZoomImageView.registerModelToImageSource(MyGlideModelToImageSource())
+glideZoomImageView.registerSubsamplingImageGenerator(MyGlideModelToImageSource())
 
 /*
  * Picasso
@@ -173,7 +173,7 @@ class MyPicassoDataToImageSource : PicassoDataToImageSource {
 }
 
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageView.registerDataToImageSource(MyPicassoDataToImageSource())
+picassoZoomImageView.registerSubsamplingImageGenerator(MyPicassoDataToImageSource())
 ```
 
 ### Exif Orientation

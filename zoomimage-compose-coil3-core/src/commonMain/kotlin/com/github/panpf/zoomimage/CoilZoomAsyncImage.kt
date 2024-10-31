@@ -295,7 +295,7 @@ private fun onState(
             }
             if (generateResult is SubsamplingImageGenerateResult.Error) {
                 zoomState.subsampling.logger.d {
-                    "SketchZoomAsyncImage. ${generateResult.message}. data='${request.data}'"
+                    "CoilZoomAsyncImage. ${generateResult.message}. data='${request.data}'"
                 }
             }
             if (generateResult is SubsamplingImageGenerateResult.Success) {

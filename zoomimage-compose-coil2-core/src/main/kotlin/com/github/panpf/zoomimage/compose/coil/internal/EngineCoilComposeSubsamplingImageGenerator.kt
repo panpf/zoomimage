@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import com.github.panpf.zoomimage.coil.internal.modelToImageSource
+import com.github.panpf.zoomimage.coil.internal.dataToImageSource
 import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -34,9 +34,10 @@ class EngineCoilComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGe
         request: ImageRequest,
         result: SuccessResult,
         painter: Painter
-    ): SubsamplingImageGenerateResult? {
-        val model = request.data
-        val imageSource = modelToImageSource(context, imageLoader, model) ?: return null
+    ): SubsamplingImageGenerateResult {
+        val data = request.data
+        val imageSource = dataToImageSource(context, imageLoader, data)
+            ?: return SubsamplingImageGenerateResult.Error("Unsupported data")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
     }
 }

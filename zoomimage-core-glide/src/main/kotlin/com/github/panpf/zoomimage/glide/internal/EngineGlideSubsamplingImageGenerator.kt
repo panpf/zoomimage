@@ -17,8 +17,9 @@ class EngineGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
         glide: Glide,
         model: Any,
         drawable: Drawable
-    ): SubsamplingImageGenerateResult? {
-        val imageSource = modelToImageSource(context, glide, model) ?: return null
+    ): SubsamplingImageGenerateResult {
+        val imageSource = modelToImageSource(context, glide, model)
+            ?: return SubsamplingImageGenerateResult.Error("Unsupported model")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
     }
 }

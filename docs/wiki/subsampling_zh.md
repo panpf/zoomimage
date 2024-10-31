@@ -119,7 +119,7 @@ CoilAsyncZoomImage(
 )
 
 val coilZoomImageView = CoilZoomImageView(context)
-coilZoomImageView.registerModelToImageSource(MyCoilModelToImageSource())
+coilZoomImageView.registerSubsamplingImageGenerator(MyCoilModelToImageSource())
 
 /*
  * Glide
@@ -142,7 +142,7 @@ GlideAsyncZoomImage(
 )
 
 val glideZoomImageView = GlideZoomImageView(context)
-glideZoomImageView.registerModelToImageSource(MyGlideModelToImageSource())
+glideZoomImageView.registerSubsamplingImageGenerator(MyGlideModelToImageSource())
 
 /*
  * Picasso
@@ -158,7 +158,7 @@ class MyPicassoDataToImageSource : PicassoDataToImageSource {
 }
 
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageView.registerDataToImageSource(MyPicassoDataToImageSource())
+picassoZoomImageView.registerSubsamplingImageGenerator(MyPicassoDataToImageSource())
 ```
 
 如果你自定义了 mode 或 data，那么你必需要自定义一个 ModelToImageSource 并应用它，否则将无法使用子采样功能

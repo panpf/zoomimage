@@ -33,8 +33,9 @@ class EnginePicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator 
         picasso: Picasso,
         data: Any,
         drawable: Drawable
-    ): SubsamplingImageGenerateResult? {
-        val imageSource = dataToImageSource(context, picasso, data) ?: return null
+    ): SubsamplingImageGenerateResult {
+        val imageSource = dataToImageSource(context, picasso, data)
+            ?: return SubsamplingImageGenerateResult.Error("Unsupported data")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
     }
 }

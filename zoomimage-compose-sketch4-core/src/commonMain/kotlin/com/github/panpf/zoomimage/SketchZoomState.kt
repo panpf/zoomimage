@@ -61,6 +61,7 @@ class SketchZoomState(
     subsampling: SubsamplingState,
     subsamplingImageGenerators: ImmutableList<SketchComposeSubsamplingImageGenerator>?
 ) : ZoomState(logger, zoomable, subsampling) {
+
     val subsamplingImageGenerators: List<SketchComposeSubsamplingImageGenerator> =
         subsamplingImageGenerators.orEmpty().plus(
             listOf(

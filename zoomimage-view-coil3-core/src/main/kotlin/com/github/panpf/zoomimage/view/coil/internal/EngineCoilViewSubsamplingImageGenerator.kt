@@ -21,7 +21,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
-import com.github.panpf.zoomimage.coil.internal.modelToImageSource
+import com.github.panpf.zoomimage.coil.internal.dataToImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
@@ -34,9 +34,10 @@ class EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerato
         request: ImageRequest,
         result: SuccessResult,
         drawable: Drawable
-    ): SubsamplingImageGenerateResult? {
-        val model = request.data
-        val imageSource = modelToImageSource(context, imageLoader, model) ?: return null
+    ): SubsamplingImageGenerateResult {
+        val data = request.data
+        val imageSource = dataToImageSource(context, imageLoader, data)
+            ?: return SubsamplingImageGenerateResult.Error("Unsupported data")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
     }
 }

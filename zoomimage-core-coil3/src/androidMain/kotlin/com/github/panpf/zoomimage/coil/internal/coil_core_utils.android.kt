@@ -42,9 +42,9 @@ import java.nio.ByteBuffer
 /**
  * Convert coil model to [ImageSource.Factory] for Android platform
  *
- * @see com.github.panpf.zoomimage.core.coil3.android.test.internal.CoilCoreUtilsAndroidTest.testModelToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.android.test.internal.CoilCoreUtilsAndroidTest.testDataToImageSource
  */
-actual suspend fun modelToImageSource(
+actual suspend fun dataToImageSource(
     context: PlatformContext,
     imageLoader: ImageLoader,
     model: Any

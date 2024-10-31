@@ -101,15 +101,16 @@ open class CoilZoomImageView @JvmOverloads constructor(
             if (imageLoader != null && result is SuccessResult && drawable != null) {
                 val coroutineScope = coroutineScope!!
                 coroutineScope.launch {
-                    val model = result.request.data
-                    val generateResult = subsamplingImageGenerators.plus(
-                        EngineCoilViewSubsamplingImageGenerator()
-                    ).firstNotNullOfOrNull {
-                        it.generateImage(context, imageLoader, result.request, result, drawable)
-                    }
+                    val request = result.request
+                    val generateResult = subsamplingImageGenerators
+                        // TODO filter animatable painter
+                        .plus(EngineCoilViewSubsamplingImageGenerator())
+                        .firstNotNullOfOrNull {
+                            it.generateImage(context, imageLoader, request, result, drawable)
+                        }
                     if (generateResult is SubsamplingImageGenerateResult.Error) {
                         logger.d {
-                            "GlideZoomImageView. ${generateResult.message}. model='$model'"
+                            "GlideZoomImageView. ${generateResult.message}. data='${request.data}'"
                         }
                     }
                     if (generateResult is SubsamplingImageGenerateResult.Success) {

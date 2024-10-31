@@ -22,10 +22,12 @@ kotlin {
         commonTest.dependencies {
             implementation(projects.internal.testCompose)
             implementation(projects.internal.testCoil3)
+            implementation(projects.internal.utilsCoil3Compose)
         }
         androidInstrumentedTest.dependencies {
             implementation(projects.internal.testCompose)
             implementation(projects.internal.testCoil3)
+            implementation(projects.internal.utilsCoil3Compose)
         }
     }
 }

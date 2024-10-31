@@ -219,7 +219,7 @@ private class ResetListener(
         isFirstResource: Boolean
     ): Boolean {
         logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
-        reset(resource = null)
+        reset(ready = false, resource = null)
         return false
     }
 
@@ -231,18 +231,18 @@ private class ResetListener(
         isFirstResource: Boolean
     ): Boolean {
         logger.d { "GlideZoomAsyncImage. onResourceReady. resource=$resource. model='$model'" }
-        reset(resource = resource)
+        reset(ready = true, resource = resource)
         return false
     }
 
-    private fun reset(resource: Drawable?) {
+    private fun reset(ready: Boolean, resource: Drawable?) {
         val drawableSize = resource
             ?.let { IntSize(it.intrinsicWidth, it.intrinsicHeight) }
             ?.takeIf { it.isNotEmpty() }
         zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
-        coroutineScope.launch {
-            if (model != null && resource != null) {
+        if (ready && model != null && resource != null) {
+            coroutineScope.launch {
                 val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
                     it.generateImage(context, glide, model, resource)
                 }
@@ -254,9 +254,9 @@ private class ResetListener(
                 } else {
                     zoomState.setImage(null as SubsamplingImage?)
                 }
-            } else {
-                zoomState.setImage(null as SubsamplingImage?)
             }
+        } else {
+            zoomState.setImage(null as SubsamplingImage?)
         }
     }
 }

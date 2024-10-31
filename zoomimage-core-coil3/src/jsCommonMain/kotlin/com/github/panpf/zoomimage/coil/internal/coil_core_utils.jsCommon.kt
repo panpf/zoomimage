@@ -30,9 +30,9 @@ import okio.Path.Companion.toPath
 /**
  * Convert coil model to [ImageSource.Factory] for js platform
  *
- * @see com.github.panpf.zoomimage.core.coil3.jscommon.test.internal.CoilCoreUtilsJsCommonTest.testModelToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.jscommon.test.internal.CoilCoreUtilsJsCommonTest.testDataToImageSource
  */
-actual suspend fun modelToImageSource(
+actual suspend fun dataToImageSource(
     context: PlatformContext,
     imageLoader: ImageLoader,
     model: Any
