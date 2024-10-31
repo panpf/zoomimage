@@ -53,7 +53,8 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -286,24 +287,24 @@ private fun onState(
         ?.takeIf { it.isNotEmpty() }
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
-    when (loadState) {
-        is State.Success -> {
-            coroutineScope.launch {
-                val model = request.data
-                val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {
-                    it.modelToImageSource(context, imageLoader, model)
+    if (loadState is State.Success) {
+        coroutineScope.launch {
+            val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
+                it.generateImage(context, imageLoader, request, loadState.result, loadState.painter)
+            }
+            if (generateResult is SubsamplingImageGenerateResult.Error) {
+                zoomState.subsampling.logger.d {
+                    "CoilZoomAsyncImage. ${generateResult.message}. data='${request.data}'"
                 }
-                if (imageSource == null) {
-                    zoomState.subsampling.logger.w { "CoilZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
-                }
-                // TODO filter animatable painter
-                zoomState.setImage(imageSource)
+            }
+            if (generateResult is SubsamplingImageGenerateResult.Success) {
+                zoomState.setImage(generateResult.subsamplingImage)
+            } else {
+                zoomState.setImage(null as SubsamplingImage?)
             }
         }
-
-        else -> {
-            zoomState.setImage(null as ImageSource?)
-        }
+    } else {
+        zoomState.setImage(null as SubsamplingImage?)
     }
 }
 

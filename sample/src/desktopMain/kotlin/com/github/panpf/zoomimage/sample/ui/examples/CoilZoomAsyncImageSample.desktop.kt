@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.examples
 
-import com.github.panpf.zoomimage.coil.CoilModelToImageSource
-import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceToImageSource
+import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceComposeSubsamplingImageGenerator
 
-actual fun platformCoilModelToImageSource(): List<CoilModelToImageSource>? =
-    listOf(CoilKotlinResourceToImageSource())
+actual fun platformCoilComposeSubsamplingImageGenerator(): List<CoilComposeSubsamplingImageGenerator>? =
+    listOf(CoilKotlinResourceComposeSubsamplingImageGenerator())

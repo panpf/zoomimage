@@ -216,7 +216,7 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     /**
      * Set subsampling image
      */
-    private fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+    fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
         if (this.subsamplingImage == subsamplingImage) return false
         logger.d { "SubsamplingEngine. setImage. '${this.subsamplingImage}' -> '${subsamplingImage}'" }
         clean("setImage")

@@ -19,10 +19,11 @@ package com.github.panpf.zoomimage
 import android.content.Context
 import android.net.Uri
 import android.util.AttributeSet
-import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
-import com.github.panpf.zoomimage.picasso.PicassoDataToImageSourceImpl
+import com.github.panpf.zoomimage.picasso.PicassoSubsamplingImageGenerator
 import com.github.panpf.zoomimage.picasso.PicassoTileImageCache
-import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.picasso.internal.EnginePicassoSubsamplingImageGenerator
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.util.Logger
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -54,7 +55,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    private val convertors = mutableListOf<PicassoDataToImageSource>()
+    private val subsamplingImageGenerators = mutableListOf<PicassoSubsamplingImageGenerator>()
 
     /**
      * Start an image request using the specified image file. This is a convenience method for
@@ -153,58 +154,59 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     ) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                resetImageSource(error = false, data = data)
+                resetImageSource(data = data)
                 callback?.onSuccess()
             }
 
             override fun onError(e: Exception?) {
-                resetImageSource(error = true, data = null)
+                resetImageSource(data = null)
                 callback?.onError(e)
             }
         })
     }
 
-    private fun resetImageSource(error: Boolean, data: Any?) {
-        _subsamplingEngine?.apply {
-            // In order to be consistent with other ZoomImageViews, TileImageCache is also configured here,
-            // although it can be set in the constructor
-            if (tileImageCacheState.value == null) {
-                tileImageCacheState.value = PicassoTileImageCache(Picasso.get())
-            }
-            // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
-            @Suppress("OPT_IN_USAGE")
-            GlobalScope.launch(Dispatchers.Main) {
-                _subsamplingEngine?.setImage(newImageSource(error, data))
+    private fun resetImageSource(data: Any?) {
+        // In order to be consistent with other ZoomImageViews, TileImageCache is also configured here,
+        // although it can be set in the constructor
+        val subsamplingEngine = _subsamplingEngine ?: return
+        val tileImageCacheState = subsamplingEngine.tileImageCacheState
+        if (tileImageCacheState.value == null) {
+            tileImageCacheState.value = PicassoTileImageCache(Picasso.get())
+        }
+
+        // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
+        @Suppress("OPT_IN_USAGE")
+        GlobalScope.launch(Dispatchers.Main) {
+            // TODO filter animatable drawable
+            val drawable = drawable
+            if (data != null && drawable != null) {
+                val generateResult =
+                    subsamplingImageGenerators.plus(EnginePicassoSubsamplingImageGenerator())
+                        .firstNotNullOfOrNull {
+                            it.generateImage(context, Picasso.get(), data, drawable)
+                        }
+                if (generateResult is SubsamplingImageGenerateResult.Error) {
+                    logger.d {
+                        "PicassoZoomImageView. ${generateResult.message}. data='$data'"
+                    }
+                }
+                if (generateResult is SubsamplingImageGenerateResult.Success) {
+                    setImage(generateResult.subsamplingImage)
+                } else {
+                    setImage(null as SubsamplingImage?)
+                }
+            } else {
+                setImage(null as SubsamplingImage?)
             }
         }
     }
 
-    private suspend fun newImageSource(error: Boolean, data: Any?): ImageSource.Factory? {
-        // TODO filter animatable drawable
-        if (error) {
-            logger.d { "PicassoZoomImageView. Can't use Subsampling, load error" }
-            return null
-        }
-        if (data == null) {
-            logger.d { "PicassoZoomImageView. Can't use Subsampling, data is null" }
-            return null
-        }
-        val imageSource = convertors.plus(PicassoDataToImageSourceImpl())
-            .firstNotNullOfOrNull {
-                it.dataToImageSource(context, Picasso.get(), data)
-            }
-        if (imageSource == null) {
-            logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported data: '$data'" }
-        }
-        return imageSource
+    fun registerSubsamplingImageGenerator(convertor: PicassoSubsamplingImageGenerator) {
+        subsamplingImageGenerators.add(0, convertor)
     }
 
-    fun registerDataToImageSource(convertor: PicassoDataToImageSource) {
-        convertors.add(0, convertor)
-    }
-
-    fun unregisterDataToImageSource(convertor: PicassoDataToImageSource) {
-        convertors.remove(convertor)
+    fun unregisterSubsamplingImageGenerator(convertor: PicassoSubsamplingImageGenerator) {
+        subsamplingImageGenerators.remove(convertor)
     }
 
     override fun newLogger(): Logger = Logger(tag = "PicassoZoomImageView")

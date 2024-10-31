@@ -23,7 +23,7 @@ import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.PicassoZoomImageView
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.image.PicassoComposeResourceToImageSource
+import com.github.panpf.zoomimage.sample.image.PicassoResourceSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.sketchUri2PicassoData
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
@@ -41,7 +41,7 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
 
     override fun createZoomImageView(context: Context): PicassoZoomImageView {
         return PicassoZoomImageView(context).apply {
-            registerDataToImageSource(PicassoComposeResourceToImageSource())
+            registerSubsamplingImageGenerator(PicassoResourceSubsamplingImageGenerator())
         }
     }
 

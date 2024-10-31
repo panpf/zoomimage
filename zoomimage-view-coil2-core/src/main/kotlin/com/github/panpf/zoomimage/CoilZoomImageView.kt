@@ -19,15 +19,14 @@ package com.github.panpf.zoomimage
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import coil.ImageLoader
-import coil.request.ImageResult
 import coil.request.SuccessResult
 import coil.util.CoilUtils
-import com.github.panpf.zoomimage.coil.CoilModelToImageSource
-import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.coil.CoilTileImageCache
-import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
+import com.github.panpf.zoomimage.view.coil.internal.EngineCoilViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
 import kotlinx.coroutines.launch
 
@@ -52,15 +51,15 @@ open class CoilZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    private val convertors = mutableListOf<CoilModelToImageSource>()
+    private val subsamplingImageGenerators = mutableListOf<CoilViewSubsamplingImageGenerator>()
     private var resetImageSourceOnAttachedToWindow: Boolean = false
 
-    fun registerModelToImageSource(convertor: CoilModelToImageSource) {
-        convertors.add(0, convertor)
+    fun registerSubsamplingImageGenerator(convertor: CoilViewSubsamplingImageGenerator) {
+        subsamplingImageGenerators.add(0, convertor)
     }
 
-    fun unregisterModelToImageSource(convertor: CoilModelToImageSource) {
-        convertors.remove(convertor)
+    fun unregisterSubsamplingImageGenerator(convertor: CoilViewSubsamplingImageGenerator) {
+        subsamplingImageGenerators.remove(convertor)
     }
 
     override fun newLogger(): Logger = Logger(tag = "CoilZoomImageView")
@@ -89,46 +88,39 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 resetImageSourceOnAttachedToWindow = true
                 return@post
             }
-            val coroutineScope = coroutineScope!!
-            val imageLoader = CoilUtils.getImageLoader(this@CoilZoomImageView)
-            val result = CoilUtils.result(this)
-            _subsamplingEngine?.apply {
-                if (tileImageCacheState.value == null && imageLoader != null) {
-                    tileImageCacheState.value = CoilTileImageCache(imageLoader)
-                }
-                coroutineScope.launch {
-                    setImage(newImageSource(imageLoader, result))
-                }
-            }
-        }
-    }
 
-    private suspend fun newImageSource(
-        imageLoader: ImageLoader?,
-        result: ImageResult?
-    ): ImageSource.Factory? {
-        val drawable = drawable
-        if (drawable == null) {
-            logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is null" }
-            return null
-        }
-        // TODO filter animatable drawable
-        if (imageLoader == null) {
-            logger.d { "CoilZoomImageView. Can't use Subsampling, imageLoader is null" }
-            return null
-        }
-        if (result !is SuccessResult) {
-            logger.d { "CoilZoomImageView. Can't use Subsampling, result is not Success" }
-            return null
-        }
-        val model = result.request.data
-        val imageSource = convertors.plus(CoilModelToImageSourceImpl())
-            .firstNotNullOfOrNull {
-                it.modelToImageSource(context, imageLoader, model)
+            val subsamplingEngine = _subsamplingEngine ?: return@post
+            val tileImageCacheState = subsamplingEngine.tileImageCacheState
+            val imageLoader = CoilUtils.getImageLoader(this@CoilZoomImageView)
+            if (tileImageCacheState.value == null && imageLoader != null) {
+                tileImageCacheState.value = CoilTileImageCache(imageLoader)
             }
-        if (imageSource == null) {
-            logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
+
+            val result = CoilUtils.result(this)
+            val drawable = drawable
+            if (imageLoader != null && result is SuccessResult && drawable != null) {
+                val coroutineScope = coroutineScope!!
+                coroutineScope.launch {
+                    val model = result.request.data
+                    val generateResult = subsamplingImageGenerators.plus(
+                        EngineCoilViewSubsamplingImageGenerator()
+                    ).firstNotNullOfOrNull {
+                        it.generateImage(context, imageLoader, result.request, result, drawable)
+                    }
+                    if (generateResult is SubsamplingImageGenerateResult.Error) {
+                        logger.d {
+                            "GlideZoomImageView. ${generateResult.message}. model='$model'"
+                        }
+                    }
+                    if (generateResult is SubsamplingImageGenerateResult.Success) {
+                        setImage(generateResult.subsamplingImage)
+                    } else {
+                        setImage(null as SubsamplingImage?)
+                    }
+                }
+            } else {
+                setImage(null as SubsamplingImage?)
+            }
         }
-        return imageSource
     }
 }

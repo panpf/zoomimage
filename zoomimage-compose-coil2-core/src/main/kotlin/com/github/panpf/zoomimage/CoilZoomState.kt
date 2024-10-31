@@ -19,9 +19,9 @@ package com.github.panpf.zoomimage
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import com.github.panpf.zoomimage.coil.CoilModelToImageSource
-import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.compose.ZoomState
+import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.compose.coil.internal.EngineCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
@@ -38,14 +38,14 @@ import kotlinx.collections.immutable.ImmutableList
  */
 @Composable
 fun rememberCoilZoomState(
-    modelToImageSources: ImmutableList<CoilModelToImageSource>? = null,
+    subsamplingImageGenerators: ImmutableList<CoilComposeSubsamplingImageGenerator>? = null,
     logLevel: Level? = null,
 ): CoilZoomState {
     val logger: Logger = rememberZoomImageLogger(tag = "CoilZoomAsyncImage", level = logLevel)
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
-    return remember(logger, zoomableState, subsamplingState, modelToImageSources) {
-        CoilZoomState(logger, zoomableState, subsamplingState, modelToImageSources)
+    return remember(logger, zoomableState, subsamplingState, subsamplingImageGenerators) {
+        CoilZoomState(logger, zoomableState, subsamplingState, subsamplingImageGenerators)
     }
 }
 
@@ -59,8 +59,9 @@ class CoilZoomState(
     logger: Logger,
     zoomable: ZoomableState,
     subsampling: SubsamplingState,
-    modelToImageSources: ImmutableList<CoilModelToImageSource>?
+    subsamplingImageGenerators: ImmutableList<CoilComposeSubsamplingImageGenerator>?
 ) : ZoomState(logger, zoomable, subsampling) {
-    val modelToImageSources: List<CoilModelToImageSource> =
-        modelToImageSources.orEmpty().plus(CoilModelToImageSourceImpl())
+    val subsamplingImageGenerators: List<CoilComposeSubsamplingImageGenerator> =
+        // TODO filter animatable painter
+        subsamplingImageGenerators.orEmpty().plus(EngineCoilComposeSubsamplingImageGenerator())
 }

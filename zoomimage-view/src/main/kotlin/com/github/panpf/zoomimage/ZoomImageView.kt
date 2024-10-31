@@ -28,6 +28,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -153,6 +154,13 @@ open class ZoomImageView @JvmOverloads constructor(
 
 
     /* ********************************* Interact with consumers ******************************** */
+
+    /**
+     * Set subsampling image
+     */
+    fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+        return subsampling.setImage(subsamplingImage)
+    }
 
     /**
      * Set up an image source from which image tile are loaded

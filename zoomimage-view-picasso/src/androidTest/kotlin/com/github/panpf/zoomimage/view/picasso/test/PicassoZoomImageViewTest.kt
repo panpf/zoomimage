@@ -10,7 +10,7 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.PicassoZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
+import com.github.panpf.zoomimage.picasso.PicassoSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.ImageSource.Factory
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -67,33 +67,43 @@ class PicassoZoomImageViewTest {
 
             assertEquals(
                 expected = 0,
-                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
+                    "convertors"
+                )!!.size
             )
 
-            val convertor1 = TestPicassoDataToImageSource()
+            val convertor1 = TestPicassoSubsamplingImageGenerator()
             picassoZoomImageView.registerDataToImageSource(convertor1)
             assertEquals(
                 expected = 1,
-                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
+                    "convertors"
+                )!!.size
             )
 
-            val convertor2 = TestPicassoDataToImageSource()
+            val convertor2 = TestPicassoSubsamplingImageGenerator()
             picassoZoomImageView.registerDataToImageSource(convertor2)
             assertEquals(
                 expected = 2,
-                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
+                    "convertors"
+                )!!.size
             )
 
             picassoZoomImageView.unregisterDataToImageSource(convertor2)
             assertEquals(
                 expected = 1,
-                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
+                    "convertors"
+                )!!.size
             )
 
             picassoZoomImageView.unregisterDataToImageSource(convertor1)
             assertEquals(
                 expected = 0,
-                actual = picassoZoomImageView.getFieldValue<List<PicassoDataToImageSource>>("convertors")!!.size
+                actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
+                    "convertors"
+                )!!.size
             )
         }
     }
@@ -202,7 +212,7 @@ class PicassoZoomImageViewTest {
         }
     }
 
-    class TestPicassoDataToImageSource : PicassoDataToImageSource {
+    class TestPicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
         override suspend fun dataToImageSource(
             context: Context,

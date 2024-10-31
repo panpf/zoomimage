@@ -22,11 +22,11 @@ import android.util.AttributeSet
 import com.bumptech.glide.Glide
 import com.bumptech.glide.getRequestFromView
 import com.bumptech.glide.internalModel
-import com.bumptech.glide.request.SingleRequest
-import com.github.panpf.zoomimage.glide.GlideModelToImageSource
-import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
+import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.glide.GlideTileImageCache
-import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.util.Logger
 import kotlinx.coroutines.launch
 
@@ -51,15 +51,15 @@ open class GlideZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    private val convertors = mutableListOf<GlideModelToImageSource>()
+    private val subsamplingImageGenerators = mutableListOf<GlideSubsamplingImageGenerator>()
     private var resetImageSourceOnAttachedToWindow: Boolean = false
 
-    fun registerModelToImageSource(convertor: GlideModelToImageSource) {
-        convertors.add(0, convertor)
+    fun registerSubsamplingImageGenerator(convertor: GlideSubsamplingImageGenerator) {
+        subsamplingImageGenerators.add(0, convertor)
     }
 
-    fun unregisterModelToImageSource(convertor: GlideModelToImageSource) {
-        convertors.remove(convertor)
+    fun unregisterSubsamplingImageGenerator(convertor: GlideSubsamplingImageGenerator) {
+        subsamplingImageGenerators.remove(convertor)
     }
 
     override fun newLogger(): Logger = Logger(tag = "GlideZoomImageView")
@@ -88,43 +88,40 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 resetImageSourceOnAttachedToWindow = true
                 return@post
             }
+
+            // In order to be consistent with other ZoomImageViews, TileImageCache is also configured here,
+            // although it can be set in the constructor
+            val subsamplingEngine = _subsamplingEngine ?: return@post
+            val tileImageCacheState = subsamplingEngine.tileImageCacheState
+            if (tileImageCacheState.value == null) {
+                tileImageCacheState.value = GlideTileImageCache(Glide.get(context))
+            }
+
             val coroutineScope = coroutineScope!!
             val request = getRequestFromView(this@GlideZoomImageView)
-            _subsamplingEngine?.apply {
-                // In order to be consistent with other ZoomImageViews, TileImageCache is also configured here,
-                // although it can be set in the constructor
-                if (tileImageCacheState.value == null) {
-                    tileImageCacheState.value = GlideTileImageCache(Glide.get(context))
-                }
+            val model: Any? = request?.internalModel
+            if (request != null && request.isComplete && model != null) {
                 coroutineScope.launch {
-                    setImage(newImageSource(request))
+                    // TODO filter animatable painter
+                    val generateResult = subsamplingImageGenerators.plus(
+                        EngineGlideSubsamplingImageGenerator()
+                    ).firstNotNullOfOrNull {
+                        it.generateImage(context, Glide.get(context), model, drawable)
+                    }
+                    if (generateResult is SubsamplingImageGenerateResult.Error) {
+                        logger.d {
+                            "GlideZoomImageView. ${generateResult.message}. model='$model'"
+                        }
+                    }
+                    if (generateResult is SubsamplingImageGenerateResult.Success) {
+                        setImage(generateResult.subsamplingImage)
+                    } else {
+                        setImage(null as SubsamplingImage?)
+                    }
                 }
+            } else {
+                setImage(null as SubsamplingImage?)
             }
         }
-    }
-
-    private suspend fun newImageSource(request: SingleRequest<*>?): ImageSource.Factory? {
-        // TODO filter animatable drawable
-        if (request == null) {
-            logger.d { "GlideZoomImageView. Can't use Subsampling, request is null" }
-            return null
-        }
-        if (!request.isComplete) {
-            logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
-            return null
-        }
-        val model: Any? = request.internalModel
-        if (model == null) {
-            logger.d { "GlideZoomImageView. Can't use Subsampling, model is null" }
-            return null
-        }
-        val imageSource = convertors.plus(GlideModelToImageSourceImpl())
-            .firstNotNullOfOrNull {
-                it.modelToImageSource(context, Glide.get(context), model)
-            }
-        if (imageSource == null) {
-            logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
-        }
-        return imageSource
     }
 }

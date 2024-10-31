@@ -31,21 +31,21 @@ class GlideZoomStateTest {
                 )
                 assertEquals(
                     expected = listOf(GlideModelToImageSourceImpl()).joinToString { it::class.toString() },
-                    actual = zoomState1.modelToImageSources.joinToString { it::class.toString() }
+                    actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
                 val modelToImageSources = remember {
                     listOf(TestGlideModelToImageSource()).toImmutableList()
                 }
                 val zoomState2 = rememberGlideZoomState(
-                    modelToImageSources = modelToImageSources,
+                    subsamplingImageGenerators = modelToImageSources,
                 )
                 assertEquals(
                     expected = listOf(
                         TestGlideModelToImageSource(),
                         GlideModelToImageSourceImpl()
                     ).joinToString { it::class.toString() },
-                    actual = zoomState2.modelToImageSources.joinToString { it::class.toString() }
+                    actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
                 assertEquals(

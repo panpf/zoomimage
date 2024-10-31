@@ -49,10 +49,9 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
-import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import kotlin.math.roundToInt
 
 /**
@@ -410,7 +409,9 @@ private fun onPainterState(
     request: DisplayRequest,
     painterState: PainterState,
 ) {
-    zoomState.zoomable.logger.d { "SketchZoomAsyncImage. onPainterState. state=${painterState.name}. uri='${request.uriString}'" }
+    zoomState.zoomable.logger.d {
+        "SketchZoomAsyncImage. onPainterState. state=${painterState.name}. uri='${request.uriString}'"
+    }
     val painterSize = painterState.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
@@ -418,21 +419,22 @@ private fun onPainterState(
         ?.takeIf { it.isNotEmpty() }
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
-    when (painterState) {
-        is PainterState.Success -> {
-            val imageSource = SketchImageSource.Factory(sketch, request.uriString)
-            val imageInfo = ImageInfo(
-                width = painterState.result.imageInfo.width,
-                height = painterState.result.imageInfo.height,
-                mimeType = painterState.result.imageInfo.mimeType
-            )
-            // TODO filter animatable painter
-            zoomState.setImage(imageSource, imageInfo)
+    if (painterState is PainterState.Success) {
+        val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
+            it.generateImage(sketch, request, painterState.result, painterState.painter)
         }
-
-        else -> {
-            zoomState.setImage(null as ImageSource?)
+        if (generateResult is SubsamplingImageGenerateResult.Error) {
+            zoomState.subsampling.logger.d {
+                "SketchZoomAsyncImage. ${generateResult.message}. uri='${request.uriString}'"
+            }
         }
+        if (generateResult is SubsamplingImageGenerateResult.Success) {
+            zoomState.setImage(generateResult.subsamplingImage)
+        } else {
+            zoomState.setImage(null as SubsamplingImage?)
+        }
+    } else {
+        zoomState.setImage(null as SubsamplingImage?)
     }
 }
 

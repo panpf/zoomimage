@@ -37,6 +37,13 @@ class KeyTestScreen : BaseScreen() {
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
             }
+//            val size = with(LocalDensity.current) { 200.toDp() }
+//            SketchZoomAsyncImage(
+//                uri = ResourceImages.anim.uri,
+//                contentDescription = "Anim",
+//                modifier = Modifier.size(size),
+//                zoomState = rememberSketchZoomState(logLevel = Logger.Level.Debug)
+//            )
         }
     }
 }

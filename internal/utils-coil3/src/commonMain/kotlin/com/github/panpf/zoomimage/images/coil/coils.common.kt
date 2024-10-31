@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.images.coil
 
 import coil3.Uri
 import coil3.pathSegments
-import com.github.panpf.zoomimage.coil.CoilModelToImageSource
+import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -16,4 +16,4 @@ fun isKotlinResourceUri(uri: Uri): Boolean =
             && "kotlin_resource"
         .equals(uri.pathSegments.firstOrNull(), ignoreCase = true)
 
-expect fun platformModeToImageSources(): ImmutableList<CoilModelToImageSource>
+expect fun platformComposeSubsamplingImageGenerators(): ImmutableList<CoilComposeSubsamplingImageGenerator>

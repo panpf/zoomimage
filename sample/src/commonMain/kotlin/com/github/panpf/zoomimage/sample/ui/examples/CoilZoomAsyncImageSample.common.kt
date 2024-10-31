@@ -13,9 +13,9 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
 import coil3.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
-import com.github.panpf.zoomimage.coil.CoilModelToImageSource
+import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.rememberCoilZoomState
-import com.github.panpf.zoomimage.sample.image.CoilComposeResourceToImageSource
+import com.github.panpf.zoomimage.sample.image.CoilComposeResourceSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
@@ -23,7 +23,7 @@ import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.collections.immutable.toImmutableList
 
-expect fun platformCoilModelToImageSource(): List<CoilModelToImageSource>?
+expect fun platformCoilComposeSubsamplingImageGenerator(): List<CoilComposeSubsamplingImageGenerator>?
 
 @Composable
 fun CoilZoomAsyncImageSample(
@@ -36,11 +36,11 @@ fun CoilZoomAsyncImageSample(
         photoPaletteState = photoPaletteState,
         createZoomState = {
             val extensionsModelToImageSources = remember {
-                platformCoilModelToImageSource().orEmpty()
-                    .plus(CoilComposeResourceToImageSource())
+                platformCoilComposeSubsamplingImageGenerator().orEmpty()
+                    .plus(CoilComposeResourceSubsamplingImageGenerator())
                     .toImmutableList()
             }
-            rememberCoilZoomState(modelToImageSources = extensionsModelToImageSources)
+            rememberCoilZoomState(subsamplingImageGenerators = extensionsModelToImageSources)
         },
         pageSelected = pageSelected,
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->

@@ -50,7 +50,8 @@ import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.glide.GlideTileImageCache
-import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -209,13 +210,15 @@ private class ResetListener(
     private val model: Any?,
 ) : RequestListener<Drawable> {
 
+    private val logger = zoomState.zoomable.logger
+
     override fun onLoadFailed(
         e: GlideException?,
         model: Any?,
         target: Target<Drawable>,
         isFirstResource: Boolean
     ): Boolean {
-        zoomState.zoomable.logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
+        logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
         reset(resource = null)
         return false
     }
@@ -227,7 +230,7 @@ private class ResetListener(
         dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
-        zoomState.zoomable.logger.d { "GlideZoomAsyncImage. onResourceReady. model='$model', resource=$resource" }
+        logger.d { "GlideZoomAsyncImage. onResourceReady. resource=$resource. model='$model'" }
         reset(resource = resource)
         return false
     }
@@ -239,25 +242,22 @@ private class ResetListener(
         zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
         coroutineScope.launch {
-            zoomState.setImage(newImageSource(resource, model))
+            if (model != null && resource != null) {
+                val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
+                    it.generateImage(context, glide, model, resource)
+                }
+                if (generateResult is SubsamplingImageGenerateResult.Error) {
+                    logger.d { "GlideZoomAsyncImage. ${generateResult.message}. model='$model'" }
+                }
+                if (generateResult is SubsamplingImageGenerateResult.Success) {
+                    zoomState.setImage(generateResult.subsamplingImage)
+                } else {
+                    zoomState.setImage(null as SubsamplingImage?)
+                }
+            } else {
+                zoomState.setImage(null as SubsamplingImage?)
+            }
         }
-    }
-
-    private suspend fun newImageSource(resource: Drawable?, model: Any?): ImageSource.Factory? {
-        if (resource == null) {
-            return null
-        }
-        if (model == null) {
-            return null
-        }
-        val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {
-            it.modelToImageSource(context, glide, model)
-        }
-        if (imageSource == null) {
-            zoomState.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
-        }
-        // TODO filter animatable painter
-        return imageSource
     }
 }
 

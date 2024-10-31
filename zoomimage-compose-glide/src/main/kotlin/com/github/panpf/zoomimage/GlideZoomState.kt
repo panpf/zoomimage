@@ -25,8 +25,8 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
-import com.github.panpf.zoomimage.glide.GlideModelToImageSource
-import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
+import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.Logger.Level
 import kotlinx.collections.immutable.ImmutableList
@@ -38,14 +38,14 @@ import kotlinx.collections.immutable.ImmutableList
  */
 @Composable
 fun rememberGlideZoomState(
-    modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
+    subsamplingImageGenerators: ImmutableList<GlideSubsamplingImageGenerator>? = null,
     logLevel: Level? = null,
 ): GlideZoomState {
     val logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage", level = logLevel)
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
-    return remember(logger, zoomableState, subsamplingState, modelToImageSources) {
-        GlideZoomState(logger, zoomableState, subsamplingState, modelToImageSources)
+    return remember(logger, zoomableState, subsamplingState, subsamplingImageGenerators) {
+        GlideZoomState(logger, zoomableState, subsamplingState, subsamplingImageGenerators)
     }
 }
 
@@ -59,9 +59,10 @@ class GlideZoomState(
     logger: Logger,
     zoomable: ZoomableState,
     subsampling: SubsamplingState,
-    modelToImageSources: ImmutableList<GlideModelToImageSource>?
+    subsamplingImageGenerators: ImmutableList<GlideSubsamplingImageGenerator>?
 ) : ZoomState(logger, zoomable, subsampling) {
 
-    val modelToImageSources: List<GlideModelToImageSource> =
-        modelToImageSources.orEmpty().plus(GlideModelToImageSourceImpl())
+    val subsamplingImageGenerators: List<GlideSubsamplingImageGenerator> =
+        // TODO filter animatable painter
+        subsamplingImageGenerators.orEmpty().plus(EngineGlideSubsamplingImageGenerator())
 }

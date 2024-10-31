@@ -219,7 +219,7 @@ class SubsamplingState(
     /**
      * Set subsampling image
      */
-    private fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+    fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
         if (this.subsamplingImage == subsamplingImage) return false
         logger.d { "SubsamplingState. setImage. '${this.subsamplingImage}' -> '${subsamplingImage}'" }
         clean("setImage")

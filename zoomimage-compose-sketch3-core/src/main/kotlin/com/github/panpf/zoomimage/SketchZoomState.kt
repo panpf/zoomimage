@@ -21,12 +21,15 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
+import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.compose.sketch.internal.EngineSketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.Logger.Level
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * Creates and remember a [SketchZoomState]
@@ -34,12 +37,15 @@ import com.github.panpf.zoomimage.util.Logger.Level
  * @see com.github.panpf.zoomimage.compose.sketch3.core.test.SketchZoomStateTest.testRememberSketchZoomState
  */
 @Composable
-fun rememberSketchZoomState(logLevel: Level? = null): SketchZoomState {
+fun rememberSketchZoomState(
+    subsamplingImageGenerators: ImmutableList<SketchComposeSubsamplingImageGenerator>? = null,
+    logLevel: Level? = null
+): SketchZoomState {
     val logger: Logger = rememberZoomImageLogger(tag = "SketchZoomAsyncImage", level = logLevel)
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
-    return remember(logger, zoomableState, subsamplingState) {
-        SketchZoomState(logger, zoomableState, subsamplingState)
+    return remember(logger, zoomableState, subsamplingState, subsamplingImageGenerators) {
+        SketchZoomState(logger, zoomableState, subsamplingState, subsamplingImageGenerators)
     }
 }
 
@@ -52,5 +58,16 @@ fun rememberSketchZoomState(logLevel: Level? = null): SketchZoomState {
 class SketchZoomState(
     logger: Logger,
     zoomable: ZoomableState,
-    subsampling: SubsamplingState
-) : ZoomState(logger, zoomable, subsampling)
+    subsampling: SubsamplingState,
+    subsamplingImageGenerators: ImmutableList<SketchComposeSubsamplingImageGenerator>?
+) : ZoomState(logger, zoomable, subsampling) {
+
+    val subsamplingImageGenerators: List<SketchComposeSubsamplingImageGenerator> =
+        subsamplingImageGenerators.orEmpty().plus(
+            listOf(
+                // TODO filter animatable drawable
+//                AnimatableComposeSketchSubsamplingImageGenerator(),
+                EngineSketchComposeSubsamplingImageGenerator()
+            )
+        )
+}

@@ -11,7 +11,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.internal.testCore)
-            api(projects.internal.utilsCoil3)
             api(libs.coil3)
         }
     }
