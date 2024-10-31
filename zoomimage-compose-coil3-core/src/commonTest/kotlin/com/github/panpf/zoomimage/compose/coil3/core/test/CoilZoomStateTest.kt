@@ -1,11 +1,17 @@
 package com.github.panpf.zoomimage.compose.coil3.core.test
 
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
-import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
-import com.github.panpf.zoomimage.images.coil.TestCoilModelToImageSource
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.compose.coil.internal.EngineCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.rememberCoilZoomState
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.util.Logger.Level.Debug
 import com.github.panpf.zoomimage.util.Logger.Level.Info
@@ -26,20 +32,20 @@ class CoilZoomStateTest {
                     actual = zoomState1.logger.tag
                 )
                 assertEquals(
-                    expected = listOf(CoilModelToImageSourceImpl()).joinToString { it::class.toString() },
+                    expected = listOf(EngineCoilComposeSubsamplingImageGenerator()).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
                 val modelToImageSources = remember {
-                    listOf(TestCoilModelToImageSource()).toImmutableList()
+                    listOf(TestCoilComposeSubsamplingImageGenerator()).toImmutableList()
                 }
                 val zoomState2 = rememberCoilZoomState(
                     subsamplingImageGenerators = modelToImageSources,
                 )
                 assertEquals(
                     expected = listOf(
-                        TestCoilModelToImageSource(),
-                        CoilModelToImageSourceImpl()
+                        TestCoilComposeSubsamplingImageGenerator(),
+                        EngineCoilComposeSubsamplingImageGenerator()
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
@@ -54,6 +60,19 @@ class CoilZoomStateTest {
                     actual = zoomState3.logger.level
                 )
             }
+        }
+    }
+
+    class TestCoilComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGenerator {
+
+        override suspend fun generateImage(
+            context: PlatformContext,
+            imageLoader: ImageLoader,
+            request: ImageRequest,
+            result: SuccessResult,
+            painter: Painter
+        ): SubsamplingImageGenerateResult? {
+            return null
         }
     }
 }

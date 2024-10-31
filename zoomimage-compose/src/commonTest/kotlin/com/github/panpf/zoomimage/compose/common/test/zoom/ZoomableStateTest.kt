@@ -1778,7 +1778,7 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1f),
-                    offset = Offset(-1f, -0f),
+                    offset = Offset(-1f, 0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
@@ -1868,7 +1868,7 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(53.09f),
-                    offset = Offset(-12955.0f, -0.0f),
+                    offset = Offset(-12955.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
@@ -2019,7 +2019,7 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1f),
-                    offset = Offset(-1.0f, -0f),
+                    offset = Offset(-1.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
@@ -2181,7 +2181,7 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1f),
-                    offset = Offset(-1.0f, -0f),
+                    offset = Offset(-1.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
@@ -2233,7 +2233,7 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(17.7f),
-                    offset = Offset(-4318.0f, -0f),
+                    offset = Offset(-4318.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
@@ -2627,7 +2627,7 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1.0f),
-                    offset = Offset(-0.0f, 0.0f),
+                    offset = Offset(0f, 0.0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
@@ -2719,7 +2719,7 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1.0f),
-                    offset = Offset(-0.0f, 0.0f),
+                    offset = Offset(0f, 0.0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )

@@ -52,7 +52,7 @@ class GlideZoomImageViewTest {
     }
 
     @Test
-    fun testRegisterModelToImageSource() = runTest {
+    fun testregisterSubsamplingImageGenerator() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val glideZoomImageView = withContext(Dispatchers.Main) {
@@ -65,33 +65,33 @@ class GlideZoomImageViewTest {
 
             assertEquals(
                 expected = 0,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
             )
 
             val convertor1 = TestGlideModelToImageSource()
-            glideZoomImageView.registerModelToImageSource(convertor1)
+            glideZoomImageView.registerSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 1,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
             )
 
             val convertor2 = TestGlideModelToImageSource()
-            glideZoomImageView.registerModelToImageSource(convertor2)
+            glideZoomImageView.registerSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 2,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
             )
 
-            glideZoomImageView.unregisterModelToImageSource(convertor2)
+            glideZoomImageView.unregisterSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 1,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
             )
 
-            glideZoomImageView.unregisterModelToImageSource(convertor1)
+            glideZoomImageView.unregisterSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 0,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("convertors")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
             )
         }
     }

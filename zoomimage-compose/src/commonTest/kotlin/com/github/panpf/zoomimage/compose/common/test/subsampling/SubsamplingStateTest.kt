@@ -14,6 +14,7 @@ import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
@@ -80,13 +81,16 @@ class SubsamplingStateTest {
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(expected = null, actual = subsampling.imageKey)
 
-        subsampling.setImageSource(TestImageSource())
-        assertEquals(expected = "TestImageSource", actual = subsampling.imageKey)
+        subsampling.setImage(TestImageSource())
+        assertEquals(expected = "TestImageSource&imageInfo=null", actual = subsampling.imageKey)
 
-        subsampling.setImageSource(TestImageSource("TestImageSource2"))
-        assertEquals(expected = "TestImageSource2", actual = subsampling.imageKey)
+        subsampling.setImage(TestImageSource("TestImageSource2"), ImageInfo(101, 202, "image/jpeg"))
+        assertEquals(
+            expected = "TestImageSource2&imageInfo=ImageInfo(size=101x202, mimeType='image/jpeg')",
+            actual = subsampling.imageKey
+        )
 
-        subsampling.setImageSource(null as TestImageSource?)
+        subsampling.setImage(null as TestImageSource?)
         assertEquals(expected = null, actual = subsampling.imageKey)
     }
 
@@ -205,7 +209,7 @@ class SubsamplingStateTest {
                     val zoomable = rememberZoomableState(logger)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -227,7 +231,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -273,7 +277,7 @@ class SubsamplingStateTest {
                     val zoomable = rememberZoomableState(logger)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -298,7 +302,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -342,7 +346,7 @@ class SubsamplingStateTest {
                     val zoomable = rememberZoomableState(logger)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -364,7 +368,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -428,7 +432,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -455,7 +459,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -490,7 +494,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -511,7 +515,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -539,7 +543,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -574,7 +578,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
             waitMillis(100)
@@ -595,7 +599,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -623,7 +627,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -658,7 +662,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -677,7 +681,7 @@ class SubsamplingStateTest {
             assertEquals(expected = "IntRect.fromLTRB(127, 5871, 563, 6305)", actual = subsampling.imageLoadRect.toString())
             assertEquals(expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')", actual = subsampling.imageInfo.toString())
 
-            subsampling.setImageSource(null as ImageSource?)
+            subsampling.setImage(null as ImageSource?)
             waitMillis(1000)
             assertEquals(expected = "{}", actual = subsampling.tileGridSizeMap.toString())
             assertEquals(expected = 0, actual = subsampling.foregroundTiles.size)
@@ -704,7 +708,7 @@ class SubsamplingStateTest {
                     zoomable.contentSize = IntSize(86, 1522)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {

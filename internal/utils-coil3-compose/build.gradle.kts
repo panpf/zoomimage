@@ -5,14 +5,14 @@ plugins {
 
 addAllMultiplatformTargets()
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.coil")
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.utils.coil3.compose")
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.internal.testCore)
+            api(projects.zoomimageComposeCoil3Core)
             api(projects.internal.utilsCoil3)
-            api(libs.coil3)
+            api(libs.kotlinx.collections.immutable)
         }
     }
 }

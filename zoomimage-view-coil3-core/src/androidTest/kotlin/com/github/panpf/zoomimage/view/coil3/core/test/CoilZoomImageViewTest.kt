@@ -2,10 +2,14 @@ package com.github.panpf.zoomimage.view.coil3.core.test
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.test.platform.app.InstrumentationRegistry
+import coil3.ImageLoader
+import coil3.PlatformContext
 import coil3.load
 import coil3.request.ErrorResult
+import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.util.CoilUtils
 import com.githb.panpf.zoomimage.images.ResourceImages
@@ -13,10 +17,10 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.CoilZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.coil.CoilModelToImageSource
-import com.github.panpf.zoomimage.images.coil.TestCoilModelToImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
+import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
@@ -54,7 +58,7 @@ class CoilZoomImageViewTest {
     }
 
     @Test
-    fun testRegisterModelToImageSource() = runTest {
+    fun testregisterSubsamplingImageGenerator() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val coilZoomImageView = withContext(Dispatchers.Main) {
@@ -67,33 +71,33 @@ class CoilZoomImageViewTest {
 
             assertEquals(
                 expected = 0,
-                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor1 = TestCoilModelToImageSource()
-            coilZoomImageView.registerModelToImageSource(convertor1)
+            val convertor1 = TestCoilComposeSubsamplingImageGenerator()
+            coilZoomImageView.registerSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 1,
-                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor2 = TestCoilModelToImageSource()
-            coilZoomImageView.registerModelToImageSource(convertor2)
+            val convertor2 = TestCoilComposeSubsamplingImageGenerator()
+            coilZoomImageView.registerSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 2,
-                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            coilZoomImageView.unregisterModelToImageSource(convertor2)
+            coilZoomImageView.unregisterSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 1,
-                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            coilZoomImageView.unregisterModelToImageSource(convertor1)
+            coilZoomImageView.unregisterSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 0,
-                actual = coilZoomImageView.getFieldValue<List<CoilModelToImageSource>>("convertors")!!.size
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
         }
     }
@@ -279,6 +283,19 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = CoilUtils.getImageLoader(coilZoomImageView))
             assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertTrue(actual = coilZoomImageView.subsampling.readyState.value)
+        }
+    }
+
+    class TestCoilComposeSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
+
+        override suspend fun generateImage(
+            context: PlatformContext,
+            imageLoader: ImageLoader,
+            request: ImageRequest,
+            result: SuccessResult,
+            drawable: Drawable
+        ): SubsamplingImageGenerateResult? {
+            return null
         }
     }
 }

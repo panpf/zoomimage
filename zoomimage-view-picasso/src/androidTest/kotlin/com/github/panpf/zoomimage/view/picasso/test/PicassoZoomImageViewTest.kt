@@ -68,41 +68,41 @@ class PicassoZoomImageViewTest {
             assertEquals(
                 expected = 0,
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
-                    "convertors"
+                    "subsamplingImageGenerators"
                 )!!.size
             )
 
             val convertor1 = TestPicassoSubsamplingImageGenerator()
-            picassoZoomImageView.registerDataToImageSource(convertor1)
+            picassoZoomImageView.registerSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 1,
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
-                    "convertors"
+                    "subsamplingImageGenerators"
                 )!!.size
             )
 
             val convertor2 = TestPicassoSubsamplingImageGenerator()
-            picassoZoomImageView.registerDataToImageSource(convertor2)
+            picassoZoomImageView.registerSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 2,
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
-                    "convertors"
+                    "subsamplingImageGenerators"
                 )!!.size
             )
 
-            picassoZoomImageView.unregisterDataToImageSource(convertor2)
+            picassoZoomImageView.unregisterSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 1,
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
-                    "convertors"
+                    "subsamplingImageGenerators"
                 )!!.size
             )
 
-            picassoZoomImageView.unregisterDataToImageSource(convertor1)
+            picassoZoomImageView.unregisterSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 0,
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
-                    "convertors"
+                    "subsamplingImageGenerators"
                 )!!.size
             )
         }

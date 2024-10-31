@@ -4,7 +4,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.toUri
 import com.github.panpf.zoomimage.coil.CoilHttpImageSource
-import com.github.panpf.zoomimage.coil.internal.modelToImageSource
+import com.github.panpf.zoomimage.coil.internal.dataToImageSource
 import com.github.panpf.zoomimage.subsampling.ByteArrayImageSource
 import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
@@ -16,18 +16,18 @@ import kotlin.test.assertEquals
 class CoilCoreUtilsJsCommonTest {
 
     @Test
-    fun testModelToImageSource() = runTest {
+    fun testDataToImageSource() = runTest {
         val context = PlatformContext.INSTANCE
         val imageLoader = ImageLoader.Builder(context).build()
         try {
             val httpUri = "http://www.example.com/image.jpg"
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource(context, imageLoader, httpUri)
+                actual = dataToImageSource(context, imageLoader, httpUri)
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource(
+                actual = dataToImageSource(
                     context,
                     imageLoader,
                     httpUri.toUri()
@@ -37,11 +37,11 @@ class CoilCoreUtilsJsCommonTest {
             val httpsUri = "https://www.example.com/image.jpg"
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource(context, imageLoader, httpsUri)
+                actual = dataToImageSource(context, imageLoader, httpsUri)
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource(
+                actual = dataToImageSource(
                     context,
                     imageLoader,
                     httpsUri.toUri()
@@ -51,11 +51,11 @@ class CoilCoreUtilsJsCommonTest {
             val pathUri = "/sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = modelToImageSource(context, imageLoader, pathUri)
+                actual = dataToImageSource(context, imageLoader, pathUri)
             )
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = modelToImageSource(
+                actual = dataToImageSource(
                     context,
                     imageLoader,
                     pathUri.toUri()
@@ -65,11 +65,11 @@ class CoilCoreUtilsJsCommonTest {
             val fileUri = "file:///sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = modelToImageSource(context, imageLoader, fileUri)
+                actual = dataToImageSource(context, imageLoader, fileUri)
             )
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = modelToImageSource(
+                actual = dataToImageSource(
                     context,
                     imageLoader,
                     fileUri.toUri()
@@ -79,13 +79,13 @@ class CoilCoreUtilsJsCommonTest {
             val path = "/sdcard/image.jpg".toPath()
             assertEquals(
                 expected = FileImageSource(path).toFactory(),
-                actual = modelToImageSource(context, imageLoader, path)
+                actual = dataToImageSource(context, imageLoader, path)
             )
 
             val byteArray = "Hello".encodeToByteArray()
             assertEquals(
                 expected = ByteArrayImageSource(byteArray).toFactory(),
-                actual = modelToImageSource(context, imageLoader, byteArray)
+                actual = dataToImageSource(context, imageLoader, byteArray)
             )
         } finally {
             imageLoader.shutdown()

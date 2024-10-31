@@ -10,8 +10,7 @@ androidLibrary(nameSpace = "com.github.panpf.zoomimage.utils.coil3")
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.zoomimageComposeCoil3Core)
-            api(libs.kotlinx.collections.immutable)
+            api(projects.zoomimageCoreCoil3)
         }
     }
 }

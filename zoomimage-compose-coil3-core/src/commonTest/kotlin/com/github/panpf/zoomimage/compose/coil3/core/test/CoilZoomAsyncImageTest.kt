@@ -23,7 +23,7 @@ import coil3.size.Precision.EXACT
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
-import com.github.panpf.zoomimage.images.coil.platformModeToImageSources
+import com.github.panpf.zoomimage.images.coil.platformComposeSubsamplingImageGenerators
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.Platform.iOS
@@ -56,8 +56,9 @@ class CoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val modelToImageSources = remember { platformModeToImageSources() }
-                        val zoomState = rememberCoilZoomState(modelToImageSources)
+                        val subsamplingImageGenerators =
+                            remember { platformComposeSubsamplingImageGenerators() }
+                        val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
@@ -128,8 +129,9 @@ class CoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val modelToImageSources = remember { platformModeToImageSources() }
-                        val zoomState = rememberCoilZoomState(modelToImageSources)
+                        val subsamplingImageGenerators =
+                            remember { platformComposeSubsamplingImageGenerators() }
+                        val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
@@ -202,8 +204,9 @@ class CoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val modelToImageSources = remember { platformModeToImageSources() }
-                        val zoomState = rememberCoilZoomState(modelToImageSources)
+                        val subsamplingImageGenerators =
+                            remember { platformComposeSubsamplingImageGenerators() }
+                        val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
@@ -274,8 +277,9 @@ class CoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val modelToImageSources = remember { platformModeToImageSources() }
-                        val zoomState = rememberCoilZoomState(modelToImageSources)
+                        val subsamplingImageGenerators =
+                            remember { platformComposeSubsamplingImageGenerators() }
+                        val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {

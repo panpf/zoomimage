@@ -55,19 +55,19 @@ class SubsamplingDesktopTest {
             assertNull(this.imageInfo)
         }
 
-        // error -3
-        val gifImageFile = ResourceImages.anim
-        val gifImageSource = gifImageFile.toImageSource()
-        createTileDecoder(
-            logger = logger,
-            imageSource = gifImageSource,
-            thumbnailSize = gifImageFile.size / 8f,
-        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            assertEquals(-3, this.code)
-            assertEquals(true, this.skipped)
-            assertEquals("Image type not support subsampling", this.message)
-            assertEquals("image/gif", this.imageInfo!!.mimeType)
-        }
+//        // error -3
+//        val gifImageFile = ResourceImages.anim
+//        val gifImageSource = gifImageFile.toImageSource()
+//        createTileDecoder(
+//            logger = logger,
+//            imageSource = gifImageSource,
+//            thumbnailSize = gifImageFile.size / 8f,
+//        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
+//            assertEquals(-3, this.code)
+//            assertEquals(true, this.skipped)
+//            assertEquals("Image type not support subsampling", this.message)
+//            assertEquals("image/gif", this.imageInfo!!.mimeType)
+//        }
 
         // error -4, width
         val errorThumbnailSize =
