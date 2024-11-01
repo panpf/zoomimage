@@ -64,5 +64,5 @@ class GlideZoomState(
 
     val subsamplingImageGenerators: List<GlideSubsamplingImageGenerator> =
         // TODO filter animatable painter
-        subsamplingImageGenerators.orEmpty().plus(EngineGlideSubsamplingImageGenerator())
+        subsamplingImageGenerators.orEmpty().plus(EngineGlideSubsamplingImageGenerator)
 }

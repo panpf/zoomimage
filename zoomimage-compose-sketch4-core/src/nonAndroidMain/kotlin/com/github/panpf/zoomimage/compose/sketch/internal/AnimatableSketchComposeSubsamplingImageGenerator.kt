@@ -7,7 +7,7 @@ import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
-actual class AnimatableSketchComposeSubsamplingImageGenerator :
+actual data object AnimatableSketchComposeSubsamplingImageGenerator :
     SketchComposeSubsamplingImageGenerator {
 
     actual override fun generateImage(
