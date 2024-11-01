@@ -100,7 +100,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
             val coroutineScope = coroutineScope!!
             val request = getRequestFromView(this@GlideZoomImageView)
             val model: Any? = request?.internalModel
-            if (request != null && request.isComplete && model != null) {
+            val drawable = drawable
+            if (request != null && request.isComplete && model != null && drawable != null) {
                 coroutineScope.launch {
                     val generateResult = subsamplingImageGenerators
                         // TODO filter animatable painter
