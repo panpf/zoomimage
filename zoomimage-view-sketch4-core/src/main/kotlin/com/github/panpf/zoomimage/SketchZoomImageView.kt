@@ -27,7 +27,9 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.sketch.SketchViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
+import com.github.panpf.zoomimage.view.sketch.internal.AnimatableSketchViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.sketch.internal.EngineSketchViewSubsamplingImageGenerator
+import kotlinx.coroutines.launch
 
 /**
  * An ImageView that integrates the Sketch image loading framework that zoom and subsampling huge images
@@ -50,15 +52,22 @@ open class SketchZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AbsStateZoomImageView(context, attrs, defStyle) {
 
-    private val subsamplingImageGenerators = mutableListOf<SketchViewSubsamplingImageGenerator>()
+    private val defaultSubsamplingImageGenerators = listOf(
+        AnimatableSketchViewSubsamplingImageGenerator,
+        EngineSketchViewSubsamplingImageGenerator
+    )
+    private var subsamplingImageGenerators: List<SketchViewSubsamplingImageGenerator> =
+        defaultSubsamplingImageGenerators
     private var resetImageSourceOnAttachedToWindow: Boolean = false
 
-    fun registerSubsamplingImageGenerator(convertor: SketchViewSubsamplingImageGenerator) {
-        subsamplingImageGenerators.add(0, convertor)
+    fun setSubsamplingImageGenerators(subsamplingImageGenerators: List<SketchViewSubsamplingImageGenerator>?) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.orEmpty() + defaultSubsamplingImageGenerators
     }
 
-    fun unregisterSubsamplingImageGenerator(convertor: SketchViewSubsamplingImageGenerator) {
-        subsamplingImageGenerators.remove(convertor)
+    fun setSubsamplingImageGenerators(vararg subsamplingImageGenerators: SketchViewSubsamplingImageGenerator) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.toList() + defaultSubsamplingImageGenerators
     }
 
     override fun newLogger(): Logger = Logger(tag = "SketchZoomImageView")
@@ -98,22 +107,22 @@ open class SketchZoomImageView @JvmOverloads constructor(
             val result = SketchUtils.getResult(this)
             val drawable = drawable
             if (sketch != null && result is ImageResult.Success && drawable != null) {
-                val request = result.request
-                val generateResult = subsamplingImageGenerators
-                    // TODO filter animatable drawable
-                    .plus(EngineSketchViewSubsamplingImageGenerator)
-                    .firstNotNullOfOrNull {
+                val coroutineScope = coroutineScope!!
+                coroutineScope.launch {
+                    val request = result.request
+                    val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
                         it.generateImage(sketch, request, result, drawable)
                     }
-                if (generateResult is SubsamplingImageGenerateResult.Error) {
-                    logger.d {
-                        "SketchZoomImageView. ${generateResult.message}. uri='${request.uri}'"
+                    if (generateResult is SubsamplingImageGenerateResult.Error) {
+                        logger.d {
+                            "SketchZoomImageView. ${generateResult.message}. uri='${request.uri}'"
+                        }
                     }
-                }
-                if (generateResult is SubsamplingImageGenerateResult.Success) {
-                    setSubsamplingImage(generateResult.subsamplingImage)
-                } else {
-                    setSubsamplingImage(null as SubsamplingImage?)
+                    if (generateResult is SubsamplingImageGenerateResult.Success) {
+                        setSubsamplingImage(generateResult.subsamplingImage)
+                    } else {
+                        setSubsamplingImage(null as SubsamplingImage?)
+                    }
                 }
             } else {
                 setSubsamplingImage(null as SubsamplingImage?)

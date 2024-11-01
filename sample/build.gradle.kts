@@ -101,6 +101,7 @@ kotlin {
             implementation(libs.androidx.navigation.ui)
             implementation(libs.androidx.recyclerview)
             implementation(libs.androidx.swiperefreshlayout)
+            implementation(libs.coil3.gif)
             implementation(libs.google.material)
             implementation(libs.moko.permissions)
             implementation(libs.panpf.assemblyadapter4.pager2)

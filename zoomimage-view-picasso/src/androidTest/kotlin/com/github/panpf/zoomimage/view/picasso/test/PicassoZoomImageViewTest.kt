@@ -12,6 +12,7 @@ import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.PicassoZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.picasso.PicassoSubsamplingImageGenerator
+import com.github.panpf.zoomimage.picasso.internal.EnginePicassoSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -55,7 +56,7 @@ class PicassoZoomImageViewTest {
     }
 
     @Test
-    fun testRegisterDataToImageSource() = runTest {
+    fun testSetSubsamplingImageGenerators() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val picassoZoomImageView = withContext(Dispatchers.Main) {
@@ -67,44 +68,34 @@ class PicassoZoomImageViewTest {
             Thread.sleep(100)
 
             assertEquals(
-                expected = 0,
+                expected = listOf(
+                    EnginePicassoSubsamplingImageGenerator
+                ),
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
-                )!!.size
+                )!!
             )
 
             val convertor1 = TestPicassoSubsamplingImageGenerator
-            picassoZoomImageView.registerSubsamplingImageGenerator(convertor1)
+            picassoZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
-                expected = 1,
+                expected = listOf(
+                    TestPicassoSubsamplingImageGenerator,
+                    EnginePicassoSubsamplingImageGenerator
+                ),
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
-                )!!.size
+                )
             )
 
-            val convertor2 = TestPicassoSubsamplingImageGenerator
-            picassoZoomImageView.registerSubsamplingImageGenerator(convertor2)
+            picassoZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
-                expected = 2,
+                expected = listOf(
+                    EnginePicassoSubsamplingImageGenerator
+                ),
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
-                )!!.size
-            )
-
-            picassoZoomImageView.unregisterSubsamplingImageGenerator(convertor2)
-            assertEquals(
-                expected = 1,
-                actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
-                    "subsamplingImageGenerators"
-                )!!.size
-            )
-
-            picassoZoomImageView.unregisterSubsamplingImageGenerator(convertor1)
-            assertEquals(
-                expected = 0,
-                actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
-                    "subsamplingImageGenerators"
-                )!!.size
+                )!!
             )
         }
     }

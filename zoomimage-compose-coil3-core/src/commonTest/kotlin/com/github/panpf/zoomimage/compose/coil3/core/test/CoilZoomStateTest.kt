@@ -9,6 +9,7 @@ import coil3.PlatformContext
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.compose.coil.internal.AnimatableCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.coil.internal.EngineCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -32,7 +33,10 @@ class CoilZoomStateTest {
                     actual = zoomState1.logger.tag
                 )
                 assertEquals(
-                    expected = listOf(EngineCoilComposeSubsamplingImageGenerator).joinToString { it::class.toString() },
+                    expected = listOf(
+                        AnimatableCoilComposeSubsamplingImageGenerator,
+                        EngineCoilComposeSubsamplingImageGenerator
+                    ).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
@@ -45,6 +49,7 @@ class CoilZoomStateTest {
                 assertEquals(
                     expected = listOf(
                         TestCoilComposeSubsamplingImageGenerator,
+                        AnimatableCoilComposeSubsamplingImageGenerator,
                         EngineCoilComposeSubsamplingImageGenerator
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }

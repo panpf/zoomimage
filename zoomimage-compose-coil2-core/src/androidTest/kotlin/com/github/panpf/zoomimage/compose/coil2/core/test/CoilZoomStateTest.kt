@@ -8,6 +8,7 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.compose.coil.internal.AnimatableCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.coil.internal.EngineCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -32,11 +33,14 @@ class CoilZoomStateTest {
                     expected = "CoilZoomAsyncImage",
                     actual = zoomState1.logger.tag
                 )
+
                 assertEquals(
-                    expected = listOf(EngineCoilComposeSubsamplingImageGenerator).joinToString { it::class.toString() },
+                    expected = listOf(
+                        AnimatableCoilComposeSubsamplingImageGenerator,
+                        EngineCoilComposeSubsamplingImageGenerator
+                    ).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
-
                 val subsamplingImageGenerators = remember {
                     listOf(TestCoilComposeSubsamplingImageGenerator).toImmutableList()
                 }
@@ -46,6 +50,7 @@ class CoilZoomStateTest {
                 assertEquals(
                     expected = listOf(
                         TestCoilComposeSubsamplingImageGenerator,
+                        AnimatableCoilComposeSubsamplingImageGenerator,
                         EngineCoilComposeSubsamplingImageGenerator
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }

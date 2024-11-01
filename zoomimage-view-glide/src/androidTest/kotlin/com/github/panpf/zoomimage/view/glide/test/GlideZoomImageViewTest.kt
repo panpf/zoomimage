@@ -14,6 +14,8 @@ import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.GlideZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.glide.internal.AnimatableGlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -53,7 +55,7 @@ class GlideZoomImageViewTest {
     }
 
     @Test
-    fun testRegisterSubsamplingImageGenerator() = runTest {
+    fun testSetSubsamplingImageGenerators() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val glideZoomImageView = withContext(Dispatchers.Main) {
@@ -65,34 +67,31 @@ class GlideZoomImageViewTest {
             Thread.sleep(100)
 
             assertEquals(
-                expected = 0,
-                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
+                expected = listOf(
+                    AnimatableGlideSubsamplingImageGenerator,
+                    EngineGlideSubsamplingImageGenerator
+                ),
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
 
             val convertor1 = TestGlideSubsamplingImageGenerator
-            glideZoomImageView.registerSubsamplingImageGenerator(convertor1)
+            glideZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
-                expected = 1,
-                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
+                expected = listOf(
+                    TestGlideSubsamplingImageGenerator,
+                    AnimatableGlideSubsamplingImageGenerator,
+                    EngineGlideSubsamplingImageGenerator
+                ),
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
 
-            val convertor2 = TestGlideSubsamplingImageGenerator
-            glideZoomImageView.registerSubsamplingImageGenerator(convertor2)
+            glideZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
-                expected = 2,
-                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
-            )
-
-            glideZoomImageView.unregisterSubsamplingImageGenerator(convertor2)
-            assertEquals(
-                expected = 1,
-                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
-            )
-
-            glideZoomImageView.unregisterSubsamplingImageGenerator(convertor1)
-            assertEquals(
-                expected = 0,
-                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
+                expected = listOf(
+                    AnimatableGlideSubsamplingImageGenerator,
+                    EngineGlideSubsamplingImageGenerator
+                ),
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
         }
     }

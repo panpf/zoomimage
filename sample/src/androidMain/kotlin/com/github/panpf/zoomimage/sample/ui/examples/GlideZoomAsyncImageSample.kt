@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.GlideZoomAsyncImage
+import com.github.panpf.zoomimage.compose.glide.CrossFade
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.rememberGlideZoomState
 import com.github.panpf.zoomimage.sample.R
@@ -54,6 +55,7 @@ fun GlideZoomAsyncImageSample(
             onLongPress = {
                 onLongClick.invoke()
             },
+            transition = CrossFade,
             requestBuilderTransform = {
                 it.addListener(object : RequestListener<Drawable> {
 

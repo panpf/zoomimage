@@ -23,6 +23,7 @@
 * remove: 移除 BitmapFrom
 * improve: 改进 sketch
   系列组件，子采样初始化完成后不会再重置变焦。 [#50](https://github.com/panpf/zoomimage/issues/50)
+* improve: 现在 Sketch、Coil、Glide 系列组件再设置在采样时会主动过滤动图
 * new: 新增 `containerWhitespaceMultiple`
   参数用于在图像边缘和容器边缘之间留出空白区域。 [#45](https://github.com/panpf/zoomimage/issues/45)
 * new: \*ZoomState 和 \*ZoomImageView 新增 setSubsamplingImage() 方法用于替代 setImageSource() 方法

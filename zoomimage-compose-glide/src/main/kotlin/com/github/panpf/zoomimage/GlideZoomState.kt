@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.glide.internal.AnimatableGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.Logger.Level
@@ -63,6 +64,11 @@ class GlideZoomState(
 ) : ZoomState(logger, zoomable, subsampling) {
 
     val subsamplingImageGenerators: List<GlideSubsamplingImageGenerator> =
-        // TODO filter animatable painter
-        subsamplingImageGenerators.orEmpty().plus(EngineGlideSubsamplingImageGenerator)
+        subsamplingImageGenerators.orEmpty()
+            .plus(
+                listOf(
+                    AnimatableGlideSubsamplingImageGenerator,
+                    EngineGlideSubsamplingImageGenerator
+                )
+            )
 }

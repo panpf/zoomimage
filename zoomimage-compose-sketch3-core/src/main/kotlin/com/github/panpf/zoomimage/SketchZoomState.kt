@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.compose.sketch.internal.AnimatableSketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.sketch.internal.EngineSketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
@@ -63,11 +64,11 @@ class SketchZoomState(
 ) : ZoomState(logger, zoomable, subsampling) {
 
     val subsamplingImageGenerators: List<SketchComposeSubsamplingImageGenerator> =
-        subsamplingImageGenerators.orEmpty().plus(
-            listOf(
-                // TODO filter animatable drawable
-//                AnimatableComposeSketchSubsamplingImageGenerator(),
-                EngineSketchComposeSubsamplingImageGenerator
+        subsamplingImageGenerators.orEmpty()
+            .plus(
+                listOf(
+                    AnimatableSketchComposeSubsamplingImageGenerator,
+                    EngineSketchComposeSubsamplingImageGenerator
+                )
             )
-        )
 }

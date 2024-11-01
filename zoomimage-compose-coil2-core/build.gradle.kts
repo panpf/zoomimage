@@ -15,6 +15,8 @@ dependencies {
     api(projects.zoomimageCoreCoil2)
     api(libs.coil2.compose.base)
     api(libs.kotlinx.collections.immutable)
+    api(libs.google.drawablepainer) // coil3 uses implementation dependency drawablepainer
+    api(libs.androidx.vectordrawable.animated) // for coil3 CrossfadeDrawable
 
     androidTestImplementation(projects.internal.testCompose)
     androidTestImplementation(projects.internal.testCoil2)

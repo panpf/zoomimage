@@ -23,8 +23,10 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.GlideZoomImageView
 import com.github.panpf.zoomimage.sample.R
@@ -32,6 +34,7 @@ import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+
 
 class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>() {
 
@@ -48,6 +51,11 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>
         stateView.loading()
         Glide.with(this@GlideZoomImageViewFragment)
             .load(sketchUri2GlideModel(zoomView.context, args.imageUri))
+            .transition(
+                withCrossFade(
+                    DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+                )
+            )
             .listener(object : RequestListener<Drawable> {
                 override fun onResourceReady(
                     resource: Drawable,

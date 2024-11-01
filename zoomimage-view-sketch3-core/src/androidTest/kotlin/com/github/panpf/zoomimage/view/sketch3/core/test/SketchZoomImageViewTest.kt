@@ -2,20 +2,29 @@ package com.github.panpf.zoomimage.view.sketch3.core.test
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
+import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
+import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.tools4a.test.ktx.getActivitySync
+import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
+import com.github.panpf.zoomimage.view.sketch.SketchViewSubsamplingImageGenerator
+import com.github.panpf.zoomimage.view.sketch.internal.AnimatableSketchViewSubsamplingImageGenerator
+import com.github.panpf.zoomimage.view.sketch.internal.EngineSketchViewSubsamplingImageGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
@@ -48,6 +57,54 @@ class SketchZoomImageViewTest {
             val context = InstrumentationRegistry.getInstrumentation().context
             val sketchZoomImageView = SketchZoomImageView(context)
             assertEquals(expected = "SketchZoomImageView", actual = sketchZoomImageView.logger.tag)
+        }
+    }
+
+    @Test
+    fun testSetSubsamplingImageGenerators() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val coilZoomImageView = withContext(Dispatchers.Main) {
+                SketchZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = listOf(
+                    AnimatableSketchViewSubsamplingImageGenerator,
+                    EngineSketchViewSubsamplingImageGenerator
+                ),
+                actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
+                    "subsamplingImageGenerators"
+                )!!
+            )
+
+            val convertor1 = TestSketchViewSubsamplingImageGenerator
+            coilZoomImageView.setSubsamplingImageGenerators(convertor1)
+            assertEquals(
+                expected = listOf(
+                    TestSketchViewSubsamplingImageGenerator,
+                    AnimatableSketchViewSubsamplingImageGenerator,
+                    EngineSketchViewSubsamplingImageGenerator
+                ),
+                actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
+                    "subsamplingImageGenerators"
+                )
+            )
+
+            coilZoomImageView.setSubsamplingImageGenerators(null)
+            assertEquals(
+                expected = listOf(
+                    AnimatableSketchViewSubsamplingImageGenerator,
+                    EngineSketchViewSubsamplingImageGenerator
+                ),
+                actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
+                    "subsamplingImageGenerators"
+                )!!
+            )
         }
     }
 
@@ -256,4 +313,16 @@ class SketchZoomImageViewTest {
             uri.pathSegments.firstOrNull(),
             ignoreCase = true
         )
+
+    data object TestSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
+
+        override suspend fun generateImage(
+            sketch: Sketch,
+            request: DisplayRequest,
+            result: DisplayResult.Success,
+            drawable: Drawable
+        ): SubsamplingImageGenerateResult? {
+            return null
+        }
+    }
 }

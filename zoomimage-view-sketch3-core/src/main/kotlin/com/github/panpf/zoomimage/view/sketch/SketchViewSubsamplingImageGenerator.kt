@@ -24,11 +24,11 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
 interface SketchViewSubsamplingImageGenerator {
 
-    fun generateImage(
+    suspend fun generateImage(
         sketch: Sketch,
         request: DisplayRequest,
         result: DisplayResult.Success,
-        painter: Drawable
+        drawable: Drawable
     ): SubsamplingImageGenerateResult?
 
     override fun equals(other: Any?): Boolean

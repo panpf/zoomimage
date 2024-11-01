@@ -24,6 +24,7 @@ import com.bumptech.glide.getRequestFromView
 import com.bumptech.glide.internalModel
 import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.glide.GlideTileImageCache
+import com.github.panpf.zoomimage.glide.internal.AnimatableGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -51,15 +52,22 @@ open class GlideZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    private val subsamplingImageGenerators = mutableListOf<GlideSubsamplingImageGenerator>()
+    private val defaultSubsamplingImageGenerators = listOf(
+        AnimatableGlideSubsamplingImageGenerator,
+        EngineGlideSubsamplingImageGenerator
+    )
+    private var subsamplingImageGenerators: List<GlideSubsamplingImageGenerator> =
+        defaultSubsamplingImageGenerators
     private var resetImageSourceOnAttachedToWindow: Boolean = false
 
-    fun registerSubsamplingImageGenerator(convertor: GlideSubsamplingImageGenerator) {
-        subsamplingImageGenerators.add(0, convertor)
+    fun setSubsamplingImageGenerators(subsamplingImageGenerators: List<GlideSubsamplingImageGenerator>?) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.orEmpty() + defaultSubsamplingImageGenerators
     }
 
-    fun unregisterSubsamplingImageGenerator(convertor: GlideSubsamplingImageGenerator) {
-        subsamplingImageGenerators.remove(convertor)
+    fun setSubsamplingImageGenerators(vararg subsamplingImageGenerators: GlideSubsamplingImageGenerator) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.toList() + defaultSubsamplingImageGenerators
     }
 
     override fun newLogger(): Logger = Logger(tag = "GlideZoomImageView")
@@ -103,12 +111,9 @@ open class GlideZoomImageView @JvmOverloads constructor(
             val drawable = drawable
             if (request != null && request.isComplete && model != null && drawable != null) {
                 coroutineScope.launch {
-                    val generateResult = subsamplingImageGenerators
-                        // TODO filter animatable painter
-                        .plus(EngineGlideSubsamplingImageGenerator)
-                        .firstNotNullOfOrNull {
-                            it.generateImage(context, Glide.get(context), model, drawable)
-                        }
+                    val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
+                        it.generateImage(context, Glide.get(context), model, drawable)
+                    }
                     if (generateResult is SubsamplingImageGenerateResult.Error) {
                         logger.d {
                             "GlideZoomImageView. ${generateResult.message}. model='$model'"

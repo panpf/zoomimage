@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
  */
 data object EngineSketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
 
-    override fun generateImage(
+    override suspend fun generateImage(
         sketch: Sketch,
         request: DisplayRequest,
         result: DisplayResult.Success,

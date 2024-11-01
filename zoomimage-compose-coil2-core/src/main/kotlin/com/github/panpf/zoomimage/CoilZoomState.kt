@@ -21,6 +21,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.compose.coil.internal.AnimatableCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.coil.internal.EngineCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -63,6 +64,11 @@ class CoilZoomState(
 ) : ZoomState(logger, zoomable, subsampling) {
 
     val subsamplingImageGenerators: List<CoilComposeSubsamplingImageGenerator> =
-        // TODO filter animatable painter
-        subsamplingImageGenerators.orEmpty().plus(EngineCoilComposeSubsamplingImageGenerator)
+        subsamplingImageGenerators.orEmpty()
+            .plus(
+                listOf(
+                    AnimatableCoilComposeSubsamplingImageGenerator,
+                    EngineCoilComposeSubsamplingImageGenerator
+                )
+            )
 }

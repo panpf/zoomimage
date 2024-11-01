@@ -24,7 +24,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
 interface SketchComposeSubsamplingImageGenerator {
 
-    fun generateImage(
+    suspend fun generateImage(
         sketch: Sketch,
         request: DisplayRequest,
         result: DisplayResult.Success,

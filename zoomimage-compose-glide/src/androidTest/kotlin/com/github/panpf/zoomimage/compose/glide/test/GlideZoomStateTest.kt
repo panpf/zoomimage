@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.bumptech.glide.Glide
 import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.glide.internal.AnimatableGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.rememberGlideZoomState
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -31,7 +32,10 @@ class GlideZoomStateTest {
                     actual = zoomState1.logger.tag
                 )
                 assertEquals(
-                    expected = listOf(EngineGlideSubsamplingImageGenerator).joinToString { it::class.toString() },
+                    expected = listOf(
+                        AnimatableGlideSubsamplingImageGenerator,
+                        EngineGlideSubsamplingImageGenerator
+                    ).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
@@ -44,6 +48,7 @@ class GlideZoomStateTest {
                 assertEquals(
                     expected = listOf(
                         TestGlideSubsamplingImageGenerator,
+                        AnimatableGlideSubsamplingImageGenerator,
                         EngineGlideSubsamplingImageGenerator
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }

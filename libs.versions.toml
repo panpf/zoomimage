@@ -15,6 +15,7 @@ androidx-swiperefreshlayout = "1.1.0"
 androidx-test-ext-junit = "1.2.1"
 androidx-test-rules = "1.6.1"
 androidx-test-runner = "1.6.1"
+androidx-vectordrawable = "1.2.0"
 
 appdirs = "1.2.2"
 cashapp-paging = "3.3.0-alpha02-0.5.1"
@@ -89,6 +90,7 @@ androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefre
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
+androidx-vectordrawable-animated = { module = "androidx.vectordrawable:vectordrawable-animated", version.ref = "androidx.vectordrawable" }
 
 appdirs = { module = "net.harawata:appdirs", version.ref = "appdirs" }
 cashapp-paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "cashapp-paging" }
@@ -103,6 +105,7 @@ coil3-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil3" }
 coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil3-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
 coil3-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3" }
+coil3-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3" }
 
 google-drawablepainer = { module = "com.google.accompanist:accompanist-drawablepainter", version.ref = "google-accompanist" }
 google-material = { module = "com.google.android.material:material", version.ref = "google-material" }

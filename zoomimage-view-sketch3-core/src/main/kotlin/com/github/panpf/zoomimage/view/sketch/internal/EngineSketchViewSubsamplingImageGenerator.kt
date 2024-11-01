@@ -33,11 +33,11 @@ import com.github.panpf.zoomimage.view.sketch.SketchViewSubsamplingImageGenerato
  */
 data object EngineSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
 
-    override fun generateImage(
+    override suspend fun generateImage(
         sketch: Sketch,
         request: DisplayRequest,
         result: DisplayResult.Success,
-        painter: Drawable
+        drawable: Drawable
     ): SubsamplingImageGenerateResult {
         val imageSource = SketchImageSource.Factory(sketch, request.uriString)
         val imageInfo = ImageInfo(

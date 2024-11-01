@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,8 @@ import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -184,9 +187,10 @@ fun SketchZoomAsyncImage(
     LaunchedEffect(zoomState.subsampling) {
         zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
     }
+    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         snapshotFlow { state.loadState }.collect { loadState ->
-            onState(sketch, zoomState, request, loadState, state.painterState)
+            onState(coroutineScope, sketch, zoomState, request, loadState, state.painterState)
         }
     }
 
@@ -223,6 +227,7 @@ fun SketchZoomAsyncImage(
 }
 
 private fun onState(
+    coroutineScope: CoroutineScope,
     sketch: Sketch,
     zoomState: SketchZoomState,
     request: ImageRequest,
@@ -240,18 +245,20 @@ private fun onState(
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     if (loadState is LoadState.Success && painterState is PainterState.Success) {
-        val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
-            it.generateImage(sketch, request, loadState.result, painterState.painter)
-        }
-        if (generateResult is SubsamplingImageGenerateResult.Error) {
-            zoomState.subsampling.logger.d {
-                "SketchZoomAsyncImage. ${generateResult.message}. uri='${request.uri}'"
+        coroutineScope.launch {
+            val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
+                it.generateImage(sketch, request, loadState.result, painterState.painter)
             }
-        }
-        if (generateResult is SubsamplingImageGenerateResult.Success) {
-            zoomState.setSubsamplingImage(generateResult.subsamplingImage)
-        } else {
-            zoomState.setSubsamplingImage(null as SubsamplingImage?)
+            if (generateResult is SubsamplingImageGenerateResult.Error) {
+                zoomState.subsampling.logger.d {
+                    "SketchZoomAsyncImage. ${generateResult.message}. uri='${request.uri}'"
+                }
+            }
+            if (generateResult is SubsamplingImageGenerateResult.Success) {
+                zoomState.setSubsamplingImage(generateResult.subsamplingImage)
+            } else {
+                zoomState.setSubsamplingImage(null as SubsamplingImage?)
+            }
         }
     } else {
         zoomState.setSubsamplingImage(null as SubsamplingImage?)

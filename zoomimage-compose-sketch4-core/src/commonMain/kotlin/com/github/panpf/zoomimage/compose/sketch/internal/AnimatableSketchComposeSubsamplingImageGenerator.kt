@@ -23,10 +23,16 @@ import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
+/**
+ * Filter animated images, animated images do not support subsampling
+ *
+ * @see com.github.panpf.zoomimage.compose.sketch4.core.android.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
+ * @see com.github.panpf.zoomimage.compose.sketch4.core.nonandroid.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
+ */
 expect object AnimatableSketchComposeSubsamplingImageGenerator :
     SketchComposeSubsamplingImageGenerator {
 
-    override fun generateImage(
+    override suspend fun generateImage(
         sketch: Sketch,
         request: ImageRequest,
         result: ImageResult.Success,

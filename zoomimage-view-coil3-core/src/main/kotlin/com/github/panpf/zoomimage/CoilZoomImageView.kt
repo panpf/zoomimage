@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
+import com.github.panpf.zoomimage.view.coil.internal.AnimatableCoilViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.coil.internal.EngineCoilViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
 import kotlinx.coroutines.launch
@@ -51,15 +52,22 @@ open class CoilZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    private val subsamplingImageGenerators = mutableListOf<CoilViewSubsamplingImageGenerator>()
+    private val defaultSubsamplingImageGenerators = listOf(
+        AnimatableCoilViewSubsamplingImageGenerator,
+        EngineCoilViewSubsamplingImageGenerator
+    )
+    private var subsamplingImageGenerators: List<CoilViewSubsamplingImageGenerator> =
+        defaultSubsamplingImageGenerators
     private var resetImageSourceOnAttachedToWindow: Boolean = false
 
-    fun registerSubsamplingImageGenerator(convertor: CoilViewSubsamplingImageGenerator) {
-        subsamplingImageGenerators.add(0, convertor)
+    fun setSubsamplingImageGenerators(subsamplingImageGenerators: List<CoilViewSubsamplingImageGenerator>?) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.orEmpty() + defaultSubsamplingImageGenerators
     }
 
-    fun unregisterSubsamplingImageGenerator(convertor: CoilViewSubsamplingImageGenerator) {
-        subsamplingImageGenerators.remove(convertor)
+    fun setSubsamplingImageGenerators(vararg subsamplingImageGenerators: CoilViewSubsamplingImageGenerator) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.toList() + defaultSubsamplingImageGenerators
     }
 
     override fun newLogger(): Logger = Logger(tag = "CoilZoomImageView")
@@ -102,15 +110,12 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 val coroutineScope = coroutineScope!!
                 coroutineScope.launch {
                     val request = result.request
-                    val generateResult = subsamplingImageGenerators
-                        // TODO filter animatable painter
-                        .plus(EngineCoilViewSubsamplingImageGenerator)
-                        .firstNotNullOfOrNull {
-                            it.generateImage(context, imageLoader, request, result, drawable)
-                        }
+                    val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
+                        it.generateImage(context, imageLoader, request, result, drawable)
+                    }
                     if (generateResult is SubsamplingImageGenerateResult.Error) {
                         logger.d {
-                            "GlideZoomImageView. ${generateResult.message}. data='${request.data}'"
+                            "CoilZoomImageView. ${generateResult.message}. data='${request.data}'"
                         }
                     }
                     if (generateResult is SubsamplingImageGenerateResult.Success) {

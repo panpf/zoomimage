@@ -23,6 +23,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * remove: Remove BitmapFrom
 * improve: Improve the sketch series components so that the zoom will no longer be reset after
   subsampling initialization is completed. [#50](https://github.com/panpf/zoomimage/issues/50)
+* improve: Now the Sketch, Coil, and Glide series components are set to actively filter animated
+  images when sampling.
 * new: New `containerWhitespaceMultiple` parameter is added to leave a white space between the edge
   of the image and the edge of the container. [#45](https://github.com/panpf/zoomimage/issues/45)
 * new: \*ZoomState and \*ZoomImageView add a new setSubsamplingImage() method to replace the

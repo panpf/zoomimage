@@ -41,7 +41,7 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
 
     override fun createZoomImageView(context: Context): PicassoZoomImageView {
         return PicassoZoomImageView(context).apply {
-            registerSubsamplingImageGenerator(PicassoResourceSubsamplingImageGenerator)
+            setSubsamplingImageGenerators(PicassoResourceSubsamplingImageGenerator)
         }
     }
 

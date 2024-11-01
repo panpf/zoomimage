@@ -55,7 +55,21 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    private val subsamplingImageGenerators = mutableListOf<PicassoSubsamplingImageGenerator>()
+    private val defaultSubsamplingImageGenerators = listOf(
+        EnginePicassoSubsamplingImageGenerator
+    )
+    private var subsamplingImageGenerators: List<PicassoSubsamplingImageGenerator> =
+        defaultSubsamplingImageGenerators
+
+    fun setSubsamplingImageGenerators(subsamplingImageGenerators: List<PicassoSubsamplingImageGenerator>?) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.orEmpty() + defaultSubsamplingImageGenerators
+    }
+
+    fun setSubsamplingImageGenerators(vararg subsamplingImageGenerators: PicassoSubsamplingImageGenerator) {
+        this.subsamplingImageGenerators =
+            subsamplingImageGenerators.toList() + defaultSubsamplingImageGenerators
+    }
 
     /**
      * Start an image request using the specified image file. This is a convenience method for
@@ -179,12 +193,9 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         GlobalScope.launch(Dispatchers.Main) {
             val drawable = drawable
             if (data != null && drawable != null) {
-                val generateResult = subsamplingImageGenerators
-                    // TODO filter animatable drawable
-                    .plus(EnginePicassoSubsamplingImageGenerator)
-                    .firstNotNullOfOrNull {
-                        it.generateImage(context, Picasso.get(), data, drawable)
-                    }
+                val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
+                    it.generateImage(context, Picasso.get(), data, drawable)
+                }
                 if (generateResult is SubsamplingImageGenerateResult.Error) {
                     logger.d {
                         "PicassoZoomImageView. ${generateResult.message}. data='$data'"
@@ -199,14 +210,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                 setSubsamplingImage(null as SubsamplingImage?)
             }
         }
-    }
-
-    fun registerSubsamplingImageGenerator(convertor: PicassoSubsamplingImageGenerator) {
-        subsamplingImageGenerators.add(0, convertor)
-    }
-
-    fun unregisterSubsamplingImageGenerator(convertor: PicassoSubsamplingImageGenerator) {
-        subsamplingImageGenerators.remove(convertor)
     }
 
     override fun newLogger(): Logger = Logger(tag = "PicassoZoomImageView")

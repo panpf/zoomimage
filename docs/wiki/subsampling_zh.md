@@ -155,7 +155,7 @@ data object : MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImage
 }
 
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.registerSubsamplingImageGenerator(MySketchViewSubsamplingImageGenerator)
+sketchZoomImageView.setSubsamplingImageGenerators(MySketchViewSubsamplingImageGenerator)
 ```
 
 > [!TIP]

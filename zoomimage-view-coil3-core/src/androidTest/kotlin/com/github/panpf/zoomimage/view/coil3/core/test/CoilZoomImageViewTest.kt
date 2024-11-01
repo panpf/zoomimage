@@ -22,6 +22,8 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
 import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
+import com.github.panpf.zoomimage.view.coil.internal.AnimatableCoilViewSubsamplingImageGenerator
+import com.github.panpf.zoomimage.view.coil.internal.EngineCoilViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
@@ -59,7 +61,7 @@ class CoilZoomImageViewTest {
     }
 
     @Test
-    fun testregisterSubsamplingImageGenerator() = runTest {
+    fun testSetSubsamplingImageGenerators() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val coilZoomImageView = withContext(Dispatchers.Main) {
@@ -71,34 +73,31 @@ class CoilZoomImageViewTest {
             Thread.sleep(100)
 
             assertEquals(
-                expected = 0,
-                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
+                expected = listOf(
+                    AnimatableCoilViewSubsamplingImageGenerator,
+                    EngineCoilViewSubsamplingImageGenerator
+                ),
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
 
-            val convertor1 = TestCoilComposeSubsamplingImageGenerator
-            coilZoomImageView.registerSubsamplingImageGenerator(convertor1)
+            val convertor1 = TestCoilViewSubsamplingImageGenerator
+            coilZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
-                expected = 1,
-                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
+                expected = listOf(
+                    TestCoilViewSubsamplingImageGenerator,
+                    AnimatableCoilViewSubsamplingImageGenerator,
+                    EngineCoilViewSubsamplingImageGenerator
+                ),
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")
             )
 
-            val convertor2 = TestCoilComposeSubsamplingImageGenerator
-            coilZoomImageView.registerSubsamplingImageGenerator(convertor2)
+            coilZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
-                expected = 2,
-                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
-            )
-
-            coilZoomImageView.unregisterSubsamplingImageGenerator(convertor2)
-            assertEquals(
-                expected = 1,
-                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
-            )
-
-            coilZoomImageView.unregisterSubsamplingImageGenerator(convertor1)
-            assertEquals(
-                expected = 0,
-                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
+                expected = listOf(
+                    AnimatableCoilViewSubsamplingImageGenerator,
+                    EngineCoilViewSubsamplingImageGenerator
+                ),
+                actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
         }
     }
@@ -287,7 +286,7 @@ class CoilZoomImageViewTest {
         }
     }
 
-    data object TestCoilComposeSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
+    data object TestCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: PlatformContext,
