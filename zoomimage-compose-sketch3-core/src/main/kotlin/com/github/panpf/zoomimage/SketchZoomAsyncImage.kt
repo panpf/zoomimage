@@ -429,12 +429,12 @@ private fun onPainterState(
             }
         }
         if (generateResult is SubsamplingImageGenerateResult.Success) {
-            zoomState.setImage(generateResult.subsamplingImage)
+            zoomState.setSubsamplingImage(generateResult.subsamplingImage)
         } else {
-            zoomState.setImage(null as SubsamplingImage?)
+            zoomState.setSubsamplingImage(null as SubsamplingImage?)
         }
     } else {
-        zoomState.setImage(null as SubsamplingImage?)
+        zoomState.setSubsamplingImage(null as SubsamplingImage?)
     }
 }
 

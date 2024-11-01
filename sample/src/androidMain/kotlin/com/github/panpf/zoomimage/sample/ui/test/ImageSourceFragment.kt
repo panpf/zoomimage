@@ -66,7 +66,7 @@ class ImageSourceFragment : BaseZoomImageViewFragment<ZoomImageView>() {
                         height = result.imageInfo.height,
                         mimeType = result.imageInfo.mimeType
                     )
-                    setImage(imageSource, imageInfo)
+                    setSubsamplingImage(imageSource, imageInfo)
                     stateView.gone()
                 } else if (result is ImageResult.Error) {
                     subsampling.setImage(null as ImageSource?)

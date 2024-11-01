@@ -47,7 +47,7 @@ Components that integrate the image loading library can use the subsampling func
 additional work
 
 [ZoomImage] and [ZoomImageView] do not have an integrated image loading library and require an
-additional call to the `setImageSource(ImageSource)` method to use the subsampling function
+additional call to the `setSubsamplingImage()` method to use the subsampling function
 
 example:
 
@@ -56,7 +56,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.setImageSource(imageSource)
+  zoomState.setSubsamplingImage(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -73,7 +73,7 @@ val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
 
 val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
-zoomImageView.setImageSource(imageSource)
+zoomImageView.setSubsamplingImage(imageSource)
 ```
 
 ### ImageSource

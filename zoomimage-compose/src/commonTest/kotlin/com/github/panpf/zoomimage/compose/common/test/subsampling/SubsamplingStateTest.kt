@@ -200,7 +200,7 @@ class SubsamplingStateTest {
             assertEquals(expected = null, actual = subsampling.imageInfo)
         }
 
-        // setImageSource
+        // setImage
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -218,7 +218,7 @@ class SubsamplingStateTest {
             assertEquals(expected = null, actual = subsampling.imageInfo)
         }
 
-        // setImageSource, containerSize, contentSize
+        // setImage, containerSize, contentSize
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -268,7 +268,7 @@ class SubsamplingStateTest {
             )
         }
 
-        // setImageSource
+        // setImage
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -289,7 +289,7 @@ class SubsamplingStateTest {
             )
         }
 
-        // setImageSource, containerSize, contentSize
+        // setImage, containerSize, contentSize
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -337,7 +337,7 @@ class SubsamplingStateTest {
             assertEquals(expected = false, actual = subsampling.ready)
         }
 
-        // setImageSource
+        // setImage
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -355,7 +355,7 @@ class SubsamplingStateTest {
             assertEquals(expected = false, actual = subsampling.ready)
         }
 
-        // setImageSource, containerSize, contentSize
+        // setImage, containerSize, contentSize
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -399,7 +399,7 @@ class SubsamplingStateTest {
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
 //        }
 //
-//        // setImageSource, containerSize, contentSize
+//        // setImage, containerSize, contentSize
 //        runComposeUiTest {
 //            var subsamplingHolder: SubsamplingState? = null
 //            setContent {
@@ -412,7 +412,7 @@ class SubsamplingStateTest {
 //                    }
 //                    val subsampling = rememberSubsamplingState(zoomable)
 //                        .apply { subsamplingHolder = this }
-//                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+//                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
 //                }
 //            }
 //            waitMillis(100)
@@ -421,7 +421,7 @@ class SubsamplingStateTest {
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
 //        }
 
-        // setImageSource, containerSize, contentSize, scale 10
+        // setImage, containerSize, contentSize, scale 10
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -448,7 +448,7 @@ class SubsamplingStateTest {
             assertEquals(expected = 48, actual = subsampling.foregroundTiles.size)
         }
 
-        // setImageSource, containerSize, contentSize, scale 20
+        // setImage, containerSize, contentSize, scale 20
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -483,7 +483,7 @@ class SubsamplingStateTest {
             return
         }
 
-        // setImageSource, containerSize, contentSize, scale 10
+        // setImage, containerSize, contentSize, scale 10
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -504,7 +504,7 @@ class SubsamplingStateTest {
             assertEquals(expected = 0, actual = subsampling.sampleSize)
         }
 
-        // setImageSource, containerSize, contentSize, scale 10
+        // setImage, containerSize, contentSize, scale 10
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -532,7 +532,7 @@ class SubsamplingStateTest {
             assertEquals(expected = 2, actual = subsampling.sampleSize)
         }
 
-        // setImageSource, containerSize, contentSize, scale 20
+        // setImage, containerSize, contentSize, scale 20
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {

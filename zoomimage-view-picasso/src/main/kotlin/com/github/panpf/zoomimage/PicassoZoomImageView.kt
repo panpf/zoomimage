@@ -191,12 +191,12 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                     }
                 }
                 if (generateResult is SubsamplingImageGenerateResult.Success) {
-                    setImage(generateResult.subsamplingImage)
+                    setSubsamplingImage(generateResult.subsamplingImage)
                 } else {
-                    setImage(null as SubsamplingImage?)
+                    setSubsamplingImage(null as SubsamplingImage?)
                 }
             } else {
-                setImage(null as SubsamplingImage?)
+                setSubsamplingImage(null as SubsamplingImage?)
             }
         }
     }

@@ -51,7 +51,7 @@ class ZoomImageTest {
                             zoomState = zoomState,
                         )
                         LaunchedEffect(Unit) {
-                            zoomState.setImageSource(ResourceImages.hugeChina.toImageSource())
+                            zoomState.setSubsamplingImage(ResourceImages.hugeChina.toImageSource())
                         }
                     }
                 }
@@ -112,7 +112,7 @@ class ZoomImageTest {
                             alignment = Alignment.BottomEnd,
                         )
                         LaunchedEffect(Unit) {
-                            zoomState.setImageSource(ResourceImages.hugeChina.toImageSource())
+                            zoomState.setSubsamplingImage(ResourceImages.hugeChina.toImageSource())
                         }
                     }
                 }

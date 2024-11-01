@@ -75,10 +75,10 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
                     height = result.imageInfo.height,
                     mimeType = result.imageInfo.mimeType
                 )
-                zoomView.setImage(imageSource, imageInfo)
+                zoomView.setSubsamplingImage(imageSource, imageInfo)
                 stateView.gone()
             } else if (result is ImageResult.Error) {
-                zoomView.setImage(null as ImageSource?)
+                zoomView.setSubsamplingImage(null as ImageSource?)
                 stateView.error {
                     message(result.throwable)
                     retryAction {

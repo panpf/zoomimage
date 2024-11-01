@@ -70,21 +70,24 @@ open class ZoomState(
     /**
      * Set subsampling image
      */
-    fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+    fun setSubsamplingImage(subsamplingImage: SubsamplingImage?): Boolean {
         return subsampling.setImage(subsamplingImage)
     }
 
     /**
      * Set subsampling image
      */
-    fun setImage(imageSource1: ImageSource.Factory?, imageInfo: ImageInfo? = null): Boolean {
+    fun setSubsamplingImage(
+        imageSource1: ImageSource.Factory?,
+        imageInfo: ImageInfo? = null
+    ): Boolean {
         return subsampling.setImage(imageSource1, imageInfo)
     }
 
     /**
      * Set subsampling image
      */
-    fun setImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
+    fun setSubsamplingImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
         return subsampling.setImage(imageSource, imageInfo)
     }
 
@@ -92,8 +95,8 @@ open class ZoomState(
      * Set subsampling image
      */
     @Deprecated(
-        message = "Use setImage(ImageSource.Factory?, ImageInfo?) instead",
-        replaceWith = ReplaceWith("setImage(imageSource)"),
+        message = "Use setSubsamplingImage(ImageSource.Factory?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setSubsamplingImage(imageSource)"),
         level = DeprecationLevel.WARNING
     )
     fun setImageSource(imageSource1: ImageSource.Factory?): Boolean {
@@ -104,8 +107,8 @@ open class ZoomState(
      * Set subsampling image
      */
     @Deprecated(
-        message = "Use setImage(ImageSource?, ImageInfo?) instead",
-        replaceWith = ReplaceWith("setImage(imageSource)"),
+        message = "Use setSubsamplingImage(ImageSource?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setSubsamplingImage(imageSource)"),
         level = DeprecationLevel.WARNING
     )
     fun setImageSource(imageSource: ImageSource?): Boolean {

@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
  * val zoomImageView = ZoomImageView(context)
  * zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
  * val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
- * zoomImageView.setImageSource(imageSource)
+ * zoomImageView.setSubsamplingImage(imageSource)
  * ```
  *
  * @see com.github.panpf.zoomimage.view.test.ZoomImageViewTest
@@ -158,21 +158,24 @@ open class ZoomImageView @JvmOverloads constructor(
     /**
      * Set subsampling image
      */
-    fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+    fun setSubsamplingImage(subsamplingImage: SubsamplingImage?): Boolean {
         return subsampling.setImage(subsamplingImage)
     }
 
     /**
      * Set up an image source from which image tile are loaded
      */
-    fun setImage(imageSource: ImageSource.Factory?, imageInfo: ImageInfo? = null): Boolean {
+    fun setSubsamplingImage(
+        imageSource: ImageSource.Factory?,
+        imageInfo: ImageInfo? = null
+    ): Boolean {
         return subsampling.setImage(imageSource, imageInfo)
     }
 
     /**
      * Set up an image source from which image tile are loaded
      */
-    fun setImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
+    fun setSubsamplingImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
         return subsampling.setImage(imageSource, imageInfo)
     }
 
@@ -180,8 +183,8 @@ open class ZoomImageView @JvmOverloads constructor(
      * Set up an image source from which image tile are loaded
      */
     @Deprecated(
-        message = "Use setImage(ImageSource?, ImageInfo?) instead",
-        replaceWith = ReplaceWith("setImage(imageSource)"),
+        message = "Use setSubsamplingImage(ImageSource?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setSubsamplingImage(imageSource)"),
         level = DeprecationLevel.WARNING
     )
     fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
@@ -192,8 +195,8 @@ open class ZoomImageView @JvmOverloads constructor(
      * Set up an image source from which image tile are loaded
      */
     @Deprecated(
-        message = "Use setImage(ImageSource?, ImageInfo?) instead",
-        replaceWith = ReplaceWith("setImage(imageSource)"),
+        message = "Use setSubsamplingImage(ImageSource?, ImageInfo?) instead",
+        replaceWith = ReplaceWith("setSubsamplingImage(imageSource)"),
         level = DeprecationLevel.WARNING
     )
     fun setImageSource(imageSource: ImageSource?): Boolean {

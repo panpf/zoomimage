@@ -35,7 +35,7 @@
 
 集成了图片加载库的组件无需任何额外的工作即可使用子采样功能
 
-[ZoomImage] 和 [ZoomImageView] 没有集成图片加载库，需要额外调用 `setImageSource(ImageSource)`
+[ZoomImage] 和 [ZoomImageView] 没有集成图片加载库，需要额外调用 `setSubsamplingImage()`
 方法以使用子采样功能
 
 示例：
@@ -45,7 +45,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.setImageSource(imageSource)
+  zoomState.setSubsamplingImage(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -61,7 +61,7 @@ view:
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
 val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
-zoomImageView.setImageSource(imageSource)
+zoomImageView.setSubsamplingImage(imageSource)
 ```
 
 ### ImageSource

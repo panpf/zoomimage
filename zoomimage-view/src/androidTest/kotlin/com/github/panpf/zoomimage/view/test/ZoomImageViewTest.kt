@@ -208,7 +208,7 @@ class ZoomImageViewTest {
     }
 
     @Test
-    fun testSetImageSource() = runTest {
+    fun testSetSubsamplingImageSource() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val zoomImageView = withContext(Dispatchers.Main) {
@@ -240,7 +240,7 @@ class ZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
                     .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
-                zoomImageView.setImage(imageSource)
+                zoomImageView.setSubsamplingImage(imageSource)
             }
             Thread.sleep(500)
 
@@ -255,7 +255,7 @@ class ZoomImageViewTest {
             assertTrue(actual = zoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                zoomImageView.setImage(null as ImageSource?)
+                zoomImageView.setSubsamplingImage(null as ImageSource?)
             }
             Thread.sleep(500)
             assertEquals(
@@ -271,7 +271,7 @@ class ZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
                     .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
-                zoomImageView.setImage(imageSource.toFactory())
+                zoomImageView.setSubsamplingImage(imageSource.toFactory())
             }
             Thread.sleep(500)
 

@@ -25,6 +25,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
   subsampling initialization is completed. [#50](https://github.com/panpf/zoomimage/issues/50)
 * new: New `containerWhitespaceMultiple` parameter is added to leave a white space between the edge
   of the image and the edge of the container. [#45](https://github.com/panpf/zoomimage/issues/45)
+* new: \*ZoomState and \*ZoomImageView add a new setSubsamplingImage() method to replace the
+  setImageSource() method
 
 ## 1.1.0-beta01
 

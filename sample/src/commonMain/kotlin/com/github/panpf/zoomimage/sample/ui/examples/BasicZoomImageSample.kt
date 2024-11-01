@@ -74,7 +74,7 @@ fun BasicZoomImageSample(
             } else {
                 null
             }
-            zoomState.setImage(imageSource, imageInfo)
+            zoomState.setSubsamplingImage(imageSource, imageInfo)
         }
 
         val imagePainter1 = imagePainter
