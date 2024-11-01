@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.core.sketch4.android.test
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config.ARGB_8888
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.sketch.Sketch.Builder
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage

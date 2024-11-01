@@ -11,6 +11,7 @@ import coil3.load
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
+import coil3.request.error
 import coil3.util.CoilUtils
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.tools4a.test.ktx.getActivitySync

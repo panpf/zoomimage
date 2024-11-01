@@ -79,13 +79,8 @@ class ZoomImageViewTest {
             zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
                 zoomImageView.setImageBitmap(Bitmap.createBitmap(86, 1522, Bitmap.Config.ARGB_8888))
-                zoomable.scale(
-                    targetScale = zoomable.maxScaleState.value,
-                    animated = false
-                )
             }
             Thread.sleep(100)
-
             assertEquals(
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
@@ -95,11 +90,36 @@ class ZoomImageViewTest {
                 actual = zoomable.contentSizeState.value
             )
             assertEquals(
-                expected = "TransformCompat(scale=24.07x24.07, offset=-776.42x-18059.09, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=0.08x1.47)",
+                expected = "0.34, 6.0, 18.0",
+                actual = arrayOf(
+                    zoomable.minScaleState.value.format(2),
+                    zoomable.mediumScaleState.value.format(2),
+                    zoomable.maxScaleState.value.format(2)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "TransformCompat(scale=0.34x0.34, offset=244.0x0.0, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=0.08x1.47)",
                 actual = zoomable.transformState.value.toString()
             )
             assertEquals(
-                expected = "Matrix{[24.069765, 0.0, -776.4219][0.0, 24.069765, -18059.092][0.0, 0.0, 1.0]}",
+                expected = "Matrix{[0.33902758, 0.0, 244.0][0.0, 0.33902758, 0.0][0.0, 0.0, 1.0]}",
+                actual = zoomImageView.imageMatrix.toString()
+            )
+
+            withContext(Dispatchers.Main) {
+                zoomable.scale(
+                    targetScale = zoomable.maxScaleState.value,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = "TransformCompat(scale=18.0x18.0, offset=-515.42x-13440.0, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=0.08x1.47)",
+                actual = zoomable.transformState.value.toString()
+            )
+            assertEquals(
+                expected = "Matrix{[18.0, 0.0, -515.4219][0.0, 18.0, -13440.001][0.0, 0.0, 1.0]}",
                 actual = zoomImageView.imageMatrix.toString()
             )
 
@@ -107,7 +127,7 @@ class ZoomImageViewTest {
                 setScale(2f, 2f)
             }
             assertEquals(
-                expected = "Matrix{[24.069765, 0.0, -776.4219][0.0, 24.069765, -18059.092][0.0, 0.0, 1.0]}",
+                expected = "Matrix{[18.0, 0.0, -515.4219][0.0, 18.0, -13440.001][0.0, 0.0, 1.0]}",
                 actual = zoomImageView.imageMatrix.toString()
             )
         }
@@ -220,7 +240,7 @@ class ZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
                     .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
-                zoomImageView.setImageSource(imageSource)
+                zoomImageView.setImage(imageSource)
             }
             Thread.sleep(500)
 
@@ -235,7 +255,7 @@ class ZoomImageViewTest {
             assertTrue(actual = zoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                zoomImageView.setImageSource(null as ImageSource?)
+                zoomImageView.setImage(null as ImageSource?)
             }
             Thread.sleep(500)
             assertEquals(
@@ -251,7 +271,7 @@ class ZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
                     .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
-                zoomImageView.setImageSource(imageSource.toFactory())
+                zoomImageView.setImage(imageSource.toFactory())
             }
             Thread.sleep(500)
 

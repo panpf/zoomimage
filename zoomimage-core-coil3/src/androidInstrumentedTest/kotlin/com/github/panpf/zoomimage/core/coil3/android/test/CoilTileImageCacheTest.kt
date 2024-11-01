@@ -2,6 +2,8 @@ package com.github.panpf.zoomimage.core.coil3.android.test
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config.ARGB_8888
+import androidx.test.platform.app.InstrumentationRegistry
+import coil3.ImageLoader
 import com.github.panpf.zoomimage.coil.CoilTileImageCache
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo

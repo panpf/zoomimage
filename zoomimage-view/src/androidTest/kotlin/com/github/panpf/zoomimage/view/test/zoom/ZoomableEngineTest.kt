@@ -2692,7 +2692,7 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1f),
-                    offset = OffsetCompat(-1f, -0f),
+                    offset = OffsetCompat(-1f, 0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
@@ -2808,7 +2808,7 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(53.09f),
-                    offset = OffsetCompat(-12955.0f, -0.0f),
+                    offset = OffsetCompat(-12955.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
@@ -3007,7 +3007,7 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1f),
-                    offset = OffsetCompat(-1.0f, -0f),
+                    offset = OffsetCompat(-1.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
@@ -3217,7 +3217,7 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1f),
-                    offset = OffsetCompat(-1.0f, -0f),
+                    offset = OffsetCompat(-1.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
@@ -3285,7 +3285,7 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(17.7f),
-                    offset = OffsetCompat(-4318.0f, -0f),
+                    offset = OffsetCompat(-4318.0f, 0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
@@ -3769,7 +3769,7 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1.0f),
-                    offset = OffsetCompat(-0.0f, 0.0f),
+                    offset = OffsetCompat(0f, 0.0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
@@ -3869,7 +3869,7 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1.0f),
-                    offset = OffsetCompat(-0.0f, 0.0f),
+                    offset = OffsetCompat(0f, 0.0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )

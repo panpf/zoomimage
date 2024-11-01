@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.view.glide.test
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bumptech.glide.Glide
@@ -12,8 +13,8 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.GlideZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.glide.GlideModelToImageSource
-import com.github.panpf.zoomimage.subsampling.ImageSource.Factory
+import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +53,7 @@ class GlideZoomImageViewTest {
     }
 
     @Test
-    fun testregisterSubsamplingImageGenerator() = runTest {
+    fun testRegisterSubsamplingImageGenerator() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val glideZoomImageView = withContext(Dispatchers.Main) {
@@ -65,33 +66,33 @@ class GlideZoomImageViewTest {
 
             assertEquals(
                 expected = 0,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor1 = TestGlideModelToImageSource()
+            val convertor1 = TestGlideSubsamplingImageGenerator()
             glideZoomImageView.registerSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 1,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor2 = TestGlideModelToImageSource()
+            val convertor2 = TestGlideSubsamplingImageGenerator()
             glideZoomImageView.registerSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 2,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
             glideZoomImageView.unregisterSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 1,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
             glideZoomImageView.unregisterSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 0,
-                actual = glideZoomImageView.getFieldValue<List<GlideModelToImageSource>>("subsamplingImageGenerators")!!.size
+                actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
         }
     }
@@ -282,13 +283,14 @@ class GlideZoomImageViewTest {
         }
     }
 
-    class TestGlideModelToImageSource : GlideModelToImageSource {
+    class TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
 
-        override suspend fun modelToImageSource(
+        override suspend fun generateImage(
             context: Context,
             glide: Glide,
-            model: Any
-        ): Factory? {
+            model: Any,
+            drawable: Drawable
+        ): SubsamplingImageGenerateResult? {
             return null
         }
     }

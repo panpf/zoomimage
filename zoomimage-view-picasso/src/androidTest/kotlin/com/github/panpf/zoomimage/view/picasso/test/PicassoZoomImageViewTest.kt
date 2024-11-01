@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.view.picasso.test
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
@@ -11,7 +12,7 @@ import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.PicassoZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.picasso.PicassoSubsamplingImageGenerator
-import com.github.panpf.zoomimage.subsampling.ImageSource.Factory
+import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
 import com.squareup.picasso.Picasso
@@ -214,11 +215,12 @@ class PicassoZoomImageViewTest {
 
     class TestPicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
-        override suspend fun dataToImageSource(
+        override suspend fun generateImage(
             context: Context,
             picasso: Picasso,
-            data: Any
-        ): Factory? {
+            data: Any,
+            drawable: Drawable
+        ): SubsamplingImageGenerateResult? {
             return null
         }
     }

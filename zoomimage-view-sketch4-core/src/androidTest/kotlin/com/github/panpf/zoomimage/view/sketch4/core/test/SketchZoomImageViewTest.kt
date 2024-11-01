@@ -4,11 +4,15 @@ import android.R
 import android.graphics.Color
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
+import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageResult.Error
 import com.github.panpf.sketch.request.ImageResult.Success
+import com.github.panpf.sketch.request.error
 import com.github.panpf.sketch.util.IntColorFetcher
 import com.github.panpf.sketch.util.SketchUtils
+import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.test.TestActivity
