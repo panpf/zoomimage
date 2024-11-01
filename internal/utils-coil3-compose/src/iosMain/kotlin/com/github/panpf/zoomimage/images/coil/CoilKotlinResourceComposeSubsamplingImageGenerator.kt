@@ -14,7 +14,8 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.subsampling.toFactory
 
-class CoilKotlinResourceComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGenerator {
+data object CoilKotlinResourceComposeSubsamplingImageGenerator :
+    CoilComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: PlatformContext,

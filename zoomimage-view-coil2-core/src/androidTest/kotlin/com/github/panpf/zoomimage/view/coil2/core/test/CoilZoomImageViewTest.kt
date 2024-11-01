@@ -74,14 +74,14 @@ class CoilZoomImageViewTest {
                 actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor1 = TestCoilViewSubsamplingImageGenerator()
+            val convertor1 = TestCoilViewSubsamplingImageGenerator
             coilZoomImageView.registerSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 1,
                 actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor2 = TestCoilViewSubsamplingImageGenerator()
+            val convertor2 = TestCoilViewSubsamplingImageGenerator
             coilZoomImageView.registerSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 2,
@@ -286,7 +286,7 @@ class CoilZoomImageViewTest {
         }
     }
 
-    class TestCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
+    data object TestCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,

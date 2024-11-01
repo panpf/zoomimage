@@ -105,7 +105,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 coroutineScope.launch {
                     val generateResult = subsamplingImageGenerators
                         // TODO filter animatable painter
-                        .plus(EngineGlideSubsamplingImageGenerator())
+                        .plus(EngineGlideSubsamplingImageGenerator)
                         .firstNotNullOfOrNull {
                             it.generateImage(context, Glide.get(context), model, drawable)
                         }

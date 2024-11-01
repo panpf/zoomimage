@@ -31,20 +31,20 @@ class GlideZoomStateTest {
                     actual = zoomState1.logger.tag
                 )
                 assertEquals(
-                    expected = listOf(EngineGlideSubsamplingImageGenerator()).joinToString { it::class.toString() },
+                    expected = listOf(EngineGlideSubsamplingImageGenerator).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
                 val modelToImageSources = remember {
-                    listOf(TestGlideSubsamplingImageGenerator()).toImmutableList()
+                    listOf(TestGlideSubsamplingImageGenerator).toImmutableList()
                 }
                 val zoomState2 = rememberGlideZoomState(
                     subsamplingImageGenerators = modelToImageSources,
                 )
                 assertEquals(
                     expected = listOf(
-                        TestGlideSubsamplingImageGenerator(),
-                        EngineGlideSubsamplingImageGenerator()
+                        TestGlideSubsamplingImageGenerator,
+                        EngineGlideSubsamplingImageGenerator
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
@@ -62,7 +62,7 @@ class GlideZoomStateTest {
         }
     }
 
-    class TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
+    data object TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,

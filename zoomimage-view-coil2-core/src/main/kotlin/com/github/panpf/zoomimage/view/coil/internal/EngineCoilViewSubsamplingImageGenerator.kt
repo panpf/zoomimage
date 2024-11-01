@@ -26,7 +26,12 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
 
-class EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
+/**
+ * [CoilViewSubsamplingImageGenerator] implementation that uses the Coil library to generate images
+ *
+ * @see com.github.panpf.zoomimage.view.coil2.core.test.internal.EngineCoilViewSubsamplingImageGeneratorTest
+ */
+data object EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: Context,

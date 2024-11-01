@@ -11,7 +11,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.squareup.picasso.Picasso
 
-class PicassoResourceSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
+data object PicassoResourceSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: Context,

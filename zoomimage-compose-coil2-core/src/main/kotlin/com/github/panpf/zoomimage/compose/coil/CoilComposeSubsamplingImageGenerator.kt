@@ -36,4 +36,10 @@ interface CoilComposeSubsamplingImageGenerator {
         result: SuccessResult,
         painter: Painter
     ): SubsamplingImageGenerateResult?
+
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
+
+    override fun toString(): String
 }

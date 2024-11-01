@@ -104,7 +104,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
                     val request = result.request
                     val generateResult = subsamplingImageGenerators
                         // TODO filter animatable painter
-                        .plus(EngineCoilViewSubsamplingImageGenerator())
+                        .plus(EngineCoilViewSubsamplingImageGenerator)
                         .firstNotNullOfOrNull {
                             it.generateImage(context, imageLoader, request, result, drawable)
                         }

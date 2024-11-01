@@ -64,5 +64,5 @@ class CoilZoomState(
 
     val subsamplingImageGenerators: List<CoilComposeSubsamplingImageGenerator> =
         // TODO filter animatable painter
-        subsamplingImageGenerators.orEmpty().plus(EngineCoilComposeSubsamplingImageGenerator())
+        subsamplingImageGenerators.orEmpty().plus(EngineCoilComposeSubsamplingImageGenerator)
 }

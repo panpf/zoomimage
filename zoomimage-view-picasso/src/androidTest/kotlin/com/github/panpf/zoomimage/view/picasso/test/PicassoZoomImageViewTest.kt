@@ -73,7 +73,7 @@ class PicassoZoomImageViewTest {
                 )!!.size
             )
 
-            val convertor1 = TestPicassoSubsamplingImageGenerator()
+            val convertor1 = TestPicassoSubsamplingImageGenerator
             picassoZoomImageView.registerSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 1,
@@ -82,7 +82,7 @@ class PicassoZoomImageViewTest {
                 )!!.size
             )
 
-            val convertor2 = TestPicassoSubsamplingImageGenerator()
+            val convertor2 = TestPicassoSubsamplingImageGenerator
             picassoZoomImageView.registerSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 2,
@@ -213,7 +213,7 @@ class PicassoZoomImageViewTest {
         }
     }
 
-    class TestPicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
+    data object TestPicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,

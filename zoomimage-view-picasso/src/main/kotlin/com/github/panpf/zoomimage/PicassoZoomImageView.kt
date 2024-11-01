@@ -181,7 +181,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             if (data != null && drawable != null) {
                 val generateResult = subsamplingImageGenerators
                     // TODO filter animatable drawable
-                    .plus(EnginePicassoSubsamplingImageGenerator())
+                    .plus(EnginePicassoSubsamplingImageGenerator)
                     .firstNotNullOfOrNull {
                         it.generateImage(context, Picasso.get(), data, drawable)
                     }

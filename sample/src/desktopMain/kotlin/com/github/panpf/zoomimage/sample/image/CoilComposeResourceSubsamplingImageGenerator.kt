@@ -13,7 +13,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-actual class CoilComposeResourceSubsamplingImageGenerator :
+actual data object CoilComposeResourceSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
     actual override suspend fun generateImage(

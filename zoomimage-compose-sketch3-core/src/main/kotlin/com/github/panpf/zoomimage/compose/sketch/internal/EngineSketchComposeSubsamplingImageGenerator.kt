@@ -26,7 +26,12 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
-class EngineSketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
+/**
+ * [SketchComposeSubsamplingImageGenerator] implementation that uses the Sketch library to generate images
+ *
+ * @see com.github.panpf.zoomimage.compose.sketch3.core.test.internal.EngineSketchComposeSubsamplingImageGeneratorTest
+ */
+data object EngineSketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
 
     override fun generateImage(
         sketch: Sketch,

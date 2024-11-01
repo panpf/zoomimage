@@ -38,7 +38,7 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
 
     override fun createZoomImageView(context: Context): CoilZoomImageView {
         return CoilZoomImageView(context).apply {
-            registerSubsamplingImageGenerator(CoilViewResourceComposeSubsamplingImageGenerator())
+            registerSubsamplingImageGenerator(CoilViewResourceComposeSubsamplingImageGenerator)
         }
     }
 

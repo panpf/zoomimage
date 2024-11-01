@@ -30,4 +30,10 @@ interface SketchComposeSubsamplingImageGenerator {
         result: DisplayResult.Success,
         painter: Painter
     ): SubsamplingImageGenerateResult?
+
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
+
+    override fun toString(): String
 }

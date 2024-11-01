@@ -101,7 +101,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 val request = result.request
                 val generateResult = subsamplingImageGenerators
                     // TODO filter animatable drawable
-                    .plus(EngineSketchViewSubsamplingImageGenerator())
+                    .plus(EngineSketchViewSubsamplingImageGenerator)
                     .firstNotNullOfOrNull {
                         it.generateImage(sketch, request, result, drawable)
                     }

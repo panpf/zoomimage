@@ -24,9 +24,11 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.squareup.picasso.Picasso
 
 /**
- * Default implementation of [PicassoSubsamplingImageGenerator]
+ * [PicassoSubsamplingImageGenerator] implementation that uses the Picasso library to generate images
+ *
+ * @see com.github.panpf.zoomimage.core.picasso.test.internal.EnginePicassoSubsamplingImageGeneratorTest
  */
-class EnginePicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
+data object EnginePicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: Context,

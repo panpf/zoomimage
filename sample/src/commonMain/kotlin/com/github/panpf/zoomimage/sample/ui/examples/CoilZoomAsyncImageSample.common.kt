@@ -37,7 +37,7 @@ fun CoilZoomAsyncImageSample(
         createZoomState = {
             val extensionsModelToImageSources = remember {
                 platformCoilComposeSubsamplingImageGenerator().orEmpty()
-                    .plus(CoilComposeResourceSubsamplingImageGenerator())
+                    .plus(CoilComposeResourceSubsamplingImageGenerator)
                     .toImmutableList()
             }
             rememberCoilZoomState(subsamplingImageGenerators = extensionsModelToImageSources)

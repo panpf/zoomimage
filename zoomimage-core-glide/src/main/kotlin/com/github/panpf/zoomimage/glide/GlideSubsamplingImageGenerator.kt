@@ -33,4 +33,10 @@ interface GlideSubsamplingImageGenerator {
         model: Any,
         drawable: Drawable
     ): SubsamplingImageGenerateResult?
+
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
+
+    override fun toString(): String
 }

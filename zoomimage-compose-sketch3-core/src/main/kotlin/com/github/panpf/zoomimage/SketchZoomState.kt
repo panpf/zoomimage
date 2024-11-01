@@ -67,7 +67,7 @@ class SketchZoomState(
             listOf(
                 // TODO filter animatable drawable
 //                AnimatableComposeSketchSubsamplingImageGenerator(),
-                EngineSketchComposeSubsamplingImageGenerator()
+                EngineSketchComposeSubsamplingImageGenerator
             )
         )
 }

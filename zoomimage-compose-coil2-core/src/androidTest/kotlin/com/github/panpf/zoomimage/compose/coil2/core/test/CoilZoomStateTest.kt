@@ -33,20 +33,20 @@ class CoilZoomStateTest {
                     actual = zoomState1.logger.tag
                 )
                 assertEquals(
-                    expected = listOf(EngineCoilComposeSubsamplingImageGenerator()).joinToString { it::class.toString() },
+                    expected = listOf(EngineCoilComposeSubsamplingImageGenerator).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
                 val subsamplingImageGenerators = remember {
-                    listOf(TestCoilComposeSubsamplingImageGenerator()).toImmutableList()
+                    listOf(TestCoilComposeSubsamplingImageGenerator).toImmutableList()
                 }
                 val zoomState2 = rememberCoilZoomState(
                     subsamplingImageGenerators = subsamplingImageGenerators,
                 )
                 assertEquals(
                     expected = listOf(
-                        TestCoilComposeSubsamplingImageGenerator(),
-                        EngineCoilComposeSubsamplingImageGenerator()
+                        TestCoilComposeSubsamplingImageGenerator,
+                        EngineCoilComposeSubsamplingImageGenerator
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
@@ -64,7 +64,7 @@ class CoilZoomStateTest {
         }
     }
 
-    class TestCoilComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGenerator {
+    data object TestCoilComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,

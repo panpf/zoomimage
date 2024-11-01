@@ -96,85 +96,87 @@ follows:
 * [ResourceImageSource]: Load images from Android's res
   directory. [ImageSource.fromResource(context, R.raw.huge_world)][ResourceImageSource]
 
-### ModelToImageSource
+### \*SubsamplingImageGenerator
 
-Components of the Coil, Glide, and Picasso series all need to convert model or data to ImageSource
-when setting ImageSource. ZoomImage provides them with their own ModelToImageSource and default
-implementation, as follows:
+The components of the Sketch, Coil, Glide, and Picasso series must create a SubsamplingImage based
+on data or uri after the image is loaded successfully.
+To support subsampling functionality, they all have their default SubsamplingImageGenerator
+implementation
 
-* [CoilModelToImageSource][CoilModelToImageSource]：[CoilModelToImageSourceImpl][CoilModelToImageSourceImpl]
-* [CoilModelToImageSource][CoilModelToImageSource2] for Coil
-  2：[CoilModelToImageSourceImpl][CoilModelToImageSourceImpl2]  for Coil 2
-* [GlideModelToImageSource]：[GlideModelToImageSourceImpl]
-* [PicassoDataToImageSource]：[PicassoDataToImageSourceImpl]
-
-If the default implementation cannot correctly convert model or data to ImageSource and therefore
-cannot use subsampling, for example, if you customize the model or data, then you must customize a
-ModelToImageSource and apply it, as follows:
+If the default implementation cannot correctly convert model or data to ImageSource when
+creating [SubsamplingImage] or you need to intercept the creation process, then you can customize a
+SubsamplingImageGenerator and apply it. The following takes the Sketch component as an example.
+Other components are similar:
 
 ```kotlin
-/*
- * Coil
- */
-class MyCoilModelToImageSource : CoilModelToImageSource {
-    override suspend fun modelToImageSource(
-        context: PlatformContext,
-        imageLoader: ImageLoader,
-        model: Any
-    ): ImageSource.Factory? {
-        // ...
+data object : MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
+
+  override fun generateImage(
+    sketch: Sketch,
+    request: ImageRequest,
+    result: ImageResult.Success,
+    painter: Painter
+  ): SubsamplingImageGenerateResult? {
+    // If the conditions are not met, skip the current SubsamplingImageGenerator
+    if (true) {
+      return null
+    }
+
+    // If the conditions are not met, the generation fails and a failure result is returned.
+    if (true) {
+      return SubsamplingImageGenerateResult.Error("message")
+    }
+
+    // Success
+    val imageSource: ImageSource = ...
+    val imageInfo: ImageInfo = ...
+    val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
+    return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
 }
 
-val coilModeToImageSources = remember { listOf(MyCoilModelToImageSource()).toImmutableList() }
-val coilZoomState = rememberCoilZoomState(coilModeToImageSources)
-CoilAsyncZoomImage(
-    zoomState = coilZoomState,
+val subsamplingImageGenerators =
+  remember { listOf(MySketchComposeSubsamplingImageGenerator).toImmutableList() }
+val sketchZoomState = rememberSketchZoomState(subsamplingImageGenerators)
+SketchAsyncZoomImage(
+  zoomState = sketchZoomState,
     ...
 )
 
-val coilZoomImageView = CoilZoomImageView(context)
-coilZoomImageView.registerSubsamplingImageGenerator(MyCoilModelToImageSource())
 
-/*
- * Glide
- */
-class MyGlideModelToImageSource : GlideModelToImageSource {
-    override suspend fun modelToImageSource(
-        context: Context,
-        imageLoader: Glide,
-        model: Any
-    ): ImageSource.Factory? {
-        // ...
+data object : MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
+
+  override fun generateImage(
+    sketch: Sketch,
+    request: ImageRequest,
+    result: ImageResult.Success,
+    drawable: Drawable
+  ): SubsamplingImageGenerateResult? {
+    // If the conditions are not met, skip the current SubsamplingImageGenerator
+    if (true) {
+      return null
+    }
+
+    // If the conditions are not met, the generation fails and a failure result is returned.
+    if (true) {
+      return SubsamplingImageGenerateResult.Error("message")
+    }
+
+    // Success
+    val imageSource: ImageSource = ...
+    val imageInfo: ImageInfo = ...
+    val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
+    return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
 }
 
-val glideModeToImageSources = remember { listOf(MyGlideModelToImageSource()).toImmutableList() }
-val glideZoomState = rememberGlideZoomState(glideModeToImageSources)
-GlideAsyncZoomImage(
-    zoomState = glideZoomState,
-    ...
-)
-
-val glideZoomImageView = GlideZoomImageView(context)
-glideZoomImageView.registerSubsamplingImageGenerator(MyGlideModelToImageSource())
-
-/*
- * Picasso
- */
-class MyPicassoDataToImageSource : PicassoDataToImageSource {
-    override suspend fun dataToImageSource(
-        context: Context,
-        picasso: Picasso,
-        data: Any
-    ): ImageSource.Factory? {
-        // ...
-    }
-}
-
-val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageView.registerSubsamplingImageGenerator(MyPicassoDataToImageSource())
+val sketchZoomImageView = SketchZoomImageView(context)
+sketchZoomImageView.registerSubsamplingImageGenerator(MySketchViewSubsamplingImageGenerator)
 ```
+
+> [!TIP]
+> If you customize mode or data, you must customize a SubsamplingImageGenerator and apply it,
+> otherwise you will not be able to use the subsampling function
 
 ### Exif Orientation
 
@@ -416,18 +418,4 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
 
-[CoilModelToImageSource]: ../../zoomimage-core-coil3/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
-
-[CoilModelToImageSourceImpl]: ../../zoomimage-core-coil3/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
-
-[CoilModelToImageSource2]: ../../zoomimage-core-coil2/src/main/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
-
-[CoilModelToImageSourceImpl2]: ../../zoomimage-core-coil2/src/main/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
-
-[GlideModelToImageSource]: ../../zoomimage-core-glide/src/main/kotlin/com/github/panpf/zoomimage/glide/GlideModelToImageSource.kt
-
-[GlideModelToImageSourceImpl]: ../../zoomimage-core-glide/src/main/kotlin/com/github/panpf/zoomimage/glide/GlideModelToImageSource.kt
-
-[PicassoDataToImageSource]: ../../zoomimage-core-picasso/src/main/kotlin/com/github/panpf/zoomimage/picasso/PicassoDataToImageSource.kt
-
-[PicassoDataToImageSourceImpl]: ../../zoomimage-core-picasso/src/main/kotlin/com/github/panpf/zoomimage/picasso/PicassoDataToImageSource.kt
+[SubsamplingImage]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/SubsamplingImage.kt

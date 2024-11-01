@@ -16,17 +16,22 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-fun SubsamplingImage(
-    imageSource: ImageSource.Factory?,
-    imageInfo: ImageInfo? = null
-): SubsamplingImage? {
-    return imageSource?.let { SubsamplingImage(it, imageInfo) }
-}
+/**
+ * Subsampling image
+ *
+ * @param imageInfo If imageInfo is not null, the contentOriginSize of Zoomable can be set in advance
+ *  to avoid the user's Transform being reset during the initialization process due to setting
+ *  contentOriginSize after the initialization is completed.
+ */
+data class SubsamplingImage(
+    val imageSource: ImageSource.Factory,
+    val imageInfo: ImageInfo? = null
+) {
 
-fun SubsamplingImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): SubsamplingImage? {
-    return imageSource?.let { SubsamplingImage(ImageSource.WrapperFactory(it), imageInfo) }
-}
+    constructor(
+        imageSource: ImageSource,
+        imageInfo: ImageInfo? = null
+    ) : this(ImageSource.WrapperFactory(imageSource), imageInfo)
 
-data class SubsamplingImage(val imageSource: ImageSource.Factory, val imageInfo: ImageInfo?) {
     val key: String by lazy { "${imageSource.key}&imageInfo=$imageInfo" }
 }

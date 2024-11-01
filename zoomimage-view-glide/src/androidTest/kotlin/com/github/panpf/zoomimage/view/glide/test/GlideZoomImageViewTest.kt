@@ -69,14 +69,14 @@ class GlideZoomImageViewTest {
                 actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor1 = TestGlideSubsamplingImageGenerator()
+            val convertor1 = TestGlideSubsamplingImageGenerator
             glideZoomImageView.registerSubsamplingImageGenerator(convertor1)
             assertEquals(
                 expected = 1,
                 actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!.size
             )
 
-            val convertor2 = TestGlideSubsamplingImageGenerator()
+            val convertor2 = TestGlideSubsamplingImageGenerator
             glideZoomImageView.registerSubsamplingImageGenerator(convertor2)
             assertEquals(
                 expected = 2,
@@ -283,7 +283,7 @@ class GlideZoomImageViewTest {
         }
     }
 
-    class TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
+    data object TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,

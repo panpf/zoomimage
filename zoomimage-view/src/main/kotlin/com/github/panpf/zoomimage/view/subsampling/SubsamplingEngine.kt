@@ -231,14 +231,16 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
      * Set subsampling image
      */
     fun setImage(imageSource: ImageSource.Factory?, imageInfo: ImageInfo? = null): Boolean {
-        return setImage(SubsamplingImage(imageSource, imageInfo))
+        return setImage(imageSource?.let { SubsamplingImage(it, imageInfo) })
     }
 
     /**
      * Set subsampling image
      */
     fun setImage(imageSource: ImageSource?, imageInfo: ImageInfo? = null): Boolean {
-        return setImage(SubsamplingImage(imageSource, imageInfo))
+        return setImage(imageSource?.let {
+            SubsamplingImage(ImageSource.WrapperFactory(it), imageInfo)
+        })
     }
 
     /**
