@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromFile
-import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.createTileDecoder
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -27,7 +26,7 @@ class SubsamplingDesktopTest {
         createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
-            thumbnailSize = hugeLongQmshtImageFile.size / 32f,
+            contentSize = hugeLongQmshtImageFile.size / 32f,
         ).getOrThrow().apply {
             assertEquals(
                 expected = hugeLongQmshtImageFile.size,
@@ -44,7 +43,7 @@ class SubsamplingDesktopTest {
         createTileDecoder(
             logger = logger,
             imageSource = errorImageSource,
-            thumbnailSize = IntSizeCompat(100, 100),
+            contentSize = IntSizeCompat(100, 100),
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             assertEquals(-1, this.code)
             assertEquals(false, this.skipped)
@@ -61,7 +60,7 @@ class SubsamplingDesktopTest {
 //        createTileDecoder(
 //            logger = logger,
 //            imageSource = gifImageSource,
-//            thumbnailSize = gifImageFile.size / 8f,
+//            contentSize = gifImageFile.size / 8f,
 //        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
 //            assertEquals(-3, this.code)
 //            assertEquals(true, this.skipped)
@@ -75,7 +74,7 @@ class SubsamplingDesktopTest {
         createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
-            thumbnailSize = errorThumbnailSize,
+            contentSize = errorThumbnailSize,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             assertEquals(-4, this.code)
             assertEquals(true, this.skipped)
@@ -99,7 +98,7 @@ class SubsamplingDesktopTest {
         createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
-            thumbnailSize = errorThumbnailSize2,
+            contentSize = errorThumbnailSize2,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             assertEquals(-4, this.code)
             assertEquals(true, this.skipped)
@@ -123,7 +122,7 @@ class SubsamplingDesktopTest {
         createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
-            thumbnailSize = errorThumbnailSize3,
+            contentSize = errorThumbnailSize3,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             assertEquals(-5, this.code)
             assertEquals(false, this.skipped)

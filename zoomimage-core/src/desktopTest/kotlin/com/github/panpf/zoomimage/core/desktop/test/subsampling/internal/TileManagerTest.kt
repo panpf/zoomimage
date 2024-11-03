@@ -13,7 +13,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileImageCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
-import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelperFactory
+import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.test.decodeImageInfo
 import com.github.panpf.zoomimage.test.toImageSource
@@ -527,7 +527,7 @@ class TileManagerTest {
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
-        val tileDecoder = TileDecoder(logger, createDecodeHelperFactory().create(imageSource))
+        val tileDecoder = TileDecoder(logger, defaultRegionDecoder().create(imageSource))
         val backgroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val foregroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val sampleSizeChangedList = mutableListOf<Int>()

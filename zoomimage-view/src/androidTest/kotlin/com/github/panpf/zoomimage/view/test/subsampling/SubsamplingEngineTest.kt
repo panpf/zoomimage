@@ -5,12 +5,10 @@ import android.widget.ImageView
 import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.tools4a.test.ktx.getActivitySync
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.test.TestActivity
-import com.github.panpf.zoomimage.test.TestImageSource
 import com.github.panpf.zoomimage.test.TestTileImageCache
 import com.github.panpf.zoomimage.test.delayUntil
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -38,27 +36,6 @@ class SubsamplingEngineTest {
         assertSame(expected = zoomable, actual = subsampling.zoomableEngine)
         assertSame(expected = zoomable.logger, actual = subsampling.logger)
         assertSame(expected = zoomable.view, actual = subsampling.view)
-    }
-
-    @Test
-    fun testImageKey() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val imageView = ImageView(context)
-        val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
-        assertEquals(expected = null, actual = subsampling.imageKey)
-
-        subsampling.setImage(TestImageSource())
-        assertEquals(expected = "TestImageSource&imageInfo=null", actual = subsampling.imageKey)
-
-        subsampling.setImage(TestImageSource("TestImageSource2"), ImageInfo(101, 202, "image/jpeg"))
-        assertEquals(
-            expected = "TestImageSource2&imageInfo=ImageInfo(size=101x202, mimeType='image/jpeg')",
-            actual = subsampling.imageKey
-        )
-
-        subsampling.setImage(null as TestImageSource?)
-        assertEquals(expected = null, actual = subsampling.imageKey)
     }
 
     @Test

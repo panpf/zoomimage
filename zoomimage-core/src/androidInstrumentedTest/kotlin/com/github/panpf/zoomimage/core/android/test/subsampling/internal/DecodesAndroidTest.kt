@@ -3,12 +3,12 @@ package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 import android.webkit.MimeTypeMap
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.internal.BitmapRegionDecoderDecodeHelper
+import com.github.panpf.zoomimage.subsampling.internal.AndroidRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.subsampling.internal.applyToImageInfo
-import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelperFactory
 import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
+import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoder
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.test.runTest
@@ -19,9 +19,9 @@ import kotlin.test.assertTrue
 class DecodesAndroidTest {
 
     @Test
-    fun testCreateDecodeHelperFactory() {
-        val factory = createDecodeHelperFactory()
-        assertTrue(factory is BitmapRegionDecoderDecodeHelper.Factory)
+    fun testDefaultRegionDecoder() {
+        val factory = defaultRegionDecoder()
+        assertTrue(factory is AndroidRegionDecoder.Matcher)
     }
 
     @Test

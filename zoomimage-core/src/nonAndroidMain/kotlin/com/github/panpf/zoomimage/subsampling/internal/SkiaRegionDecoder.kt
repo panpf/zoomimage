@@ -19,8 +19,11 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.toSkiaRect
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import okio.buffer
 import okio.use
 import org.jetbrains.skia.Bitmap
@@ -39,13 +42,12 @@ import kotlin.math.ceil
  *
  * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.SkiaDecoderHelperTest
  */
-class SkiaDecodeHelper(
+class SkiaRegionDecoder(
     override val imageSource: ImageSource,
     override val imageInfo: ImageInfo,
-    override val supportRegion: Boolean,
     val bytes: ByteArray,
     val image: Image,
-) : DecodeHelper {
+) : RegionDecoder {
 
     override fun decodeRegion(
         key: String,
@@ -73,21 +75,46 @@ class SkiaDecodeHelper(
         image.close()
     }
 
-    override fun copy(): DecodeHelper {
-        return SkiaDecodeHelper(
+    override fun copy(): RegionDecoder {
+        return SkiaRegionDecoder(
             imageSource = imageSource,
             imageInfo = imageInfo,
-            supportRegion = supportRegion,
             bytes = bytes,
             image = Image.makeFromEncoded(bytes)
         )
     }
 
     override fun toString(): String {
-        return "SkiaDecodeHelper(imageSource=$imageSource, imageInfo=$imageInfo, supportRegion=$supportRegion)"
+        return "SkiaDecodeHelper(imageSource=$imageSource, imageInfo=$imageInfo)"
     }
 
-    class Factory : DecodeHelper.Factory {
+    class Matcher : RegionDecoder.Matcher {
+
+        override suspend fun accept(subsamplingImage: SubsamplingImage): Factory {
+            return Factory()
+        }
+    }
+
+    class Factory : RegionDecoder.Factory {
+
+        private var _bytes: ByteArray? = null
+        private val bytesSynchronizedObject = SynchronizedObject()
+
+        private var _image: Image? = null
+        private val imageSynchronizedObject = SynchronizedObject()
+
+        override suspend fun decodeImageInfo(imageSource: ImageSource): ImageInfo {
+            val bytes = getOrCreateBytes(imageSource)
+            val image = getOrCreateImage(bytes)
+            val data = Data.makeFromBytes(bytes)
+            val encodedImageFormat = Codec.makeFromData(data).use { it.encodedImageFormat }
+            val mimeType = "image/${encodedImageFormat.name.lowercase()}"
+            return ImageInfo(
+                width = image.width,
+                height = image.height,
+                mimeType = mimeType
+            )
+        }
 
         override fun checkSupport(mimeType: String): Boolean? = when (mimeType) {
             "image/jpeg", "image/png", "image/webp", "image/bmp" -> true
@@ -97,30 +124,40 @@ class SkiaDecodeHelper(
             else -> null
         }
 
-        override fun create(imageSource: ImageSource): SkiaDecodeHelper {
-            val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
-            val image = Image.makeFromEncoded(bytes)
-            val imageInfo = readImageInfo(bytes, image)
-            val supportRegion = checkSupport(imageInfo.mimeType) ?: true
-            return SkiaDecodeHelper(
+        override suspend fun create(
+            imageSource: ImageSource,
+            imageInfo: ImageInfo
+        ): SkiaRegionDecoder {
+            val bytes = getOrCreateBytes(imageSource)
+            val image = getOrCreateImage(bytes)
+            return SkiaRegionDecoder(
                 imageSource = imageSource,
                 imageInfo = imageInfo,
-                supportRegion = supportRegion,
                 bytes = bytes,
                 image = image
             )
         }
 
-        private fun readImageInfo(bytes: ByteArray, image: Image): ImageInfo {
-            val encodedImageFormat = Codec.makeFromData(Data.makeFromBytes(bytes)).use {
-                it.encodedImageFormat
+        private fun getOrCreateBytes(imageSource: ImageSource): ByteArray {
+            return synchronized(bytesSynchronizedObject) {
+                _bytes
+                    ?: imageSource.openSource().buffer().use { it.readByteArray() }.also {
+                        this@Factory._bytes = it
+                    }
             }
-            val mimeType = "image/${encodedImageFormat.name.lowercase()}"
-            return ImageInfo(
-                width = image.width,
-                height = image.height,
-                mimeType = mimeType
-            )
+        }
+
+        private fun getOrCreateImage(bytes: ByteArray): Image {
+            return synchronized(imageSynchronizedObject) {
+                _image
+                    ?: Image.makeFromEncoded(bytes).also {
+                        _image = it
+                    }
+            }
+        }
+
+        override fun close() {
+
         }
     }
 }

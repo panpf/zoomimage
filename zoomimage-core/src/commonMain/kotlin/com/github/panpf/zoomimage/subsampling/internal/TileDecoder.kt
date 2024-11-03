@@ -32,22 +32,22 @@ import kotlinx.atomicfu.locks.synchronized
  */
 class TileDecoder(
     val logger: Logger,
-    private val decodeHelper: DecodeHelper,
+    private val regionDecoder: RegionDecoder,
 ) : AutoCloseable {
 
     private var closed = false
-    private val decoderPool = mutableListOf<DecodeHelper>()
+    private val decoderPool = mutableListOf<RegionDecoder>()
     private val poolSyncLock = SynchronizedObject()
 
     val decoderPoolSize: Int
         get() = decoderPool.size
 
-    val imageInfo: ImageInfo = decodeHelper.imageInfo
+    val imageInfo: ImageInfo = regionDecoder.imageInfo
 
-    val imageSource: ImageSource = decodeHelper.imageSource
+    val imageSource: ImageSource = regionDecoder.imageSource
 
     init {
-        decoderPool.add(decodeHelper)
+        decoderPool.add(regionDecoder)
     }
 
     @WorkerThread
@@ -59,22 +59,22 @@ class TileDecoder(
 
     @WorkerThread
     private fun useDecoder(
-        block: (decoder: DecodeHelper) -> TileImage?
+        block: (decoder: RegionDecoder) -> TileImage?
     ): TileImage? {
-        var decodeHelper: DecodeHelper? = synchronized(poolSyncLock) {
+        var regionDecoder: RegionDecoder? = synchronized(poolSyncLock) {
             if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }
-        if (decodeHelper == null) {
-            decodeHelper = this.decodeHelper.copy()
+        if (regionDecoder == null) {
+            regionDecoder = this.regionDecoder.copy()
         }
 
-        val tileImage = block(decodeHelper)
+        val tileImage = block(regionDecoder)
 
         synchronized(poolSyncLock) {
             if (!closed) {
-                decoderPool.add(decodeHelper)
+                decoderPool.add(regionDecoder)
             } else {
-                decodeHelper.close()
+                regionDecoder.close()
             }
         }
 
@@ -86,7 +86,7 @@ class TileDecoder(
         val closed = synchronized(poolSyncLock) { this@TileDecoder.closed }
         if (!closed) {
             this@TileDecoder.closed = true
-            logger.d { "TileDecoder. close. $decodeHelper" }
+            logger.d { "TileDecoder. close. $regionDecoder" }
             synchronized(poolSyncLock) {
                 decoderPool.forEach { it.close() }
                 decoderPool.clear()
@@ -95,6 +95,6 @@ class TileDecoder(
     }
 
     override fun toString(): String {
-        return "TileDecoder($decodeHelper)"
+        return "TileDecoder($regionDecoder)"
     }
 }

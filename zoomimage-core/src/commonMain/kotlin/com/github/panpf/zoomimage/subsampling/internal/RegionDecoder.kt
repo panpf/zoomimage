@@ -16,30 +16,40 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 
-// TODO rename to RegionDecoder
-interface DecodeHelper : AutoCloseable {
+interface RegionDecoder : AutoCloseable {
 
     val imageSource: ImageSource
 
     val imageInfo: ImageInfo
 
-    val supportRegion: Boolean
-
     @WorkerThread
     fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileImage
 
-    fun copy(): DecodeHelper
+    fun copy(): RegionDecoder
 
-    interface Factory {
+    interface Matcher {
 
+        @MainThread
+        suspend fun accept(subsamplingImage: SubsamplingImage): Factory?
+    }
+
+    interface Factory : AutoCloseable {
+
+        @WorkerThread
+        suspend fun decodeImageInfo(imageSource: ImageSource): ImageInfo
+
+        @MainThread
         fun checkSupport(mimeType: String): Boolean?
 
-        fun create(imageSource: ImageSource): DecodeHelper
+        @WorkerThread
+        suspend fun create(imageSource: ImageSource, imageInfo: ImageInfo): RegionDecoder
     }
 }

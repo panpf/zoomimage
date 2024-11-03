@@ -17,7 +17,9 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 /**
- * Create a [DecodeHelper].Factory
+ * Get the platform's default RegionDecoder
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoder
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testDefaultRegionDecoder
  */
-// TODO Can be set by the user
-expect fun createDecodeHelperFactory(): DecodeHelper.Factory
+expect fun defaultRegionDecoder(): RegionDecoder.Matcher

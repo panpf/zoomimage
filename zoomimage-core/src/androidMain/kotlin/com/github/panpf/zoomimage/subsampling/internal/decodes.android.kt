@@ -26,12 +26,12 @@ import okio.buffer
 import okio.use
 
 /**
- * Create a [DecodeHelper].Factory
+ * Get the platform's default RegionDecoder
  *
- * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCreateDecodeHelperFactory
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoder
  */
-actual fun createDecodeHelperFactory(): DecodeHelper.Factory {
-    return BitmapRegionDecoderDecodeHelper.Factory()
+actual fun defaultRegionDecoder(): RegionDecoder.Matcher {
+    return AndroidRegionDecoder.Matcher()
 }
 
 /**

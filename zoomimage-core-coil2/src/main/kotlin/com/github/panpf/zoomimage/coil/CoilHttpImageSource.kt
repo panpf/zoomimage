@@ -58,9 +58,9 @@ class CoilHttpImageSource(
     }
 
     class Factory(
-        private val context: Context,
-        private val imageLoader: ImageLoader,
-        private val url: String
+        val context: Context,
+        val imageLoader: ImageLoader,
+        val url: String
     ) : ImageSource.Factory {
 
         override val key: String = url

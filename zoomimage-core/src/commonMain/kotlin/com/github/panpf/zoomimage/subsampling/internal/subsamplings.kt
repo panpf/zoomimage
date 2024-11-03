@@ -16,13 +16,18 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import androidx.annotation.MainThread
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 /**
@@ -31,66 +36,83 @@ import kotlin.math.abs
  *
  * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.SubsamplingDesktopTest.testCreateTileDecoder
  */
-fun createTileDecoder(
+@MainThread
+suspend fun createTileDecoder(
     logger: Logger,
-    imageSource: ImageSource,
-    thumbnailSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    subsamplingImage: SubsamplingImage,
+    regionDecoders: List<RegionDecoder.Matcher>,
+    onImageInfoPassed: (ImageInfo) -> Unit,
 ): Result<TileDecoder> = runCatching {
-    val decodeHelper = try {
-        createDecodeHelperFactory().create(imageSource)
-    } catch (e: Exception) {
-        throw CreateTileDecoderException(
-            code = -1,
-            skipped = false,
-            message = "Create DecodeHelper failed: ${e.message}",
-            imageInfo = null
-        )
-    }
-    val imageInfo = decodeHelper.imageInfo
-    if (imageInfo.size.isEmpty()) {
-        decodeHelper.close()
-        val message = "image width or height is error: ${imageInfo.width}x${imageInfo.height}"
-        throw CreateTileDecoderException(
-            code = -2,
-            skipped = true,
-            message = message,
-            imageInfo = imageInfo
-        )
-    }
-    // TODO No need. If it is not supported, an exception will be thrown.
-    if (!decodeHelper.supportRegion) {
-        decodeHelper.close()
-        val message = "Image type not support subsampling"
-        throw CreateTileDecoderException(
-            code = -3,
-            skipped = true,
-            message = message,
-            imageInfo = imageInfo
-        )
-    }
-    if (thumbnailSize.width >= imageInfo.width || thumbnailSize.height >= imageInfo.height) {
-        decodeHelper.close()
-        val message = "The thumbnail size is greater than or equal to the original image"
-        throw CreateTileDecoderException(
-            code = -4,
-            skipped = true,
-            message = message,
-            imageInfo = imageInfo
-        )
-    }
-    if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
-        decodeHelper.close()
-        val message =
-            "The aspect ratio of the thumbnail is too different from that of the original image. " +
-                    "Please refer to the canUseSubsamplingByAspectRatio() function to correct the thumbnail size."
-        throw CreateTileDecoderException(
-            code = -5,
-            skipped = false,
-            message = message,
-            imageInfo = imageInfo
-        )
-    }
-    TileDecoder(logger, decodeHelper)
+    regionDecoders
+        .plus(defaultRegionDecoder())
+        .firstNotNullOf { it.accept(subsamplingImage) }
+        .use { regionDecoderFactory ->
+            // Read ImageInfo
+            var imageSource: ImageSource? = null
+            val externalImageInfo = subsamplingImage.imageInfo
+            val imageInfo = if (externalImageInfo != null) {
+                externalImageInfo
+            } else {
+                val imageSource1 = withContext(ioCoroutineDispatcher()) {
+                    runCatching { subsamplingImage.imageSource.create() }
+                }.apply {
+                    if (isFailure) throw exceptionOrNull()!!
+                }.getOrThrow().apply { imageSource = this }
+
+                withContext(ioCoroutineDispatcher()) {
+                    runCatching { regionDecoderFactory.decodeImageInfo(imageSource1) }
+                }.apply {
+                    if (isFailure) throw exceptionOrNull()!!
+                }.getOrThrow()
+            }
+
+            // Check image size
+            val imageSize = imageInfo.size
+            if (imageSize.isEmpty()) {
+                throw Exception("image size invalid: ${imageInfo.width}x${imageInfo.height}")
+            }
+            if (contentSize.width >= imageSize.width || contentSize.height >= imageSize.height) {
+                throw Exception(
+                    "the thumbnail size is greater than or equal to the original image. " +
+                            "contentSize=${contentSize.toShortString()}, " +
+                            "imageSize=${imageSize.toShortString()}"
+                )
+            }
+
+            // Check aspect ratio
+            if (!canUseSubsamplingByAspectRatio(imageSize, thumbnailSize = contentSize)) {
+                throw Exception(
+                    "The aspect ratio of the thumbnail is too different from that of the original image. " +
+                            "contentSize=${contentSize.toShortString()}, " +
+                            "imageSize=${imageSize.toShortString()}"
+                )
+            }
+
+            // Check image mimeType
+            val supportRegion = imageInfo.mimeType.let { regionDecoderFactory.checkSupport(it) }
+            if (supportRegion == false) {
+                throw Exception("Image type not support subsampling. mimeType=${imageInfo.mimeType}")
+            }
+
+            onImageInfoPassed(imageInfo)
+
+            // Create RegionDecoder
+            if (imageSource == null) {
+                imageSource = withContext(ioCoroutineDispatcher()) {
+                    runCatching { subsamplingImage.imageSource.create() }
+                }.apply {
+                    if (isFailure) throw exceptionOrNull()!!
+                }.getOrThrow().apply { imageSource = this }
+            }
+            val regionDecoder = withContext(ioCoroutineDispatcher()) {
+                runCatching { regionDecoderFactory.create(imageSource!!, imageInfo) }
+            }.apply {
+                if (isFailure) throw exceptionOrNull()!!
+            }.getOrThrow()
+
+            TileDecoder(logger, regionDecoder)
+        }
 }
 
 /**

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import com.githb.panpf.zoomimage.images.ResourceImages
-import com.github.panpf.zoomimage.subsampling.internal.BitmapRegionDecoderDecodeHelper
+import com.github.panpf.zoomimage.subsampling.internal.AndroidRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.test.hammingDistance
 import com.github.panpf.zoomimage.test.produceFingerPrint
@@ -15,16 +15,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class BitmapRegionDecoderDecodeHelperTest {
+class AndroidRegionDecoderTest {
 
     @Test
     fun testFactory() {
         val dogImageFile = ResourceImages.dog
         val dogImageSource = dogImageFile.toImageSource()
-        BitmapRegionDecoderDecodeHelper.Factory().create(dogImageSource).apply {
+        AndroidRegionDecoder.Factory().create(dogImageSource).apply {
             assertSame(dogImageSource, imageSource)
             assertEquals(dogImageFile.size, imageInfo.size)
-            assertEquals(true, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED),
                 actual = exifOrientationHelper
@@ -33,10 +32,9 @@ class BitmapRegionDecoderDecodeHelperTest {
 
         val animImageFile = ResourceImages.anim
         val animImageSource = animImageFile.toImageSource()
-        BitmapRegionDecoderDecodeHelper.Factory().create(animImageSource).apply {
+        AndroidRegionDecoder.Factory().create(animImageSource).apply {
             assertSame(animImageSource, imageSource)
             assertEquals(animImageFile.size, imageInfo.size)
-            assertEquals(false, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED),
                 actual = exifOrientationHelper
@@ -45,10 +43,9 @@ class BitmapRegionDecoderDecodeHelperTest {
 
         val exifRotate180ImageFile = ResourceImages.exifRotate180
         val exifRotate180ImageSource = exifRotate180ImageFile.toImageSource()
-        BitmapRegionDecoderDecodeHelper.Factory().create(exifRotate180ImageSource).apply {
+        AndroidRegionDecoder.Factory().create(exifRotate180ImageSource).apply {
             assertSame(exifRotate180ImageSource, imageSource)
             assertEquals(exifRotate180ImageFile.size, imageInfo.size)
-            assertEquals(true, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_180),
                 actual = exifOrientationHelper
@@ -57,10 +54,9 @@ class BitmapRegionDecoderDecodeHelperTest {
 
         val exifTransposeImageFile = ResourceImages.exifTranspose
         val exifTransposeImageSource = exifTransposeImageFile.toImageSource()
-        BitmapRegionDecoderDecodeHelper.Factory().create(exifTransposeImageSource).apply {
+        AndroidRegionDecoder.Factory().create(exifTransposeImageSource).apply {
             assertSame(exifTransposeImageSource, imageSource)
             assertEquals(exifTransposeImageFile.size, imageInfo.size)
-            assertEquals(true, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSPOSE),
                 actual = exifOrientationHelper
@@ -70,7 +66,7 @@ class BitmapRegionDecoderDecodeHelperTest {
 
     @Test
     fun testFactoryCheckSupport() {
-        val factory = BitmapRegionDecoderDecodeHelper.Factory()
+        val factory = AndroidRegionDecoder.Factory()
         assertEquals(true, factory.checkSupport("image/jpeg"))
         assertEquals(true, factory.checkSupport("image/png"))
         assertEquals(true, factory.checkSupport("image/webp"))
@@ -98,7 +94,7 @@ class BitmapRegionDecoderDecodeHelperTest {
     @Test
     fun test() {
         val imageSource1 = ResourceImages.exifNormal.toImageSource()
-        val decodeHelper1 = BitmapRegionDecoderDecodeHelper.Factory().create(imageSource1)
+        val decodeHelper1 = AndroidRegionDecoder.Factory().create(imageSource1)
         val bitmap11: Bitmap
         try {
             bitmap11 = decodeHelper1.decodeRegion(
@@ -125,7 +121,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         }
 
         val imageSource2 = ResourceImages.exifRotate90.toImageSource()
-        val tileDecoder2 = BitmapRegionDecoderDecodeHelper.Factory().create(imageSource2)
+        val tileDecoder2 = AndroidRegionDecoder.Factory().create(imageSource2)
         val bitmap2: Bitmap
         try {
             bitmap2 = tileDecoder2

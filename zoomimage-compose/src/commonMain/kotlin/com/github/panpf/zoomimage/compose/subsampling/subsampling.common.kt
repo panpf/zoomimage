@@ -146,7 +146,7 @@ internal class SubsamplingDrawTilesNode(
                     "outsideLoadCount=${outsideLoadCount}, " +
                     "realDrawCount=${realDrawCount}, " +
                     "backgroundCount=${backgroundCount}. " +
-                    "'${subsampling.imageKey}'"
+                    "'${subsampling.subsamplingImage?.key}'"
         }
     }
 

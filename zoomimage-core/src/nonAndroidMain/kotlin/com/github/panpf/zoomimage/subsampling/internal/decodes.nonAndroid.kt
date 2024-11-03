@@ -17,10 +17,10 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 /**
- * Create a [DecodeHelper].Factory
+ * Create a [RegionDecoder].Factory
  *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testCreateDecodeHelperFactory
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testDefaultRegionDecoder
  */
-actual fun createDecodeHelperFactory(): DecodeHelper.Factory {
-    return SkiaDecodeHelper.Factory()
+actual fun defaultRegionDecoder(): RegionDecoder.Matcher {
+    return SkiaRegionDecoder.Matcher()
 }

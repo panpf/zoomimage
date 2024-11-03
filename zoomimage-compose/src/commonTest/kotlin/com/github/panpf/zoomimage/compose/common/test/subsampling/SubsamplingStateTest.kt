@@ -14,12 +14,10 @@ import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.test.Platform
-import com.github.panpf.zoomimage.test.TestImageSource
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.TestTileImageCache
 import com.github.panpf.zoomimage.test.current
@@ -74,27 +72,6 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testImageKey() {
-        val logger = Logger("Test")
-        val zoomable = ZoomableState(logger)
-        val testLifecycle = TestLifecycle()
-        val subsampling = SubsamplingState(zoomable, testLifecycle)
-        assertEquals(expected = null, actual = subsampling.imageKey)
-
-        subsampling.setImage(TestImageSource())
-        assertEquals(expected = "TestImageSource&imageInfo=null", actual = subsampling.imageKey)
-
-        subsampling.setImage(TestImageSource("TestImageSource2"), ImageInfo(101, 202, "image/jpeg"))
-        assertEquals(
-            expected = "TestImageSource2&imageInfo=ImageInfo(size=101x202, mimeType='image/jpeg')",
-            actual = subsampling.imageKey
-        )
-
-        subsampling.setImage(null as TestImageSource?)
-        assertEquals(expected = null, actual = subsampling.imageKey)
-    }
-
-    @Test
     fun testTileImageCache() {
         val logger = Logger("Test")
         val zoomable = ZoomableState(logger)
@@ -137,10 +114,17 @@ class SubsamplingStateTest {
         val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
-        assertEquals(expected = TileManager.DefaultPausedContinuousTransformTypes, actual = subsampling.pausedContinuousTransformTypes)
+        assertEquals(
+            expected = TileManager.DefaultPausedContinuousTransformTypes,
+            actual = subsampling.pausedContinuousTransformTypes
+        )
 
-        subsampling.pausedContinuousTransformTypes = ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
-        assertEquals(expected = ContinuousTransformType.GESTURE or ContinuousTransformType.FLING, actual = subsampling.pausedContinuousTransformTypes)
+        subsampling.pausedContinuousTransformTypes =
+            ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+        assertEquals(
+            expected = ContinuousTransformType.GESTURE or ContinuousTransformType.FLING,
+            actual = subsampling.pausedContinuousTransformTypes
+        )
     }
 
     @Test
@@ -500,7 +484,10 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.ready }
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 0, actual = subsampling.sampleSize)
         }
 
@@ -528,7 +515,10 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 2, actual = subsampling.sampleSize)
         }
 
@@ -556,7 +546,10 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 1, actual = subsampling.sampleSize)
         }
     }
@@ -584,9 +577,15 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 0, actual = subsampling.sampleSize)
-            assertEquals(expected = "IntRect.fromLTRB(0, 0, 690, 12176)", actual = subsampling.imageLoadRect.toString())
+            assertEquals(
+                expected = "IntRect.fromLTRB(0, 0, 690, 12176)",
+                actual = subsampling.imageLoadRect.toString()
+            )
         }
 
         runComposeUiTest {
@@ -612,9 +611,15 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 1, actual = subsampling.sampleSize)
-            assertEquals(expected = "IntRect.fromLTRB(0, 5703, 690, 6473)", actual = subsampling.imageLoadRect.toString())
+            assertEquals(
+                expected = "IntRect.fromLTRB(0, 5703, 690, 6473)",
+                actual = subsampling.imageLoadRect.toString()
+            )
         }
 
         runComposeUiTest {
@@ -640,9 +645,15 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 1, actual = subsampling.sampleSize)
-            assertEquals(expected = "IntRect.fromLTRB(127, 5871, 563, 6305)", actual = subsampling.imageLoadRect.toString())
+            assertEquals(
+                expected = "IntRect.fromLTRB(127, 5871, 563, 6305)",
+                actual = subsampling.imageLoadRect.toString()
+            )
         }
     }
 
@@ -675,18 +686,30 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 144, actual = subsampling.foregroundTiles.size)
             assertEquals(expected = 1, actual = subsampling.sampleSize)
-            assertEquals(expected = "IntRect.fromLTRB(127, 5871, 563, 6305)", actual = subsampling.imageLoadRect.toString())
-            assertEquals(expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')", actual = subsampling.imageInfo.toString())
+            assertEquals(
+                expected = "IntRect.fromLTRB(127, 5871, 563, 6305)",
+                actual = subsampling.imageLoadRect.toString()
+            )
+            assertEquals(
+                expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')",
+                actual = subsampling.imageInfo.toString()
+            )
 
             subsampling.setImage(null as ImageSource?)
             waitMillis(1000)
             assertEquals(expected = "{}", actual = subsampling.tileGridSizeMap.toString())
             assertEquals(expected = 0, actual = subsampling.foregroundTiles.size)
             assertEquals(expected = 0, actual = subsampling.sampleSize)
-            assertEquals(expected = "IntRect.fromLTRB(0, 0, 0, 0)", actual = subsampling.imageLoadRect.toString())
+            assertEquals(
+                expected = "IntRect.fromLTRB(0, 0, 0, 0)",
+                actual = subsampling.imageLoadRect.toString()
+            )
             assertEquals(expected = "null", actual = subsampling.imageInfo.toString())
         }
     }
@@ -721,18 +744,30 @@ class SubsamplingStateTest {
             waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
-            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(
+                expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
+                actual = subsampling.tileGridSizeMap.toString()
+            )
             assertEquals(expected = 144, actual = subsampling.foregroundTiles.size)
             assertEquals(expected = 1, actual = subsampling.sampleSize)
-            assertEquals(expected = "IntRect.fromLTRB(127, 5871, 563, 6305)", actual = subsampling.imageLoadRect.toString())
-            assertEquals(expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')", actual = subsampling.imageInfo.toString())
+            assertEquals(
+                expected = "IntRect.fromLTRB(127, 5871, 563, 6305)",
+                actual = subsampling.imageLoadRect.toString()
+            )
+            assertEquals(
+                expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')",
+                actual = subsampling.imageInfo.toString()
+            )
         }
 
         val subsampling = subsamplingHolder!!
         assertEquals(expected = "{}", actual = subsampling.tileGridSizeMap.toString())
         assertEquals(expected = 0, actual = subsampling.foregroundTiles.size)
         assertEquals(expected = 0, actual = subsampling.sampleSize)
-        assertEquals(expected = "IntRect.fromLTRB(0, 0, 0, 0)", actual = subsampling.imageLoadRect.toString())
+        assertEquals(
+            expected = "IntRect.fromLTRB(0, 0, 0, 0)",
+            actual = subsampling.imageLoadRect.toString()
+        )
         assertEquals(expected = "null", actual = subsampling.imageInfo.toString())
     }
 

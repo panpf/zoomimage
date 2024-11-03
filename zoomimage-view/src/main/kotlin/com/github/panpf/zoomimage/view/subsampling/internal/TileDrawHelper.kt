@@ -121,7 +121,7 @@ class TileDrawHelper(
                     "outsideLoadCount=${outsideLoadCount}, " +
                     "realDrawCount=${realDrawCount}, " +
                     "backgroundCount=${backgroundCount}. " +
-                    "'${subsamplingEngine.imageKey}'"
+                    "'${subsamplingEngine.subsamplingImage?.key}'"
         }
     }
 
