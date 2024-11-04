@@ -410,8 +410,8 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         resetTileDecoderJob = coroutineScope.launch {
             val tileDecoderResult = createTileDecoder(
                 logger = logger,
-                contentSize = contentSize,
                 subsamplingImage = subsamplingImage,
+                contentSize = contentSize,
                 regionDecoders = regionDecodersState.value,
                 onImageInfoPassed = {
                     zoomableEngine.contentOriginSizeState.value = it.size

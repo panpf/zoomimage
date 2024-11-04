@@ -1,9 +1,11 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoder
+import com.github.panpf.zoomimage.subsampling.toFactory
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -26,7 +28,8 @@ class TileDecoderTest {
     fun test() {
         val logger = Logger("Test")
         val imageSource = ResourceImages.hugeCard.toImageSource()
-        val decodeHelper = defaultRegionDecoder().create(imageSource)
+        val decodeHelper =
+            defaultRegionDecoder().create(SubsamplingImage(imageSource.toFactory()), imageSource)
         val scope = CoroutineScope(Dispatchers.Main)
         val dispatcher = Dispatchers.IO.limitedParallelism(3)
         val tileDecoder = TileDecoder(logger, decodeHelper)
@@ -61,7 +64,8 @@ class TileDecoderTest {
     fun testToString() {
         val logger = Logger("Test")
         val imageSource = ResourceImages.hugeCard.toImageSource()
-        val decodeHelper = defaultRegionDecoder().create(imageSource)
+        val decodeHelper =
+            defaultRegionDecoder().create(SubsamplingImage(imageSource.toFactory()), imageSource)
         val tileDecoder = TileDecoder(logger, decodeHelper)
         assertEquals(
             expected = "TileDecoder($decodeHelper)",

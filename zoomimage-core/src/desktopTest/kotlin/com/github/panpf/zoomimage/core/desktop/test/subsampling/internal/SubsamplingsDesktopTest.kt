@@ -1,18 +1,17 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
-import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.fromFile
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.createTileDecoder
+import com.github.panpf.zoomimage.test.TestRegionDecoder
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.div
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class SubsamplingDesktopTest {
 
@@ -25,8 +24,10 @@ class SubsamplingDesktopTest {
         val hugeLongQmshtImageSource = hugeLongQmshtImageFile.toImageSource()
         createTileDecoder(
             logger = logger,
-            imageSource = hugeLongQmshtImageSource,
+            subsamplingImage = SubsamplingImage(hugeLongQmshtImageSource),
             contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = emptyList(),
+            onImageInfoPassed = {}
         ).getOrThrow().apply {
             assertEquals(
                 expected = hugeLongQmshtImageFile.size,
@@ -38,106 +39,129 @@ class SubsamplingDesktopTest {
             )
         }
 
-        // error -1
-        val errorImageSource = ImageSource.fromFile("fake_image.jpg")
+        // error: imageSize empty
         createTileDecoder(
             logger = logger,
-            imageSource = errorImageSource,
-            contentSize = IntSizeCompat(100, 100),
-        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            assertEquals(-1, this.code)
-            assertEquals(false, this.skipped)
-            assertEquals(
-                "Create DecodeHelper failed: fake_image.jpg (No such file or directory)",
-                this.message
-            )
-            assertNull(this.imageInfo)
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(0, 100, "image/jpeg")
+            ),
+            contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = emptyList(),
+            onImageInfoPassed = {}
+        ).exceptionOrNull()!!
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(100, 0, "image/jpeg")
+            ),
+            contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = emptyList(),
+            onImageInfoPassed = {}
+        ).exceptionOrNull()!!
+
+        // error: contentSize >= imageSize
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/jpeg")
+            ),
+            contentSize = hugeLongQmshtImageFile.size,
+            regionDecoders = emptyList(),
+            onImageInfoPassed = {}
+        ).exceptionOrNull()!!
+
+        // error: aspect ratio too different
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/jpeg")
+            ),
+            contentSize = IntSizeCompat(
+                hugeLongQmshtImageFile.size.width / 32,
+                hugeLongQmshtImageFile.size.height / 34
+            ),
+            regionDecoders = emptyList(),
+            onImageInfoPassed = {}
+        ).exceptionOrNull()!!
+
+        // error: unsupported mimeTypes
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/jpeg")
+            ),
+            contentSize = hugeLongQmshtImageFile.size / 32,
+            regionDecoders = listOf(
+                TestRegionDecoder.Factory(
+                    imageInfo = ImageInfo(100, 100, "image/jpeg"),
+                    unsupportedMimeTypes = listOf("image/jpeg")
+                )
+            ),
+            onImageInfoPassed = {}
+        ).exceptionOrNull()!!
+
+        // onImageInfoPassed
+        val actions = mutableListOf<String>()
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(hugeLongQmshtImageSource),
+            contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = listOf(
+                TestRegionDecoder.Factory(
+                    imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/jpeg"),
+                    actions = actions
+                )
+            ),
+            onImageInfoPassed = { actions.add("onImageInfoPassed") }
+        ).getOrThrow()
+        assertEquals("[accept, create, checkSupport, onImageInfoPassed]", actions.toString())
+
+        actions.clear()
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/jpeg")
+            ),
+            contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = listOf(
+                TestRegionDecoder.Factory(
+                    imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/jpeg"),
+                    actions = actions
+                )
+            ),
+            onImageInfoPassed = { actions.add("onImageInfoPassed") }
+        ).getOrThrow()
+        assertEquals("[accept, checkSupport, onImageInfoPassed, create]", actions.toString())
+
+        // imageInfo
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(hugeLongQmshtImageSource),
+            contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = emptyList(),
+            onImageInfoPassed = { actions.add("onImageInfoPassed") }
+        ).getOrThrow().apply {
+            assertEquals(hugeLongQmshtImageFile.size, imageInfo.size)
+            assertEquals("image/jpeg", imageInfo.mimeType)
         }
-
-//        // error -3
-//        val gifImageFile = ResourceImages.anim
-//        val gifImageSource = gifImageFile.toImageSource()
-//        createTileDecoder(
-//            logger = logger,
-//            imageSource = gifImageSource,
-//            contentSize = gifImageFile.size / 8f,
-//        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-//            assertEquals(-3, this.code)
-//            assertEquals(true, this.skipped)
-//            assertEquals("Image type not support subsampling", this.message)
-//            assertEquals("image/gif", this.imageInfo!!.mimeType)
-//        }
-
-        // error -4, width
-        val errorThumbnailSize =
-            hugeLongQmshtImageFile.size / ScaleFactorCompat(1f, 8f)
         createTileDecoder(
             logger = logger,
-            imageSource = hugeLongQmshtImageSource,
-            contentSize = errorThumbnailSize,
-        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            assertEquals(-4, this.code)
-            assertEquals(true, this.skipped)
-            assertEquals(
-                "The thumbnail size is greater than or equal to the original image",
-                this.message
-            )
-            assertEquals(
-                expected = hugeLongQmshtImageFile.size,
-                actual = this.imageInfo!!.size
-            )
-            assertEquals(
-                expected = "image/jpeg",
-                actual = imageInfo!!.mimeType
-            )
-        }
-
-        // error -4, height
-        val errorThumbnailSize2 =
-            hugeLongQmshtImageFile.size / ScaleFactorCompat(8f, 1f)
-        createTileDecoder(
-            logger = logger,
-            imageSource = hugeLongQmshtImageSource,
-            contentSize = errorThumbnailSize2,
-        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            assertEquals(-4, this.code)
-            assertEquals(true, this.skipped)
-            assertEquals(
-                "The thumbnail size is greater than or equal to the original image",
-                this.message
-            )
-            assertEquals(
-                expected = hugeLongQmshtImageFile.size,
-                actual = this.imageInfo!!.size
-            )
-            assertEquals(
-                expected = "image/jpeg",
-                actual = imageInfo!!.mimeType
-            )
-        }
-
-        // error -5
-        val errorThumbnailSize3 =
-            hugeLongQmshtImageFile.size / ScaleFactorCompat(32f, 34f)
-        createTileDecoder(
-            logger = logger,
-            imageSource = hugeLongQmshtImageSource,
-            contentSize = errorThumbnailSize3,
-        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            assertEquals(-5, this.code)
-            assertEquals(false, this.skipped)
-            assertEquals(
-                "The aspect ratio of the thumbnail is too different from that of the original image. Please refer to the canUseSubsamplingByAspectRatio() function to correct the thumbnail size.",
-                this.message
-            )
-            assertEquals(
-                expected = hugeLongQmshtImageFile.size,
-                actual = this.imageInfo!!.size
-            )
-            assertEquals(
-                expected = "image/jpeg",
-                actual = imageInfo!!.mimeType
-            )
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(hugeLongQmshtImageFile.size * 2, "image/png")
+            ),
+            contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = emptyList(),
+            onImageInfoPassed = { actions.add("onImageInfoPassed") }
+        ).getOrThrow().apply {
+            assertEquals(hugeLongQmshtImageFile.size * 2, imageInfo.size)
+            assertEquals("image/png", imageInfo.mimeType)
         }
     }
 }

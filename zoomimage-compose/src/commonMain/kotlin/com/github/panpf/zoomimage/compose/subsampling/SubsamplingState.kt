@@ -425,8 +425,8 @@ class SubsamplingState(
         resetTileDecoderJob = coroutineScope.launch {
             val tileDecoderResult = createTileDecoder(
                 logger = logger,
-                contentSize = contentSize.toCompat(),
                 subsamplingImage = subsamplingImage,
+                contentSize = contentSize.toCompat(),
                 regionDecoders = regionDecoders,
                 onImageInfoPassed = {
                     zoomableState.contentOriginSize = it.size.toPlatform()

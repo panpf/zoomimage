@@ -1,18 +1,85 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling.internal
 
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.canUseSubsamplingByAspectRatio
+import com.github.panpf.zoomimage.subsampling.internal.checkImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.checkNewPreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
+import com.github.panpf.zoomimage.test.TestRegionDecoder
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.div
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
 class SubsamplingsCommonTest {
+
+    @Test
+    fun testCheckImageInfo() {
+        // success
+        checkImageInfo(
+            imageInfo = ImageInfo(100, 100, "image/jpeg"),
+            factory = TestRegionDecoder.Factory(ImageInfo(100, 100, "image/jpeg")),
+            contentSize = IntSizeCompat(50, 40)
+        )
+
+        // error: imageSize empty
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(0, 100, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(ImageInfo(0, 100, "image/jpeg")),
+                contentSize = IntSizeCompat(50, 40)
+            )
+        }
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(100, 0, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(ImageInfo(100, 0, "image/jpeg")),
+                contentSize = IntSizeCompat(50, 40)
+            )
+        }
+
+        // error: contentSize >= imageSize
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(100, 100, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(ImageInfo(100, 100, "image/jpeg")),
+                contentSize = IntSizeCompat(101, 40)
+            )
+        }
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(100, 100, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(ImageInfo(100, 100, "image/jpeg")),
+                contentSize = IntSizeCompat(40, 101)
+            )
+        }
+
+        // error: aspect ratio too different
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(100, 100, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(ImageInfo(100, 100, "image/jpeg")),
+                contentSize = IntSizeCompat(50, 30)
+            )
+        }
+
+        // error: unsupported mimeTypes
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(100, 100, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(
+                    ImageInfo(100, 100, "image/jpeg"),
+                    unsupportedMimeTypes = listOf("image/jpeg")
+                ),
+                contentSize = IntSizeCompat(50, 40)
+            )
+        }
+    }
 
     @Test
     fun testCanUseSubsamplingByAspectRatio() {

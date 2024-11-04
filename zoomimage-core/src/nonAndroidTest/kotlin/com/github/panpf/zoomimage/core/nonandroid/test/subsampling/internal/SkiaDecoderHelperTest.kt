@@ -2,7 +2,9 @@ package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaRegionDecoder
+import com.github.panpf.zoomimage.subsampling.toFactory
 import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.hammingDistance
@@ -26,28 +28,36 @@ class SkiaDecoderHelperTest {
         }
         val dogImageFile = ResourceImages.dog
         val dogImageSource = dogImageFile.toImageSource()
-        SkiaRegionDecoder.Factory().create(dogImageSource).apply {
+        SkiaRegionDecoder.Factory()
+            .create(SubsamplingImage(dogImageSource.toFactory()), dogImageSource).apply {
             assertSame(dogImageSource, imageSource)
             assertEquals(dogImageFile.size, imageInfo.size)
         }
 
         val animImageFile = ResourceImages.anim
         val animImageSource = animImageFile.toImageSource()
-        SkiaRegionDecoder.Factory().create(animImageSource).apply {
+        SkiaRegionDecoder.Factory()
+            .create(SubsamplingImage(animImageSource.toFactory()), animImageSource).apply {
             assertSame(animImageSource, imageSource)
             assertEquals(animImageFile.size, imageInfo.size)
         }
 
         val exifRotate180ImageFile = ResourceImages.exifRotate180
         val exifRotate180ImageSource = exifRotate180ImageFile.toImageSource()
-        SkiaRegionDecoder.Factory().create(exifRotate180ImageSource).apply {
+        SkiaRegionDecoder.Factory().create(
+            SubsamplingImage(exifRotate180ImageSource.toFactory()),
+            exifRotate180ImageSource
+        ).apply {
             assertSame(exifRotate180ImageSource, imageSource)
             assertEquals(exifRotate180ImageFile.size, imageInfo.size)
         }
 
         val exifTransposeImageFile = ResourceImages.exifTranspose
         val exifTransposeImageSource = exifTransposeImageFile.toImageSource()
-        SkiaRegionDecoder.Factory().create(exifTransposeImageSource).apply {
+        SkiaRegionDecoder.Factory().create(
+            SubsamplingImage(exifTransposeImageSource.toFactory()),
+            exifTransposeImageSource
+        ).apply {
             assertSame(exifTransposeImageSource, imageSource)
             assertEquals(exifTransposeImageFile.size, imageInfo.size)
         }
@@ -74,7 +84,8 @@ class SkiaDecoderHelperTest {
             return
         }
         val imageSource1 = ResourceImages.exifNormal.toImageSource()
-        val decodeHelper1 = SkiaRegionDecoder.Factory().create(imageSource1)
+        val decodeHelper1 = SkiaRegionDecoder.Factory()
+            .create(SubsamplingImage(imageSource1.toFactory()), imageSource1)
         val bitmap11: Bitmap
         try {
             bitmap11 = decodeHelper1.decodeRegion(
@@ -101,7 +112,8 @@ class SkiaDecoderHelperTest {
         }
 
         val imageSource2 = ResourceImages.exifRotate90.toImageSource()
-        val tileDecoder2 = SkiaRegionDecoder.Factory().create(imageSource2)
+        val tileDecoder2 = SkiaRegionDecoder.Factory()
+            .create(SubsamplingImage(imageSource2.toFactory()), imageSource2)
         val bitmap2: Bitmap
         try {
             bitmap2 = tileDecoder2
@@ -130,13 +142,14 @@ class SkiaDecoderHelperTest {
         }
         val image = Image.makeFromBitmap(bitmap)
         val bytes = image.encodeToData()!!.bytes
+        val imageSource = ResourceImages.hugeCard.toImageSource()
         assertEquals(
-            expected = "SkiaDecodeHelper(imageSource=KotlinResourceImageSource('huge_card.jpg'), imageInfo=ImageInfo(size=1100x5321, mimeType='image/jpeg'), supportRegion=true)",
+            expected = "SkiaDecodeHelper(subsamplingImage=SubsamplingImage(imageSource=WrapperFactory(KotlinResourceImageSource('huge_card.jpg')), imageInfo=null), imageInfo=ImageInfo(size=1100x5321, mimeType='image/jpeg'))",
             actual = SkiaRegionDecoder(
-                imageSource = ResourceImages.hugeCard.toImageSource(),
+                subsamplingImage = SubsamplingImage(imageSource.toFactory()),
+                imageSource = imageSource,
                 imageInfo = ImageInfo(1100, 5321, "image/jpeg"),
                 bytes = bytes,
-                Image.makeFromEncoded(bytes)
             ).toString()
         )
     }

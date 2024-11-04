@@ -4,6 +4,7 @@ import com.githb.panpf.zoomimage.images.ResourceImageFile
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileImageCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
@@ -15,6 +16,7 @@ import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
+import com.github.panpf.zoomimage.subsampling.toFactory
 import com.github.panpf.zoomimage.test.decodeImageInfo
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.useApply
@@ -527,13 +529,17 @@ class TileManagerTest {
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
-        val tileDecoder = TileDecoder(logger, defaultRegionDecoder().create(imageSource))
+        val tileDecoder = TileDecoder(
+            logger,
+            defaultRegionDecoder().create(SubsamplingImage(imageSource.toFactory()), imageSource)
+        )
         val backgroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val foregroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val sampleSizeChangedList = mutableListOf<Int>()
         val imageLoadChangedList = mutableListOf<IntRectCompat>()
         val tileManager = TileManager(
             logger = logger,
+            subsamplingImage = SubsamplingImage(imageSource.toFactory()),
             tileDecoder = tileDecoder,
             tileImageConvertor = null,
             tileImageCacheHelper = tileImageCacheHelper,

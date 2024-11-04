@@ -38,8 +38,8 @@ import kotlin.math.abs
 @MainThread
 suspend fun createTileDecoder(
     logger: Logger,
-    contentSize: IntSizeCompat,
     subsamplingImage: SubsamplingImage,
+    contentSize: IntSizeCompat,
     regionDecoders: List<RegionDecoder.Factory>,
     onImageInfoPassed: (ImageInfo) -> Unit,
 ): Result<TileDecoder> = runCatching {
@@ -61,8 +61,10 @@ suspend fun createTileDecoder(
             val regionDecoder = regionDecoderFactory.create(subsamplingImage, imageSource)
 
             try {
-                val imageInfo = regionDecoder.imageInfo
-                checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
+                if (externalImageInfo == null) {
+                    val imageInfo = regionDecoder.imageInfo
+                    checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
+                }
 
                 regionDecoder.ready()
             } catch (e: Exception) {
@@ -83,7 +85,12 @@ suspend fun createTileDecoder(
     return Result.success(TileDecoder(logger, regionDecoder))
 }
 
-private fun checkImageInfo(
+/**
+ * Check the image information, including the image size, aspect ratio, and whether the image type is supported
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCheckImageInfo
+ */
+fun checkImageInfo(
     imageInfo: ImageInfo,
     factory: RegionDecoder.Factory,
     contentSize: IntSizeCompat
@@ -134,8 +141,8 @@ fun canUseSubsamplingByAspectRatio(
     val heightScale = imageSize.height / thumbnailSize.height.toFloat()
     val diff = abs(widthScale - heightScale)
     val diffFormatted = diff.format(1)
-    val minDiffFormatted = maxDifference.format(1)
-    return diffFormatted <= minDiffFormatted
+    val maxDiffFormatted = maxDifference.format(1)
+    return diffFormatted <= maxDiffFormatted
 }
 
 /**

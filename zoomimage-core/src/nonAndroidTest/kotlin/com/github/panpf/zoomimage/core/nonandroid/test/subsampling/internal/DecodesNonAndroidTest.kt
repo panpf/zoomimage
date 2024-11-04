@@ -10,6 +10,6 @@ class DecodesNonAndroidTest {
     @Test
     fun testDefaultRegionDecoder() {
         val factory = defaultRegionDecoder()
-        assertTrue(factory is SkiaRegionDecoder.Matcher)
+        assertTrue(factory is SkiaRegionDecoder.Factory)
     }
 }
