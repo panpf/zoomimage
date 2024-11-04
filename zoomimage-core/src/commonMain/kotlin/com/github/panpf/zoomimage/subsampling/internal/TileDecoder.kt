@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -43,8 +42,6 @@ class TileDecoder(
         get() = decoderPool.size
 
     val imageInfo: ImageInfo = regionDecoder.imageInfo
-
-    val imageSource: ImageSource = regionDecoder.imageSource
 
     init {
         decoderPool.add(regionDecoder)

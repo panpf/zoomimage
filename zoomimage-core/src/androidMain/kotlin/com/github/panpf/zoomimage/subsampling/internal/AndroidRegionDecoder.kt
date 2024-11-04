@@ -26,8 +26,6 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntRectCompat
-import kotlinx.atomicfu.locks.SynchronizedObject
-import kotlinx.atomicfu.locks.synchronized
 import okio.buffer
 import java.io.BufferedInputStream
 
@@ -39,38 +37,33 @@ import java.io.BufferedInputStream
  * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.AndroidRegionDecoderTest
  */
 class AndroidRegionDecoder(
-    override val imageSource: ImageSource,
-    override val imageInfo: ImageInfo,
-    val bitmapRegionDecoder: BitmapRegionDecoder,
-    val inputStream: BufferedInputStream,
-    val exifOrientationHelper: ExifOrientationHelper,
+    override val subsamplingImage: SubsamplingImage,
+    val imageSource: ImageSource,
+    imageInfo: ImageInfo? = subsamplingImage.imageInfo,
 ) : RegionDecoder {
 
-    override fun decodeRegion(
-        key: String,
-        region: IntRectCompat,
-        sampleSize: Int
-    ): BitmapTileImage {
-        val options = BitmapFactory.Options().apply {
-            inSampleSize = sampleSize
+    private val exifOrientationHelper: ExifOrientationHelper by lazy {
+        val exifOrientation = imageSource.decodeExifOrientation()
+        ExifOrientationHelper(exifOrientation)
+    }
+    private var inputStream: BufferedInputStream? = null
+    private var bitmapRegionDecoder: BitmapRegionDecoder? = null
+
+    override val imageInfo: ImageInfo by lazy { imageInfo ?: decodeImageInfo() }
+
+    private fun decodeImageInfo(): ImageInfo {
+        val imageInfo = imageSource.decodeImageInfo()
+        val correctedImageInfo = exifOrientationHelper.applyToImageInfo(imageInfo)
+        return correctedImageInfo
+    }
+
+    override fun ready() {
+        if (inputStream != null && bitmapRegionDecoder != null) return
+
+        val inputStream = imageSource.openSource().buffer().inputStream().buffered().apply {
+            this@AndroidRegionDecoder.inputStream = this
         }
-        val originalRegion = exifOrientationHelper
-            .applyToRect(region, imageInfo.size, reverse = true)
-        val bitmap = bitmapRegionDecoder.decodeRegion(originalRegion.toAndroidRect(), options)
-            ?: throw Exception("Invalid image. region decode return null")
-        val tileImage = BitmapTileImage(bitmap, key, fromCache = false)
-        val correctedImage = exifOrientationHelper.applyToTileImage(tileImage)
-        return correctedImage
-    }
-
-    override fun close() {
-        bitmapRegionDecoder.recycle()
-        inputStream.close()
-    }
-
-    override fun copy(): RegionDecoder {
-        val inputStream = imageSource.openSource().buffer().inputStream().buffered()
-        val bitmapRegionDecoder = runCatching {
+        bitmapRegionDecoder = kotlin.runCatching {
             if (VERSION.SDK_INT >= VERSION_CODES.S) {
                 BitmapRegionDecoder.newInstance(inputStream)!!
             } else {
@@ -83,54 +76,50 @@ class AndroidRegionDecoder(
                 throw exceptionOrNull()!!
             }
         }.getOrThrow()
+    }
+
+    override fun decodeRegion(
+        key: String,
+        region: IntRectCompat,
+        sampleSize: Int
+    ): BitmapTileImage {
+        ready()
+        val options = BitmapFactory.Options().apply {
+            inSampleSize = sampleSize
+        }
+        val originalRegion = exifOrientationHelper
+            .applyToRect(region, imageInfo.size, reverse = true)
+        val bitmap = bitmapRegionDecoder!!.decodeRegion(originalRegion.toAndroidRect(), options)
+            ?: throw Exception("Invalid image. region decode return null")
+        val tileImage = BitmapTileImage(bitmap, key, fromCache = false)
+        val correctedImage = exifOrientationHelper.applyToTileImage(tileImage)
+        return correctedImage
+    }
+
+    override fun close() {
+        bitmapRegionDecoder?.recycle()
+        inputStream?.close()
+    }
+
+    override fun copy(): RegionDecoder {
         return AndroidRegionDecoder(
+            subsamplingImage = subsamplingImage,
             imageSource = imageSource,
             imageInfo = imageInfo,
-            exifOrientationHelper = exifOrientationHelper,
-            inputStream = inputStream,
-            bitmapRegionDecoder = bitmapRegionDecoder,
         )
     }
 
     override fun toString(): String {
-        return "BitmapFactoryDecodeHelper(" +
-                "imageSource=$imageSource, " +
-                "imageInfo=$imageInfo, " +
-                "exifOrientationHelper=$exifOrientationHelper)"
+        return "AndroidRegionDecoder(subsamplingImage=$subsamplingImage, imageInfo=$imageInfo)"
     }
 
     private fun IntRectCompat.toAndroidRect(): Rect {
         return Rect(left, top, right, bottom)
     }
 
-    class Matcher : RegionDecoder.Matcher {
-        override suspend fun accept(subsamplingImage: SubsamplingImage): Factory {
-            return Factory()
-        }
-    }
-
     class Factory : RegionDecoder.Factory {
 
-        private var _exifOrientation: ExifOrientationHelper? = null
-        private val exifOrientationSynchronizedObject = SynchronizedObject()
-
-        private fun getOrCreateExifOrientationHelper(imageSource: ImageSource): ExifOrientationHelper {
-            return synchronized(exifOrientationSynchronizedObject) {
-                @Suppress("ComplexRedundantLet")
-                _exifOrientation
-                    ?: imageSource
-                        .decodeExifOrientation()
-                        .let { ExifOrientationHelper(it) }
-                        .apply { this@Factory._exifOrientation = this }
-            }
-        }
-
-        override suspend fun decodeImageInfo(imageSource: ImageSource): ImageInfo {
-            val exifOrientationHelper = getOrCreateExifOrientationHelper(imageSource)
-            val imageInfo = imageSource.decodeImageInfo()
-            val correctedImageInfo = exifOrientationHelper.applyToImageInfo(imageInfo)
-            return correctedImageInfo
-        }
+        override suspend fun accept(subsamplingImage: SubsamplingImage): Boolean = true
 
         override fun checkSupport(mimeType: String): Boolean? = when (mimeType) {
             "image/jpeg", "image/png", "image/webp" -> true
@@ -140,36 +129,12 @@ class AndroidRegionDecoder(
             else -> null
         }
 
-        override suspend fun create(
+        override fun create(
+            subsamplingImage: SubsamplingImage,
             imageSource: ImageSource,
-            imageInfo: ImageInfo
-        ): AndroidRegionDecoder {
-            val exifOrientationHelper = getOrCreateExifOrientationHelper(imageSource)
-            val inputStream = imageSource.openSource().buffer().inputStream().buffered()
-            val bitmapRegionDecoder = kotlin.runCatching {
-                if (VERSION.SDK_INT >= VERSION_CODES.S) {
-                    BitmapRegionDecoder.newInstance(inputStream)!!
-                } else {
-                    @Suppress("DEPRECATION")
-                    BitmapRegionDecoder.newInstance(inputStream, false)!!
-                }
-            }.apply {
-                if (isFailure) {
-                    inputStream.close()
-                    throw exceptionOrNull()!!
-                }
-            }.getOrThrow()
-            return AndroidRegionDecoder(
-                imageSource = imageSource,
-                imageInfo = imageInfo,
-                exifOrientationHelper = exifOrientationHelper,
-                inputStream = inputStream,
-                bitmapRegionDecoder = bitmapRegionDecoder,
-            )
-        }
-
-        override fun close() {
-
-        }
+        ): AndroidRegionDecoder = AndroidRegionDecoder(
+            subsamplingImage = subsamplingImage,
+            imageSource = imageSource,
+        )
     }
 }

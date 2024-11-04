@@ -26,30 +26,27 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 
 interface RegionDecoder : AutoCloseable {
 
-    val imageSource: ImageSource
+    val subsamplingImage: SubsamplingImage
 
     val imageInfo: ImageInfo
+
+    fun ready()
 
     @WorkerThread
     fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileImage
 
     fun copy(): RegionDecoder
 
-    interface Matcher {
+    interface Factory {
 
         @MainThread
-        suspend fun accept(subsamplingImage: SubsamplingImage): Factory?
-    }
+        suspend fun accept(subsamplingImage: SubsamplingImage): Boolean
 
-    interface Factory : AutoCloseable {
-
-        @WorkerThread
-        suspend fun decodeImageInfo(imageSource: ImageSource): ImageInfo
-
-        @MainThread
         fun checkSupport(mimeType: String): Boolean?
 
-        @WorkerThread
-        suspend fun create(imageSource: ImageSource, imageInfo: ImageInfo): RegionDecoder
+        fun create(
+            subsamplingImage: SubsamplingImage,
+            imageSource: ImageSource,
+        ): RegionDecoder
     }
 }

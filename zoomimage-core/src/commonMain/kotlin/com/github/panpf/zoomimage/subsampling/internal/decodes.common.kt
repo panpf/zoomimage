@@ -22,4 +22,4 @@ package com.github.panpf.zoomimage.subsampling.internal
  * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoder
  * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testDefaultRegionDecoder
  */
-expect fun defaultRegionDecoder(): RegionDecoder.Matcher
+expect fun defaultRegionDecoder(): RegionDecoder.Factory

@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileImage
@@ -52,6 +52,7 @@ import kotlinx.coroutines.withContext
  */
 class TileManager(
     private val logger: Logger,
+    private val subsamplingImage: SubsamplingImage,
     private val tileDecoder: TileDecoder,
     private val tileImageConvertor: TileImageConvertor?,
     private val tileImageCacheHelper: TileImageCacheHelper,
@@ -76,7 +77,6 @@ class TileManager(
     private var lastSampleSize: Int = 0
     private var lastContentVisibleRect: IntRectCompat? = null
     private var updateTileSnapshotListJob: Job? = null
-    private val imageSource: ImageSource = tileDecoder.imageSource
 
     /**
      * A continuous transform type that needs to pause loading
@@ -173,14 +173,14 @@ class TileManager(
          * If the following detections fail, simply skip the refresh and keep the current state
          */
         if (rotation % 90 != 0) {
-            logger.d { "TileManager. refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
+            logger.d { "TileManager. refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${subsamplingImage.key}'" }
             return -1
         }
         if (continuousTransformType and pausedContinuousTransformTypes != 0) {
             logger.d {
                 val continuousTransformTypeName =
                     ContinuousTransformType.name(continuousTransformType)
-                "TileManager. refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
+                "TileManager. refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${subsamplingImage.key}'"
             }
             return -2
         }
@@ -208,7 +208,7 @@ class TileManager(
                         "scale=${scale.format(4)}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileGridMap=${sortedTileGridMap.toIntroString()}. " +
-                        "'${imageSource.key}'"
+                        "'${subsamplingImage.key}'"
             }
             if (sampleSizeChanged) {
                 clean("refreshTiles:foregroundTilesEmptyOrOne")
@@ -224,7 +224,7 @@ class TileManager(
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
-                        "'${imageSource.key}'"
+                        "'${subsamplingImage.key}'"
             }
             if (imageLoadRectChanged) {
                 clean("refreshTiles:contentVisibleRectEmpty")
@@ -294,7 +294,7 @@ class TileManager(
                     "contentSize=${contentSize.toShortString()}, " +
                     "continuousTransformType=${continuousTransformTypeName}, " +
                     "imageInfo=${imageInfo.toShortString()}, " +
-                    "'${imageSource.key}"
+                    "'${subsamplingImage.key}"
         }
         if (sampleSizeChanged || imageLoadRectChanged || actualFreeCount > 0) {
             updateTileSnapshotList("refreshTiles:loadOrFreeTile")
@@ -363,7 +363,7 @@ class TileManager(
     fun clean(caller: String) {
         val updateTileSnapshotListJob = updateTileSnapshotListJob
         if (updateTileSnapshotListJob != null && updateTileSnapshotListJob.isActive) {
-            logger.d { "TileManager. cleanTiles:$caller. cancel updateTileSnapshotListJob. '${imageSource.key}" }
+            logger.d { "TileManager. cleanTiles:$caller. cancel updateTileSnapshotListJob. '${subsamplingImage.key}" }
             updateTileSnapshotListJob.cancel("clean:$caller")
             this.updateTileSnapshotListJob = null
         }
@@ -374,7 +374,7 @@ class TileManager(
             sortedTileGridMap.forEach {
                 freeCount += freeTiles(it.tiles, skipNotify = true)
             }
-            logger.d { "TileManager. cleanTiles:$caller. freeCount=$freeCount. '${imageSource.key}" }
+            logger.d { "TileManager. cleanTiles:$caller. freeCount=$freeCount. '${subsamplingImage.key}" }
             if (freeCount > 0) {
                 updateTileSnapshotList("clean:$caller")
             }
@@ -385,7 +385,7 @@ class TileManager(
     private fun loadTile(tile: Tile): Boolean {
         if (tile.tileImage != null) {
             logger.d {
-                "TileManager. loadTile. skipped, loaded. $tile. '${imageSource.key}'"
+                "TileManager. loadTile. skipped, loaded. $tile. '${subsamplingImage.key}'"
             }
             return false
         }
@@ -393,22 +393,22 @@ class TileManager(
         val job = tile.loadJob
         if (job?.isActive == true) {
             logger.d {
-                "TileManager. loadTile. skipped, loading. $tile. '${imageSource.key}'"
+                "TileManager. loadTile. skipped, loading. $tile. '${subsamplingImage.key}'"
             }
             return false
         }
 
-        logger.d("TileManager. loadTile. started. $tile. '${imageSource.key}'")
+        logger.d("TileManager. loadTile. started. $tile. '${subsamplingImage.key}'")
         tile.loadJob = coroutineScope.async {
             val tileKey =
-                "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
+                "${subsamplingImage.imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
             val cachedValue = tileImageCacheHelper.get(tileKey)
             if (cachedValue != null) {
                 val convertedTileImage: TileImage =
                     tileImageConvertor?.convert(cachedValue) ?: cachedValue
                 tile.setTileImage(convertedTileImage, allowAnimate = true)
                 tile.state = TileState.STATE_LOADED
-                logger.d { "TileManager. loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
+                logger.d { "TileManager. loadTile. successful, fromMemory. $tile. '${subsamplingImage.key}'" }
                 updateTileSnapshotList("loadTile:fromMemory")
             } else {
                 tile.cleanTileImage()
@@ -426,21 +426,21 @@ class TileManager(
                     decodeResult.isFailure -> {
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        logger.e("TileManager. loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${imageSource.key}'")
+                        logger.e("TileManager. loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${subsamplingImage.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     tileImage == null -> {
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        logger.e("TileManager. loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
+                        logger.e("TileManager. loadTile. failed, bitmap null. $tile. '${subsamplingImage.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     tile.sampleSize == 1 && (tile.srcRect.width != tileImage.width || tile.srcRect.height != tileImage.height) -> {
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileImage. '${imageSource.key}'")
+                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileImage. '${subsamplingImage.key}'")
                         tileImage.recycle()
                         updateTileSnapshotList("loadTile:failed")
                     }
@@ -449,20 +449,20 @@ class TileManager(
                         val cacheTileImage: TileImage = tileImageCacheHelper.put(
                             key = tileKey,
                             tileImage = tileImage,
-                            imageUrl = imageSource.key,
+                            imageUrl = subsamplingImage.imageSource.key,
                             imageInfo = imageInfo,
                         ) ?: tileImage
                         val convertedTileImage: TileImage =
                             tileImageConvertor?.convert(cacheTileImage) ?: cacheTileImage
                         tile.setTileImage(convertedTileImage, allowAnimate = true)
                         tile.state = TileState.STATE_LOADED
-                        logger.d { "TileManager. loadTile. successful. $tile. '${imageSource.key}'" }
+                        logger.d { "TileManager. loadTile. successful. $tile. '${subsamplingImage.key}'" }
                         updateTileSnapshotList("loadTile:successful")
                     }
 
                     else -> {
                         logger.d {
-                            "TileManager. loadTile. canceled. image=${tileImage}, $tile. '${imageSource.key}'"
+                            "TileManager. loadTile. canceled. image=${tileImage}, $tile. '${subsamplingImage.key}'"
                         }
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
@@ -492,7 +492,7 @@ class TileManager(
 
         val tileImage = tile.tileImage
         if (tileImage != null) {
-            logger.d { "TileManager. freeTile. $tile. '${imageSource.key}'" }
+            logger.d { "TileManager. freeTile. $tile. '${subsamplingImage.key}'" }
             tile.cleanTileImage()
         }
 
@@ -521,11 +521,11 @@ class TileManager(
 
     private fun updateTileSnapshotList(caller: String) {
         if (updateTileSnapshotListJob?.isActive == true) {
-            logger.d { "TileManager. updateTileSnapshotList:$caller. skipped, notifyTileSnapshotListJob is running. '${imageSource.key}'" }
+            logger.d { "TileManager. updateTileSnapshotList:$caller. skipped, notifyTileSnapshotListJob is running. '${subsamplingImage.key}'" }
             return
         }
 
-        logger.d { "TileManager. updateTileSnapshotList:$caller. launched. '${imageSource.key}'" }
+        logger.d { "TileManager. updateTileSnapshotList:$caller. launched. '${subsamplingImage.key}'" }
         updateTileSnapshotListJob = coroutineScope.launch {
             var running = true
             while (running && isActive) {
@@ -626,7 +626,7 @@ class TileManager(
                 }
             }
 
-            logger.d { "TileManager. updateTileSnapshotList:$caller. end, running=$running, active=$isActive. '${imageSource.key}'" }
+            logger.d { "TileManager. updateTileSnapshotList:$caller. end, running=$running, active=$isActive. '${subsamplingImage.key}'" }
         }
     }
 

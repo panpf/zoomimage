@@ -21,6 +21,6 @@ package com.github.panpf.zoomimage.subsampling.internal
  *
  * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testDefaultRegionDecoder
  */
-actual fun defaultRegionDecoder(): RegionDecoder.Matcher {
-    return SkiaRegionDecoder.Matcher()
+actual fun defaultRegionDecoder(): RegionDecoder.Factory {
+    return SkiaRegionDecoder.Factory()
 }

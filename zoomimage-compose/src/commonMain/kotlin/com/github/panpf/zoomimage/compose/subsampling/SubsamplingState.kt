@@ -168,7 +168,7 @@ class SubsamplingState(
     /**
      * User-defined RegionDecoder
      */
-    var regionDecoders: List<RegionDecoder.Matcher> by mutableStateOf(emptyList())
+    var regionDecoders: List<RegionDecoder.Factory> by mutableStateOf(emptyList())
 
 
     /* *********************************** Information properties ******************************* */
@@ -460,13 +460,15 @@ class SubsamplingState(
     private fun resetTileManager(caller: String) {
         cleanTileManager("resetTileManager:$caller")
 
+        val subsamplingImage = subsamplingImage
         val tileDecoder = tileDecoder
         val imageInfo = imageInfo
         val contentSize = contentSize
         val preferredTileSize = preferredTileSize
-        if (tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
+        if (subsamplingImage == null || tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
             logger.d {
                 "SubsamplingState. resetTileManager:$caller. failed. " +
+                        "subsamplingImage=${subsamplingImage}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileDecoder=${tileDecoder}, " +
@@ -478,6 +480,7 @@ class SubsamplingState(
 
         val tileManager = TileManager(
             logger = logger,
+            subsamplingImage = subsamplingImage,
             tileDecoder = tileDecoder,
             tileImageConvertor = tileImageConvertor,
             contentSize = contentSize.toCompat(),
@@ -515,7 +518,7 @@ class SubsamplingState(
                     "preferredTileSize=${preferredTileSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
-                    "'${subsamplingImage?.key}'"
+                    "'${subsamplingImage.key}'"
         }
         this@SubsamplingState.tileManager = tileManager
         refreshReadyState("resetTileManager:$caller")

@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.subsampling.internal
 
 import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -41,78 +40,76 @@ suspend fun createTileDecoder(
     logger: Logger,
     contentSize: IntSizeCompat,
     subsamplingImage: SubsamplingImage,
-    regionDecoders: List<RegionDecoder.Matcher>,
+    regionDecoders: List<RegionDecoder.Factory>,
     onImageInfoPassed: (ImageInfo) -> Unit,
 ): Result<TileDecoder> = runCatching {
-    regionDecoders
+    val regionDecoderFactory = regionDecoders
         .plus(defaultRegionDecoder())
-        .firstNotNullOf { it.accept(subsamplingImage) }
-        .use { regionDecoderFactory ->
-            // Read ImageInfo
-            var imageSource: ImageSource? = null
-            val externalImageInfo = subsamplingImage.imageInfo
-            val imageInfo = if (externalImageInfo != null) {
-                externalImageInfo
-            } else {
-                val imageSource1 = withContext(ioCoroutineDispatcher()) {
-                    runCatching { subsamplingImage.imageSource.create() }
-                }.apply {
-                    if (isFailure) throw exceptionOrNull()!!
-                }.getOrThrow().apply { imageSource = this }
+        .find { it.accept(subsamplingImage) }!!
 
-                withContext(ioCoroutineDispatcher()) {
-                    runCatching { regionDecoderFactory.decodeImageInfo(imageSource1) }
-                }.apply {
-                    if (isFailure) throw exceptionOrNull()!!
-                }.getOrThrow()
-            }
+    // The contentOriginSize of Zoomable can be set in advance through the external ImageInfo.
+    // Avoid setting contentOriginSize after initialization to reset user transformations generated during initialization
+    val externalImageInfo = subsamplingImage.imageInfo
+    if (externalImageInfo != null) {
+        checkImageInfo(externalImageInfo, regionDecoderFactory, contentSize)
+        onImageInfoPassed(externalImageInfo)
+    }
 
-            // Check image size
-            val imageSize = imageInfo.size
-            if (imageSize.isEmpty()) {
-                throw Exception("image size invalid: ${imageInfo.width}x${imageInfo.height}")
-            }
-            if (contentSize.width >= imageSize.width || contentSize.height >= imageSize.height) {
-                throw Exception(
-                    "the thumbnail size is greater than or equal to the original image. " +
-                            "contentSize=${contentSize.toShortString()}, " +
-                            "imageSize=${imageSize.toShortString()}"
-                )
-            }
+    val regionDecoder = withContext(ioCoroutineDispatcher()) {
+        runCatching {
+            val imageSource = subsamplingImage.imageSource.create()
+            val regionDecoder = regionDecoderFactory.create(subsamplingImage, imageSource)
 
-            // Check aspect ratio
-            if (!canUseSubsamplingByAspectRatio(imageSize, thumbnailSize = contentSize)) {
-                throw Exception(
-                    "The aspect ratio of the thumbnail is too different from that of the original image. " +
-                            "contentSize=${contentSize.toShortString()}, " +
-                            "imageSize=${imageSize.toShortString()}"
-                )
-            }
+            val imageInfo = regionDecoder.imageInfo
+            checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
 
-            // Check image mimeType
-            val supportRegion = imageInfo.mimeType.let { regionDecoderFactory.checkSupport(it) }
-            if (supportRegion == false) {
-                throw Exception("Image type not support subsampling. mimeType=${imageInfo.mimeType}")
-            }
-
-            onImageInfoPassed(imageInfo)
-
-            // Create RegionDecoder
-            if (imageSource == null) {
-                imageSource = withContext(ioCoroutineDispatcher()) {
-                    runCatching { subsamplingImage.imageSource.create() }
-                }.apply {
-                    if (isFailure) throw exceptionOrNull()!!
-                }.getOrThrow().apply { imageSource = this }
-            }
-            val regionDecoder = withContext(ioCoroutineDispatcher()) {
-                runCatching { regionDecoderFactory.create(imageSource!!, imageInfo) }
-            }.apply {
-                if (isFailure) throw exceptionOrNull()!!
-            }.getOrThrow()
-
-            TileDecoder(logger, regionDecoder)
+            regionDecoder.ready()
+            regionDecoder
         }
+    }.apply {
+        if (isFailure) throw exceptionOrNull()!!
+    }.getOrThrow()
+
+    // Although the checkImageInfo check passes, ready may fail, so call onImageInfoPassed after ready
+    if (externalImageInfo == null) {
+        onImageInfoPassed(regionDecoder.imageInfo)
+    }
+
+    return Result.success(TileDecoder(logger, regionDecoder))
+}
+
+private fun checkImageInfo(
+    imageInfo: ImageInfo,
+    factory: RegionDecoder.Factory,
+    contentSize: IntSizeCompat
+) {
+    // Check image size
+    val imageSize = imageInfo.size
+    if (imageSize.isEmpty()) {
+        throw Exception("image size invalid: ${imageInfo.width}x${imageInfo.height}")
+    }
+    if (contentSize.width >= imageSize.width || contentSize.height >= imageSize.height) {
+        throw Exception(
+            "the thumbnail size is greater than or equal to the original image. " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "imageSize=${imageSize.toShortString()}"
+        )
+    }
+
+    // Check aspect ratio
+    if (!canUseSubsamplingByAspectRatio(imageSize, thumbnailSize = contentSize)) {
+        throw Exception(
+            "The aspect ratio of the thumbnail is too different from that of the original image. " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "imageSize=${imageSize.toShortString()}"
+        )
+    }
+
+    // Check image mimeType
+    val supportRegion = imageInfo.mimeType.let { factory.checkSupport(it) }
+    if (supportRegion == false) {
+        throw Exception("Image type not support subsampling. mimeType=${imageInfo.mimeType}")
+    }
 }
 
 /**

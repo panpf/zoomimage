@@ -149,7 +149,7 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     /**
      * User-defined RegionDecoder
      */
-    var regionDecodersState = MutableStateFlow<List<RegionDecoder.Matcher>>(emptyList())
+    var regionDecodersState = MutableStateFlow<List<RegionDecoder.Factory>>(emptyList())
 
 
     /* *********************************** Information properties ******************************* */
@@ -445,13 +445,15 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     private fun resetTileManager(caller: String) {
         cleanTileManager(caller)
 
+        val subsamplingImage = subsamplingImage
         val tileDecoder = tileDecoder
         val imageInfo = imageInfoState.value
         val preferredTileSize = preferredTileSizeState.value
         val contentSize = contentSizeState.value
-        if (tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
+        if (subsamplingImage == null || tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
             logger.d {
                 "SubsamplingEngine. resetTileManager:$caller. failed. " +
+                        "subsamplingImage=${subsamplingImage}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileDecoder=${tileDecoder}, " +
@@ -462,6 +464,7 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
 
         val tileManager = TileManager(
             logger = logger,
+            subsamplingImage = subsamplingImage,
             tileDecoder = tileDecoder,
             tileImageConvertor = null,
             preferredTileSize = preferredTileSize,
@@ -500,7 +503,7 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "preferredTileSize=${preferredTileSize.toShortString()}, " +
                     "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
-                    "'${subsamplingImage?.key}'"
+                    "'${subsamplingImage.key}'"
         }
         this@SubsamplingEngine.tileManager = tileManager
         refreshReadyState("resetTileManager:$caller")

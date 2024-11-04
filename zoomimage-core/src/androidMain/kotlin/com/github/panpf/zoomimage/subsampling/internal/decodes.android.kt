@@ -30,8 +30,8 @@ import okio.use
  *
  * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoder
  */
-actual fun defaultRegionDecoder(): RegionDecoder.Matcher {
-    return AndroidRegionDecoder.Matcher()
+actual fun defaultRegionDecoder(): RegionDecoder.Factory {
+    return AndroidRegionDecoder.Factory()
 }
 
 /**
