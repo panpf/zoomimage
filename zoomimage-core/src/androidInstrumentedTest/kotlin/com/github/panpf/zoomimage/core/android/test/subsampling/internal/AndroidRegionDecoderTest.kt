@@ -190,8 +190,8 @@ class AndroidRegionDecoderTest {
                     assertEquals(100, height)
                 }
             }
-        val bitmapFinger = produceFingerPrint(bitmap1)
-        val bitmap2Finger = produceFingerPrint(bitmap2)
+        val bitmapFinger = bitmap1.produceFingerPrint()
+        val bitmap2Finger = bitmap2.produceFingerPrint()
         val hanming2 = hammingDistance(bitmapFinger, bitmap2Finger)
         assertTrue(hanming2 <= 2)
     }

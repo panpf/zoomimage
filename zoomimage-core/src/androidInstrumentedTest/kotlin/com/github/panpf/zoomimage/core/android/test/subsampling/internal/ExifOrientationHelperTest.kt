@@ -210,8 +210,8 @@ class ExifOrientationHelperTest {
             ).bitmap
             if (change) {
                 assertNotEquals(
-                    illegal = produceFingerPrint(source = inBitmap),
-                    actual = produceFingerPrint(appliedBitmap),
+                    illegal = inBitmap.produceFingerPrint(),
+                    actual = appliedBitmap.produceFingerPrint(),
                     message = message,
                 )
 
@@ -220,14 +220,14 @@ class ExifOrientationHelperTest {
                     reverse = true
                 ).bitmap
                 assertEquals(
-                    expected = produceFingerPrint(source = inBitmap),
-                    actual = produceFingerPrint(reversedBitmap),
+                    expected = inBitmap.produceFingerPrint(),
+                    actual = reversedBitmap.produceFingerPrint(),
                     message = message,
                 )
             } else {
                 assertEquals(
-                    expected = produceFingerPrint(source = inBitmap),
-                    actual = produceFingerPrint(appliedBitmap),
+                    expected = inBitmap.produceFingerPrint(),
+                    actual = appliedBitmap.produceFingerPrint(),
                     message = message,
                 )
             }

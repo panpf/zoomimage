@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.test
 
 import android.graphics.Bitmap
+import android.media.ThumbnailUtils
 
 actual fun createBitmap(width: Int, height: Int): Bitmap {
     return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -42,3 +43,16 @@ fun Bitmap.copyWith(
 ): Bitmap {
     return this.copy(/* config = */ config, /* isMutable = */ isMutable)
 }
+
+/**
+ * Create thumbnails with specified width and height
+ */
+actual fun Bitmap.thumbnail(width: Int, height: Int): Bitmap {
+    val outputBitmap = ThumbnailUtils.extractThumbnail(this, width, height)
+    return outputBitmap
+}
+
+/**
+ * Returns the Color at the specified location. Format ARGB_8888
+ */
+actual fun Bitmap.readIntPixel(x: Int, y: Int): Int = getPixel(x, y)
