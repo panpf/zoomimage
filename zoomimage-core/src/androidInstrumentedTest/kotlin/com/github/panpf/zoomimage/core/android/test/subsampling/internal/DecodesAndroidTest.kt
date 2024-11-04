@@ -21,7 +21,7 @@ class DecodesAndroidTest {
     @Test
     fun testDefaultRegionDecoder() {
         val factory = defaultRegionDecoder()
-        assertTrue(factory is AndroidRegionDecoder.Matcher)
+        assertTrue(factory is AndroidRegionDecoder.Factory)
     }
 
     @Test

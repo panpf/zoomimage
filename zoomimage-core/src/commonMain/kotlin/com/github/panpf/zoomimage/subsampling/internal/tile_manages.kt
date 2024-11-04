@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling.internal
-
-import com.github.panpf.zoomimage.subsampling.Tile
+package com.github.panpf.zoomimage.subsampling
 
 /**
  * Sampling tiles

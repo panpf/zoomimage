@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.toSkiaRect
@@ -38,7 +39,7 @@ import kotlin.math.ceil
  *
  * *Not thread safe*
  *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.SkiaDecoderHelperTest
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.SkiaRegionDecoderTest
  */
 class SkiaRegionDecoder(
     override val subsamplingImage: SubsamplingImage,
@@ -66,7 +67,7 @@ class SkiaRegionDecoder(
         )
     }
 
-    override fun ready() {
+    override fun prepare() {
 
     }
 
@@ -105,8 +106,23 @@ class SkiaRegionDecoder(
         )
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as SkiaRegionDecoder
+        if (subsamplingImage != other.subsamplingImage) return false
+        if (imageSource != other.imageSource) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = subsamplingImage.hashCode()
+        result = 31 * result + imageSource.hashCode()
+        return result
+    }
+
     override fun toString(): String {
-        return "SkiaDecodeHelper(subsamplingImage=$subsamplingImage, imageInfo=$imageInfo)"
+        return "SkiaRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource)"
     }
 
     class Factory : RegionDecoder.Factory {
@@ -128,5 +144,18 @@ class SkiaRegionDecoder(
             subsamplingImage = subsamplingImage,
             imageSource = imageSource,
         )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "SkiaRegionDecoder"
+        }
     }
 }

@@ -327,6 +327,34 @@ ZoomImage(
 )
 ```
 
+### RegionDecoder
+
+ZoomImage 在 Android 平台上使用 BitmapRegionDecoder 来解码图片，非 Android 平台使用 Skia
+来解码图片，但它们支持的图片类型有限，你可以通过 [RegionDecoder] 接口来扩展支持的图片类型
+
+先实现 [RegionDecoder] 接口和它的 Factory 接口定义你的 [RegionDecoder]，参考 [SkiaRegionDecoder] 和
+[AndroidRegionDecoder]
+
+然后在 [SubsamplingState] 或 [SubsamplingEngine] 上应用你的 [RegionDecoder]，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+
+LaunchEffect(zoomState.subsampling) {
+    zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
+}
+
+ZoomImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+
+val sketchZoomImageView = SketchZoomImageView(context)
+sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecoder.Factory())
+```
+
 ### 可访问属性
 
 ```kotlin
@@ -384,3 +412,13 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
 
 [SubsamplingImage]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/SubsamplingImage.kt
+
+[RegionDecoder]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/RegionDecoder.kt
+
+[SkiaRegionDecoder]: ../../zoomimage-core/src/nonAndroidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder.kt
+
+[AndroidRegionDecoder]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/AndroidRegionDecoder.kt
+
+[SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+
+[SubsamplingEngine]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt

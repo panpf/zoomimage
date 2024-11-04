@@ -2,9 +2,9 @@ package com.github.panpf.zoomimage.test
 
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileImage
-import com.github.panpf.zoomimage.subsampling.internal.RegionDecoder
 import com.github.panpf.zoomimage.util.IntRectCompat
 
 class TestRegionDecoder(
@@ -16,7 +16,7 @@ class TestRegionDecoder(
 
     }
 
-    override fun ready() {
+    override fun prepare() {
 
     }
 
@@ -26,6 +26,25 @@ class TestRegionDecoder(
 
     override fun copy(): RegionDecoder {
         return TestRegionDecoder(subsamplingImage, imageInfo)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as TestRegionDecoder
+        if (subsamplingImage != other.subsamplingImage) return false
+        if (imageInfo != other.imageInfo) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = subsamplingImage.hashCode()
+        result = 31 * result + imageInfo.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "TestRegionDecoder(subsamplingImage=$subsamplingImage, imageInfo=$imageInfo)"
     }
 
     class Factory(
@@ -57,6 +76,19 @@ class TestRegionDecoder(
         ): RegionDecoder {
             actions?.add("create")
             return TestRegionDecoder(subsamplingImage, imageInfo)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestRegionDecoder"
         }
     }
 }

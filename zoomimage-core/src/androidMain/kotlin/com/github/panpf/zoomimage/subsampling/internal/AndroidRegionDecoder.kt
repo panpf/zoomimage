@@ -24,6 +24,7 @@ import android.os.Build.VERSION_CODES
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 import okio.buffer
@@ -57,7 +58,7 @@ class AndroidRegionDecoder(
         return correctedImageInfo
     }
 
-    override fun ready() {
+    override fun prepare() {
         if (inputStream != null && bitmapRegionDecoder != null) return
 
         val inputStream = imageSource.openSource().buffer().inputStream().buffered().apply {
@@ -83,7 +84,7 @@ class AndroidRegionDecoder(
         region: IntRectCompat,
         sampleSize: Int
     ): BitmapTileImage {
-        ready()
+        prepare()
         val options = BitmapFactory.Options().apply {
             inSampleSize = sampleSize
         }
@@ -109,12 +110,27 @@ class AndroidRegionDecoder(
         )
     }
 
-    override fun toString(): String {
-        return "AndroidRegionDecoder(subsamplingImage=$subsamplingImage, imageInfo=$imageInfo)"
-    }
-
     private fun IntRectCompat.toAndroidRect(): Rect {
         return Rect(left, top, right, bottom)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as AndroidRegionDecoder
+        if (subsamplingImage != other.subsamplingImage) return false
+        if (imageSource != other.imageSource) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = subsamplingImage.hashCode()
+        result = 31 * result + imageSource.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "AndroidRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource)"
     }
 
     class Factory : RegionDecoder.Factory {
@@ -136,5 +152,18 @@ class AndroidRegionDecoder(
             subsamplingImage = subsamplingImage,
             imageSource = imageSource,
         )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "AndroidRegionDecoder"
+        }
     }
 }

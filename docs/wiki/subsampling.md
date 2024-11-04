@@ -358,6 +358,36 @@ ZoomImage(
 )
 ```
 
+### RegionDecoder
+
+ZoomImage uses BitmapRegionDecoder on the Android platform to decode images, and non-Android
+platforms use Skia to decode images, but they support limited image types. You can expand the
+supported image types through the [RegionDecoder] interface.
+
+First implement the [RegionDecoder] interface and its Factory interface to define
+your [RegionDecoder],
+refer to [SkiaRegionDecoder] and [AndroidRegionDecoder]
+
+Then apply your [RegionDecoder] on [SubsamplingState] or [SubsamplingEngine] as follows:
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+
+LaunchEffect(zoomState.subsampling) {
+  zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
+}
+
+ZoomImage(
+  imageUri = "https://sample.com/sample.jpeg",
+  contentDescription = "view image",
+  modifier = Modifier.fillMaxSize(),
+  zoomState = zoomState,
+)
+
+val sketchZoomImageView = SketchZoomImageView(context)
+sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecoder.Factory())
+```
+
 ### Public Properties
 
 ```kotlin
@@ -419,3 +449,13 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
 
 [SubsamplingImage]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/SubsamplingImage.kt
+
+[RegionDecoder]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/RegionDecoder.kt
+
+[SkiaRegionDecoder]: ../../zoomimage-core/src/nonAndroidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder.kt
+
+[AndroidRegionDecoder]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/AndroidRegionDecoder.kt
+
+[SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+
+[SubsamplingEngine]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt

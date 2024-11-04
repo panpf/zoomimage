@@ -16,6 +16,8 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import com.github.panpf.zoomimage.subsampling.RegionDecoder
+
 /**
  * Get the platform's default RegionDecoder
  *

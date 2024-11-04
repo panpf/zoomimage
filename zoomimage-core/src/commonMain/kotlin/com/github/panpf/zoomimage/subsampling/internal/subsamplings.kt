@@ -18,6 +18,8 @@ package com.github.panpf.zoomimage.subsampling.internal
 
 import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.RegionDecoder
+import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -66,7 +68,7 @@ suspend fun createTileDecoder(
                     checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
                 }
 
-                regionDecoder.ready()
+                regionDecoder.prepare()
             } catch (e: Exception) {
                 regionDecoder.close()
                 throw e

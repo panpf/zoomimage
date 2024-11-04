@@ -21,6 +21,7 @@ import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import okio.buffer
 import okio.use
