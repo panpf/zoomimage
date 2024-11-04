@@ -60,10 +60,15 @@ suspend fun createTileDecoder(
             val imageSource = subsamplingImage.imageSource.create()
             val regionDecoder = regionDecoderFactory.create(subsamplingImage, imageSource)
 
-            val imageInfo = regionDecoder.imageInfo
-            checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
+            try {
+                val imageInfo = regionDecoder.imageInfo
+                checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
 
-            regionDecoder.ready()
+                regionDecoder.ready()
+            } catch (e: Exception) {
+                regionDecoder.close()
+                throw e
+            }
             regionDecoder
         }
     }.apply {
