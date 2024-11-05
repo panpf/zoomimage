@@ -16,9 +16,20 @@
 
 package com.github.panpf.zoomimage.subsampling
 
+/**
+ * Result of generating a [SubsamplingImage]
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.SubsamplingImageGenerateResultTest
+ */
 sealed interface SubsamplingImageGenerateResult {
 
-    class Success(val subsamplingImage: SubsamplingImage) : SubsamplingImageGenerateResult
+    /**
+     * Success result
+     */
+    data class Success(val subsamplingImage: SubsamplingImage) : SubsamplingImageGenerateResult
 
-    class Error(val message: String) : SubsamplingImageGenerateResult
+    /**
+     * Error result
+     */
+    data class Error(val message: String) : SubsamplingImageGenerateResult
 }

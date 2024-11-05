@@ -22,6 +22,8 @@ package com.github.panpf.zoomimage.subsampling
  * @param imageInfo If imageInfo is not null, the contentOriginSize of Zoomable can be set in advance
  *  to avoid the user's Transform being reset during the initialization process due to setting
  *  contentOriginSize after the initialization is completed.
+ *
+ *  @see com.github.panpf.zoomimage.core.common.test.subsampling.SubsamplingImageTest
  */
 data class SubsamplingImage(
     val imageSource: ImageSource.Factory,
