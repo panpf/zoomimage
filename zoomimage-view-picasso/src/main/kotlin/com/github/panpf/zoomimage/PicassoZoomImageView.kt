@@ -56,7 +56,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val defaultSubsamplingImageGenerators = listOf(
-        EnginePicassoSubsamplingImageGenerator
+        EnginePicassoSubsamplingImageGenerator()
     )
     private var subsamplingImageGenerators: List<PicassoSubsamplingImageGenerator> =
         defaultSubsamplingImageGenerators

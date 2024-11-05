@@ -36,22 +36,22 @@ class CoilZoomStateTest {
 
                 assertEquals(
                     expected = listOf(
-                        AnimatableCoilComposeSubsamplingImageGenerator,
-                        EngineCoilComposeSubsamplingImageGenerator
+                        AnimatableCoilComposeSubsamplingImageGenerator(),
+                        EngineCoilComposeSubsamplingImageGenerator()
                     ).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
                 val subsamplingImageGenerators = remember {
-                    listOf(TestCoilComposeSubsamplingImageGenerator).toImmutableList()
+                    listOf(TestCoilComposeSubsamplingImageGenerator()).toImmutableList()
                 }
                 val zoomState2 = rememberCoilZoomState(
                     subsamplingImageGenerators = subsamplingImageGenerators,
                 )
                 assertEquals(
                     expected = listOf(
-                        TestCoilComposeSubsamplingImageGenerator,
-                        AnimatableCoilComposeSubsamplingImageGenerator,
-                        EngineCoilComposeSubsamplingImageGenerator
+                        TestCoilComposeSubsamplingImageGenerator(),
+                        AnimatableCoilComposeSubsamplingImageGenerator(),
+                        EngineCoilComposeSubsamplingImageGenerator()
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
@@ -69,7 +69,7 @@ class CoilZoomStateTest {
         }
     }
 
-    data object TestCoilComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGenerator {
+    class TestCoilComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,
@@ -79,6 +79,19 @@ class CoilZoomStateTest {
             painter: Painter
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestCoilComposeSubsamplingImageGenerator"
         }
     }
 }

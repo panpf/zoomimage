@@ -31,7 +31,7 @@ import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
  *
  * @see com.github.panpf.zoomimage.view.coil2.core.test.internal.EngineCoilViewSubsamplingImageGeneratorTest
  */
-data object EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
+class EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: Context,
@@ -44,5 +44,18 @@ data object EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGe
         val imageSource = dataToImageSource(context, imageLoader, data)
             ?: return SubsamplingImageGenerateResult.Error("Unsupported data")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "EngineCoilViewSubsamplingImageGenerator"
     }
 }

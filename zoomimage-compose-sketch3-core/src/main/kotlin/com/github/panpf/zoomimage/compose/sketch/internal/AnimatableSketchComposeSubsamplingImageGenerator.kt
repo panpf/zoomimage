@@ -31,7 +31,7 @@ import com.google.accompanist.drawablepainter.DrawablePainter
  *
  * @see com.github.panpf.zoomimage.compose.sketch3.core.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
  */
-data object AnimatableSketchComposeSubsamplingImageGenerator :
+class AnimatableSketchComposeSubsamplingImageGenerator :
     SketchComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
@@ -48,5 +48,18 @@ data object AnimatableSketchComposeSubsamplingImageGenerator :
             }
         }
         return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "AnimatableSketchComposeSubsamplingImageGenerator"
     }
 }

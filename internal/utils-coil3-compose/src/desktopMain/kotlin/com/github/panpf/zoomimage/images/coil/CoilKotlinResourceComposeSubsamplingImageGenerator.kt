@@ -14,7 +14,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.subsampling.toFactory
 
-data object CoilKotlinResourceComposeSubsamplingImageGenerator :
+class CoilKotlinResourceComposeSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
@@ -35,5 +35,18 @@ data object CoilKotlinResourceComposeSubsamplingImageGenerator :
             return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
         }
         return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "CoilKotlinResourceComposeSubsamplingImageGenerator"
     }
 }

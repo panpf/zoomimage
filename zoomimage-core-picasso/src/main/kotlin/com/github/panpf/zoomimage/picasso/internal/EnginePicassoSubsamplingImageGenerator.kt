@@ -28,7 +28,7 @@ import com.squareup.picasso.Picasso
  *
  * @see com.github.panpf.zoomimage.core.picasso.test.internal.EnginePicassoSubsamplingImageGeneratorTest
  */
-data object EnginePicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
+class EnginePicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: Context,
@@ -39,5 +39,18 @@ data object EnginePicassoSubsamplingImageGenerator : PicassoSubsamplingImageGene
         val imageSource = dataToImageSource(context, picasso, data)
             ?: return SubsamplingImageGenerateResult.Error("Unsupported data")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "EnginePicassoSubsamplingImageGenerator"
     }
 }

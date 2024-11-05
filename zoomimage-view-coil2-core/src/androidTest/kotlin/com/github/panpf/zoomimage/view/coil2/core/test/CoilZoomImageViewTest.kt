@@ -73,19 +73,19 @@ class CoilZoomImageViewTest {
 
             assertEquals(
                 expected = listOf(
-                    AnimatableCoilViewSubsamplingImageGenerator,
-                    EngineCoilViewSubsamplingImageGenerator
+                    AnimatableCoilViewSubsamplingImageGenerator(),
+                    EngineCoilViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
 
-            val convertor1 = TestCoilViewSubsamplingImageGenerator
+            val convertor1 = TestCoilViewSubsamplingImageGenerator()
             coilZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
                 expected = listOf(
-                    TestCoilViewSubsamplingImageGenerator,
-                    AnimatableCoilViewSubsamplingImageGenerator,
-                    EngineCoilViewSubsamplingImageGenerator
+                    TestCoilViewSubsamplingImageGenerator(),
+                    AnimatableCoilViewSubsamplingImageGenerator(),
+                    EngineCoilViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")
             )
@@ -93,8 +93,8 @@ class CoilZoomImageViewTest {
             coilZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
                 expected = listOf(
-                    AnimatableCoilViewSubsamplingImageGenerator,
-                    EngineCoilViewSubsamplingImageGenerator
+                    AnimatableCoilViewSubsamplingImageGenerator(),
+                    EngineCoilViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<CoilViewSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
@@ -285,7 +285,7 @@ class CoilZoomImageViewTest {
         }
     }
 
-    data object TestCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
+    class TestCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,
@@ -295,6 +295,19 @@ class CoilZoomImageViewTest {
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestCoilViewSubsamplingImageGenerator"
         }
     }
 }

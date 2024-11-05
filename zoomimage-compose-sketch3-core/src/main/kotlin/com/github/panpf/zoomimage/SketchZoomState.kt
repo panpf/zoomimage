@@ -67,8 +67,8 @@ class SketchZoomState(
         subsamplingImageGenerators.orEmpty()
             .plus(
                 listOf(
-                    AnimatableSketchComposeSubsamplingImageGenerator,
-                    EngineSketchComposeSubsamplingImageGenerator
+                    AnimatableSketchComposeSubsamplingImageGenerator(),
+                    EngineSketchComposeSubsamplingImageGenerator()
                 )
             )
 }

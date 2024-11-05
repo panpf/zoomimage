@@ -68,19 +68,19 @@ class GlideZoomImageViewTest {
 
             assertEquals(
                 expected = listOf(
-                    AnimatableGlideSubsamplingImageGenerator,
-                    EngineGlideSubsamplingImageGenerator
+                    AnimatableGlideSubsamplingImageGenerator(),
+                    EngineGlideSubsamplingImageGenerator()
                 ),
                 actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
 
-            val convertor1 = TestGlideSubsamplingImageGenerator
+            val convertor1 = TestGlideSubsamplingImageGenerator()
             glideZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
                 expected = listOf(
-                    TestGlideSubsamplingImageGenerator,
-                    AnimatableGlideSubsamplingImageGenerator,
-                    EngineGlideSubsamplingImageGenerator
+                    TestGlideSubsamplingImageGenerator(),
+                    AnimatableGlideSubsamplingImageGenerator(),
+                    EngineGlideSubsamplingImageGenerator()
                 ),
                 actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
@@ -88,8 +88,8 @@ class GlideZoomImageViewTest {
             glideZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
                 expected = listOf(
-                    AnimatableGlideSubsamplingImageGenerator,
-                    EngineGlideSubsamplingImageGenerator
+                    AnimatableGlideSubsamplingImageGenerator(),
+                    EngineGlideSubsamplingImageGenerator()
                 ),
                 actual = glideZoomImageView.getFieldValue<List<GlideSubsamplingImageGenerator>>("subsamplingImageGenerators")!!
             )
@@ -282,7 +282,7 @@ class GlideZoomImageViewTest {
         }
     }
 
-    data object TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
+    class TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,
@@ -291,6 +291,19 @@ class GlideZoomImageViewTest {
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestGlideSubsamplingImageGenerator"
         }
     }
 }

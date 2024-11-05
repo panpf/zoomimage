@@ -53,8 +53,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
 ) : AbsStateZoomImageView(context, attrs, defStyle) {
 
     private val defaultSubsamplingImageGenerators = listOf(
-        AnimatableSketchViewSubsamplingImageGenerator,
-        EngineSketchViewSubsamplingImageGenerator
+        AnimatableSketchViewSubsamplingImageGenerator(),
+        EngineSketchViewSubsamplingImageGenerator()
     )
     private var subsamplingImageGenerators: List<SketchViewSubsamplingImageGenerator> =
         defaultSubsamplingImageGenerators

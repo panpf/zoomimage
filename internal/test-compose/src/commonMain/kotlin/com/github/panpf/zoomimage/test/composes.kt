@@ -8,7 +8,7 @@ import kotlin.time.TimeSource
 @OptIn(ExperimentalTestApi::class)
 fun ComposeUiTest.waitMillis(millis: Long) {
     val startTime = TimeSource.Monotonic.markNow()
-    waitUntil(millis * 2) {
+    waitUntil(timeoutMillis = millis * 2) {
         startTime.elapsedNow().inWholeMilliseconds >= millis
     }
 }

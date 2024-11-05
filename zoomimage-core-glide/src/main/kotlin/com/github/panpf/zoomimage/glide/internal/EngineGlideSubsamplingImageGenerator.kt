@@ -28,7 +28,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
  *
  * @see com.github.panpf.zoomimage.core.glide.test.internal.EngineGlideSubsamplingImageGeneratorTest
  */
-data object EngineGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
+class EngineGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: Context,
@@ -39,5 +39,18 @@ data object EngineGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerato
         val imageSource = modelToImageSource(context, glide, model)
             ?: return SubsamplingImageGenerateResult.Error("Unsupported model")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "EngineGlideSubsamplingImageGenerator"
     }
 }

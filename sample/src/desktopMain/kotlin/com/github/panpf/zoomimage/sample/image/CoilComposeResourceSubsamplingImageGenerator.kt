@@ -13,7 +13,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-actual data object CoilComposeResourceSubsamplingImageGenerator :
+actual class CoilComposeResourceSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
     actual override suspend fun generateImage(
@@ -34,5 +34,18 @@ actual data object CoilComposeResourceSubsamplingImageGenerator :
             return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
         }
         return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "CoilComposeResourceSubsamplingImageGenerator"
     }
 }

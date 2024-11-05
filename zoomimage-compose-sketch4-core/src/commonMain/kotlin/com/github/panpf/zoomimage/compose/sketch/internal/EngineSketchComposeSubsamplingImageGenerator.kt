@@ -31,7 +31,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
  *
  * @see com.github.panpf.zoomimage.compose.sketch4.core.test.internal.EngineSketchComposeSubsamplingImageGeneratorTest
  */
-data object EngineSketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
+class EngineSketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         sketch: Sketch,
@@ -46,5 +46,18 @@ data object EngineSketchComposeSubsamplingImageGenerator : SketchComposeSubsampl
             mimeType = result.imageInfo.mimeType
         )
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, imageInfo))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "EngineSketchComposeSubsamplingImageGenerator"
     }
 }

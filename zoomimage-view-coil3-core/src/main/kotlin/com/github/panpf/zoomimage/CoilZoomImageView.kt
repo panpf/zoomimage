@@ -53,8 +53,8 @@ open class CoilZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val defaultSubsamplingImageGenerators = listOf(
-        AnimatableCoilViewSubsamplingImageGenerator,
-        EngineCoilViewSubsamplingImageGenerator
+        AnimatableCoilViewSubsamplingImageGenerator(),
+        EngineCoilViewSubsamplingImageGenerator()
     )
     private var subsamplingImageGenerators: List<CoilViewSubsamplingImageGenerator> =
         defaultSubsamplingImageGenerators

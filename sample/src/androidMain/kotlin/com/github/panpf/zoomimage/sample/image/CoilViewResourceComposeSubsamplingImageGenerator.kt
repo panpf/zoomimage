@@ -12,7 +12,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
 
-data object CoilViewResourceComposeSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
+class CoilViewResourceComposeSubsamplingImageGenerator : CoilViewSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: PlatformContext,
@@ -33,5 +33,18 @@ data object CoilViewResourceComposeSubsamplingImageGenerator : CoilViewSubsampli
             return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
         }
         return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "CoilViewResourceComposeSubsamplingImageGenerator"
     }
 }

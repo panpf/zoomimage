@@ -53,8 +53,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val defaultSubsamplingImageGenerators = listOf(
-        AnimatableGlideSubsamplingImageGenerator,
-        EngineGlideSubsamplingImageGenerator
+        AnimatableGlideSubsamplingImageGenerator(),
+        EngineGlideSubsamplingImageGenerator()
     )
     private var subsamplingImageGenerators: List<GlideSubsamplingImageGenerator> =
         defaultSubsamplingImageGenerators

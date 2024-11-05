@@ -67,8 +67,8 @@ class CoilZoomState(
         subsamplingImageGenerators.orEmpty()
             .plus(
                 listOf(
-                    AnimatableCoilComposeSubsamplingImageGenerator,
-                    EngineCoilComposeSubsamplingImageGenerator
+                    AnimatableCoilComposeSubsamplingImageGenerator(),
+                    EngineCoilComposeSubsamplingImageGenerator()
                 )
             )
 }

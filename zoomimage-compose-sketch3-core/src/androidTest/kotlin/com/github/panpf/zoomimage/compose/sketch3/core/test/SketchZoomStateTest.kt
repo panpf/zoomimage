@@ -35,22 +35,22 @@ class SketchZoomStateTest {
 
                 assertEquals(
                     expected = listOf(
-                        AnimatableSketchComposeSubsamplingImageGenerator,
-                        EngineSketchComposeSubsamplingImageGenerator
+                        AnimatableSketchComposeSubsamplingImageGenerator(),
+                        EngineSketchComposeSubsamplingImageGenerator()
                     ).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
                 val subsamplingImageGenerators = remember {
-                    listOf(TestSketchComposeSubsamplingImageGenerator).toImmutableList()
+                    listOf(TestSketchComposeSubsamplingImageGenerator()).toImmutableList()
                 }
                 val zoomState2 = rememberSketchZoomState(
                     subsamplingImageGenerators = subsamplingImageGenerators,
                 )
                 assertEquals(
                     expected = listOf(
-                        TestSketchComposeSubsamplingImageGenerator,
-                        AnimatableSketchComposeSubsamplingImageGenerator,
-                        EngineSketchComposeSubsamplingImageGenerator
+                        TestSketchComposeSubsamplingImageGenerator(),
+                        AnimatableSketchComposeSubsamplingImageGenerator(),
+                        EngineSketchComposeSubsamplingImageGenerator()
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
@@ -68,7 +68,7 @@ class SketchZoomStateTest {
         }
     }
 
-    data object TestSketchComposeSubsamplingImageGenerator :
+    class TestSketchComposeSubsamplingImageGenerator :
         SketchComposeSubsamplingImageGenerator {
 
         override suspend fun generateImage(
@@ -78,6 +78,19 @@ class SketchZoomStateTest {
             painter: Painter
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestSketchComposeSubsamplingImageGenerator"
         }
     }
 }

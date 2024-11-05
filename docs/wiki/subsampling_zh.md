@@ -45,7 +45,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-  zoomState.setSubsamplingImage(imageSource)
+    zoomState.setSubsamplingImage(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -93,7 +93,7 @@ Sketch、Coil、Glide、Picasso 系列的组件在图片加载成功后都要根
 组件为例，其它组件大同小异：
 
 ```kotlin
-data object : MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
+class MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
 
     override fun generateImage(
         sketch: Sketch,
@@ -117,10 +117,23 @@ data object : MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplin
         val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
         return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    return other != null && this::class == other::class
+  }
+
+  override fun hashCode(): Int {
+    return this::class.hashCode()
+  }
+
+  override fun toString(): String {
+    return "MySketchComposeSubsamplingImageGenerator"
+  }
 }
 
 val subsamplingImageGenerators =
-    remember { listOf(MySketchComposeSubsamplingImageGenerator).toImmutableList() }
+  remember { listOf(MySketchComposeSubsamplingImageGenerator()).toImmutableList() }
 val sketchZoomState = rememberSketchZoomState(subsamplingImageGenerators)
 SketchAsyncZoomImage(
     zoomState = sketchZoomState,
@@ -128,7 +141,7 @@ SketchAsyncZoomImage(
 )
 
 
-data object : MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
+class MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
 
     override fun generateImage(
         sketch: Sketch,
@@ -152,10 +165,23 @@ data object : MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImage
         val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
         return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    return other != null && this::class == other::class
+  }
+
+  override fun hashCode(): Int {
+    return this::class.hashCode()
+  }
+
+  override fun toString(): String {
+    return "MySketchViewSubsamplingImageGenerator"
+  }
 }
 
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.setSubsamplingImageGenerators(MySketchViewSubsamplingImageGenerator)
+sketchZoomImageView.setSubsamplingImageGenerators(MySketchViewSubsamplingImageGenerator())
 ```
 
 > [!TIP]

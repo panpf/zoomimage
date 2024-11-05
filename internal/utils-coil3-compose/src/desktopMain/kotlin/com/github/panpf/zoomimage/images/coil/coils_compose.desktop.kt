@@ -5,5 +5,5 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 actual fun platformComposeSubsamplingImageGenerators(): ImmutableList<CoilComposeSubsamplingImageGenerator> {
-    return persistentListOf(CoilKotlinResourceComposeSubsamplingImageGenerator)
+    return persistentListOf(CoilKotlinResourceComposeSubsamplingImageGenerator())
 }

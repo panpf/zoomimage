@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.view.sketch.SketchViewSubsamplingImageGenerato
  *
  * @see com.github.panpf.zoomimage.view.sketch3.core.test.internal.AnimatableSketchViewSubsamplingImageGeneratorTest
  */
-data object AnimatableSketchViewSubsamplingImageGenerator :
+class AnimatableSketchViewSubsamplingImageGenerator :
     SketchViewSubsamplingImageGenerator {
 
     override suspend fun generateImage(
@@ -44,5 +44,18 @@ data object AnimatableSketchViewSubsamplingImageGenerator :
             return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
         }
         return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "AnimatableSketchViewSubsamplingImageGenerator"
     }
 }

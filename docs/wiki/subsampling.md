@@ -109,7 +109,7 @@ SubsamplingImageGenerator and apply it. The following takes the Sketch component
 Other components are similar:
 
 ```kotlin
-data object : MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
+class MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
 
   override fun generateImage(
     sketch: Sketch,
@@ -133,10 +133,23 @@ data object : MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplin
     val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
     return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    return other != null && this::class == other::class
+  }
+
+  override fun hashCode(): Int {
+    return this::class.hashCode()
+  }
+
+  override fun toString(): String {
+    return "MySketchComposeSubsamplingImageGenerator"
+  }
 }
 
 val subsamplingImageGenerators =
-  remember { listOf(MySketchComposeSubsamplingImageGenerator).toImmutableList() }
+  remember { listOf(MySketchComposeSubsamplingImageGenerator()).toImmutableList() }
 val sketchZoomState = rememberSketchZoomState(subsamplingImageGenerators)
 SketchAsyncZoomImage(
   zoomState = sketchZoomState,
@@ -144,7 +157,7 @@ SketchAsyncZoomImage(
 )
 
 
-data object : MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
+class MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
 
   override fun generateImage(
     sketch: Sketch,
@@ -168,10 +181,23 @@ data object : MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImage
     val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
     return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    return other != null && this::class == other::class
+  }
+
+  override fun hashCode(): Int {
+    return this::class.hashCode()
+  }
+
+  override fun toString(): String {
+    return "MySketchViewSubsamplingImageGenerator"
+  }
 }
 
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.setSubsamplingImageGenerators(MySketchViewSubsamplingImageGenerator)
+sketchZoomImageView.setSubsamplingImageGenerators(MySketchViewSubsamplingImageGenerator())
 ```
 
 > [!TIP]

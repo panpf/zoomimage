@@ -33,23 +33,23 @@ class GlideZoomStateTest {
                 )
                 assertEquals(
                     expected = listOf(
-                        AnimatableGlideSubsamplingImageGenerator,
-                        EngineGlideSubsamplingImageGenerator
+                        AnimatableGlideSubsamplingImageGenerator(),
+                        EngineGlideSubsamplingImageGenerator()
                     ).joinToString { it::class.toString() },
                     actual = zoomState1.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
 
                 val modelToImageSources = remember {
-                    listOf(TestGlideSubsamplingImageGenerator).toImmutableList()
+                    listOf(TestGlideSubsamplingImageGenerator()).toImmutableList()
                 }
                 val zoomState2 = rememberGlideZoomState(
                     subsamplingImageGenerators = modelToImageSources,
                 )
                 assertEquals(
                     expected = listOf(
-                        TestGlideSubsamplingImageGenerator,
-                        AnimatableGlideSubsamplingImageGenerator,
-                        EngineGlideSubsamplingImageGenerator
+                        TestGlideSubsamplingImageGenerator(),
+                        AnimatableGlideSubsamplingImageGenerator(),
+                        EngineGlideSubsamplingImageGenerator()
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.subsamplingImageGenerators.joinToString { it::class.toString() }
                 )
@@ -67,7 +67,7 @@ class GlideZoomStateTest {
         }
     }
 
-    data object TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
+    class TestGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,
@@ -76,6 +76,19 @@ class GlideZoomStateTest {
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestGlideSubsamplingImageGenerator"
         }
     }
 }

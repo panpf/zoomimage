@@ -67,8 +67,8 @@ class GlideZoomState(
         subsamplingImageGenerators.orEmpty()
             .plus(
                 listOf(
-                    AnimatableGlideSubsamplingImageGenerator,
-                    EngineGlideSubsamplingImageGenerator
+                    AnimatableGlideSubsamplingImageGenerator(),
+                    EngineGlideSubsamplingImageGenerator()
                 )
             )
 }

@@ -29,7 +29,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
  * @see com.github.panpf.zoomimage.compose.sketch4.core.android.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
  * @see com.github.panpf.zoomimage.compose.sketch4.core.nonandroid.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
  */
-expect object AnimatableSketchComposeSubsamplingImageGenerator :
+expect class AnimatableSketchComposeSubsamplingImageGenerator() :
     SketchComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(

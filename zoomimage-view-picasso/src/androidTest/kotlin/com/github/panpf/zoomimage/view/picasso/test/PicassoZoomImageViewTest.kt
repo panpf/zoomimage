@@ -69,19 +69,19 @@ class PicassoZoomImageViewTest {
 
             assertEquals(
                 expected = listOf(
-                    EnginePicassoSubsamplingImageGenerator
+                    EnginePicassoSubsamplingImageGenerator()
                 ),
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
                 )!!
             )
 
-            val convertor1 = TestPicassoSubsamplingImageGenerator
+            val convertor1 = TestPicassoSubsamplingImageGenerator()
             picassoZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
                 expected = listOf(
-                    TestPicassoSubsamplingImageGenerator,
-                    EnginePicassoSubsamplingImageGenerator
+                    TestPicassoSubsamplingImageGenerator(),
+                    EnginePicassoSubsamplingImageGenerator()
                 ),
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
@@ -91,7 +91,7 @@ class PicassoZoomImageViewTest {
             picassoZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
                 expected = listOf(
-                    EnginePicassoSubsamplingImageGenerator
+                    EnginePicassoSubsamplingImageGenerator()
                 ),
                 actual = picassoZoomImageView.getFieldValue<List<PicassoSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
@@ -204,7 +204,7 @@ class PicassoZoomImageViewTest {
         }
     }
 
-    data object TestPicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
+    class TestPicassoSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             context: Context,
@@ -213,6 +213,19 @@ class PicassoZoomImageViewTest {
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestPicassoSubsamplingImageGenerator"
         }
     }
 }

@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
  * @see com.github.panpf.zoomimage.compose.coil3.core.android.test.internal.AnimatableCoilComposeSubsamplingImageGeneratorTest
  * @see com.github.panpf.zoomimage.compose.coil3.core.nonandroid.test.internal.AnimatableCoilComposeSubsamplingImageGeneratorTest
  */
-expect object AnimatableCoilComposeSubsamplingImageGenerator :
+expect class AnimatableCoilComposeSubsamplingImageGenerator() :
     CoilComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(

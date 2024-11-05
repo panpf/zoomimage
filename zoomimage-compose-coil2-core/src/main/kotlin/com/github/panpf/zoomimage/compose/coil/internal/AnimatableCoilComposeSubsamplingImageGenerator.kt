@@ -34,7 +34,7 @@ import com.google.accompanist.drawablepainter.DrawablePainter
  *
  * @see com.github.panpf.zoomimage.compose.coil2.core.test.internal.AnimatableCoilComposeSubsamplingImageGeneratorTest
  */
-data object AnimatableCoilComposeSubsamplingImageGenerator :
+class AnimatableCoilComposeSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
@@ -74,5 +74,18 @@ data object AnimatableCoilComposeSubsamplingImageGenerator :
 
             else -> drawable
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "AnimatableCoilComposeSubsamplingImageGenerator"
     }
 }

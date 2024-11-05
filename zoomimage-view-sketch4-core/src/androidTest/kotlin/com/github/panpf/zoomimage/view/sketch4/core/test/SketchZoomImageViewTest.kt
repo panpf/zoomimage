@@ -10,7 +10,6 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.ImageResult.Error
 import com.github.panpf.sketch.request.ImageResult.Success
 import com.github.panpf.sketch.request.error
@@ -75,21 +74,21 @@ class SketchZoomImageViewTest {
 
             assertEquals(
                 expected = listOf(
-                    AnimatableSketchViewSubsamplingImageGenerator,
-                    EngineSketchViewSubsamplingImageGenerator
+                    AnimatableSketchViewSubsamplingImageGenerator(),
+                    EngineSketchViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
                 )!!
             )
 
-            val convertor1 = TestSketchViewSubsamplingImageGenerator
+            val convertor1 = TestSketchViewSubsamplingImageGenerator()
             coilZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
                 expected = listOf(
-                    TestSketchViewSubsamplingImageGenerator,
-                    AnimatableSketchViewSubsamplingImageGenerator,
-                    EngineSketchViewSubsamplingImageGenerator
+                    TestSketchViewSubsamplingImageGenerator(),
+                    AnimatableSketchViewSubsamplingImageGenerator(),
+                    EngineSketchViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
@@ -99,8 +98,8 @@ class SketchZoomImageViewTest {
             coilZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
                 expected = listOf(
-                    AnimatableSketchViewSubsamplingImageGenerator,
-                    EngineSketchViewSubsamplingImageGenerator
+                    AnimatableSketchViewSubsamplingImageGenerator(),
+                    EngineSketchViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
@@ -293,7 +292,7 @@ class SketchZoomImageViewTest {
         }
     }
 
-    data object TestSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
+    class TestSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             sketch: Sketch,
@@ -302,6 +301,19 @@ class SketchZoomImageViewTest {
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestSketchViewSubsamplingImageGenerator"
         }
     }
 }

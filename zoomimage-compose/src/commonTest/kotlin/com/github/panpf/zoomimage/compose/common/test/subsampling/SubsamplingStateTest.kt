@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.compose.common.test.subsampling
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
@@ -43,7 +42,7 @@ class SubsamplingStateTest {
                     actual = subsamplingState.zoomableState
                 )
                 assertSame(
-                    expected = LocalLifecycleOwner.current.lifecycle,
+                    expected = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle,
                     actual = subsamplingState.lifecycle
                 )
             }
@@ -198,7 +197,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(1000) { !subsampling.ready }
+            waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(expected = null, actual = subsampling.imageInfo)
         }
 
@@ -220,7 +219,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(1000) { subsampling.ready }
+            waitUntil(timeoutMillis = 1000) { subsampling.ready }
             assertEquals(
                 expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')",
                 actual = subsampling.imageInfo.toString()
@@ -266,7 +265,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(1000) { !subsampling.ready }
+            waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(
                 expected = "{}",
                 actual = subsampling.tileGridSizeMap.toString()
@@ -291,7 +290,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(1000) { subsampling.ready }
+            waitUntil(timeoutMillis = 1000) { subsampling.ready }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
                 actual = subsampling.tileGridSizeMap.toString()
@@ -317,7 +316,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(1000) { !subsampling.ready }
+            waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(expected = false, actual = subsampling.ready)
         }
 
@@ -335,7 +334,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(1000) { !subsampling.ready }
+            waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(expected = false, actual = subsampling.ready)
         }
 
@@ -357,7 +356,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(1000) { subsampling.ready }
+            waitUntil(timeoutMillis = 1000) { subsampling.ready }
             assertEquals(expected = true, actual = subsampling.ready)
         }
     }
@@ -379,7 +378,7 @@ class SubsamplingStateTest {
 //            }
 //            waitMillis(100)
 //            val subsampling = subsamplingHolder!!
-//            waitUntil(1000) { !subsampling.ready }
+//            waitUntil(timeoutMillis = 1000) { !subsampling.ready }
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
 //        }
 //
@@ -401,7 +400,7 @@ class SubsamplingStateTest {
 //            }
 //            waitMillis(100)
 //            val subsampling = subsamplingHolder!!
-//            waitUntil(1000) { subsampling.ready }
+//            waitUntil(timeoutMillis = 1000) { subsampling.ready }
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
 //        }
 
@@ -428,7 +427,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
+            waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = 48, actual = subsampling.foregroundTiles.size)
         }
 
@@ -455,7 +454,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
+            waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = 144, actual = subsampling.foregroundTiles.size)
         }
     }
@@ -483,7 +482,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(2000) { subsampling.ready }
+            waitUntil(timeoutMillis = 2000) { subsampling.ready }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
                 actual = subsampling.tileGridSizeMap.toString()
@@ -514,7 +513,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
+            waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
                 actual = subsampling.tileGridSizeMap.toString()
@@ -545,7 +544,7 @@ class SubsamplingStateTest {
             }
             waitMillis(100)
             val subsampling = subsamplingHolder!!
-            waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
+            waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
                 actual = subsampling.tileGridSizeMap.toString()

@@ -11,7 +11,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.squareup.picasso.Picasso
 
-data object PicassoResourceSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
+class PicassoResourceSubsamplingImageGenerator : PicassoSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: Context,
@@ -25,5 +25,18 @@ data object PicassoResourceSubsamplingImageGenerator : PicassoSubsamplingImageGe
             return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
         }
         return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "PicassoResourceSubsamplingImageGenerator"
     }
 }

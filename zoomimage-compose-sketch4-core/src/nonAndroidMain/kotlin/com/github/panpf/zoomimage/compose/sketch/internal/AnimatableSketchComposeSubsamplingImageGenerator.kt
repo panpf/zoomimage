@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
  *
  * @see com.github.panpf.zoomimage.compose.sketch4.core.nonandroid.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
  */
-actual data object AnimatableSketchComposeSubsamplingImageGenerator :
+actual class AnimatableSketchComposeSubsamplingImageGenerator :
     SketchComposeSubsamplingImageGenerator {
 
     actual override suspend fun generateImage(
@@ -44,5 +44,18 @@ actual data object AnimatableSketchComposeSubsamplingImageGenerator :
             return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
         }
         return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "AnimatableSketchComposeSubsamplingImageGenerator"
     }
 }

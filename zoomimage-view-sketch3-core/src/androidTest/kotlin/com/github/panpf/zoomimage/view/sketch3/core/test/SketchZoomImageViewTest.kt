@@ -74,21 +74,21 @@ class SketchZoomImageViewTest {
 
             assertEquals(
                 expected = listOf(
-                    AnimatableSketchViewSubsamplingImageGenerator,
-                    EngineSketchViewSubsamplingImageGenerator
+                    AnimatableSketchViewSubsamplingImageGenerator(),
+                    EngineSketchViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
                 )!!
             )
 
-            val convertor1 = TestSketchViewSubsamplingImageGenerator
+            val convertor1 = TestSketchViewSubsamplingImageGenerator()
             coilZoomImageView.setSubsamplingImageGenerators(convertor1)
             assertEquals(
                 expected = listOf(
-                    TestSketchViewSubsamplingImageGenerator,
-                    AnimatableSketchViewSubsamplingImageGenerator,
-                    EngineSketchViewSubsamplingImageGenerator
+                    TestSketchViewSubsamplingImageGenerator(),
+                    AnimatableSketchViewSubsamplingImageGenerator(),
+                    EngineSketchViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
@@ -98,8 +98,8 @@ class SketchZoomImageViewTest {
             coilZoomImageView.setSubsamplingImageGenerators(null)
             assertEquals(
                 expected = listOf(
-                    AnimatableSketchViewSubsamplingImageGenerator,
-                    EngineSketchViewSubsamplingImageGenerator
+                    AnimatableSketchViewSubsamplingImageGenerator(),
+                    EngineSketchViewSubsamplingImageGenerator()
                 ),
                 actual = coilZoomImageView.getFieldValue<List<SketchViewSubsamplingImageGenerator>>(
                     "subsamplingImageGenerators"
@@ -314,7 +314,7 @@ class SketchZoomImageViewTest {
             ignoreCase = true
         )
 
-    data object TestSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
+    class TestSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
 
         override suspend fun generateImage(
             sketch: Sketch,
@@ -323,6 +323,19 @@ class SketchZoomImageViewTest {
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {
             return null
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            return other != null && this::class == other::class
+        }
+
+        override fun hashCode(): Int {
+            return this::class.hashCode()
+        }
+
+        override fun toString(): String {
+            return "TestSketchViewSubsamplingImageGenerator"
         }
     }
 }
