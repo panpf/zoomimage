@@ -14,7 +14,7 @@ dependencies {
     api(projects.zoomimageCompose)
     api(projects.zoomimageCoreGlide)
     api(libs.glide.ktx)
-    api(libs.google.drawablepainer)
+    api(libs.google.drawablepainter)
     api(libs.kotlinx.collections.immutable)
 
     androidTestImplementation(projects.internal.testCompose)

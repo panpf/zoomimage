@@ -19,8 +19,8 @@ kotlin {
             api(libs.kotlinx.collections.immutable)
         }
         androidMain.dependencies {
-            api(libs.google.drawablepainer) // coil3 uses implementation dependency drawablepainer
-            api(libs.androidx.vectordrawable.animated) // for coil3 CrossfadeDrawable
+            api(libs.google.drawablepainter) // coil uses implementation dependency drawablepainer
+            api(libs.androidx.vectordrawable.animated) // for coil CrossfadeDrawable
         }
 
         commonTest.dependencies {

@@ -27,6 +27,7 @@
 * new: 新增 `containerWhitespaceMultiple`
   参数用于在图像边缘和容器边缘之间留出空白区域。 [#45](https://github.com/panpf/zoomimage/issues/45)
 * new: \*ZoomState 和 \*ZoomImageView 新增 setSubsamplingImage() 方法用于替代 setImageSource() 方法
+* depend: 升级 jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 
 ## 1.1.0-beta01
 

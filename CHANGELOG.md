@@ -29,6 +29,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
   of the image and the edge of the container. [#45](https://github.com/panpf/zoomimage/issues/45)
 * new: \*ZoomState and \*ZoomImageView add a new setSubsamplingImage() method to replace the
   setImageSource() method
+* depend: Upgrade jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 
 ## 1.1.0-beta01
 

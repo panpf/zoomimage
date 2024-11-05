@@ -82,7 +82,6 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
                 state = pagerState,
                 userScrollEnabled = true,
                 modifier = Modifier.fillMaxSize(),
-                //for some reason its' unresolved beyondBoundsPageCount = 0
             ) { index ->
                 val pageSelected by remember {
                     derivedStateOf {
