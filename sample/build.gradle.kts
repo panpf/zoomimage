@@ -75,11 +75,12 @@ kotlin {
             implementation(libs.panpf.sketch4.animated.gif)
             implementation(libs.panpf.sketch4.compose.resources)
             implementation(libs.panpf.sketch4.extensions.compose)
-            implementation(libs.panpf.sketch4.http.ktor2)
+            implementation(libs.panpf.sketch4.http.ktor3)
             implementation(libs.panpf.sketch4.svg)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.screenModel)
             implementation(libs.voyager.transitions)
+            implementation(libs.kotlinx.coroutines.core)
         }
         androidMain.dependencies {
             implementation(projects.zoomimageComposeGlide)
@@ -136,10 +137,6 @@ kotlin {
             implementation(libs.androidx.datastore.core.okio)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.cashapp.paging.compose.common)
-        }
-        wasmJsMain.dependencies {
-            implementation(libs.ktor.client.contentNegotiation.wasm)
-            implementation(libs.ktor.serialization.kotlinxJson.wasm)
         }
     }
 }
