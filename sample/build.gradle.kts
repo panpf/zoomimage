@@ -72,6 +72,7 @@ kotlin {
 //            implementation(libs.coil.gif)
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.contentNegotiation)
+            implementation(libs.ktor.client.core)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.kotlinx.collections.immutable)
             implementation(libs.panpf.sketch4.animated)
@@ -82,6 +83,7 @@ kotlin {
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.screenModel)
             implementation(libs.voyager.transitions)
+            implementation(libs.kotlinx.coroutines.core)
         }
         androidMain.dependencies {
             implementation(projects.zoomimageComposeGlide)
@@ -120,6 +122,7 @@ kotlin {
             implementation(libs.panpf.tools4k)
             implementation(libs.photoview)
             implementation(libs.subsamplingscaleimageview)
+            implementation(libs.ktor.client.android)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -137,10 +140,6 @@ kotlin {
             implementation(libs.androidx.datastore.core.okio)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.cashapp.paging.compose.common)
-        }
-        wasmJsMain.dependencies {
-            implementation(libs.ktor.client.contentNegotiation.wasm)
-            implementation(libs.ktor.serialization.kotlinxJson.wasm)
         }
     }
 }
