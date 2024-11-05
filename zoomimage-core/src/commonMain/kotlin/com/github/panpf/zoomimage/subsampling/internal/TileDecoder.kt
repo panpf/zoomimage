@@ -38,6 +38,7 @@ class TileDecoder(
     private var closed = false
     private val decoderPool = mutableListOf<RegionDecoder>()
     private val poolSyncLock = SynchronizedObject()
+    private var regionDecoderCount = 0
 
     val decoderPoolSize: Int
         get() = decoderPool.size
@@ -46,12 +47,14 @@ class TileDecoder(
 
     init {
         decoderPool.add(regionDecoder)
+        regionDecoderCount++
+        logger.d { "TileDecoder. useDecoder. regionDecoderCount=${regionDecoderCount}. ${this.regionDecoder}" }
     }
 
     @WorkerThread
     fun decode(key: String, srcRect: IntRectCompat, sampleSize: Int): TileImage? {
         val closed = synchronized(poolSyncLock) { closed }
-        check(!closed) { "TileDecoder is closed" }
+        check(!closed) { "TileDecoder is closed. $regionDecoder" }
         return useDecoder { decoder -> decoder.decodeRegion(key, srcRect, sampleSize) }
     }
 
@@ -63,6 +66,8 @@ class TileDecoder(
             if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }
         if (regionDecoder == null) {
+            regionDecoderCount++
+            logger.d { "TileDecoder. useDecoder. regionDecoderCount=${regionDecoderCount}. ${this.regionDecoder}" }
             regionDecoder = this.regionDecoder.copy()
         }
 

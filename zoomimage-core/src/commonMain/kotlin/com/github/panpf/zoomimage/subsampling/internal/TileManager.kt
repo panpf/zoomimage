@@ -36,7 +36,6 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
@@ -70,7 +69,6 @@ class TileManager(
             ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val decodeDispatcher: CoroutineDispatcher =
         ioCoroutineDispatcher().limitedParallelism(2)
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
