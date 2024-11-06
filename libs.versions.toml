@@ -1,7 +1,6 @@
 [versions]
 android-plugin = "8.7.1"
 androidx-activity = "1.9.0"
-androidx-annotation = "1.9.1"
 androidx-appcompat = "1.7.0"
 androidx-compose = "1.7.1" # sync with jetbrains-compose
 androidx-constraintlayout = "2.1.4"
@@ -18,6 +17,7 @@ androidx-test-runner = "1.6.2"
 androidx-vectordrawable = "1.2.0"
 
 appdirs = "1.2.2"
+
 cashapp-paging = "3.3.0-alpha02-0.5.1"
 
 coil3 = "3.0.0"
@@ -40,8 +40,10 @@ kotlinx-serialization-json = "1.7.3"
 ktor = "3.0.0"
 
 leakcanary = "2.14"
+
 mavenpublish = "0.29.0"
 moko-permissions = "0.18.0"
+
 okio = "3.9.1"
 
 panpf-assemblyadapter4 = "4.1.0"
@@ -53,8 +55,10 @@ panpf-tools4k = "1.0.0"
 
 picasso = "2.8"
 photoview = "2.3.0"
+
 skiko = "0.8.15"    # sync with jetbrains-compose
 subsamplingscaleimageview = "3.10.0"
+
 voyager = "1.1.0-alpha03"
 
 [libraries]
@@ -69,7 +73,6 @@ gradlePlugin-kotlinxCover = { module = "org.jetbrains.kotlinx:kover-gradle-plugi
 gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenpublish" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-compose-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "androidx-compose" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose" }
@@ -92,6 +95,7 @@ androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-
 androidx-vectordrawable-animated = { module = "androidx.vectordrawable:vectordrawable-animated", version.ref = "androidx-vectordrawable" }
 
 appdirs = { module = "net.harawata:appdirs", version.ref = "appdirs" }
+
 cashapp-paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "cashapp-paging" }
 
 coil2 = { module = "io.coil-kt:coil", version.ref = "coil2" }
@@ -122,22 +126,27 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-serialization-kotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+
 moko-permissions = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko-permissions" }
+
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 panpf-assemblyadapter4-pager2 = { module = "io.github.panpf.assemblyadapter4:assemblyadapter-pager2", version.ref = "panpf-assemblyadapter4" }
 panpf-assemblyadapter4-recycler = { module = "io.github.panpf.assemblyadapter4:assemblyadapter-recycler", version.ref = "panpf-assemblyadapter4" }
 panpf-assemblyadapter4-recycler-paging = { module = "io.github.panpf.assemblyadapter4:assemblyadapter-recycler-paging", version.ref = "panpf-assemblyadapter4" }
+
 panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panpf-sketch3" }
 panpf-sketch3-compose = { module = "io.github.panpf.sketch3:sketch-compose", version.ref = "panpf-sketch3" }
 panpf-sketch3-core = { module = "io.github.panpf.sketch3:sketch-core", version.ref = "panpf-sketch3" }
 panpf-sketch3-compose-core = { module = "io.github.panpf.sketch3:sketch-compose-core", version.ref = "panpf-sketch3" }
 panpf-sketch3-viewability = { module = "io.github.panpf.sketch3:sketch-viewability", version.ref = "panpf-sketch3" }
+
 panpf-sketch4-animated-gif = { module = "io.github.panpf.sketch4:sketch-animated-gif", version.ref = "panpf-sketch4" }
 panpf-sketch4-core = { module = "io.github.panpf.sketch4:sketch-core", version.ref = "panpf-sketch4" }
 panpf-sketch4-compose = { module = "io.github.panpf.sketch4:sketch-compose", version.ref = "panpf-sketch4" }
@@ -151,6 +160,7 @@ panpf-sketch4-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref
 panpf-sketch4-singleton = { module = "io.github.panpf.sketch4:sketch-singleton", version.ref = "panpf-sketch4" }
 panpf-sketch4-view = { module = "io.github.panpf.sketch4:sketch-view", version.ref = "panpf-sketch4" }
 panpf-sketch4-view-core = { module = "io.github.panpf.sketch4:sketch-view-core", version.ref = "panpf-sketch4" }
+
 panpf-tools4a-activity = { module = "io.github.panpf.tools4a:tools4a-activity-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-device = { module = "io.github.panpf.tools4a:tools4a-device-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-dimen = { module = "io.github.panpf.tools4a:tools4a-dimen-ktx", version.ref = "panpf-tools4a" }
@@ -161,7 +171,9 @@ panpf-tools4a-run = { module = "io.github.panpf.tools4a:tools4a-run-ktx", versio
 panpf-tools4a-test = { module = "io.github.panpf.tools4a:tools4a-test-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-toast = { module = "io.github.panpf.tools4a:tools4a-toast-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-view = { module = "io.github.panpf.tools4a:tools4a-view-ktx", version.ref = "panpf-tools4a" }
+
 panpf-tools4j-reflect = { module = "io.github.panpf.tools4j:tools4j-reflect-ktx", version.ref = "panpf-tools4j" }
+
 panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "panpf-tools4k" }
 
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }

@@ -26,7 +26,6 @@ kotlin {
             api(libs.okio)
         }
         androidMain.dependencies {
-            api(libs.androidx.annotation)
             api(libs.androidx.exifinterface)
             api(libs.kotlinx.coroutines.android)
         }

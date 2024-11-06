@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-import com.github.panpf.zoomimage.annotation.IntDef
+import androidx.annotation.IntDef
 
 /**
  * Tile state

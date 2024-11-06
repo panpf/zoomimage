@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.zoom
 
-import com.github.panpf.zoomimage.annotation.IntDef
+import androidx.annotation.IntDef
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.FLING
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.GESTURE
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.LOCATE

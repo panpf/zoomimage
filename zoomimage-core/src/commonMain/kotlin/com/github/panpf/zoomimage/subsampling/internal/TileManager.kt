@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.annotation.MainThread
+import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
