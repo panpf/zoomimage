@@ -9,7 +9,6 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.load
 import coil3.request.ErrorResult
-import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.error
 import coil3.util.CoilUtils
@@ -291,7 +290,6 @@ class CoilZoomImageViewTest {
         override suspend fun generateImage(
             context: PlatformContext,
             imageLoader: ImageLoader,
-            request: ImageRequest,
             result: SuccessResult,
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {

@@ -22,7 +22,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import coil.ImageLoader
 import coil.drawable.CrossfadeDrawable
-import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
@@ -38,12 +37,11 @@ class AnimatableCoilViewSubsamplingImageGenerator :
     override suspend fun generateImage(
         context: Context,
         imageLoader: ImageLoader,
-        request: ImageRequest,
         result: SuccessResult,
         drawable: Drawable
     ): SubsamplingImageGenerateResult? {
         val leafDrawable = drawable.findLeafChildDrawable()
-        if (leafDrawable is Animatable) {
+        if (leafDrawable !is CrossfadeDrawable && leafDrawable is Animatable) {
             return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
         }
         return null
@@ -52,10 +50,10 @@ class AnimatableCoilViewSubsamplingImageGenerator :
     /**
      * Find the last child [Drawable] from the specified Drawable
      */
-    private fun Drawable.findLeafChildDrawable(): Drawable? {
+    private fun Drawable.findLeafChildDrawable(): Drawable {
         return when (val drawable = this) {
             is CrossfadeDrawable -> {
-                drawable.end?.findLeafChildDrawable()
+                drawable.end?.findLeafChildDrawable() ?: drawable
             }
 
             is LayerDrawable -> {
@@ -63,7 +61,7 @@ class AnimatableCoilViewSubsamplingImageGenerator :
                 if (layerCount > 0) {
                     drawable.getDrawable(layerCount - 1).findLeafChildDrawable()
                 } else {
-                    null
+                    drawable
                 }
             }
 

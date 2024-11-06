@@ -21,10 +21,9 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
     fun testGenerateImage() = runTest {
         val context = platformContext
         val imageLoader = ImageLoader(context)
-        val imageRequest = ImageRequest.Builder(context).build()
         val result = SuccessResult(
             image = createBitmap(100, 200).asImage(),
-            request = imageRequest,
+            request = ImageRequest.Builder(context).build(),
             dataSource = DataSource.DISK,
         )
         val generator = AnimatableCoilComposeSubsamplingImageGenerator()
@@ -34,7 +33,6 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 painter = ColorPainter(Color.Blue)
             )

@@ -9,7 +9,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import coil.ImageLoader
 import coil.load
 import coil.request.ErrorResult
-import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.util.CoilUtils
 import com.githb.panpf.zoomimage.images.ResourceImages
@@ -290,7 +289,6 @@ class CoilZoomImageViewTest {
         override suspend fun generateImage(
             context: Context,
             imageLoader: ImageLoader,
-            request: ImageRequest,
             result: SuccessResult,
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {

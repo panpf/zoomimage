@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.sketch.internal.AnimatableSketchComposeSubsamplingImageGenerator
@@ -72,7 +71,6 @@ class SketchZoomStateTest {
 
         override suspend fun generateImage(
             sketch: Sketch,
-            request: ImageRequest,
             result: ImageResult.Success,
             painter: Painter
         ): SubsamplingImageGenerateResult? {

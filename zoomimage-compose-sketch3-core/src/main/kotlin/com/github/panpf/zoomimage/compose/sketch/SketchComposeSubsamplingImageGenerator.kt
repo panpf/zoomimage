@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.compose.sketch
 
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
@@ -26,7 +25,6 @@ interface SketchComposeSubsamplingImageGenerator {
 
     suspend fun generateImage(
         sketch: Sketch,
-        request: DisplayRequest,
         result: DisplayResult.Success,
         painter: Painter
     ): SubsamplingImageGenerateResult?

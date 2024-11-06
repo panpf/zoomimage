@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.glide.internal
 import android.content.Context
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import com.bumptech.glide.Glide
 import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -36,7 +37,8 @@ class AnimatableGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator 
         model: Any,
         drawable: Drawable
     ): SubsamplingImageGenerateResult? {
-        if (drawable is Animatable) {
+        val leafDrawable = drawable.findLeafChildDrawable()
+        if (leafDrawable is Animatable) {
             return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
         }
         return null
@@ -53,5 +55,23 @@ class AnimatableGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator 
 
     override fun toString(): String {
         return "AnimatableGlideSubsamplingImageGenerator"
+    }
+
+    /**
+     * Find the last child [Drawable] from the specified Drawable
+     */
+    private fun Drawable.findLeafChildDrawable(): Drawable {
+        return when (val drawable = this) {
+            is LayerDrawable -> {
+                val layerCount = drawable.numberOfLayers
+                if (layerCount > 0) {
+                    drawable.getDrawable(layerCount - 1).findLeafChildDrawable()
+                } else {
+                    drawable
+                }
+            }
+
+            else -> drawable
+        }
     }
 }

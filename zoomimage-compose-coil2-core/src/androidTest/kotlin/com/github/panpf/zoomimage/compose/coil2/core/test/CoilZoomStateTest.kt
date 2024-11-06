@@ -5,7 +5,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.test.junit4.createComposeRule
 import coil.ImageLoader
-import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.compose.coil.internal.AnimatableCoilComposeSubsamplingImageGenerator
@@ -74,7 +73,6 @@ class CoilZoomStateTest {
         override suspend fun generateImage(
             context: Context,
             imageLoader: ImageLoader,
-            request: ImageRequest,
             result: SuccessResult,
             painter: Painter
         ): SubsamplingImageGenerateResult? {

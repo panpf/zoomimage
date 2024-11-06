@@ -18,24 +18,44 @@ package com.github.panpf.zoomimage.compose.sketch.internal
 
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.painter.AnimatablePainter
+import com.github.panpf.sketch.painter.CrossfadePainter
 import com.github.panpf.sketch.request.ImageResult
+import com.github.panpf.sketch.util.findLeafPainter
 import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
 /**
  * Filter animated images, animated images do not support subsampling
  *
- * @see com.github.panpf.zoomimage.compose.sketch4.core.android.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
- * @see com.github.panpf.zoomimage.compose.sketch4.core.nonandroid.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
+ * @see com.github.panpf.zoomimage.compose.sketch4.core.test.internal.AnimatableSketchComposeSubsamplingImageGeneratorTest
  */
-expect class AnimatableSketchComposeSubsamplingImageGenerator() :
+class AnimatableSketchComposeSubsamplingImageGenerator :
     SketchComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         sketch: Sketch,
-        request: ImageRequest,
         result: ImageResult.Success,
         painter: Painter
-    ): SubsamplingImageGenerateResult?
+    ): SubsamplingImageGenerateResult? {
+        val leafPainter = painter.findLeafPainter()
+        // TODO CrossfadePainter replaced by TransitionPainter
+        if (leafPainter !is CrossfadePainter && leafPainter is AnimatablePainter) {
+            return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
+        }
+        return null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    override fun toString(): String {
+        return "AnimatableSketchComposeSubsamplingImageGenerator"
+    }
 }

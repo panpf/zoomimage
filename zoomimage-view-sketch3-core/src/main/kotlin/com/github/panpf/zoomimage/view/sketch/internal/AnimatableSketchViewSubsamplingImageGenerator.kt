@@ -18,10 +18,10 @@ package com.github.panpf.zoomimage.view.sketch.internal
 
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.drawable.internal.CrossfadeDrawable
 import com.github.panpf.sketch.request.DisplayResult
-import com.github.panpf.sketch.util.findLeafChildDrawable
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.view.sketch.SketchViewSubsamplingImageGenerator
 
@@ -35,12 +35,11 @@ class AnimatableSketchViewSubsamplingImageGenerator :
 
     override suspend fun generateImage(
         sketch: Sketch,
-        request: DisplayRequest,
         result: DisplayResult.Success,
         drawable: Drawable
     ): SubsamplingImageGenerateResult? {
         val leafDrawable = drawable.findLeafChildDrawable()
-        if (leafDrawable is Animatable) {
+        if (leafDrawable !is CrossfadeDrawable && leafDrawable is Animatable) {
             return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
         }
         return null
@@ -57,5 +56,27 @@ class AnimatableSketchViewSubsamplingImageGenerator :
 
     override fun toString(): String {
         return "AnimatableSketchViewSubsamplingImageGenerator"
+    }
+
+    /**
+     * Find the last child [Drawable] from the specified Drawable
+     */
+    private fun Drawable.findLeafChildDrawable(): Drawable {
+        return when (val drawable = this) {
+            is CrossfadeDrawable -> {
+                drawable.end?.findLeafChildDrawable() ?: drawable
+            }
+
+            is LayerDrawable -> {
+                val layerCount = drawable.numberOfLayers
+                if (layerCount > 0) {
+                    drawable.getDrawable(layerCount - 1).findLeafChildDrawable()
+                } else {
+                    drawable
+                }
+            }
+
+            else -> drawable
+        }
     }
 }

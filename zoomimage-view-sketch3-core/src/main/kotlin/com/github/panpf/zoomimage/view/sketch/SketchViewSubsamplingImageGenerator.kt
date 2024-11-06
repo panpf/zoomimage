@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.view.sketch
 
 import android.graphics.drawable.Drawable
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
@@ -26,7 +25,6 @@ interface SketchViewSubsamplingImageGenerator {
 
     suspend fun generateImage(
         sketch: Sketch,
-        request: DisplayRequest,
         result: DisplayResult.Success,
         drawable: Drawable
     ): SubsamplingImageGenerateResult?

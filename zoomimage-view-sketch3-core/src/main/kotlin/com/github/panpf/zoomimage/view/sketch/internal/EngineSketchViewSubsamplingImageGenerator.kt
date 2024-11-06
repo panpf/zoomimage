@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.view.sketch.internal
 
 import android.graphics.drawable.Drawable
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -35,11 +34,10 @@ class EngineSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGene
 
     override suspend fun generateImage(
         sketch: Sketch,
-        request: DisplayRequest,
         result: DisplayResult.Success,
         drawable: Drawable
     ): SubsamplingImageGenerateResult {
-        val imageSource = SketchImageSource.Factory(sketch, request.uriString)
+        val imageSource = SketchImageSource.Factory(sketch, result.request.uriString)
         val imageInfo = ImageInfo(
             width = result.imageInfo.width,
             height = result.imageInfo.height,

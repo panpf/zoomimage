@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.sample.image
 import androidx.compose.ui.graphics.painter.Painter
 import coil3.ImageLoader
 import coil3.PlatformContext
-import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import com.github.panpf.sketch.fetch.isComposeResourceUri
 import com.github.panpf.sketch.util.toUri
@@ -19,11 +18,10 @@ actual class CoilComposeResourceSubsamplingImageGenerator :
     actual override suspend fun generateImage(
         context: PlatformContext,
         imageLoader: ImageLoader,
-        request: ImageRequest,
         result: SuccessResult,
         painter: Painter
     ): SubsamplingImageGenerateResult? {
-        val uri = when (val model = request.data) {
+        val uri = when (val model = result.request.data) {
             is String -> model.toUri()
             is coil3.Uri -> model.toString().toUri()
             is platform.Foundation.NSURL -> model.toString().toUri()

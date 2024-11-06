@@ -27,10 +27,9 @@ class AnimatableCoilViewSubsamplingImageGeneratorTest {
     fun testGenerateImage() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageLoader = ImageLoader(context)
-        val imageRequest = ImageRequest.Builder(context).build()
         val result = SuccessResult(
             image = ColorDrawable(Color.CYAN).asImage(),
-            request = imageRequest,
+            request = ImageRequest.Builder(context).build(),
             dataSource = DataSource.DISK,
         )
         val generator = AnimatableCoilViewSubsamplingImageGenerator()
@@ -40,7 +39,6 @@ class AnimatableCoilViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 drawable = ColorDrawable(Color.BLUE)
             )
@@ -51,7 +49,6 @@ class AnimatableCoilViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 drawable = TestAnimatableDrawable()
             )
@@ -62,7 +59,6 @@ class AnimatableCoilViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 drawable = CrossfadeDrawable(TestAnimatableDrawable(), null)
             )
@@ -72,7 +68,6 @@ class AnimatableCoilViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 drawable = CrossfadeDrawable(null, TestAnimatableDrawable())
             )
@@ -83,7 +78,6 @@ class AnimatableCoilViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 drawable = TransitionDrawable(
                     arrayOf(TestAnimatableDrawable(), ColorDrawable(Color.CYAN))
@@ -95,7 +89,6 @@ class AnimatableCoilViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 drawable = TransitionDrawable(
                     arrayOf(ColorDrawable(Color.CYAN), TestAnimatableDrawable())

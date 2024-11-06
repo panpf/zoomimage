@@ -1,35 +1,35 @@
-package com.github.panpf.zoomimage.view.sketch4.core.test.internal
+package com.github.panpf.zoomimage.compose.sketch4.core.test.internal
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.asImage
 import com.github.panpf.sketch.decode.ImageInfo
-import com.github.panpf.sketch.drawable.CrossfadeDrawable
+import com.github.panpf.sketch.painter.AnimatablePainter
+import com.github.panpf.sketch.painter.CrossfadePainter
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.resize.Resize
 import com.github.panpf.sketch.source.DataFrom
+import com.github.panpf.zoomimage.compose.sketch.internal.AnimatableSketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
-import com.github.panpf.zoomimage.view.sketch.internal.AnimatableSketchViewSubsamplingImageGenerator
+import com.github.panpf.zoomimage.test.sketch.platformContext
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class AnimatableSketchViewSubsamplingImageGeneratorTest {
+class AnimatableSketchComposeSubsamplingImageGeneratorTest {
 
     @Test
     fun testGenerateImage() = runTest {
-        val context = InstrumentationRegistry.getInstrumentation().context
+        val context = platformContext
         val sketch = Sketch.Builder(context).build()
         val result = ImageResult.Success(
-            image = ColorDrawable(Color.CYAN).asImage(),
+            image = ColorPainter(Color.Cyan).asImage(),
             request = ImageRequest(context, "http://sample.com/sample.jpeg"),
             cacheKey = "",
             imageInfo = ImageInfo(100, 200, "image/jpeg"),
@@ -38,14 +38,14 @@ class AnimatableSketchViewSubsamplingImageGeneratorTest {
             transformeds = null,
             extras = null,
         )
-        val generator = AnimatableSketchViewSubsamplingImageGenerator()
+        val generator = AnimatableSketchComposeSubsamplingImageGenerator()
 
         assertEquals(
             expected = null,
             actual = generator.generateImage(
                 sketch = sketch,
                 result = result,
-                drawable = ColorDrawable(Color.BLUE)
+                painter = ColorPainter(Color.Blue)
             )
         )
 
@@ -54,7 +54,7 @@ class AnimatableSketchViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 sketch = sketch,
                 result = result,
-                drawable = TestAnimatableDrawable()
+                painter = TestAnimatablePainter()
             )
         )
 
@@ -63,7 +63,7 @@ class AnimatableSketchViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 sketch = sketch,
                 result = result,
-                drawable = CrossfadeDrawable(TestAnimatableDrawable(), null)
+                painter = CrossfadePainter(TestAnimatablePainter(), null)
             )
         )
         assertEquals(
@@ -71,15 +71,15 @@ class AnimatableSketchViewSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 sketch = sketch,
                 result = result,
-                drawable = CrossfadeDrawable(null, TestAnimatableDrawable())
+                painter = CrossfadePainter(null, TestAnimatablePainter())
             )
         )
     }
 
     @Test
     fun testEqualsAndHashCode() {
-        val element1 = AnimatableSketchViewSubsamplingImageGenerator()
-        val element11 = AnimatableSketchViewSubsamplingImageGenerator()
+        val element1 = AnimatableSketchComposeSubsamplingImageGenerator()
+        val element11 = AnimatableSketchComposeSubsamplingImageGenerator()
 
         assertEquals(expected = element1, actual = element11)
         assertNotEquals(illegal = element1, actual = null as Any?)
@@ -91,12 +91,12 @@ class AnimatableSketchViewSubsamplingImageGeneratorTest {
     @Test
     fun testToString() {
         assertEquals(
-            expected = "AnimatableSketchViewSubsamplingImageGenerator",
-            actual = AnimatableSketchViewSubsamplingImageGenerator().toString()
+            expected = "AnimatableSketchComposeSubsamplingImageGenerator",
+            actual = AnimatableSketchComposeSubsamplingImageGenerator().toString()
         )
     }
 
-    class TestAnimatableDrawable : Drawable(), Animatable {
+    class TestAnimatablePainter : Painter(), AnimatablePainter {
 
         override fun start() {
         }
@@ -108,21 +108,10 @@ class AnimatableSketchViewSubsamplingImageGeneratorTest {
             return false
         }
 
-        override fun draw(canvas: Canvas) {
+        override val intrinsicSize: Size = Size(100f, 200f)
 
-        }
+        override fun DrawScope.onDraw() {
 
-        override fun setAlpha(alpha: Int) {
-
-        }
-
-        override fun setColorFilter(colorFilter: ColorFilter?) {
-
-        }
-
-        @Suppress("OVERRIDE_DEPRECATION")
-        override fun getOpacity(): Int {
-            return 0
         }
     }
 }

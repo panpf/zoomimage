@@ -290,7 +290,7 @@ private fun onState(
     if (loadState is State.Success) {
         coroutineScope.launch {
             val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
-                it.generateImage(context, imageLoader, request, loadState.result, loadState.painter)
+                it.generateImage(context, imageLoader, loadState.result, loadState.painter)
             }
             if (generateResult is SubsamplingImageGenerateResult.Error) {
                 zoomState.subsampling.logger.d {

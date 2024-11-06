@@ -109,13 +109,12 @@ open class CoilZoomImageView @JvmOverloads constructor(
             if (imageLoader != null && result is SuccessResult && drawable != null) {
                 val coroutineScope = coroutineScope!!
                 coroutineScope.launch {
-                    val request = result.request
                     val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
-                        it.generateImage(context, imageLoader, request, result, drawable)
+                        it.generateImage(context, imageLoader, result, drawable)
                     }
                     if (generateResult is SubsamplingImageGenerateResult.Error) {
                         logger.d {
-                            "CoilZoomImageView. ${generateResult.message}. data='${request.data}'"
+                            "CoilZoomImageView. ${generateResult.message}. data='${result.request.data}'"
                         }
                     }
                     if (generateResult is SubsamplingImageGenerateResult.Success) {

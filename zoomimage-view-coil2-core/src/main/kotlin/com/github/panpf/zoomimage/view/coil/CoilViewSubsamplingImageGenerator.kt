@@ -20,7 +20,6 @@ import com.github.panpf.zoomimage.subsampling.ImageSource as ZoomImageImageSourc
 import android.content.Context
 import android.graphics.drawable.Drawable
 import coil.ImageLoader
-import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
@@ -32,7 +31,6 @@ interface CoilViewSubsamplingImageGenerator {
     suspend fun generateImage(
         context: Context,
         imageLoader: ImageLoader,
-        request: ImageRequest,
         result: SuccessResult,
         drawable: Drawable
     ): SubsamplingImageGenerateResult?

@@ -109,13 +109,12 @@ open class SketchZoomImageView @JvmOverloads constructor(
             if (sketch != null && result is DisplayResult.Success && drawable != null) {
                 val coroutineScope = coroutineScope!!
                 coroutineScope.launch {
-                    val request = result.request
                     val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
-                        it.generateImage(sketch, request, result, drawable)
+                        it.generateImage(sketch, result, drawable)
                     }
                     if (generateResult is SubsamplingImageGenerateResult.Error) {
                         logger.d {
-                            "SketchZoomImageView. ${generateResult.message}. uri='${request.uriString}'"
+                            "SketchZoomImageView. ${generateResult.message}. uri='${result.request.uriString}'"
                         }
                     }
                     if (generateResult is SubsamplingImageGenerateResult.Success) {

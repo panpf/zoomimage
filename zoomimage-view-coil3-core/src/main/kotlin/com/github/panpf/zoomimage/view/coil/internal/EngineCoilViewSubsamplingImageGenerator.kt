@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage.view.coil.internal
 import android.graphics.drawable.Drawable
 import coil3.ImageLoader
 import coil3.PlatformContext
-import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import com.github.panpf.zoomimage.coil.internal.dataToImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
@@ -36,11 +35,10 @@ class EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerato
     override suspend fun generateImage(
         context: PlatformContext,
         imageLoader: ImageLoader,
-        request: ImageRequest,
         result: SuccessResult,
         drawable: Drawable
     ): SubsamplingImageGenerateResult {
-        val data = request.data
+        val data = result.request.data
         val imageSource = dataToImageSource(context, imageLoader, data)
             ?: return SubsamplingImageGenerateResult.Error("Unsupported data")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))

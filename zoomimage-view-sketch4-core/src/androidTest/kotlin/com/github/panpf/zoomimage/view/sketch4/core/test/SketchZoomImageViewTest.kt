@@ -9,7 +9,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.loadImage
-import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult.Error
 import com.github.panpf.sketch.request.ImageResult.Success
 import com.github.panpf.sketch.request.error
@@ -296,7 +295,6 @@ class SketchZoomImageViewTest {
 
         override suspend fun generateImage(
             sketch: Sketch,
-            request: ImageRequest,
             result: Success,
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {

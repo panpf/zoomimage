@@ -11,7 +11,6 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
-import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.util.SketchUtils
@@ -318,7 +317,6 @@ class SketchZoomImageViewTest {
 
         override suspend fun generateImage(
             sketch: Sketch,
-            request: DisplayRequest,
             result: DisplayResult.Success,
             drawable: Drawable
         ): SubsamplingImageGenerateResult? {

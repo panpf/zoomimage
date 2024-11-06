@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.compose.sketch.internal
 
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sketch.SketchImageSource
@@ -35,11 +34,10 @@ class EngineSketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingIma
 
     override suspend fun generateImage(
         sketch: Sketch,
-        request: ImageRequest,
         result: ImageResult.Success,
         painter: Painter
     ): SubsamplingImageGenerateResult {
-        val imageSource = SketchImageSource.Factory(sketch, request.uri.toString())
+        val imageSource = SketchImageSource.Factory(sketch, result.request.uri.toString())
         val imageInfo = ImageInfo(
             width = result.imageInfo.width,
             height = result.imageInfo.height,

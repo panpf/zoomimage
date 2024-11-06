@@ -25,8 +25,6 @@ class EngineCoilComposeSubsamplingImageGeneratorTest {
         val imageLoader = ImageLoader(context)
         val generator = EngineCoilComposeSubsamplingImageGenerator()
 
-        val httpRequest =
-            ImageRequest.Builder(context).data("http://sample.com/sample.jpeg").build()
         assertEquals(
             expected = SubsamplingImageGenerateResult.Success(
                 SubsamplingImage(
@@ -41,27 +39,25 @@ class EngineCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = httpRequest,
                 result = SuccessResult(
                     drawable = ColorDrawable(Color.CYAN),
-                    request = httpRequest,
+                    request = ImageRequest.Builder(context).data("http://sample.com/sample.jpeg")
+                        .build(),
                     dataSource = DataSource.DISK,
                 ),
                 painter = ColorPainter(androidx.compose.ui.graphics.Color.Blue)
             )
         )
 
-        val fakeHttpRequest =
-            ImageRequest.Builder(context).data("fakehttp://sample.com/sample.jpeg").build()
         assertEquals(
             expected = SubsamplingImageGenerateResult.Error("Unsupported data"),
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = fakeHttpRequest,
                 result = SuccessResult(
                     drawable = ColorDrawable(Color.CYAN),
-                    request = fakeHttpRequest,
+                    request = ImageRequest.Builder(context)
+                        .data("fakehttp://sample.com/sample.jpeg").build(),
                     dataSource = DataSource.DISK,
                 ),
                 painter = ColorPainter(androidx.compose.ui.graphics.Color.Blue)

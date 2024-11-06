@@ -29,10 +29,9 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
     fun testGenerateImage() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageLoader = ImageLoader(context)
-        val imageRequest = ImageRequest.Builder(context).build()
         val result = SuccessResult(
             image = ColorDrawable(Color.CYAN).asImage(),
-            request = imageRequest,
+            request = ImageRequest.Builder(context).build(),
             dataSource = DataSource.DISK,
         )
         val generator = AnimatableCoilComposeSubsamplingImageGenerator()
@@ -42,7 +41,6 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 painter = ColorPainter(androidx.compose.ui.graphics.Color.Blue)
             )
@@ -53,7 +51,6 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 painter = DrawablePainter(TestAnimatableDrawable())
             )
@@ -64,7 +61,6 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 painter = DrawablePainter(CrossfadeDrawable(TestAnimatableDrawable(), null))
             )
@@ -74,7 +70,6 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 painter = DrawablePainter(CrossfadeDrawable(null, TestAnimatableDrawable()))
             )
@@ -85,7 +80,6 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 painter = DrawablePainter(
                     TransitionDrawable(
@@ -103,7 +97,6 @@ class AnimatableCoilComposeSubsamplingImageGeneratorTest {
             actual = generator.generateImage(
                 context = context,
                 imageLoader = imageLoader,
-                request = imageRequest,
                 result = result,
                 painter = DrawablePainter(
                     TransitionDrawable(

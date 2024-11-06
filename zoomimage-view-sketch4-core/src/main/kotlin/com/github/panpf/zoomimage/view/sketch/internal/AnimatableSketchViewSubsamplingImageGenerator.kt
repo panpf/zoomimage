@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.view.sketch.internal
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.drawable.CrossfadeDrawable
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.util.findLeafDrawable
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -35,12 +35,12 @@ class AnimatableSketchViewSubsamplingImageGenerator :
 
     override suspend fun generateImage(
         sketch: Sketch,
-        request: ImageRequest,
         result: ImageResult.Success,
         drawable: Drawable
     ): SubsamplingImageGenerateResult? {
         val leafDrawable = drawable.findLeafDrawable()
-        if (leafDrawable is Animatable) {
+        // TODO CrossfadeDrawable replaced by sketch TransitionDrawable
+        if (leafDrawable !is CrossfadeDrawable && leafDrawable is Animatable) {
             return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
         }
         return null
