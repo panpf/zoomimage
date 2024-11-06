@@ -19,8 +19,8 @@ package com.github.panpf.zoomimage.compose.sketch.internal
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.painter.AnimatablePainter
-import com.github.panpf.sketch.painter.CrossfadePainter
 import com.github.panpf.sketch.request.ImageResult
+import com.github.panpf.sketch.transition.TransitionPainter
 import com.github.panpf.sketch.util.findLeafPainter
 import com.github.panpf.zoomimage.compose.sketch.SketchComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -39,8 +39,7 @@ class AnimatableSketchComposeSubsamplingImageGenerator :
         painter: Painter
     ): SubsamplingImageGenerateResult? {
         val leafPainter = painter.findLeafPainter()
-        // TODO CrossfadePainter replaced by TransitionPainter
-        if (leafPainter !is CrossfadePainter && leafPainter is AnimatablePainter) {
+        if (leafPainter !is TransitionPainter && leafPainter is AnimatablePainter) {
             return SubsamplingImageGenerateResult.Error("Animated images do not support subsampling")
         }
         return null

@@ -44,7 +44,6 @@ import com.github.panpf.sketch.name
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -189,8 +188,8 @@ fun SketchZoomAsyncImage(
     }
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
-        snapshotFlow { state.loadState }.collect { loadState ->
-            onState(coroutineScope, sketch, zoomState, request, loadState, state.painterState)
+        snapshotFlow { state.painterState }.collect { painterState ->
+            onState(coroutineScope, sketch, zoomState, request, painterState)
         }
     }
 
@@ -231,7 +230,6 @@ private fun onState(
     sketch: Sketch,
     zoomState: SketchZoomState,
     request: ImageRequest,
-    loadState: LoadState?,
     painterState: PainterState?,
 ) {
     zoomState.zoomable.logger.d {
@@ -244,10 +242,10 @@ private fun onState(
         ?.takeIf { it.isNotEmpty() }
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
-    if (loadState is LoadState.Success && painterState is PainterState.Success) {
+    if (painterState is PainterState.Success) {
         coroutineScope.launch {
             val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
-                it.generateImage(sketch, loadState.result, painterState.painter)
+                it.generateImage(sketch, painterState.result, painterState.painter)
             }
             if (generateResult is SubsamplingImageGenerateResult.Error) {
                 zoomState.subsampling.logger.d {
