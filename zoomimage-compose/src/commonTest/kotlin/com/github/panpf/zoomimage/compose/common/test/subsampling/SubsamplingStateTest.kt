@@ -6,6 +6,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -42,7 +43,7 @@ class SubsamplingStateTest {
                     actual = subsamplingState.zoomableState
                 )
                 assertSame(
-                    expected = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle,
+                    expected = LocalLifecycleOwner.current.lifecycle,
                     actual = subsamplingState.lifecycle
                 )
             }

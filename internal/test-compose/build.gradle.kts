@@ -15,6 +15,7 @@ kotlin {
             api(projects.internal.testCore)
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             api(compose.uiTest)
+            api(libs.jetbrains.lifecycle.runtime.compose)
         }
         androidMain.dependencies {
             api(libs.androidx.compose.ui.test.junit4.android)

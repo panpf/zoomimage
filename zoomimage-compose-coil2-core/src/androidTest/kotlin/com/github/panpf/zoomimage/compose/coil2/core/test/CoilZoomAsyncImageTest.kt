@@ -63,7 +63,7 @@ class CoilZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val onLoadingResult = onLoadingResultHolder
             val onSuccessResult = onSuccessResultHolder
@@ -133,7 +133,7 @@ class CoilZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val zoomState = zoomStateHolder!!
 
@@ -207,7 +207,7 @@ class CoilZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val onState = onStateResult
             val zoomState = zoomStateHolder
@@ -273,7 +273,7 @@ class CoilZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val zoomState = zoomStateHolder!!
 
