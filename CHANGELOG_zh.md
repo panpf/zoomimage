@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.1.0-rc01
 
 * change: SubsamplingState.disabledTileBitmapCache 重命名为 disabledTileImageCache
 * change: SubsamplingState.tileBitmapCache 重命名为 tileImageCache
