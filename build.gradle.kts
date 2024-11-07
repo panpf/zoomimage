@@ -37,7 +37,7 @@ allprojects {
         google()
         maven { setUrl("https://www.jitpack.io") }
 //        maven { setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots") }
-        mavenLocal()
+//        mavenLocal()
     }
 }
 
