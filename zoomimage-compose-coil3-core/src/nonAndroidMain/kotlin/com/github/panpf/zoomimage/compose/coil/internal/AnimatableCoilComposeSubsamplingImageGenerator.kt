@@ -40,16 +40,16 @@ actual class AnimatableCoilComposeSubsamplingImageGenerator :
         return null
     }
 
-    override fun equals(other: Any?): Boolean {
+    actual override fun equals(other: Any?): Boolean {
         if (this === other) return true
         return other != null && this::class == other::class
     }
 
-    override fun hashCode(): Int {
+    actual override fun hashCode(): Int {
         return this::class.hashCode()
     }
 
-    override fun toString(): String {
+    actual override fun toString(): String {
         return "AnimatableCoilComposeSubsamplingImageGenerator"
     }
 }
