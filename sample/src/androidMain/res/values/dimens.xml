@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="grid_divider">4dp</dimen>
-    <dimen name="menu_item_height">50dp</dimen>
-</resources>

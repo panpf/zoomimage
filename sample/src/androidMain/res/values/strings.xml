@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">ZoomImage</string>
-
-    <string name="loading">LOADING…</string>
-    <string name="load_end">THE END</string>
-    <string name="load_error">LOAD ERROR</string>
-
-    <string name="pager_number">%d/%d</string>
-</resources>
