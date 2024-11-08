@@ -18,7 +18,6 @@ import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.collections.immutable.toImmutableList
@@ -44,7 +43,7 @@ fun CoilZoomAsyncImageSample(
         },
         pageSelected = pageSelected,
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
-        var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
+        var pageState by remember { mutableStateOf<PageState?>(null) }
         val context = LocalPlatformContext.current
         val request = remember(key1 = photo) {
             val model = sketchUri2CoilModel(context, photo.originalUrl)
@@ -54,13 +53,13 @@ fun CoilZoomAsyncImageSample(
                 precision(Precision.EXACT)
                 listener(
                     onStart = {
-                        myLoadState = MyPageState.Loading
+                        pageState = PageState.Loading
                     },
                     onError = { _, _ ->
-                        myLoadState = MyPageState.Error()
+                        pageState = PageState.Error()
                     },
                     onSuccess = { _, _ ->
-                        myLoadState = MyPageState.None
+                        pageState = null
                     }
                 )
             }.build()
@@ -78,6 +77,6 @@ fun CoilZoomAsyncImageSample(
             }
         )
 
-        PageState(state = myLoadState)
+        PageState(pageState = pageState)
     }
 }

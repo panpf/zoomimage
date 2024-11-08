@@ -3,10 +3,8 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -34,7 +32,8 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.ability.bindPauseLoadWhenScrolling
 import com.github.panpf.zoomimage.sample.appSettings
-import com.github.panpf.zoomimage.sample.ui.common.list.PagingAppendState
+import com.github.panpf.zoomimage.sample.ui.common.PagingListAppendState
+import com.github.panpf.zoomimage.sample.ui.common.PagingListRefreshState
 import com.github.panpf.zoomimage.sample.ui.components.VerticalScrollbarCompat
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.Flow
@@ -81,6 +80,8 @@ fun PagingPhotoList(
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
+        PagingListRefreshState(pagingItems)
+
         BottomToolbar(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -115,7 +116,7 @@ private fun PhotoSquareGrid(
                 PhotoGridItem(
                     index = index,
                     photo = photo,
-                    modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                    staggeredGridMode = false,
                     onClick = { photo1, index1 ->
                         onClick(pagingItems.itemSnapshotList.items, photo1, index1)
                     },
@@ -128,9 +129,7 @@ private fun PhotoSquareGrid(
                     span = { GridItemSpan(this.maxLineSpan) },
                     contentType = 2
                 ) {
-                    PagingAppendState(pagingItems.loadState.append) {
-                        pagingItems.retry()
-                    }
+                    PagingListAppendState(pagingItems)
                 }
             }
         }
@@ -168,17 +167,7 @@ private fun PhotoStaggeredGrid(
                 PhotoGridItem(
                     index = index,
                     photo = photo,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .let {
-                            val photoWidth = photo.width ?: 0
-                            val photoHeight = photo.height ?: 0
-                            if (photoWidth > 0 && photoHeight > 0) {
-                                it.aspectRatio(photoWidth.toFloat() / photoHeight)
-                            } else {
-                                it.aspectRatio(1f)
-                            }
-                        },
+                    staggeredGridMode = true,
                     onClick = { photo1, index1 ->
                         onClick(pagingItems.itemSnapshotList.items, photo1, index1)
                     },
@@ -191,9 +180,7 @@ private fun PhotoStaggeredGrid(
                     span = StaggeredGridItemSpan.FullLine,
                     contentType = 2
                 ) {
-                    PagingAppendState(pagingItems.loadState.append) {
-                        pagingItems.retry()
-                    }
+                    PagingListAppendState(pagingItems)
                 }
             }
         }

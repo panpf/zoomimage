@@ -17,7 +17,6 @@ import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
@@ -54,13 +53,13 @@ fun SketchZoomAsyncImageSample(
             onLongPress = { onLongClick.invoke() }
         )
 
-        val myPageState by remember {
+        val pageState by remember {
             derivedStateOf {
                 if (imageState.loadState is LoadState.Error) {
-                    MyPageState.Error { imageState.restart() }
-                } else MyPageState.None
+                    PageState.Error { imageState.restart() }
+                } else null
             }
         }
-        PageState(state = myPageState)
+        PageState(pageState = pageState)
     }
 }

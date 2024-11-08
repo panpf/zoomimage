@@ -3,10 +3,8 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -64,7 +62,7 @@ fun PhotoList(
         snapshotFlow { pageStart }.collectLatest {
             val finalPageStart = it.takeIf { it >= 0 } ?: initialPageStart  // refresh
             refreshing = finalPageStart == initialPageStart
-            appendState = if (finalPageStart > initialPageStart) AppendState.LOADING else null
+            appendState = if (finalPageStart > initialPageStart) AppendState.Loading else null
             val loadedPhotos = load(finalPageStart, pageSize)
             photos = if (it == initialPageStart) {
                 loadedPhotos
@@ -73,7 +71,7 @@ fun PhotoList(
             }
             nextPageStart = calculateNextPageStart(it, loadedPhotos.size)
             appendState = if (finalPageStart > initialPageStart && loadedPhotos.isEmpty())
-                AppendState.END else AppendState.LOADING
+                AppendState.End else AppendState.Loading
             refreshing = false
         }
     }
@@ -162,7 +160,7 @@ private fun PhotoSquareGrid(
                 PhotoGridItem(
                     index = index,
                     photo = item,
-                    modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                    staggeredGridMode = false,
                     onClick = { photo, index1 ->
                         onClick(photos, photo, index1)
                     },
@@ -175,9 +173,7 @@ private fun PhotoSquareGrid(
                     span = { GridItemSpan(this.maxLineSpan) },
                     contentType = 2
                 ) {
-                    AppendState(appendState) {
-
-                    }
+                    AppendState(appendState)
                 }
             }
         }
@@ -216,17 +212,7 @@ private fun PhotoStaggeredGrid(
                 PhotoGridItem(
                     index = index,
                     photo = photo,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .let {
-                            val photoWidth = photo.width ?: 0
-                            val photoHeight = photo.height ?: 0
-                            if (photoWidth > 0 && photoHeight > 0) {
-                                it.aspectRatio(photoWidth.toFloat() / photoHeight)
-                            } else {
-                                it.aspectRatio(1f)
-                            }
-                        },
+                    staggeredGridMode = true,
                     onClick = { photo1, index1 ->
                         onClick(photos, photo1, index1)
                     },
@@ -239,9 +225,7 @@ private fun PhotoStaggeredGrid(
                     span = StaggeredGridItemSpan.FullLine,
                     contentType = 2
                 ) {
-                    AppendState(appendState) {
-
-                    }
+                    AppendState(appendState)
                 }
             }
         }

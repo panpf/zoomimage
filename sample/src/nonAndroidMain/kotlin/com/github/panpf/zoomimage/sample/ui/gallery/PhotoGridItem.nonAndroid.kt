@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,9 +17,20 @@ import com.github.panpf.zoomimage.sample.ui.model.Photo
 actual fun PhotoGridItem(
     index: Int,
     photo: Photo,
-    modifier: Modifier,
+    staggeredGridMode: Boolean,
     onClick: (photo: Photo, index: Int) -> Unit,
 ) {
+    val modifier = Modifier
+        .fillMaxWidth()
+        .let {
+            val photoWidth = photo.width ?: 0
+            val photoHeight = photo.height ?: 0
+            if (staggeredGridMode && photoWidth > 0 && photoHeight > 0) {
+                it.aspectRatio(photoWidth.toFloat() / photoHeight)
+            } else {
+                it.aspectRatio(1f)
+            }
+        }
     val appSettings = LocalPlatformContext.current.appSettings
     val composeImageLoader by appSettings.composeImageLoader.collectAsState()
     when (composeImageLoader) {

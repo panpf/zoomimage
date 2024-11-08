@@ -21,7 +21,6 @@ import com.github.panpf.sketch.request.execute
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
@@ -46,17 +45,17 @@ fun BasicZoomImageSample(
             zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
         }
 
-        var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
+        var pageState by remember { mutableStateOf<PageState?>(null) }
         var imagePainter: Painter? by remember { mutableStateOf(null) }
         LaunchedEffect(photo) {
-            myLoadState = MyPageState.Loading
+            pageState = PageState.Loading
             val imageResult = ImageRequest(context, photo.originalUrl) {
                 getPlatformSketchZoomAsyncImageSampleImageOptions()
             }.execute()
-            myLoadState = if (imageResult is ImageResult.Success) {
-                MyPageState.None
+            pageState = if (imageResult is ImageResult.Success) {
+                null
             } else {
-                MyPageState.Error()
+                PageState.Error()
             }
             imagePainter = imageResult.image?.asPainter()
 
@@ -96,6 +95,6 @@ fun BasicZoomImageSample(
             )
         }
 
-        PageState(state = myLoadState)
+        PageState(pageState = pageState)
     }
 }

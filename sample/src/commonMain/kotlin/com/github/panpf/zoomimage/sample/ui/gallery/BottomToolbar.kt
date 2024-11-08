@@ -31,7 +31,6 @@ import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import org.jetbrains.compose.resources.painterResource
 
-
 @Composable
 fun BottomToolbar(modifier: Modifier) {
     val context = LocalPlatformContext.current

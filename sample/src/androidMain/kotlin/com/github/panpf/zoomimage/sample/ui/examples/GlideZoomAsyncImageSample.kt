@@ -24,7 +24,6 @@ import com.github.panpf.zoomimage.rememberGlideZoomState
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
@@ -42,7 +41,7 @@ fun GlideZoomAsyncImageSample(
         pageSelected = pageSelected,
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val context = LocalContext.current
-        var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
+        var pageState by remember { mutableStateOf<PageState?>(PageState.Loading) }
         val glideData = remember(key1 = photo) { sketchUri2GlideModel(context, photo.originalUrl) }
         GlideZoomAsyncImage(
             model = glideData,
@@ -65,7 +64,7 @@ fun GlideZoomAsyncImageSample(
                         target: Target<Drawable>,
                         isFirstResource: Boolean
                     ): Boolean {
-                        myLoadState = MyPageState.Error()
+                        pageState = PageState.Error()
                         return false
                     }
 
@@ -76,14 +75,14 @@ fun GlideZoomAsyncImageSample(
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        myLoadState = MyPageState.None
+                        pageState = null
                         return false
                     }
                 })
             }
         )
 
-        PageState(state = myLoadState)
+        PageState(pageState = pageState)
     }
 }
 

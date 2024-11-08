@@ -32,11 +32,9 @@ import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.components.HorizontalTabPager
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState.Error
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState.Loading
-import com.github.panpf.zoomimage.sample.ui.components.MyPageState.None
 import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.components.PageState.Error
+import com.github.panpf.zoomimage.sample.ui.components.PageState.Loading
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
@@ -116,16 +114,16 @@ class ImageSourceTestScreen : BaseScreen() {
                 zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
             }
 
-            var myLoadState by remember { mutableStateOf<MyPageState>(None) }
+            var pageState by remember { mutableStateOf<PageState?>(null) }
             var imagePainter: Painter? by remember { mutableStateOf(null) }
             LaunchedEffect(sketchImageUri) {
-                myLoadState = Loading
+                pageState = Loading
                 val imageRequest = ImageRequest(context, sketchImageUri) {
                     memoryCachePolicy(DISABLED)
                 }
                 val imageResult = imageRequest.execute()
-                myLoadState = if (imageResult is ImageResult.Success) {
-                    None
+                pageState = if (imageResult is ImageResult.Success) {
+                    null
                 } else {
                     Error()
                 }
@@ -164,7 +162,7 @@ class ImageSourceTestScreen : BaseScreen() {
                 )
             }
 
-            PageState(state = myLoadState)
+            PageState(pageState = pageState)
         }
     }
 }
