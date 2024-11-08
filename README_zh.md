@@ -246,26 +246,6 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
        文件中已经配置了忽略 `iosSample.run.xml`
     2. 在顶部运行配置下拉框点击 `Edit Configurations` 选择 `iosSample` 然后配置 `Execute target` 即可
 
-## 同类库对比
-
-| Function/Library      | ZoomImage |           [Telephoto]           | [PhotoView] | [Subsampling<br/>ScaleImageView] |
-|:----------------------|:---------:|:-------------------------------:|:-----------:|:--------------------------------:|
-| Compose Multiplatform |     ✅     | ✅<br>(Only Android and Desktop) |      ❌      |                ❌                 |
-| Android Compose       |     ✅     |                ✅                |      ❌      |                ❌                 |
-| Android View          |     ✅     |                ❌                |      ✅      |                ✅                 |
-| 旋转                    |     ✅     |                ❌                |      ✅      |                ❌                 |
-| 定位                    |     ✅     |                ❌                |      ❌      |                ✅                 |
-| 滚动条                   |     ✅     |                ❌                |      ❌      |                ❌                 |
-| 阅读模式                  |     ✅     |                ❌                |      ❌      |                ❌                 |
-| 子采样                   |     ✅     |                ✅                |      ❌      |                ✅                 |
-| 子采样动画                 |     ✅     |                ❌                |      ❌      |                ❌                 |
-| 单指缩放                  |     ✅     |                ✅                |      ✅      |                ✅                 |
-| 鼠标滚轮缩放                |     ✅     |                ✅                |      ❌      |                ❌                 |
-| 键盘缩放拖动                |     ✅     |                ❌                |      ❌      |                ❌                 |
-| 动态缩放比例                |     ✅     |                ❌                |      ❌      |                ❌                 |
-| 集成图片加载器               |     ✅     |                ✅                |      ❌      |                ❌                 |
-| 丰富的交互接口               |     ✅     |                ❌                |      ✅      |                ✅                 |
-
 ## 我的项目
 
 以下是我的其它开源项目，感兴趣的可以了解一下：
@@ -297,12 +277,6 @@ Apache 2.0. 有关详细信息，请参阅 [LICENSE](LICENSE.txt) 文件.
 [min_api_image]: https://img.shields.io/badge/AndroidAPI-21%2B-orange.svg
 
 [min_api_link]: https://android-arsenal.com/api?level=21
-
-[Telephoto]: https://github.com/saket/telephoto
-
-[PhotoView]: https://github.com/Baseflow/PhotoView
-
-[Subsampling<br/>ScaleImageView]: https://github.com/davemorrissey/subsampling-scale-image-view
 
 [Sketch]: https://github.com/panpf/sketch
 

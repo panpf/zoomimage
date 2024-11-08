@@ -266,26 +266,6 @@ Run the sample app:
     2. Click `Edit Configurations` in the run configuration drop-down box at the top,
        select `iosSample` and then configure `Execute target`
 
-## Comparison of similar libraries
-
-| Function/Library      | ZoomImage |           [Telephoto]           | [PhotoView] | [Subsampling<br/>ScaleImageView] |
-|:----------------------|:---------:|:-------------------------------:|:-----------:|:--------------------------------:|
-| Compose Multiplatform |     ✅     | ✅<br>(Only Android and Desktop) |      ❌      |                ❌                 |
-| Android Compose       |     ✅     |                ✅                |      ❌      |                ❌                 |
-| Android View          |     ✅     |                ❌                |      ✅      |                ✅                 |
-| Rotate                |     ✅     |                ❌                |      ✅      |                ❌                 |
-| Locate                |     ✅     |                ❌                |      ❌      |                ✅                 |
-| Scroll Bar            |     ✅     |                ❌                |      ❌      |                ❌                 |
-| Read Mode             |     ✅     |                ❌                |      ❌      |                ❌                 |
-| Subsampling           |     ✅     |                ✅                |      ❌      |                ✅                 |
-| Subsampling animation |     ✅     |                ❌                |      ❌      |                ❌                 |
-| One-finger scale      |     ✅     |                ✅                |      ✅      |                ✅                 |
-| Mouse wheel scale     |     ✅     |                ✅                |      ❌      |                ❌                 |
-| Keyboard zoom         |     ✅     |                ❌                |      ❌      |                ❌                 |
-| Dynamic scale factor  |     ✅     |                ❌                |      ❌      |                ❌                 |
-| Image Loader          |     ✅     |                ✅                |      ❌      |                ❌                 |
-| Rich interfaces       |     ✅     |                ❌                |      ✅      |                ✅                 |
-
 ## My Projects
 
 The following are my other open source projects. If you are interested, you can learn about them:
@@ -320,12 +300,6 @@ Apache 2.0. See the [LICENSE](LICENSE.txt) file for details.
 [min_api_image]: https://img.shields.io/badge/AndroidAPI-21%2B-orange.svg
 
 [min_api_link]: https://android-arsenal.com/api?level=21
-
-[Telephoto]: https://github.com/saket/telephoto
-
-[PhotoView]: https://github.com/Baseflow/PhotoView
-
-[Subsampling<br/>ScaleImageView]: https://github.com/davemorrissey/subsampling-scale-image-view
 
 [Sketch]: https://github.com/panpf/sketch
 
