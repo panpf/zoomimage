@@ -39,7 +39,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 ## 示例 App
 
 * Android：请到 [Releases](https://github.com/panpf/zoomimage/releases) 页面下载最新版本的安装包
-* Web：https://panpf.github.io/zoomimage-demo/
+* Web：https://panpf.github.io/zoomimage/app
 * 桌面：使用 [kdoctor] 检查运行环境，并按照提示安装需要的软件，然后在项目根目录执行
   `./package_desktop.sh` 命令打包，安装包位置包含在输出中
 * iOS：请参考 [运行示例 App](#运行示例-app) 部分自行编译运行

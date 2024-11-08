@@ -50,7 +50,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 * Android: Please go to the [Releases](https://github.com/panpf/zoomimage/releases) page to download
   the latest version of the installation package
-* Web: https://panpf.github.io/zoomimage-demo/
+* Web: https://panpf.github.io/zoomimage/app
 * Desktop: Use [kdoctor] to check the running environment, and follow the prompts to install the
   required software, and then execute the `./package_desktop.sh` command in the project root
   directory to package. The installation package location is included in the output.
