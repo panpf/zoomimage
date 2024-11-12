@@ -83,7 +83,7 @@ zoomImageView.setSubsamplingImage(imageSource)
 * [ResourceImageSource]：从 Android 的 res 目录加载图片。[ImageSource.fromResource(context,
   R.raw.huge_world)][ResourceImageSource]
 
-### \*SubsamplingImageGenerator
+### SubsamplingImageGenerator
 
 Sketch、Coil、Glide、Picasso 系列的组件在图片加载成功后都要根据 data 或 uri 创建 SubsamplingImage
 以支持子采样功能，它们都有其默认的 SubsamplingImageGenerator 实现
