@@ -2,6 +2,13 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+decode:
+
+* improve: 改进根据 mimeType 判断是否支持区域解码，非 image 类型直接返回 false，非 Android 平台上根据
+  skiko 版本判断是否支持 heic、heif、avif 类型
+
 ## 1.1.0-rc01
 
 * change: SubsamplingState.disabledTileBitmapCache 重命名为 disabledTileImageCache

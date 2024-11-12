@@ -16,12 +16,14 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import com.github.panpf.zoomimage.core.BuildKonfig
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.compareVersions
 import com.github.panpf.zoomimage.util.toSkiaRect
 import okio.buffer
 import okio.use
@@ -129,12 +131,22 @@ class SkiaRegionDecoder(
 
         override suspend fun accept(subsamplingImage: SubsamplingImage): Boolean = true
 
-        override fun checkSupport(mimeType: String): Boolean? = when (mimeType) {
-            "image/jpeg", "image/png", "image/webp", "image/bmp" -> true
-            "image/svg+xml" -> false
-            // TODO Get the skiko version and return false directly.
-            //  "image/heic", "image/heif", "image/avif" -> false
-            else -> null
+        override fun checkSupport(mimeType: String): Boolean? {
+            if (!mimeType.startsWith("image/")) {
+                return false
+            }
+            return when (mimeType) {
+                "image/jpeg", "image/png", "image/webp", "image/bmp", "image/gif" -> true
+                "image/svg+xml" -> false
+                "image/heic", "image/heif", "image/avif" ->
+                    if (compareVersions(
+                            BuildKonfig.SKIKO_VERSION_NAME,
+                            "0.8.15"
+                        ) <= 0
+                    ) false else null
+
+                else -> null
+            }
         }
 
         override fun create(

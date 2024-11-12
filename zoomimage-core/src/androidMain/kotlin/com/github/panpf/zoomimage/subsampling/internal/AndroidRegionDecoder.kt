@@ -137,12 +137,17 @@ class AndroidRegionDecoder(
 
         override suspend fun accept(subsamplingImage: SubsamplingImage): Boolean = true
 
-        override fun checkSupport(mimeType: String): Boolean? = when (mimeType) {
-            "image/jpeg", "image/png", "image/webp" -> true
-            "image/gif", "image/bmp", "image/svg+xml" -> false
-            "image/heic", "image/heif" -> VERSION.SDK_INT >= VERSION_CODES.O_MR1
-            "image/avif" -> if (VERSION.SDK_INT <= 34) false else null
-            else -> null
+        override fun checkSupport(mimeType: String): Boolean? {
+            if (!mimeType.startsWith("image/")) {
+                return false
+            }
+            return when (mimeType) {
+                "image/jpeg", "image/png", "image/webp" -> true
+                "image/gif", "image/bmp", "image/svg+xml" -> false
+                "image/heic", "image/heif" -> VERSION.SDK_INT >= VERSION_CODES.O_MR1
+                "image/avif" -> if (VERSION.SDK_INT <= 35) false else null
+                else -> null
+            }
         }
 
         override fun create(

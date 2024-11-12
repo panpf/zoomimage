@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+    id("com.codingfeline.buildkonfig")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlinx.atomicfu")
     id("org.jetbrains.kotlinx.kover")
@@ -42,5 +43,29 @@ kotlin {
         androidInstrumentedTest.dependencies {
             implementation(projects.internal.testCore)
         }
+    }
+}
+
+buildkonfig {
+    packageName = "com.github.panpf.zoomimage.core"
+    defaultConfigs {
+        buildConfigField(
+            type = com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            name = "VERSION_NAME",
+            value = project.versionName,
+            const = true
+        )
+        buildConfigField(
+            type = com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            name = "VERSION_CODE",
+            value = project.versionCode.toString(),
+            const = true
+        )
+        buildConfigField(
+            type = com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            name = "SKIKO_VERSION_NAME",
+            value = libs.versions.skiko.get(),
+            const = true
+        )
     }
 }

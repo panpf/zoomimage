@@ -36,10 +36,11 @@ class SkiaRegionDecoderTest {
         assertEquals(true, factory.checkSupport("image/png"))
         assertEquals(true, factory.checkSupport("image/webp"))
         assertEquals(true, factory.checkSupport("image/bmp"))
-        assertEquals(null, factory.checkSupport("image/heic"))
-        assertEquals(null, factory.checkSupport("image/heif"))
-        assertEquals(null, factory.checkSupport("image/gif"))
-        assertEquals(null, factory.checkSupport("image/avif"))
+        assertEquals(true, factory.checkSupport("image/gif"))
+        assertEquals(false, factory.checkSupport("image/heic"))
+        assertEquals(false, factory.checkSupport("image/heif"))
+        assertEquals(false, factory.checkSupport("image/avif"))
+        assertEquals(false, factory.checkSupport("video/mp4"))
         assertEquals(null, factory.checkSupport("image/fake"))
     }
 

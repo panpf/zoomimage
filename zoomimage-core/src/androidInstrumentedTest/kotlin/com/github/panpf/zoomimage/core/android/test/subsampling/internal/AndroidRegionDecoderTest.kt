@@ -47,12 +47,13 @@ class AndroidRegionDecoderTest {
         } else {
             assertEquals(false, factory.checkSupport("image/heif"))
         }
-        if (Build.VERSION.SDK_INT > 34) {
+        if (Build.VERSION.SDK_INT > 35) {
             assertEquals(null, factory.checkSupport("image/avif"))
         } else {
             assertEquals(false, factory.checkSupport("image/avif"))
         }
         assertEquals(null, factory.checkSupport("image/fake"))
+        assertEquals(false, factory.checkSupport("video/mp4"))
     }
 
     @Test
