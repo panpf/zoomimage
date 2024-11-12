@@ -96,7 +96,7 @@ follows:
 * [ResourceImageSource]: Load images from Android's res
   directory. [ImageSource.fromResource(context, R.raw.huge_world)][ResourceImageSource]
 
-### \*SubsamplingImageGenerator
+### SubsamplingImageGenerator
 
 The components of the Sketch, Coil, Glide, and Picasso series must create a SubsamplingImage based
 on data or uri after the image is loaded successfully.
