@@ -363,7 +363,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple,
         )
         if (paramsChanges == 0) {
-            logger.d { "ZoomableState. reset:$caller. All parameters unchanged" }
+            logger.d { "ZoomableState. reset:$caller. skipped. All parameters unchanged" }
             return@coroutineScope
         }
 

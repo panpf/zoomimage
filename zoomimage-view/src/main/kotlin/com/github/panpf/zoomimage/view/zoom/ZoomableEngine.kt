@@ -344,7 +344,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple,
         )
         if (paramsChanges == 0) {
-            logger.d { "ZoomableEngine. reset:$caller. All parameters unchanged" }
+            logger.d { "ZoomableEngine. reset:$caller. skipped. All parameters unchanged" }
             return@coroutineScope
         }
 
