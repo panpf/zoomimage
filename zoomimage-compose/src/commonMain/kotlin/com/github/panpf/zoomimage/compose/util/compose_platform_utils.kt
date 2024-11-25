@@ -375,6 +375,13 @@ internal fun Offset.limitTo(rect: Rect): Offset {
 internal fun Offset.limitTo(size: Size): Offset =
     limitTo(Rect(0f, 0f, size.width, size.height))
 
+/**
+ * If true is returned, it means Offset is empty
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsOffsetTest.testIsEmpty
+ */
+internal fun Offset.isEmpty(): Boolean = abs(x).format(2) == 0f && abs(y).format(2) == 0f
+
 
 /* ************************************** IntOffset ********************************************* */
 
@@ -875,6 +882,13 @@ internal operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
 @Stable
 internal operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
+
+/**
+ * Returns true if the scaling is 1
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsScaleFactorTest.testIsOrigin
+ */
+internal fun ScaleFactor.isOrigin(): Boolean = scaleX.format(2) == 1f && scaleY.format(2) == 1f
 
 
 /* ************************************** TransformOrigin *************************************** */

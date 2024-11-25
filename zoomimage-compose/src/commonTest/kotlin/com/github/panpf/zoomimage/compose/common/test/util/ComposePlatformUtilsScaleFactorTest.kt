@@ -4,6 +4,7 @@ import androidx.compose.ui.layout.ScaleFactor
 import com.github.panpf.zoomimage.compose.util.Origin
 import com.github.panpf.zoomimage.compose.util.ScaleFactor
 import com.github.panpf.zoomimage.compose.util.div
+import com.github.panpf.zoomimage.compose.util.isOrigin
 import com.github.panpf.zoomimage.compose.util.times
 import com.github.panpf.zoomimage.compose.util.toShortString
 import kotlin.test.Test
@@ -69,5 +70,12 @@ class ComposePlatformUtilsScaleFactorTest {
             "6.54x16.17",
             (ScaleFactor(35.97f, 53.35f) / ScaleFactor(5.5f, 3.3f)).toShortString()
         )
+    }
+
+    @Test
+    fun testIsOrigin() {
+        assertEquals(expected = true, actual = ScaleFactor(1f).isOrigin())
+        assertEquals(expected = true, actual = ScaleFactor(0.995f).isOrigin())
+        assertEquals(expected = false, actual = ScaleFactor(0.994f).isOrigin())
     }
 }

@@ -5,6 +5,7 @@ import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.util.rotateInSpace
@@ -16,6 +17,14 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 
 class OffsetCompatTest {
+
+    @Test
+    fun testIsEmpty() {
+        assertEquals(expected = true, actual = OffsetCompat(0f, 0f).isEmpty())
+        assertEquals(expected = true, actual = OffsetCompat(-0f, -0f).isEmpty())
+        assertEquals(expected = true, actual = OffsetCompat(0.004f, 0.004f).isEmpty())
+        assertEquals(expected = false, actual = OffsetCompat(0.006f, 0.006f).isEmpty())
+    }
 
     @Test
     fun testToShortString() {

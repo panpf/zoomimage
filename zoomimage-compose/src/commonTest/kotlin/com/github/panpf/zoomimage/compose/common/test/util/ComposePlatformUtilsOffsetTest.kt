@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ScaleFactor
 import com.github.panpf.zoomimage.compose.util.div
+import com.github.panpf.zoomimage.compose.util.isEmpty
 import com.github.panpf.zoomimage.compose.util.limitTo
 import com.github.panpf.zoomimage.compose.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.compose.util.rotateInSpace
@@ -211,5 +212,13 @@ class ComposePlatformUtilsOffsetTest {
             Offset(600.4f, 300.5f),
             Offset(600.4f, 400.9f).limitTo(Size(700.9f, 300.5f))
         )
+    }
+
+    @Test
+    fun testIsEmpty() {
+        assertEquals(expected = true, actual = Offset(0f, 0f).isEmpty())
+        assertEquals(expected = true, actual = Offset(-0f, -0f).isEmpty())
+        assertEquals(expected = true, actual = Offset(0.004f, 0.004f).isEmpty())
+        assertEquals(expected = false, actual = Offset(0.006f, 0.006f).isEmpty())
     }
 }

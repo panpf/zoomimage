@@ -6,6 +6,7 @@ import androidx.compose.ui.layout.ScaleFactor
 import com.github.panpf.zoomimage.compose.util.ScaleFactor
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.div
+import com.github.panpf.zoomimage.compose.zoom.isEmpty
 import com.github.panpf.zoomimage.compose.zoom.lerp
 import com.github.panpf.zoomimage.compose.zoom.minus
 import com.github.panpf.zoomimage.compose.zoom.plus
@@ -110,6 +111,69 @@ class TransformTest {
 
     @Test
     fun testToString() {
+        assertEquals(
+            expected = "Transform(scale=1.0x1.0, offset=0.0x0.0, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=0.0x0.0)",
+            actual = Transform.Origin.toString()
+        )
+
+        assertEquals(
+            expected = "Transform(scale=4.7x1.3, offset=97.0x156.0, rotation=270.0, scaleOrigin=0.7x0.3, rotationOrigin=0.2x0.6)",
+            actual = Transform(
+                ScaleFactor(4.7f, 1.3f),
+                Offset(97f, 156f),
+                rotation = 270f,
+                scaleOrigin = TransformOrigin(0.7f, 0.3f),
+                rotationOrigin = TransformOrigin(0.2f, 0.6f),
+            ).toString()
+        )
+    }
+
+    @Test
+    fun testIsEmptyAndIsNotEmpty() {
+        assertEquals(
+            expected = true,
+            actual = Transform(
+                scale = ScaleFactor(1f),
+                offset = Offset(0f, 0f),
+                rotation = 0f
+            ).isEmpty()
+        )
+        assertEquals(
+            expected = true,
+            actual = Transform(
+                scale = ScaleFactor(0.995f),
+                offset = Offset(0.004f, 0.004f),
+                rotation = 0.004f
+            ).isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = Transform(
+                scale = ScaleFactor(0.994f),
+                offset = Offset(0.004f, 0.004f),
+                rotation = 0.004f
+            ).isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = Transform(
+                scale = ScaleFactor(0.995f),
+                offset = Offset(0.006f, 0.006f),
+                rotation = 0.004f
+            ).isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = Transform(
+                scale = ScaleFactor(0.995f),
+                offset = Offset(0.004f, 0.004f),
+                rotation = 0.006f
+            ).isEmpty()
+        )
+    }
+
+    @Test
+    fun testToShortString() {
         assertEquals(
             "(1.0x1.0,0.0x0.0,0.0,0.0x0.0,0.0x0.0)",
             Transform.Origin.toShortString()

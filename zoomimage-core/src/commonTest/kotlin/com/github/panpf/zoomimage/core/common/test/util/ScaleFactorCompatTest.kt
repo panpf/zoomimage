@@ -3,12 +3,20 @@ package com.github.panpf.zoomimage.core.common.test.util
 import com.github.panpf.zoomimage.util.Origin
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.isOrigin
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ScaleFactorCompatTest {
+
+    @Test
+    fun testIsOrigin() {
+        assertEquals(expected = true, actual = ScaleFactorCompat(1f).isOrigin())
+        assertEquals(expected = true, actual = ScaleFactorCompat(0.995f).isOrigin())
+        assertEquals(expected = false, actual = ScaleFactorCompat(0.994f).isOrigin())
+    }
 
     @Test
     fun testToShortString() {

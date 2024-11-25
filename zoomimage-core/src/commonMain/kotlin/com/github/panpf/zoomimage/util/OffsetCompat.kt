@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.util.internal.packFloats
 import com.github.panpf.zoomimage.util.internal.unpackFloat1
 import com.github.panpf.zoomimage.util.internal.unpackFloat2
 import kotlin.jvm.JvmInline
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
@@ -246,6 +247,13 @@ inline fun OffsetCompat.takeOrElse(block: () -> OffsetCompat): OffsetCompat =
 
 
 /* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * If true is returned, it means Offset is empty
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testIsEmpty
+ */
+fun OffsetCompat.isEmpty() = abs(x).format(2) == 0f && abs(y).format(2) == 0f
 
 /**
  * Return short string descriptions, for example: '10.01x9.03'

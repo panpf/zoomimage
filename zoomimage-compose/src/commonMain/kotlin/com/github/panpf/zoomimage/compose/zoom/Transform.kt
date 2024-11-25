@@ -27,6 +27,8 @@ import com.github.panpf.zoomimage.compose.util.Origin
 import com.github.panpf.zoomimage.compose.util.TopStart
 import com.github.panpf.zoomimage.compose.util.div
 import com.github.panpf.zoomimage.compose.util.format
+import com.github.panpf.zoomimage.compose.util.isEmpty
+import com.github.panpf.zoomimage.compose.util.isOrigin
 import com.github.panpf.zoomimage.compose.util.times
 import com.github.panpf.zoomimage.compose.util.toShortString
 
@@ -143,24 +145,34 @@ data class Transform(
     }
 }
 
+/**
+ * Returns whether the Transform is empty, that is, the scale is 1, the offset is 0, and the rotation is 0
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testIsEmptyAndIsNotEmpty
+ */
 fun Transform.isEmpty(): Boolean {
-    return scaleX.format(2) == 1f
-            && scaleY.format(2) == 1f
-            && offsetX.format(2) == 0f
-            && offsetY.format(2) == 0f
-            && rotation.format(2) == 0f
+    return scale.isOrigin() && offset.isEmpty() && rotation.format(2) == 0f
 }
 
+/**
+ * Returns whether the Transform is not empty
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testIsEmptyAndIsNotEmpty
+ */
 fun Transform.isNotEmpty(): Boolean = !isEmpty()
 
 /**
  * Return short string descriptions, for example: '(3.45x9.87,10.56x20.56,45.03,0.52x0.52,0.52x0.52)'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testToShortString
  */
 fun Transform.toShortString(): String =
     "(${scale.toShortString()},${offset.toShortString()},$rotation,${scaleOrigin.toShortString()},${rotationOrigin.toShortString()})"
 
 /**
  * Returns an Transform scaled by multiplying [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testTimes
  */
 operator fun Transform.times(scaleFactor: ScaleFactor): Transform {
     return this.copy(
@@ -177,6 +189,8 @@ operator fun Transform.times(scaleFactor: ScaleFactor): Transform {
 
 /**
  * Returns an Transform scaled by multiplying [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testDiv
  */
 operator fun Transform.div(scaleFactor: ScaleFactor): Transform {
     return this.copy(
@@ -193,6 +207,8 @@ operator fun Transform.div(scaleFactor: ScaleFactor): Transform {
 
 /**
  * Add other Transform to the current Transform, and the scale origin or rotation origin of both must be the same when neither is scaled or rotated equal to the default value
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testPlus
  */
 operator fun Transform.plus(other: Transform): Transform {
     require(
@@ -239,6 +255,8 @@ operator fun Transform.plus(other: Transform): Transform {
 
 /**
  * Subtract other Transform from the current Transform, and the scale origin or rotation origin of both must be the same when neither is scaled or rotated equal to the default value
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testMinus
  */
 operator fun Transform.minus(other: Transform): Transform {
     require(
@@ -297,6 +315,8 @@ operator fun Transform.minus(other: Transform): Transform {
  *
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.TransformTest.testLerp
  */
 @Stable
 fun lerp(start: Transform, stop: Transform, fraction: Float): Transform {

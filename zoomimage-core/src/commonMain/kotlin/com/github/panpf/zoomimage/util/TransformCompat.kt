@@ -133,11 +133,7 @@ data class TransformCompat(
  * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testIsEmpty
  */
 fun TransformCompat.isEmpty(): Boolean {
-    return scaleX.format(2) == 1f
-            && scaleY.format(2) == 1f
-            && offsetX.format(2) == 0f
-            && offsetY.format(2) == 0f
-            && rotation.format(2) == 0f
+    return scale.isOrigin() && offset.isEmpty() && rotation.format(2) == 0f
 }
 
 /**

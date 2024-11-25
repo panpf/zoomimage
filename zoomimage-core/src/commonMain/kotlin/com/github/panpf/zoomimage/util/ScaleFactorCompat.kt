@@ -189,6 +189,13 @@ fun lerp(start: ScaleFactorCompat, stop: ScaleFactorCompat, fraction: Float): Sc
 /* ************************************ Extra-extended functions ******************************** */
 
 /**
+ * Returns true if the scaling is 1
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.ScaleFactorCompatTest.testIsOrigin
+ */
+fun ScaleFactorCompat.isOrigin(): Boolean = scaleX.format(2) == 1f && scaleY.format(2) == 1f
+
+/**
  * Return short string descriptions, for example: '3.45x9.87'
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.ScaleFactorCompatTest.testToShortString
