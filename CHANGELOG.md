@@ -9,6 +9,8 @@ zoom:
 * fix: The SketchZoomAsyncImage component of the 'zoomimage-compose-sketch4' module always displays
   the image in the upper left corner first, and then instantly moves the image to the center of the
   screen. [#60](https://github.com/panpf/zoomimage/issues/60)
+* new: The new containerWhitespace attribute is used to set the white space around the container in
+  pixel values. [#59](https://github.com/panpf/zoomimage/issues/59)
 
 subsampling:
 

@@ -384,7 +384,7 @@ fun checkParamsChanges(
     readMode: ReadMode?,
     scalesCalculator: ScalesCalculator,
     limitOffsetWithinBaseVisibleRect: Boolean,
-    containerWhitespaceMultiple: Float,
+    containerWhitespace: ContainerWhitespace,
     lastContainerSize: IntSizeCompat,
     lastContentSize: IntSizeCompat,
     lastContentOriginSize: IntSizeCompat,
@@ -394,7 +394,7 @@ fun checkParamsChanges(
     lastReadMode: ReadMode?,
     lastScalesCalculator: ScalesCalculator,
     lastLimitOffsetWithinBaseVisibleRect: Boolean,
-    lastContainerWhitespaceMultiple: Float,
+    lastContainerWhitespace: ContainerWhitespace,
 ): Int {
     return if (
         lastContainerSize.isNotEmpty()
@@ -409,7 +409,7 @@ fun checkParamsChanges(
         && lastReadMode == readMode
         && lastScalesCalculator == scalesCalculator
         && lastLimitOffsetWithinBaseVisibleRect == limitOffsetWithinBaseVisibleRect
-        && lastContainerWhitespaceMultiple == containerWhitespaceMultiple
+        && lastContainerWhitespace == containerWhitespace
     ) {
         if (lastContainerSize == containerSize) 0 else 1
     } else {
@@ -705,7 +705,7 @@ fun calculateUserOffsetBounds(
     rotation: Int,
     userScale: Float,
     limitBaseVisibleRect: Boolean,
-    containerWhitespaceMultiple: Float
+    containerWhitespace: ContainerWhitespace
 ): RectCompat {
     /*
      * Calculations are based on the following rules:
@@ -718,8 +718,8 @@ fun calculateUserOffsetBounds(
         return RectCompat.Zero
     }
     require(rotation % 90 == 0) { "rotation must be multiple of 90, rotation=$rotation" }
-    require(containerWhitespaceMultiple >= 0f) {
-        "containerWhitespaceMultiple must be greater than or equal to 0, containerWhitespaceMultiple=$containerWhitespaceMultiple"
+    require(containerWhitespace.check()) {
+        "containerWhitespace must be greater than or equal to 0f, containerWhitespace=$containerWhitespace"
     }
 
     val rotatedContentSize = contentSize.rotate(rotation)
@@ -779,18 +779,16 @@ fun calculateUserOffsetBounds(
         right = horizontalBounds.endInclusive.filterNegativeZeros(),
         bottom = verticalBounds.endInclusive.filterNegativeZeros(),
     )
-    val containerWhitespaceOffsetBounds = if (containerWhitespaceMultiple > 0f) {
-        val containerWhitespaceWidth = containerSize.width * containerWhitespaceMultiple
-        val containerWhitespaceHeight = containerSize.height * containerWhitespaceMultiple
+    val containerWhitespaceOffsetBounds = if (!containerWhitespace.isEmpty()) {
         val horPaddingSpace =
             (containerSize.width - scaledRotatedContentBaseDisplayRect.width).coerceAtLeast(0f) / 2
         val verPaddingSpace =
             (containerSize.height - scaledRotatedContentBaseDisplayRect.height).coerceAtLeast(0f) / 2
         RectCompat(
-            left = (offsetBounds.left - containerWhitespaceWidth + horPaddingSpace).filterNegativeZeros(),
-            top = (offsetBounds.top - containerWhitespaceHeight + verPaddingSpace).filterNegativeZeros(),
-            right = (offsetBounds.right + containerWhitespaceWidth - horPaddingSpace).filterNegativeZeros(),
-            bottom = (offsetBounds.bottom + containerWhitespaceHeight - verPaddingSpace).filterNegativeZeros(),
+            left = (offsetBounds.left - containerWhitespace.left + horPaddingSpace).filterNegativeZeros(),
+            top = (offsetBounds.top - containerWhitespace.top + verPaddingSpace).filterNegativeZeros(),
+            right = (offsetBounds.right + containerWhitespace.right - horPaddingSpace).filterNegativeZeros(),
+            bottom = (offsetBounds.bottom + containerWhitespace.bottom - verPaddingSpace).filterNegativeZeros(),
         )
     } else {
         offsetBounds

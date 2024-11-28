@@ -45,6 +45,7 @@ import com.github.panpf.zoomimage.view.util.requiredMainThread
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
@@ -68,6 +69,7 @@ import com.github.panpf.zoomimage.zoom.canScrollByEdge
 import com.github.panpf.zoomimage.zoom.checkParamsChanges
 import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
 import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
+import com.github.panpf.zoomimage.zoom.isEmpty
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
@@ -168,6 +170,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     var containerWhitespaceMultipleState = MutableStateFlow(0f)
 
     /**
+     * Add whitespace around containers, has higher priority than [containerWhitespaceMultipleState]
+     */
+    var containerWhitespaceState = MutableStateFlow(ContainerWhitespace.Zero)
+
+    /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
      *
      * @see com.github.panpf.zoomimage.zoom.GestureType
@@ -184,7 +191,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     private var lastScalesCalculator: ScalesCalculator = scalesCalculatorState.value
     private var lastLimitOffsetWithinBaseVisibleRect: Boolean =
         limitOffsetWithinBaseVisibleRectState.value
-    private var lastContainerWhitespaceMultiple: Float = containerWhitespaceMultipleState.value
+    private var lastContainerWhitespace: ContainerWhitespace = calculateContainerWhitespace()
 
 
     /* *********************************** Information properties ******************************* */
@@ -310,7 +317,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         val alignment = alignmentState.value
         val scalesCalculator = scalesCalculatorState.value
         val limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value
-        val containerWhitespaceMultiple = containerWhitespaceMultipleState.value
+        val containerWhitespace = calculateContainerWhitespace()
         val lastContainerSize = lastContainerSize
         val lastContentSize = lastContentSize
         val lastContentOriginSize = lastContentOriginSize
@@ -320,7 +327,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         val lastRotation = lastRotation
         val lastScalesCalculator = lastScalesCalculator
         val lastLimitOffsetWithinBaseVisibleRect = lastLimitOffsetWithinBaseVisibleRect
-        val lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple
+        val lastContainerWhitespace = lastContainerWhitespace
         val paramsChanges = checkParamsChanges(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -331,7 +338,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             readMode = readMode,
             scalesCalculator = scalesCalculator,
             limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
-            containerWhitespaceMultiple = containerWhitespaceMultiple,
+            containerWhitespace = containerWhitespace,
             lastContainerSize = lastContainerSize,
             lastContentSize = lastContentSize,
             lastContentOriginSize = lastContentOriginSize,
@@ -341,7 +348,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             lastReadMode = lastReadMode,
             lastScalesCalculator = lastScalesCalculator,
             lastLimitOffsetWithinBaseVisibleRect = lastLimitOffsetWithinBaseVisibleRect,
-            lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple,
+            lastContainerWhitespace = lastContainerWhitespace,
         )
         if (paramsChanges == 0) {
             logger.d { "ZoomableEngine. reset:$caller. skipped. All parameters unchanged" }
@@ -440,7 +447,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         this@ZoomableEngine.lastRotation = rotation
         this@ZoomableEngine.lastScalesCalculator = scalesCalculator
         this@ZoomableEngine.lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
-        this@ZoomableEngine.lastContainerWhitespaceMultiple = containerWhitespaceMultiple
+        this@ZoomableEngine.lastContainerWhitespace = containerWhitespace
     }
 
     /**
@@ -790,6 +797,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
                 reset("containerWhitespaceMultipleChanged")
             }
         }
+        coroutineScope.launch {
+            containerWhitespaceState.collect {
+                reset("containerWhitespaceChanged")
+            }
+        }
     }
 
     private fun onDetachFromWindow() {
@@ -961,7 +973,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
-            containerWhitespaceMultiple = containerWhitespaceMultipleState.value,
+            containerWhitespace = calculateContainerWhitespace(),
         ).let {
             Rect(
                 /* left = */ it.left.roundToInt(),
@@ -1040,7 +1052,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             rotation = rotation,
             userScale = userScale,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
-            containerWhitespaceMultiple = containerWhitespaceMultipleState.value,
+            containerWhitespace = calculateContainerWhitespace(),
         ).round().toRect()      // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -1128,7 +1140,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             rotation = rotation,
             userScale = userTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
-            containerWhitespaceMultiple = containerWhitespaceMultipleState.value,
+            containerWhitespace = calculateContainerWhitespace(),
         )
         this._userOffsetBoundsState.value = userOffsetBounds.round()
 
@@ -1136,6 +1148,22 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             userOffsetBounds = userOffsetBounds,
             userOffset = userTransform.offset,
         )
+    }
+
+    private fun calculateContainerWhitespace(): ContainerWhitespace {
+        val containerWhitespace = containerWhitespaceState.value
+        val containerSize = containerSizeState.value
+        val containerWhitespaceMultiple = containerWhitespaceMultipleState.value
+        return if (!containerWhitespace.isEmpty()) {
+            containerWhitespace
+        } else if (containerSize.isNotEmpty() && containerWhitespaceMultiple != 0f) {
+            ContainerWhitespace(
+                horizontal = containerSize.width * containerWhitespaceMultiple,
+                vertical = containerSize.height * containerWhitespaceMultiple
+            )
+        } else {
+            ContainerWhitespace.Zero
+        }
     }
 
     override fun toString(): String =

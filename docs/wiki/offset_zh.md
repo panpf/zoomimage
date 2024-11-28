@@ -146,7 +146,7 @@ SketchZoomAsyncImage(
 ### 容器空白区域
 
 ZoomImage 默认在拖动图像时图像的边缘始终和容器的边缘对齐，它们中间不会存在空白区域（图像初始状态时除外），当你需要在图像和容器之间留有空白区域时，你可以通过设置
-`containerWhitespaceMultiple` 参数为来达到此目的
+`containerWhitespace` 或 `containerWhitespaceMultiple` 参数为来达到此目的
 
 示例：
 
@@ -154,6 +154,15 @@ ZoomImage 默认在拖动图像时图像的边缘始终和容器的边缘对齐�
 val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.zommable) {
+    // 通过 containerWhitespace 属性设置具体的大小
+    zoomState.zommable.containerWhitespace = ContainerWhitespace(
+        left = 4f, top = 3f, right = 2f, bottom = 1f
+    )
+    // or
+    zoomState.zommable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
+    // or
+    zoomState.zommable.containerWhitespace = ContainerWhitespace(size = 1f)
+
     // 在图像边缘和容器边缘之间留有 50% 容器大小的空白区域
     zoomState.zommable.containerWhitespaceMultiple = 0.5f
 }

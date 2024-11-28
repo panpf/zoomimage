@@ -62,6 +62,7 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
@@ -84,6 +85,7 @@ import com.github.panpf.zoomimage.zoom.canScrollByEdge
 import com.github.panpf.zoomimage.zoom.checkParamsChanges
 import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
 import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
+import com.github.panpf.zoomimage.zoom.isEmpty
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
 import com.github.panpf.zoomimage.zoom.transformAboutEquals
@@ -193,6 +195,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
      * Add whitespace around containers based on container size
      */
     var containerWhitespaceMultiple: Float by mutableStateOf(0f)
+
+    /**
+     * Add whitespace around containers, has higher priority than [containerWhitespaceMultiple]
+     */
+    var containerWhitespace: ContainerWhitespace by mutableStateOf(ContainerWhitespace.Zero)
 
     /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
@@ -306,7 +313,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
     private var lastReadMode: ReadMode? = readMode
     private var lastScalesCalculator: ScalesCalculator = scalesCalculator
     private var lastLimitOffsetWithinBaseVisibleRect: Boolean = limitOffsetWithinBaseVisibleRect
-    private var lastContainerWhitespaceMultiple: Float = containerWhitespaceMultiple
+    private var lastContainerWhitespace: ContainerWhitespace = calculateContainerWhitespace()
 
 
     /* ********************************* Interact with consumers ******************************** */
@@ -328,7 +335,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         val rotation = rotation
         val scalesCalculator = scalesCalculator
         val limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
-        val containerWhitespaceMultiple = containerWhitespaceMultiple
+        val containerWhitespace = calculateContainerWhitespace()
         val lastContainerSize = lastContainerSize
         val lastContentSize = lastContentSize
         val lastContentOriginSize = lastContentOriginSize
@@ -338,7 +345,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         val lastRotation = lastRotation
         val lastScalesCalculator = lastScalesCalculator
         val lastLimitOffsetWithinBaseVisibleRect = lastLimitOffsetWithinBaseVisibleRect
-        val lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple
+        val lastContainerWhitespace = lastContainerWhitespace
 
         val paramsChanges = checkParamsChanges(
             containerSize = containerSize.toCompat(),
@@ -350,7 +357,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             readMode = readMode,
             scalesCalculator = scalesCalculator,
             limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
-            containerWhitespaceMultiple = containerWhitespaceMultiple,
+            containerWhitespace = containerWhitespace,
             lastContainerSize = lastContainerSize.toCompat(),
             lastContentSize = lastContentSize.toCompat(),
             lastContentOriginSize = lastContentOriginSize.toCompat(),
@@ -360,7 +367,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             lastReadMode = lastReadMode,
             lastScalesCalculator = lastScalesCalculator,
             lastLimitOffsetWithinBaseVisibleRect = lastLimitOffsetWithinBaseVisibleRect,
-            lastContainerWhitespaceMultiple = lastContainerWhitespaceMultiple,
+            lastContainerWhitespace = lastContainerWhitespace,
         )
         if (paramsChanges == 0) {
             logger.d { "ZoomableState. reset:$caller. skipped. All parameters unchanged" }
@@ -460,7 +467,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         this@ZoomableState.lastRotation = rotation
         this@ZoomableState.lastScalesCalculator = scalesCalculator
         this@ZoomableState.lastLimitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
-        this@ZoomableState.lastContainerWhitespaceMultiple = containerWhitespaceMultiple
+        this@ZoomableState.lastContainerWhitespace = containerWhitespace
     }
 
     /**
@@ -809,6 +816,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
                 reset("containerWhitespaceMultipleChanged")
             }
         }
+        coroutineScope.launch {
+            snapshotFlow { containerWhitespace }.collect {
+                reset("containerWhitespaceChanged")
+            }
+        }
     }
 
     override fun onAbandoned() = onForgotten()
@@ -1051,7 +1063,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             rotation = rotation,
             userScale = userScale,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
-            containerWhitespaceMultiple = containerWhitespaceMultiple,
+            containerWhitespace = calculateContainerWhitespace(),
         ).round().toPlatformRect()    // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -1134,7 +1146,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             rotation = rotation,
             userScale = userTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
-            containerWhitespaceMultiple = containerWhitespaceMultiple,
+            containerWhitespace = calculateContainerWhitespace(),
         )
         this.userOffsetBounds = userOffsetBounds.roundToPlatform()
 
@@ -1142,6 +1154,22 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             userOffsetBounds = userOffsetBounds,
             userOffset = userTransform.offset.toCompat(),
         )
+    }
+
+    private fun calculateContainerWhitespace(): ContainerWhitespace {
+        val containerWhitespace = containerWhitespace
+        val containerSize = containerSize
+        val containerWhitespaceMultiple = containerWhitespaceMultiple
+        return if (!containerWhitespace.isEmpty()) {
+            containerWhitespace
+        } else if (containerSize.isNotEmpty() && containerWhitespaceMultiple != 0f) {
+            ContainerWhitespace(
+                horizontal = containerSize.width * containerWhitespaceMultiple,
+                vertical = containerSize.height * containerWhitespaceMultiple
+            )
+        } else {
+            ContainerWhitespace.Zero
+        }
     }
 
     override fun toString(): String =

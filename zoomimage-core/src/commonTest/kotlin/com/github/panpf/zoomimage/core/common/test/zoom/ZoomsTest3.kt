@@ -21,6 +21,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.CenterStart
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopEnd
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopStart
+import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Crop
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillBounds
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillHeight
@@ -76,7 +77,7 @@ class ZoomsTest3 {
                     rotation = item.rotation,
                     userScale = item.userScale,
                     limitBaseVisibleRect = item.limitBaseVisibleRect,
-                    containerWhitespaceMultiple = 0f,
+                    containerWhitespace = ContainerWhitespace.Zero,
                 )
             }
         }
@@ -596,7 +597,7 @@ class ZoomsTest3 {
                 rotation = item.rotation,
                 userScale = item.userScale,
                 limitBaseVisibleRect = item.limitBaseVisibleRect,
-                containerWhitespaceMultiple = 0f,
+                containerWhitespace = ContainerWhitespace.Zero,
             )
             assertEquals(expected = item.expected, actual = result, message = item.getMessage())
 
@@ -616,12 +617,15 @@ class ZoomsTest3 {
             val verPaddingSpace =
                 (containerSize.height - scaledRotatedContentBaseDisplayRect.height).coerceAtLeast(0f) / 2
 
-            val containerWhitespaceMultiple1 = 0.5f
+            val containerWhitespaceMultiple1 = ContainerWhitespace(
+                horizontal = containerSize.width * 0.5f,
+                vertical = containerSize.height * 0.5f
+            )
             val expected1 = result.copy(
-                left = result.left - containerSize.width * containerWhitespaceMultiple1 + horPaddingSpace,
-                top = result.top - containerSize.height * containerWhitespaceMultiple1 + verPaddingSpace,
-                right = result.right + containerSize.width * containerWhitespaceMultiple1 - horPaddingSpace,
-                bottom = result.bottom + containerSize.height * containerWhitespaceMultiple1 - verPaddingSpace
+                left = result.left - containerWhitespaceMultiple1.left + horPaddingSpace,
+                top = result.top - containerWhitespaceMultiple1.top + verPaddingSpace,
+                right = result.right + containerWhitespaceMultiple1.right - horPaddingSpace,
+                bottom = result.bottom + containerWhitespaceMultiple1.bottom - verPaddingSpace
             )
             val result1 = calculateUserOffsetBounds(
                 containerSize = containerSize,
@@ -631,16 +635,21 @@ class ZoomsTest3 {
                 rotation = item.rotation,
                 userScale = item.userScale,
                 limitBaseVisibleRect = item.limitBaseVisibleRect,
-                containerWhitespaceMultiple = containerWhitespaceMultiple1,
+                containerWhitespace = containerWhitespaceMultiple1,
             )
             assertEquals(expected = expected1, actual = result1, message = item.getMessage())
 
-            val containerWhitespaceMultiple2 = 1f
+            val containerWhitespaceMultiple2 = ContainerWhitespace(
+                left = containerSize.width * 0.2f,
+                top = containerSize.height * 0.4f,
+                right = containerSize.width * 0.6f,
+                bottom = containerSize.height * 0.8f,
+            )
             val expected2 = result.copy(
-                left = result.left - containerSize.width * containerWhitespaceMultiple2 + horPaddingSpace,
-                top = result.top - containerSize.height * containerWhitespaceMultiple2 + verPaddingSpace,
-                right = result.right + containerSize.width * containerWhitespaceMultiple2 - horPaddingSpace,
-                bottom = result.bottom + containerSize.height * containerWhitespaceMultiple2 - verPaddingSpace
+                left = result.left - containerWhitespaceMultiple2.left + horPaddingSpace,
+                top = result.top - containerWhitespaceMultiple2.top + verPaddingSpace,
+                right = result.right + containerWhitespaceMultiple2.right - horPaddingSpace,
+                bottom = result.bottom + containerWhitespaceMultiple2.bottom - verPaddingSpace
             )
             val result2 = calculateUserOffsetBounds(
                 containerSize = containerSize,
@@ -650,7 +659,7 @@ class ZoomsTest3 {
                 rotation = item.rotation,
                 userScale = item.userScale,
                 limitBaseVisibleRect = item.limitBaseVisibleRect,
-                containerWhitespaceMultiple = containerWhitespaceMultiple2,
+                containerWhitespace = containerWhitespaceMultiple2,
             )
             assertEquals(expected = expected2, actual = result2, message = item.getMessage())
         }
@@ -666,7 +675,7 @@ class ZoomsTest3 {
                 rotation = 0,
                 userScale = 2f,
                 limitBaseVisibleRect = false,
-                containerWhitespaceMultiple = 0f,
+                containerWhitespace = ContainerWhitespace.Zero,
             )
         )
         assertEquals(
@@ -679,7 +688,7 @@ class ZoomsTest3 {
                 rotation = 0,
                 userScale = 2f,
                 limitBaseVisibleRect = false,
-                containerWhitespaceMultiple = 0f,
+                containerWhitespace = ContainerWhitespace.Zero,
             )
         )
 
@@ -693,7 +702,7 @@ class ZoomsTest3 {
                     rotation = rotation,
                     userScale = 2f,
                     limitBaseVisibleRect = false,
-                    containerWhitespaceMultiple = 0f,
+                    containerWhitespace = ContainerWhitespace.Zero,
                 )
             }
         }
@@ -706,7 +715,10 @@ class ZoomsTest3 {
                 rotation = 90,
                 userScale = 2f,
                 limitBaseVisibleRect = false,
-                containerWhitespaceMultiple = -0.5f,
+                containerWhitespace = ContainerWhitespace(
+                    horizontal = containerSize.width * -0.5f,
+                    vertical = containerSize.height * -0.5f
+                ),
             )
         }
     }
@@ -741,7 +753,7 @@ class ZoomsTest3 {
                     rotation = item.rotation,
                     userScale = item.userScale,
                     limitBaseVisibleRect = item.limitBaseVisibleRect,
-                    containerWhitespaceMultiple = 0f,
+                    containerWhitespace = ContainerWhitespace.Zero,
                 )
             }
         }
@@ -1261,7 +1273,7 @@ class ZoomsTest3 {
                 rotation = item.rotation,
                 userScale = item.userScale,
                 limitBaseVisibleRect = item.limitBaseVisibleRect,
-                containerWhitespaceMultiple = 0f,
+                containerWhitespace = ContainerWhitespace.Zero,
             )
             assertEquals(expected = item.expected, actual = result, message = item.getMessage())
 
@@ -1281,12 +1293,15 @@ class ZoomsTest3 {
             val verPaddingSpace =
                 (containerSize.height - scaledRotatedContentBaseDisplayRect.height).coerceAtLeast(0f) / 2
 
-            val containerWhitespaceMultiple1 = 0.5f
+            val containerWhitespaceMultiple1 = ContainerWhitespace(
+                horizontal = containerSize.width * 0.5f,
+                vertical = containerSize.height * 0.5f
+            )
             val expected1 = result.copy(
-                left = result.left - containerSize.width * containerWhitespaceMultiple1 + horPaddingSpace,
-                top = result.top - containerSize.height * containerWhitespaceMultiple1 + verPaddingSpace,
-                right = result.right + containerSize.width * containerWhitespaceMultiple1 - horPaddingSpace,
-                bottom = result.bottom + containerSize.height * containerWhitespaceMultiple1 - verPaddingSpace
+                left = result.left - containerWhitespaceMultiple1.left + horPaddingSpace,
+                top = result.top - containerWhitespaceMultiple1.top + verPaddingSpace,
+                right = result.right + containerWhitespaceMultiple1.right - horPaddingSpace,
+                bottom = result.bottom + containerWhitespaceMultiple1.bottom - verPaddingSpace
             )
             val result1 = calculateUserOffsetBounds(
                 containerSize = containerSize,
@@ -1296,16 +1311,21 @@ class ZoomsTest3 {
                 rotation = item.rotation,
                 userScale = item.userScale,
                 limitBaseVisibleRect = item.limitBaseVisibleRect,
-                containerWhitespaceMultiple = containerWhitespaceMultiple1,
+                containerWhitespace = containerWhitespaceMultiple1,
             )
             assertEquals(expected = expected1, actual = result1, message = item.getMessage())
 
-            val containerWhitespaceMultiple2 = 1f
+            val containerWhitespaceMultiple2 = ContainerWhitespace(
+                left = containerSize.width * 0.2f,
+                top = containerSize.height * 0.4f,
+                right = containerSize.width * 0.6f,
+                bottom = containerSize.height * 0.8f,
+            )
             val expected2 = result.copy(
-                left = result.left - containerSize.width * containerWhitespaceMultiple2 + horPaddingSpace,
-                top = result.top - containerSize.height * containerWhitespaceMultiple2 + verPaddingSpace,
-                right = result.right + containerSize.width * containerWhitespaceMultiple2 - horPaddingSpace,
-                bottom = result.bottom + containerSize.height * containerWhitespaceMultiple2 - verPaddingSpace
+                left = result.left - containerWhitespaceMultiple2.left + horPaddingSpace,
+                top = result.top - containerWhitespaceMultiple2.top + verPaddingSpace,
+                right = result.right + containerWhitespaceMultiple2.right - horPaddingSpace,
+                bottom = result.bottom + containerWhitespaceMultiple2.bottom - verPaddingSpace
             )
             val result2 = calculateUserOffsetBounds(
                 containerSize = containerSize,
@@ -1315,7 +1335,7 @@ class ZoomsTest3 {
                 rotation = item.rotation,
                 userScale = item.userScale,
                 limitBaseVisibleRect = item.limitBaseVisibleRect,
-                containerWhitespaceMultiple = containerWhitespaceMultiple2,
+                containerWhitespace = containerWhitespaceMultiple2,
             )
             assertEquals(expected = expected2, actual = result2, message = item.getMessage())
         }
@@ -1331,7 +1351,7 @@ class ZoomsTest3 {
                 rotation = 0,
                 userScale = 2f,
                 limitBaseVisibleRect = false,
-                containerWhitespaceMultiple = 0f,
+                containerWhitespace = ContainerWhitespace.Zero,
             )
         )
         assertEquals(
@@ -1344,7 +1364,7 @@ class ZoomsTest3 {
                 rotation = 0,
                 userScale = 2f,
                 limitBaseVisibleRect = false,
-                containerWhitespaceMultiple = 0f,
+                containerWhitespace = ContainerWhitespace.Zero,
             )
         )
 
@@ -1358,7 +1378,7 @@ class ZoomsTest3 {
                     rotation = rotation,
                     userScale = 2f,
                     limitBaseVisibleRect = false,
-                    containerWhitespaceMultiple = 0f,
+                    containerWhitespace = ContainerWhitespace.Zero,
                 )
             }
         }
@@ -1371,7 +1391,10 @@ class ZoomsTest3 {
                 rotation = 90,
                 userScale = 2f,
                 limitBaseVisibleRect = false,
-                containerWhitespaceMultiple = -0.5f,
+                containerWhitespace = ContainerWhitespace(
+                    horizontal = containerSize.width * -0.5f,
+                    vertical = containerSize.height * -0.5f
+                ),
             )
         }
     }
@@ -2053,7 +2076,7 @@ class ZoomsTest3 {
             rotation = 0,
             userScale = 1f,
             limitBaseVisibleRect = false,
-            containerWhitespaceMultiple = 0f,
+            containerWhitespace = ContainerWhitespace.Zero,
         )
         // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
         listOf(
@@ -2078,7 +2101,7 @@ class ZoomsTest3 {
             rotation = 0,
             userScale = 4f,
             limitBaseVisibleRect = false,
-            containerWhitespaceMultiple = 0f,
+            containerWhitespace = ContainerWhitespace.Zero,
         )
         // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
         listOf(
