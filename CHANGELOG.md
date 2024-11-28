@@ -4,6 +4,12 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 # new
 
+zoom:
+
+* fix: The SketchZoomAsyncImage component of the 'zoomimage-compose-sketch4' module always displays
+  the image in the upper left corner first, and then instantly moves the image to the center of the
+  screen. [#60](https://github.com/panpf/zoomimage/issues/60)
+
 subsampling:
 
 * improve: Improve to determine whether regional decoding is supported based on mimeType. Non-image

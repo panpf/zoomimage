@@ -4,6 +4,11 @@
 
 # new
 
+zoom:
+
+* fix: 'zoomimage-compose-sketch4' 模块的 SketchZoomAsyncImage
+  组件始终首先在左上角显示图像，然后立即将图像移动到屏幕中央. [#60](https://github.com/panpf/zoomimage/issues/60)
+
 subsampling:
 
 * improve: 改进根据 mimeType 判断是否支持区域解码，非 image 类型直接返回 false，非 Android 平台上根据
