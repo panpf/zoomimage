@@ -107,7 +107,7 @@ class ImageSourceTestScreen : BaseScreen() {
             photoPaletteState = photoPaletteState,
             createZoomState = { rememberZoomState() },
             pageSelected = pageSelected,
-        ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
+        ) { contentScale, alignment, zoomState, scrollBar, onLongClick, onTapClick ->
             val context = LocalPlatformContext.current
             val sketch = SingletonSketch.get(context)
             LaunchedEffect(Unit) {
@@ -158,6 +158,9 @@ class ImageSourceTestScreen : BaseScreen() {
                     scrollBar = scrollBar,
                     onLongPress = {
                         onLongClick.invoke()
+                    },
+                    onTap = {
+                        onTapClick.invoke(it)
                     }
                 )
             }

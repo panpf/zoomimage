@@ -39,7 +39,7 @@ fun GlideZoomAsyncImageSample(
         photoPaletteState = photoPaletteState,
         createZoomState = { rememberGlideZoomState() },
         pageSelected = pageSelected,
-    ) { contentScale, alignment, state, scrollBar, onLongClick ->
+    ) { contentScale, alignment, state, scrollBar, onLongClick, onTapClick ->
         val context = LocalContext.current
         var pageState by remember { mutableStateOf<PageState?>(PageState.Loading) }
         val glideData = remember(key1 = photo) { sketchUri2GlideModel(context, photo.originalUrl) }
@@ -53,6 +53,9 @@ fun GlideZoomAsyncImageSample(
             scrollBar = scrollBar,
             onLongPress = {
                 onLongClick.invoke()
+            },
+            onTap = {
+                onTapClick.invoke(it)
             },
             transition = CrossFade,
             requestBuilderTransform = {

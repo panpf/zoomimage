@@ -92,7 +92,8 @@ fun <T : ZoomState> BaseZoomImageSample(
         alignment: Alignment,
         zoomState: T,
         scrollBar: ScrollBarSpec?,
-        onLongClick: () -> Unit
+        onLongClick: () -> Unit,
+        onTapClick: (Offset) -> Unit,
     ) -> Unit
 ) {
     val settingsService = LocalPlatformContext.current.appSettings
@@ -189,13 +190,20 @@ fun <T : ZoomState> BaseZoomImageSample(
     }
     val infoDialogState = rememberMyDialogState()
 
+    val coroutineScope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize()) {
         content(
             contentScale.toPlatform(),
             alignment.toPlatform(),
             zoomState,
-            if (scrollBarEnabled) ScrollBarSpec.Default.copy(color = photoPaletteState.value.containerColor) else null
-        ) { infoDialogState.show() }
+            if (scrollBarEnabled) ScrollBarSpec.Default.copy(color = photoPaletteState.value.containerColor) else null,
+            { infoDialogState.show() },
+            { offset ->
+                coroutineScope.launch {
+                    EventBus.toastFlow.emit("onTapClick: $offset")
+                }
+            }
+        )
 
         Row(Modifier.padding(20.dp).padding(top = 80.dp)) {
             val headerInfo = remember {

@@ -28,6 +28,7 @@ import android.view.animation.Animation
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.ZoomImageView
@@ -46,6 +47,7 @@ import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
+import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
@@ -94,6 +96,9 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             )
         )
         zoomImageView.apply {
+            onViewTapListener = OnViewTapListener { _, offset ->
+                showShortToast("offset: $offset")
+            }
             onViewLongPressListener = OnViewLongPressListener { _, _ ->
                 InfoItemsDialogFragment().apply {
                     val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
