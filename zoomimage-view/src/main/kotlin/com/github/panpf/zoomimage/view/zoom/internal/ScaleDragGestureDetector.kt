@@ -17,8 +17,6 @@
 package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.view.ScaleGestureDetector.OnScaleGestureListener
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
@@ -41,7 +39,7 @@ internal class ScaleDragGestureDetector(
 
     private val touchSlop: Float
     private val minimumVelocity: Float
-    private val scaleDetector: ScaleGestureDetector
+    private val scaleDetector: FasterScaleGestureDetector
 
     private var firstTouch: OffsetCompat? = null
     private var lastTouch: OffsetCompat? = null
@@ -60,9 +58,10 @@ internal class ScaleDragGestureDetector(
         val configuration = ViewConfiguration.get(view.context)
         minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
         touchSlop = configuration.scaledTouchSlop.toFloat()
-        scaleDetector = ScaleGestureDetector(view.context, object : OnScaleGestureListener {
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                // TODO When you zoom in with two fingers, you need to slide a certain distance to trigger it.
+        scaleDetector = FasterScaleGestureDetector(
+            view.context,
+            object : FasterScaleGestureDetector.OnScaleGestureListener {
+                override fun onScale(detector: FasterScaleGestureDetector): Boolean {
                 val scaleFactor = detector.scaleFactor
                     .takeIf { !isNaN(it) && !isInfinite(it) }
                     ?: return false
@@ -87,12 +86,12 @@ internal class ScaleDragGestureDetector(
                 return true
             }
 
-            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                override fun onScaleBegin(detector: FasterScaleGestureDetector): Boolean {
                 view.parent.requestDisallowInterceptTouchEvent(true)
                 return true
             }
 
-            override fun onScaleEnd(detector: ScaleGestureDetector) {
+                override fun onScaleEnd(detector: FasterScaleGestureDetector) {
 
             }
         })

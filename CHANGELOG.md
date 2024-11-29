@@ -9,6 +9,8 @@ zoom:
 * fix: The SketchZoomAsyncImage component of the 'zoomimage-compose-sketch4' module always displays
   the image in the upper left corner first, and then instantly moves the image to the center of the
   screen. [#60](https://github.com/panpf/zoomimage/issues/60)
+* improve: The two-finger zoom gesture of ZoomImageView series components can now be triggered by
+  sliding a relatively short distance. [#61](https://github.com/panpf/zoomimage/issues/61)
 * new: The new containerWhitespace attribute is used to set the white space around the container in
   pixel values. [#59](https://github.com/panpf/zoomimage/issues/59)
 
@@ -53,7 +55,8 @@ depend:
 
 ## 1.1.0-beta01
 
-* change: The `contentSize` properties of ZoomableState and ZoomableEngine now no longer return `containerSize` when empty
+* change: The `contentSize` properties of ZoomableState and ZoomableEngine now no longer return
+  `containerSize` when empty
 * change: Decisions about whether to disable Tile's memory cache are no longer based on the memory
   cache setting of the thumbnail's image request
 * change: The minimum length of the scrollbar is now 10.dp

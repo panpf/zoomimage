@@ -8,6 +8,8 @@ zoom:
 
 * fix: 'zoomimage-compose-sketch4' 模块的 SketchZoomAsyncImage
   组件始终首先在左上角显示图像，然后立即将图像移动到屏幕中央. [#60](https://github.com/panpf/zoomimage/issues/60)
+* improve: ZoomImageView
+  系列组件双指缩放手势现在只需滑动比较短的距离就可以触发. [#61](https://github.com/panpf/zoomimage/issues/61)
 * new: 新增 containerWhitespace
   属性用于以像素值的方式设置容器容器四周的空白. [#59](https://github.com/panpf/zoomimage/issues/59)
 
