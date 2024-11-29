@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+## 1.1.0-rc02
 
 zoom:
 
