@@ -149,7 +149,7 @@ class SubsamplingEngineTest {
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
             val subsampling = SubsamplingEngine(zoomable)
-            Thread.sleep(100)
+            Thread.sleep(500)
             assertEquals(expected = null, actual = subsampling.imageInfoState.value)
         }
 
@@ -165,7 +165,7 @@ class SubsamplingEngineTest {
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = null, actual = subsampling.imageInfoState.value)
         }
@@ -184,7 +184,7 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(
                 expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')",
@@ -206,7 +206,7 @@ class SubsamplingEngineTest {
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
             val subsampling = SubsamplingEngine(zoomable)
-            Thread.sleep(100)
+            Thread.sleep(500)
             assertEquals(
                 expected = "{}",
                 actual = subsampling.tileGridSizeMapState.value.toString()
@@ -225,7 +225,7 @@ class SubsamplingEngineTest {
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(
                 expected = "{}",
@@ -247,7 +247,7 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -269,7 +269,7 @@ class SubsamplingEngineTest {
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
             val subsampling = SubsamplingEngine(zoomable)
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
         }
@@ -286,7 +286,7 @@ class SubsamplingEngineTest {
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
         }
@@ -305,7 +305,7 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(expected = true, actual = subsampling.readyState.value)
         }
@@ -327,11 +327,11 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(expected = 48, actual = subsampling.foregroundTilesState.value.size)
         }
@@ -350,11 +350,11 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(20f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(expected = 144, actual = subsampling.foregroundTilesState.value.size)
         }
@@ -376,7 +376,7 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(2000) { subsampling.readyState.value }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -399,11 +399,11 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -426,11 +426,11 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(20f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -455,7 +455,7 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -481,11 +481,11 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -511,11 +511,11 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -544,11 +544,11 @@ class SubsamplingEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             val subsampling = SubsamplingEngine(zoomable)
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -598,11 +598,11 @@ class SubsamplingEngineTest {
             val subsampling = SubsamplingEngine(zoomable)
                 .apply { subsamplingHolder = this }
             subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            Thread.sleep(100)
+            Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -620,7 +620,7 @@ class SubsamplingEngineTest {
             )
         }
 
-        Thread.sleep(100)
+        Thread.sleep(500)
         val subsampling = subsamplingHolder!!
         assertEquals(expected = "{}", actual = subsampling.tileGridSizeMapState.value.toString())
         assertEquals(expected = 0, actual = subsampling.foregroundTilesState.value.size)
