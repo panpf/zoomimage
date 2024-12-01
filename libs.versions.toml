@@ -22,7 +22,7 @@ appdirs = "1.2.2"
 
 cashapp-paging = "3.3.0-alpha02-0.5.1"
 
-coil3 = "3.0.0"
+coil3 = "3.0.4"
 coil2 = "2.4.0"
 
 glide = "4.15.1"
