@@ -26,8 +26,10 @@ import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
+import com.github.panpf.zoomimage.util.aboutEquals
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.filterNegativeZeros
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
@@ -41,7 +43,6 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
-import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -733,45 +734,46 @@ fun calculateUserOffsetBounds(
         if (limitBaseVisibleRect) it.limitTo(containerSize.toSize()) else it
     }
 
-    val scaledRotatedContentBaseDisplayRect = rotatedContentBaseDisplayRect * userScale
+    val containerWidth = containerSize.width
+    val containerHeight = containerSize.height
 
-    val horizontalBounds =
-        if (scaledRotatedContentBaseDisplayRect.width.roundToInt() >= containerSize.width) {
-            val leftBounds =
-                (scaledRotatedContentBaseDisplayRect.right - containerSize.width) * -1
-            val rightBounds = scaledRotatedContentBaseDisplayRect.left * -1
-            val correctLeftBounds = leftBounds.coerceAtMost(rightBounds)
-            correctLeftBounds..rightBounds
-        } else if (alignment.isStart) {
-            0f..0f
-        } else if (alignment.isEnd) {
-            val leftBounds = (scaledRotatedContentBaseDisplayRect.right - containerSize.width) * -1
-            leftBounds..leftBounds
-        } else {   // horizontal center
-            val horizontalSpace =
-                (containerSize.width - scaledRotatedContentBaseDisplayRect.width) / 2f
-            val leftBounds = (scaledRotatedContentBaseDisplayRect.left - horizontalSpace) * -1
-            leftBounds..leftBounds
-        }
+    val scaledRotatedContentBaseDisplayRect = (rotatedContentBaseDisplayRect * userScale)
+    val scaledRotatedContentBaseWidth = scaledRotatedContentBaseDisplayRect.width
+    val scaledRotatedContentBaseHeight = scaledRotatedContentBaseDisplayRect.height
 
-    val verticalBounds =
-        if (scaledRotatedContentBaseDisplayRect.height.roundToInt() >= containerSize.height) {
-            val topBounds = (scaledRotatedContentBaseDisplayRect.bottom - containerSize.height) * -1
-            val bottomBounds = scaledRotatedContentBaseDisplayRect.top * -1
-            val correctTopBounds = topBounds.coerceAtMost(bottomBounds)
-            correctTopBounds..bottomBounds
-        } else if (alignment.isTop) {
-            0f..0f
-        } else if (alignment.isBottom) {
-            val topBounds = (scaledRotatedContentBaseDisplayRect.bottom - containerSize.height) * -1
-            topBounds..topBounds
-        } else {
-            // vertical center
-            val verticalSpace =
-                (containerSize.height - scaledRotatedContentBaseDisplayRect.height) / 2f
-            val topBounds = (scaledRotatedContentBaseDisplayRect.top - verticalSpace) * -1
-            topBounds..topBounds
-        }
+    val horizontalBounds = if (scaledRotatedContentBaseWidth.roundToInt() >= containerWidth) {
+        val leftBounds =
+            (scaledRotatedContentBaseDisplayRect.right - containerWidth) * -1
+        val rightBounds = scaledRotatedContentBaseDisplayRect.left * -1
+        val correctLeftBounds = leftBounds.coerceAtMost(rightBounds)
+        correctLeftBounds..rightBounds
+    } else if (alignment.isStart) {
+        0f..0f
+    } else if (alignment.isEnd) {
+        val leftBounds = (scaledRotatedContentBaseDisplayRect.right - containerWidth) * -1
+        leftBounds..leftBounds
+    } else {   // horizontal center
+        val horizontalSpace = (containerWidth - scaledRotatedContentBaseWidth) / 2f
+        val leftBounds = (scaledRotatedContentBaseDisplayRect.left - horizontalSpace) * -1
+        leftBounds..leftBounds
+    }
+
+    val verticalBounds = if (scaledRotatedContentBaseHeight.roundToInt() >= containerHeight) {
+        val topBounds = (scaledRotatedContentBaseDisplayRect.bottom - containerHeight) * -1
+        val bottomBounds = scaledRotatedContentBaseDisplayRect.top * -1
+        val correctTopBounds = topBounds.coerceAtMost(bottomBounds)
+        correctTopBounds..bottomBounds
+    } else if (alignment.isTop) {
+        0f..0f
+    } else if (alignment.isBottom) {
+        val topBounds = (scaledRotatedContentBaseDisplayRect.bottom - containerHeight) * -1
+        topBounds..topBounds
+    } else {
+        // vertical center
+        val verticalSpace = (containerHeight - scaledRotatedContentBaseHeight) / 2f
+        val topBounds = (scaledRotatedContentBaseDisplayRect.top - verticalSpace) * -1
+        topBounds..topBounds
+    }
 
     val offsetBounds = RectCompat(
         left = horizontalBounds.start.filterNegativeZeros(),
@@ -779,20 +781,19 @@ fun calculateUserOffsetBounds(
         right = horizontalBounds.endInclusive.filterNegativeZeros(),
         bottom = verticalBounds.endInclusive.filterNegativeZeros(),
     )
-    val containerWhitespaceOffsetBounds = if (!containerWhitespace.isEmpty()) {
-        val horPaddingSpace =
-            (containerSize.width - scaledRotatedContentBaseDisplayRect.width).coerceAtLeast(0f) / 2
-        val verPaddingSpace =
-            (containerSize.height - scaledRotatedContentBaseDisplayRect.height).coerceAtLeast(0f) / 2
-        RectCompat(
-            left = (offsetBounds.left - containerWhitespace.left + horPaddingSpace).filterNegativeZeros(),
-            top = (offsetBounds.top - containerWhitespace.top + verPaddingSpace).filterNegativeZeros(),
-            right = (offsetBounds.right + containerWhitespace.right - horPaddingSpace).filterNegativeZeros(),
-            bottom = (offsetBounds.bottom + containerWhitespace.bottom - verPaddingSpace).filterNegativeZeros(),
-        )
-    } else {
-        offsetBounds
-    }
+
+    val horPaddingSpace = (containerWidth - scaledRotatedContentBaseWidth).coerceAtLeast(0f) / 2
+    val verPaddingSpace = (containerHeight - scaledRotatedContentBaseHeight).coerceAtLeast(0f) / 2
+    val leftWhitespace = (containerWhitespace.right - horPaddingSpace).coerceAtLeast(0f)
+    val topWhitespace = (containerWhitespace.bottom - verPaddingSpace).coerceAtLeast(0f)
+    val rightWhitespace = (containerWhitespace.left - horPaddingSpace).coerceAtLeast(0f)
+    val bottomWhitespace = (containerWhitespace.top - verPaddingSpace).coerceAtLeast(0f)
+    val containerWhitespaceOffsetBounds = RectCompat(
+        left = (offsetBounds.left - leftWhitespace).filterNegativeZeros(),
+        top = (offsetBounds.top - topWhitespace).filterNegativeZeros(),
+        right = (offsetBounds.right + rightWhitespace).filterNegativeZeros(),
+        bottom = (offsetBounds.bottom + bottomWhitespace).filterNegativeZeros()
+    )
     return containerWhitespaceOffsetBounds
 }
 
@@ -1259,19 +1260,4 @@ fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
             && one.scaleY.aboutEquals(two.scaleY, delta = 0.1f, scale = 2)
             && one.offsetX.aboutEquals(two.offsetX, delta = 1f, scale = 2)
             && one.offsetY.aboutEquals(two.offsetY, delta = 1f, scale = 2)
-}
-
-private fun Float.aboutEquals(other: Float, delta: Float, scale: Int): Boolean {
-    return abs(this - other).format(scale) <= delta
-}
-
-private fun Float.filterNegativeZeros(): Float {
-    return if (this == -0f) 0f else this
-}
-
-private fun OffsetCompat.filterNegativeZeros(): OffsetCompat {
-    if (this.x == -0f || this.y == -0f) {
-        return OffsetCompat(this.x.filterNegativeZeros(), this.y.filterNegativeZeros())
-    }
-    return this
 }

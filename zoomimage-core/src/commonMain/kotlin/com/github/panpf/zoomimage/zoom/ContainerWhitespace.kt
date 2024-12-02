@@ -16,6 +16,8 @@
 
 package com.github.panpf.zoomimage.zoom
 
+import com.github.panpf.zoomimage.util.format
+
 /**
  * The amount of white space allowed around the container when the image is moved within the container
  *
@@ -58,4 +60,13 @@ fun ContainerWhitespace.check(): Boolean {
  */
 fun ContainerWhitespace.isEmpty(): Boolean {
     return left <= 0f && top <= 0f && right <= 0f && bottom <= 0f
+}
+
+/**
+ * Check if the white space is empty
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ContainerWhitespaceTest.testIsEmpty
+ */
+fun ContainerWhitespace.toShortString(): String {
+    return "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 }

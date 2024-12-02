@@ -7,6 +7,8 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import com.github.panpf.zoomimage.test.Item
 import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
+import com.github.panpf.zoomimage.util.RectCompat
+import com.github.panpf.zoomimage.util.filterNegativeZeros
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.times
@@ -621,11 +623,11 @@ class ZoomsTest3 {
                 horizontal = containerSize.width * 0.5f,
                 vertical = containerSize.height * 0.5f
             )
-            val expected1 = result.copy(
-                left = result.left - containerWhitespaceMultiple1.left + horPaddingSpace,
-                top = result.top - containerWhitespaceMultiple1.top + verPaddingSpace,
-                right = result.right + containerWhitespaceMultiple1.right - horPaddingSpace,
-                bottom = result.bottom + containerWhitespaceMultiple1.bottom - verPaddingSpace
+            val expected1 = RectCompat(
+                left = (result.left - (containerWhitespaceMultiple1.right - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                top = (result.top - (containerWhitespaceMultiple1.bottom - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                right = (result.right + (containerWhitespaceMultiple1.left - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                bottom = (result.bottom + (containerWhitespaceMultiple1.top - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros()
             )
             val result1 = calculateUserOffsetBounds(
                 containerSize = containerSize,
@@ -645,11 +647,11 @@ class ZoomsTest3 {
                 right = containerSize.width * 0.6f,
                 bottom = containerSize.height * 0.8f,
             )
-            val expected2 = result.copy(
-                left = result.left - containerWhitespaceMultiple2.left + horPaddingSpace,
-                top = result.top - containerWhitespaceMultiple2.top + verPaddingSpace,
-                right = result.right + containerWhitespaceMultiple2.right - horPaddingSpace,
-                bottom = result.bottom + containerWhitespaceMultiple2.bottom - verPaddingSpace
+            val expected2 = RectCompat(
+                left = (result.left - (containerWhitespaceMultiple2.right - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                top = (result.top - (containerWhitespaceMultiple2.bottom - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                right = (result.right + (containerWhitespaceMultiple2.left - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                bottom = (result.bottom + (containerWhitespaceMultiple2.top - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros()
             )
             val result2 = calculateUserOffsetBounds(
                 containerSize = containerSize,
@@ -1297,11 +1299,11 @@ class ZoomsTest3 {
                 horizontal = containerSize.width * 0.5f,
                 vertical = containerSize.height * 0.5f
             )
-            val expected1 = result.copy(
-                left = result.left - containerWhitespaceMultiple1.left + horPaddingSpace,
-                top = result.top - containerWhitespaceMultiple1.top + verPaddingSpace,
-                right = result.right + containerWhitespaceMultiple1.right - horPaddingSpace,
-                bottom = result.bottom + containerWhitespaceMultiple1.bottom - verPaddingSpace
+            val expected1 = RectCompat(
+                left = (result.left - (containerWhitespaceMultiple1.right - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                top = (result.top - (containerWhitespaceMultiple1.bottom - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                right = (result.right + (containerWhitespaceMultiple1.left - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                bottom = (result.bottom + (containerWhitespaceMultiple1.top - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros()
             )
             val result1 = calculateUserOffsetBounds(
                 containerSize = containerSize,
@@ -1321,11 +1323,11 @@ class ZoomsTest3 {
                 right = containerSize.width * 0.6f,
                 bottom = containerSize.height * 0.8f,
             )
-            val expected2 = result.copy(
-                left = result.left - containerWhitespaceMultiple2.left + horPaddingSpace,
-                top = result.top - containerWhitespaceMultiple2.top + verPaddingSpace,
-                right = result.right + containerWhitespaceMultiple2.right - horPaddingSpace,
-                bottom = result.bottom + containerWhitespaceMultiple2.bottom - verPaddingSpace
+            val expected2 = RectCompat(
+                left = (result.left - (containerWhitespaceMultiple2.right - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                top = (result.top - (containerWhitespaceMultiple2.bottom - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                right = (result.right + (containerWhitespaceMultiple2.left - horPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros(),
+                bottom = (result.bottom + (containerWhitespaceMultiple2.top - verPaddingSpace).coerceAtLeast(0f)).filterNegativeZeros()
             )
             val result2 = calculateUserOffsetBounds(
                 containerSize = containerSize,

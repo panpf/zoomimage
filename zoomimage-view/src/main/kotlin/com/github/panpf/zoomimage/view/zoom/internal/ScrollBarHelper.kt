@@ -85,6 +85,7 @@ internal class ScrollBarHelper(
         val rotatedContentSize = contentSize.rotate(rotation)
         val minLength = 10f * Resources.getSystem().displayMetrics.density
         if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
+            // TODO Inaccurate when containerWhitespace is set
             val widthScale =
                 (containerSize.width - scrollBarSpec.margin * 4) / rotatedContentSize.width
             val left = (scrollBarSpec.margin * 2) + (rotatedContentVisibleRect.left * widthScale)

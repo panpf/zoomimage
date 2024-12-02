@@ -125,6 +125,7 @@ internal class ZoomScrollBarNode(
         val drawHorScrollBar = rotatedContentVisibleRect.width < rotatedContentSize.width
         val drawVerScrollBar = rotatedContentVisibleRect.height < rotatedContentSize.height
         if (drawHorScrollBar) {
+            // TODO Inaccurate when containerWhitespace is set
             val widthScale = (drawSize.width - marginPx * 4) / rotatedContentSize.width
             drawRoundRect(
                 color = scrollBarSpec.color,

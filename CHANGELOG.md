@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+zoom:
+
+* fix: Fix containerWhitespace crash bug. [#63](https://github.com/panpf/zoomimage/issues/63)
+
 ## 1.1.0-rc02
 
 zoom:

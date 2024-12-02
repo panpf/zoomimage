@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.util
 
 import okio.Closeable
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.round
 import kotlin.math.roundToInt
@@ -121,7 +122,7 @@ internal fun Float.toStringAsFixed(digits: Int): String {
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testCompareVersions
  */
-fun compareVersions(version1: String, version2: String): Int {
+internal fun compareVersions(version1: String, version2: String): Int {
     val (numbers1, suffix1) = version1.split("-", limit = 2)
         .let { it[0].trim() to it.getOrNull(1)?.trim() }
     val (numbers2, suffix2) = version2.split("-", limit = 2)
@@ -180,4 +181,19 @@ fun compareVersions(version1: String, version2: String): Int {
         }
     }
     return suffixCompareResult
+}
+
+internal fun Float.aboutEquals(other: Float, delta: Float, scale: Int): Boolean {
+    return abs(this - other).format(scale) <= delta
+}
+
+internal fun Float.filterNegativeZeros(): Float {
+    return if (this == -0f) 0f else this
+}
+
+internal fun OffsetCompat.filterNegativeZeros(): OffsetCompat {
+    if (this.x == -0f || this.y == -0f) {
+        return OffsetCompat(this.x.filterNegativeZeros(), this.y.filterNegativeZeros())
+    }
+    return this
 }

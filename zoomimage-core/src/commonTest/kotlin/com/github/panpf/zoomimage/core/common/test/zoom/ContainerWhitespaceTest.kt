@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.core.common.test.zoom
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.check
 import com.github.panpf.zoomimage.zoom.isEmpty
+import com.github.panpf.zoomimage.zoom.toShortString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -109,6 +110,18 @@ class ContainerWhitespaceTest {
         assertEquals(
             expected = false,
             actual = ContainerWhitespace.Zero.copy(bottom = 1f).isEmpty()
+        )
+    }
+
+    @Test
+    fun testToShortString() {
+        assertEquals(
+            "[10.34x9.77,600.32x500.91]",
+            ContainerWhitespace(10.342f, 9.765f, 600.321f, 500.906f).toShortString()
+        )
+        assertEquals(
+            "[9.77x10.34,500.91x600.32]",
+            ContainerWhitespace(9.765f, 10.342f, 500.906f, 600.321f).toShortString()
         )
     }
 }
