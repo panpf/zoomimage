@@ -50,6 +50,7 @@ import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
@@ -149,6 +150,19 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.containerWhitespaceMultiple
                     .collectWithLifecycle(viewLifecycleOwner) {
                         containerWhitespaceMultipleState.value = it
+                    }
+                appSettings.containerWhitespace
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        containerWhitespaceState.value = if (it) {
+                            ContainerWhitespace(
+                                left = 100f,
+                                top = 200f,
+                                right = 300f,
+                                bottom = 400f
+                            )
+                        } else {
+                            ContainerWhitespace.Zero
+                        }
                     }
                 appSettings.readModeEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     val sizeType = if (appSettings.readModeAcceptedBoth.value) {

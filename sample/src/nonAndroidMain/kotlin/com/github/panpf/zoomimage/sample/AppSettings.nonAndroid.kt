@@ -112,6 +112,10 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         floatSettingsStateFlow(context, "containerWhitespaceMultiple1", 0f)
     }
 
+    actual val containerWhitespace: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "containerWhitespace", false)
+    }
+
     actual val readModeEnabled: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "readModeEnabled", true)
     }

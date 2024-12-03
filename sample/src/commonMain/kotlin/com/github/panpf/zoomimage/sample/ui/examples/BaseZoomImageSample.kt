@@ -76,6 +76,7 @@ import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -110,6 +111,7 @@ fun <T : ZoomState> BaseZoomImageSample(
     val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
     val containerWhitespaceMultiple by settingsService.containerWhitespaceMultiple.collectAsState()
+    val containerWhitespace by settingsService.containerWhitespace.collectAsState()
 //    val scalesCalculator by settingsService.scalesCalculator.collectAsState()
     val scalesCalculatorName by settingsService.scalesCalculatorName.collectAsState()
     val scalesMultiple by settingsService.scalesMultiple.collectAsState()
@@ -164,6 +166,18 @@ fun <T : ZoomState> BaseZoomImageSample(
         }
         LaunchedEffect(containerWhitespaceMultiple) {
             zoomable.containerWhitespaceMultiple = containerWhitespaceMultiple
+        }
+        LaunchedEffect(containerWhitespace) {
+            zoomable.containerWhitespace = if (containerWhitespace) {
+                ContainerWhitespace(
+                    left = 100f,
+                    top = 200f,
+                    right = 300f,
+                    bottom = 400f
+                )
+            } else {
+                ContainerWhitespace.Zero
+            }
         }
         LaunchedEffect(readMode) {
             zoomable.readMode = readMode

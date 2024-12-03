@@ -188,6 +188,12 @@ fun ZoomImageSettingList() {
             state = appSettings.containerWhitespaceMultiple
         )
 
+        SwitchSettingItem(
+            title = "Container Whitespace",
+            desc = null,
+            state = appSettings.containerWhitespace,
+        )
+
         DividerSettingItem()
 
         SwitchSettingItem(

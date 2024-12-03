@@ -66,6 +66,8 @@ expect class AppSettings(context: PlatformContext) {
 
     val containerWhitespaceMultiple: SettingsStateFlow<Float>
 
+    val containerWhitespace: SettingsStateFlow<Boolean>
+
     val readModeEnabled: SettingsStateFlow<Boolean>
 
     val readModeAcceptedBoth: SettingsStateFlow<Boolean>

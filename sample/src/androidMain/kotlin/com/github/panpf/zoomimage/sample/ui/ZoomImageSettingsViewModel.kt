@@ -195,6 +195,13 @@ class ZoomImageSettingsViewModel(
             )
         )
 
+        add(
+            SwitchMenuFlow(
+                title = "Container Whitespace",
+                data = appSettings.containerWhitespace,
+            )
+        )
+
         add(MenuDivider())
 
         add(
