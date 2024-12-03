@@ -9,6 +9,8 @@ zoom:
 * fix: Fix containerWhitespace crash bug. [#63](https://github.com/panpf/zoomimage/issues/63)
 * fix: Fixed the bug of offset error when LayoutDirection is in RTL
   mode. [#65](https://github.com/panpf/zoomimage/issues/65)
+* improve: Provide LayoutDirection RTL support for alignment and containerWhitespace properties of
+  all components. [#66](https://github.com/panpf/zoomimage/issues/66)
 
 ## 1.1.0-rc02
 

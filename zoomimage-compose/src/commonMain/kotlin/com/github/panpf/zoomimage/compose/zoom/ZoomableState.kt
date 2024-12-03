@@ -37,10 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
@@ -52,6 +54,7 @@ import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.util.limitTo
 import com.github.panpf.zoomimage.compose.util.name
 import com.github.panpf.zoomimage.compose.util.roundToPlatform
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.util.times
 import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.util.toCompatOffset
@@ -104,8 +107,9 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
-    val zoomableState = remember(logger) {
-        ZoomableState(logger)
+    val layoutDirection = LocalLayoutDirection.current
+    val zoomableState = remember(logger, layoutDirection) {
+        ZoomableState(logger, layoutDirection)
     }
     return zoomableState
 }
@@ -116,7 +120,7 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
  * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomableStateTest
  */
 @Stable
-class ZoomableState(val logger: Logger) : RememberObserver {
+class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : RememberObserver {
 
     private var coroutineScope: CoroutineScope? = null
     private var lastScaleAnimatable: Animatable<*, *>? = null
@@ -379,7 +383,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             contentSize = contentSize.toCompat(),
             contentOriginSize = contentOriginSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
@@ -400,7 +404,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
                 containerSize = containerSize.toCompat(),
                 contentSize = contentSize.toCompat(),
                 contentScale = contentScale.toCompat(),
-                alignment = alignment.toCompat(),
+                alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
                 rotation = rotation,
                 newBaseTransform = newBaseTransform,
                 lastTransform = lastTransform.toCompat(),
@@ -443,14 +447,14 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
         ).roundToPlatform()
         contentBaseVisibleRect = calculateContentBaseVisibleRect(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
         ).roundToPlatform()
         baseTransform = newBaseTransform.toPlatform()
@@ -499,7 +503,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             userScale = currentUserScale,
             userOffset = currentUserOffset.toCompat(),
@@ -641,7 +645,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             contentPoint = contentPoint.toCompatOffset(),
         )
@@ -738,7 +742,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
             userOffset = currentUserTransform.offset.toCompat(),
@@ -1059,11 +1063,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             userScale = userScale,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
-            containerWhitespace = calculateContainerWhitespace(),
+            containerWhitespace = calculateContainerWhitespace().rtlFlipped(layoutDirection),
         ).round().toPlatformRect()    // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -1123,7 +1127,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
@@ -1132,7 +1136,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
@@ -1142,11 +1146,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
+            alignment = alignment.rtlFlipped(layoutDirection).toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
-            containerWhitespace = calculateContainerWhitespace(),
+            containerWhitespace = calculateContainerWhitespace().rtlFlipped(layoutDirection),
         )
         this.userOffsetBounds = userOffsetBounds.roundToPlatform()
 

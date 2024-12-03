@@ -6,6 +6,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.DefaultScaleInKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultScaleOutKeyMatchers
@@ -129,7 +130,7 @@ class ScaleKeyHandlerTest {
     @Test
     fun testHandle() {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
-        val zoomableState = ZoomableState(Logger("Test"))
+        val zoomableState = ZoomableState(Logger("Test"), LayoutDirection.Ltr)
         val scaleKeyHandler2 =
             ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = true)
         assertEquals(

@@ -126,6 +126,8 @@ class ZoomableEngineTest {
 
         zoomable.alignmentState.value = AlignmentCompat.TopStart
         assertEquals(expected = AlignmentCompat.TopStart, actual = zoomable.alignmentState.value)
+
+        // TODO test LayoutDirection
     }
 
     @Test
@@ -225,6 +227,12 @@ class ZoomableEngineTest {
 
         zoomable.limitOffsetWithinBaseVisibleRectState.value = true
         assertEquals(expected = true, actual = zoomable.limitOffsetWithinBaseVisibleRectState.value)
+    }
+
+    @Test
+    fun testContainerWhitespace() {
+        // TODO test
+        // TODO test LayoutDirection
     }
 
     @Test

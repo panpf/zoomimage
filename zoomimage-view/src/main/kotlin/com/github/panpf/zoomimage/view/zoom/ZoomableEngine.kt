@@ -42,6 +42,7 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import com.github.panpf.zoomimage.view.util.format
 import com.github.panpf.zoomimage.view.util.requiredMainThread
+import com.github.panpf.zoomimage.view.util.rtlFlipped
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -307,7 +308,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     suspend fun reset(caller: String): Unit = coroutineScope {
         requiredMainThread()
         stopAllAnimation("reset:$caller")
-
+        view.layoutDirection
         val containerSize = containerSizeState.value
         val contentSize = contentSizeState.value
         val contentOriginSize = contentOriginSizeState.value
@@ -360,7 +361,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             contentSize = contentSize,
             contentOriginSize = contentOriginSize,
             contentScale = contentScale,
-            alignment = alignment,
+            alignment = alignment.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
@@ -381,7 +382,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
                 containerSize = containerSize,
                 contentSize = contentSize,
                 contentScale = contentScale,
-                alignment = alignment,
+                alignment = alignment.rtlFlipped(view.layoutDirection),
                 rotation = rotation,
                 newBaseTransform = newBaseTransform,
                 lastTransform = lastTransform,
@@ -423,14 +424,14 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSizeState.value,
             contentSize = contentSizeState.value,
             contentScale = contentScaleState.value,
-            alignment = alignmentState.value,
+            alignment = alignmentState.value.rtlFlipped(view.layoutDirection),
             rotation = rotation,
         ).round()
         _contentBaseVisibleRectState.value = calculateContentBaseVisibleRect(
             containerSize = containerSizeState.value,
             contentSize = contentSizeState.value,
             contentScale = contentScaleState.value,
-            alignment = alignmentState.value,
+            alignment = alignmentState.value.rtlFlipped(view.layoutDirection),
             rotation = rotation,
         ).round()
         _baseTransformState.value = newBaseTransform
@@ -481,7 +482,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment,
+            alignment = alignment.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             userScale = currentUserScale,
             userOffset = currentUserOffset,
@@ -624,7 +625,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment,
+            alignment = alignment.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             contentPoint = contentPoint.toOffset(),
         )
@@ -723,7 +724,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment,
+            alignment = alignment.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
             userOffset = currentUserTransform.offset,
@@ -969,11 +970,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment,
+            alignment = alignment.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
-            containerWhitespace = calculateContainerWhitespace(),
+            containerWhitespace = calculateContainerWhitespace().rtlFlipped(view.layoutDirection),
         ).let {
             Rect(
                 /* left = */ it.left.roundToInt(),
@@ -1048,11 +1049,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSizeState.value,
             contentSize = contentSizeState.value,
             contentScale = contentScaleState.value,
-            alignment = alignmentState.value,
+            alignment = alignmentState.value.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             userScale = userScale,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
-            containerWhitespace = calculateContainerWhitespace(),
+            containerWhitespace = calculateContainerWhitespace().rtlFlipped(view.layoutDirection),
         ).round().toRect()      // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -1117,7 +1118,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSizeState.value,
             contentSize = contentSizeState.value,
             contentScale = contentScaleState.value,
-            alignment = alignmentState.value,
+            alignment = alignmentState.value.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
@@ -1126,7 +1127,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSizeState.value,
             contentSize = contentSizeState.value,
             contentScale = contentScaleState.value,
-            alignment = alignmentState.value,
+            alignment = alignmentState.value.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
@@ -1136,11 +1137,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             containerSize = containerSizeState.value,
             contentSize = contentSizeState.value,
             contentScale = contentScaleState.value,
-            alignment = alignmentState.value,
+            alignment = alignmentState.value.rtlFlipped(view.layoutDirection),
             rotation = rotation,
             userScale = userTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
-            containerWhitespace = calculateContainerWhitespace(),
+            containerWhitespace = calculateContainerWhitespace().rtlFlipped(view.layoutDirection),
         )
         this._userOffsetBoundsState.value = userOffsetBounds.round()
 

@@ -70,3 +70,12 @@ fun ContainerWhitespace.isEmpty(): Boolean {
 fun ContainerWhitespace.toShortString(): String {
     return "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 }
+
+/**
+ * Flip the white space horizontally
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ContainerWhitespaceTest.testRtlFlipped
+ */
+fun ContainerWhitespace.rtlFlipped(): ContainerWhitespace {
+    return ContainerWhitespace(left = right, top = top, right = left, bottom = bottom)
+}

@@ -22,6 +22,7 @@ import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Looper
+import android.view.View
 import android.widget.ImageView.ScaleType
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -109,6 +110,30 @@ internal fun ScaleType.toAlignment(): AlignmentCompat = when (this) {
     ScaleType.CENTER -> AlignmentCompat.Center
     ScaleType.CENTER_CROP -> AlignmentCompat.Center
     ScaleType.CENTER_INSIDE -> AlignmentCompat.Center
+}
+
+/**
+ * If [layoutDirection] is [View.LAYOUT_DIRECTION_RTL], returns the horizontally flipped [AlignmentCompat], otherwise returns itself
+ *
+ * @see com.github.panpf.zoomimage.view.test.util.ViewPlatformUtilsTest.testRtlFlipped
+ */
+fun AlignmentCompat.rtlFlipped(layoutDirection: Int? = null): AlignmentCompat {
+    return if (layoutDirection == null || layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+        when (this) {
+            AlignmentCompat.TopStart -> AlignmentCompat.TopEnd
+            AlignmentCompat.TopCenter -> AlignmentCompat.TopCenter
+            AlignmentCompat.TopEnd -> AlignmentCompat.TopStart
+            AlignmentCompat.CenterStart -> AlignmentCompat.CenterEnd
+            AlignmentCompat.Center -> AlignmentCompat.Center
+            AlignmentCompat.CenterEnd -> AlignmentCompat.CenterStart
+            AlignmentCompat.BottomStart -> AlignmentCompat.BottomEnd
+            AlignmentCompat.BottomCenter -> AlignmentCompat.BottomCenter
+            AlignmentCompat.BottomEnd -> AlignmentCompat.BottomStart
+            else -> this
+        }
+    } else {
+        this
+    }
 }
 
 //internal fun ScaleType.computeScaleFactor(
