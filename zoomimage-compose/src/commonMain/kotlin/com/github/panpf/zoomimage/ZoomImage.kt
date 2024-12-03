@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -40,6 +41,7 @@ import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.util.round
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -121,10 +123,11 @@ fun ZoomImage(
         }
         zoomState.zoomable.containerSize = newContainerSize
 
+        val layoutDirection = LocalLayoutDirection.current
         MyImage(
             painter = painter,
             contentDescription = contentDescription,
-            alignment = Alignment.TopStart,
+            alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
             contentScale = ContentScale.None,
             alpha = alpha,
             colorFilter = colorFilter,

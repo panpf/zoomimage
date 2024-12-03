@@ -7,6 +7,8 @@
 zoom:
 
 * fix: 修复 containerWhitespace 导致崩溃的 bug. [#63](https://github.com/panpf/zoomimage/issues/63)
+* fix: 修复在 LayoutDirection 为 RTL 模式下偏移错误的
+  bug. [#65](https://github.com/panpf/zoomimage/issues/65)
 
 ## 1.1.0-rc02
 

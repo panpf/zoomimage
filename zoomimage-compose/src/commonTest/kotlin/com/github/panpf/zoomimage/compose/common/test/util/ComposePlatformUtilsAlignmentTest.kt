@@ -12,6 +12,7 @@ import com.github.panpf.zoomimage.compose.util.isStart
 import com.github.panpf.zoomimage.compose.util.isTop
 import com.github.panpf.zoomimage.compose.util.isVerticalCenter
 import com.github.panpf.zoomimage.compose.util.name
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.util.valueOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -227,6 +228,157 @@ class ComposePlatformUtilsAlignmentTest {
                 message = it.first.name,
             )
         }
+    }
+
+    @Test
+    fun testRtlFlipped() {
+        assertEquals(
+            expected = Alignment.TopStart,
+            actual = Alignment.TopStart.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.TopCenter,
+            actual = Alignment.TopCenter.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.TopEnd,
+            actual = Alignment.TopEnd.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.CenterStart,
+            actual = Alignment.CenterStart.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.Center,
+            actual = Alignment.Center.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.CenterEnd,
+            actual = Alignment.CenterEnd.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.BottomStart,
+            actual = Alignment.BottomStart.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.BottomCenter,
+            actual = Alignment.BottomCenter.rtlFlipped(LayoutDirection.Ltr)
+        )
+        assertEquals(
+            expected = Alignment.BottomEnd,
+            actual = Alignment.BottomEnd.rtlFlipped(LayoutDirection.Ltr)
+        )
+
+        assertEquals(
+            expected = Alignment.TopEnd,
+            actual = Alignment.TopStart.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.TopCenter,
+            actual = Alignment.TopCenter.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.TopStart,
+            actual = Alignment.TopEnd.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.CenterEnd,
+            actual = Alignment.CenterStart.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.Center,
+            actual = Alignment.Center.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.CenterStart,
+            actual = Alignment.CenterEnd.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.BottomEnd,
+            actual = Alignment.BottomStart.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.BottomCenter,
+            actual = Alignment.BottomCenter.rtlFlipped(LayoutDirection.Rtl)
+        )
+        assertEquals(
+            expected = Alignment.BottomStart,
+            actual = Alignment.BottomEnd.rtlFlipped(LayoutDirection.Rtl)
+        )
+
+        assertEquals(
+            expected = Alignment.TopEnd,
+            actual = Alignment.TopStart.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.TopCenter,
+            actual = Alignment.TopCenter.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.TopStart,
+            actual = Alignment.TopEnd.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.CenterEnd,
+            actual = Alignment.CenterStart.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.Center,
+            actual = Alignment.Center.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.CenterStart,
+            actual = Alignment.CenterEnd.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.BottomEnd,
+            actual = Alignment.BottomStart.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.BottomCenter,
+            actual = Alignment.BottomCenter.rtlFlipped(null)
+        )
+        assertEquals(
+            expected = Alignment.BottomStart,
+            actual = Alignment.BottomEnd.rtlFlipped(null)
+        )
+
+        assertEquals(
+            expected = Alignment.TopEnd,
+            actual = Alignment.TopStart.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.TopCenter,
+            actual = Alignment.TopCenter.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.TopStart,
+            actual = Alignment.TopEnd.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.CenterEnd,
+            actual = Alignment.CenterStart.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.Center,
+            actual = Alignment.Center.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.CenterStart,
+            actual = Alignment.CenterEnd.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.BottomEnd,
+            actual = Alignment.BottomStart.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.BottomCenter,
+            actual = Alignment.BottomCenter.rtlFlipped()
+        )
+        assertEquals(
+            expected = Alignment.BottomStart,
+            actual = Alignment.BottomEnd.rtlFlipped()
+        )
     }
 
     class MyAlignment : Alignment {

@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.AsyncImagePainter
 import com.github.panpf.sketch.AsyncImageState
@@ -45,6 +46,7 @@ import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -299,6 +301,7 @@ private fun BaseZoomAsyncImage(
         contentScale = contentScale,
         filterQuality = filterQuality
     )
+    val layoutDirection = LocalLayoutDirection.current
     AsyncImageContent(
         modifier = modifier.onSizeChanged { size ->
             // Ensure images are prepared before content is drawn when in-memory cache exists
@@ -306,7 +309,7 @@ private fun BaseZoomAsyncImage(
         },
         painter = painter,
         contentDescription = contentDescription,
-        alignment = Alignment.TopStart,
+        alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
         contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,

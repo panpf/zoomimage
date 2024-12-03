@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.valueOf
@@ -1156,3 +1157,28 @@ internal val Alignment.isBottom: Boolean
     get() = this == Alignment.BottomStart
             || this == Alignment.BottomCenter
             || this == Alignment.BottomEnd
+
+/**
+ * If [layoutDirection] is [LayoutDirection.Rtl], returns the horizontally flipped [AlignmentCompat], otherwise returns itself
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testRtlFlipped
+ */
+@Stable
+fun Alignment.rtlFlipped(layoutDirection: LayoutDirection? = null): Alignment {
+    return if (layoutDirection == null || layoutDirection == LayoutDirection.Rtl) {
+        when (this) {
+            Alignment.TopStart -> Alignment.TopEnd
+            Alignment.TopCenter -> Alignment.TopCenter
+            Alignment.TopEnd -> Alignment.TopStart
+            Alignment.CenterStart -> Alignment.CenterEnd
+            Alignment.Center -> Alignment.Center
+            Alignment.CenterEnd -> Alignment.CenterStart
+            Alignment.BottomStart -> Alignment.BottomEnd
+            Alignment.BottomCenter -> Alignment.BottomCenter
+            Alignment.BottomEnd -> Alignment.BottomStart
+            else -> this
+        }
+    } else {
+        this
+    }
+}

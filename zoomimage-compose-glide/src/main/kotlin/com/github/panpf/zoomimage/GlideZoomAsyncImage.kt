@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -45,6 +46,7 @@ import com.github.panpf.zoomimage.compose.glide.Placeholder
 import com.github.panpf.zoomimage.compose.glide.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.glide.Transition
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -157,10 +159,11 @@ fun GlideZoomAsyncImage(
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val coroutineScope = rememberCoroutineScope()
+        val layoutDirection = LocalLayoutDirection.current
         GlideImage(
             model = model,
             contentDescription = contentDescription,
-            alignment = Alignment.TopStart,
+            alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
             contentScale = ContentScale.None,
             alpha = alpha,
             colorFilter = colorFilter,

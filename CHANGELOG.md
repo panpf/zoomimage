@@ -7,6 +7,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 zoom:
 
 * fix: Fix containerWhitespace crash bug. [#63](https://github.com/panpf/zoomimage/issues/63)
+* fix: Fixed the bug of offset error when LayoutDirection is in RTL
+  mode. [#65](https://github.com/panpf/zoomimage/issues/65)
 
 ## 1.1.0-rc02
 

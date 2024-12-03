@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.LayoutModifier
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -46,6 +47,7 @@ import coil3.request.ImageRequest
 import coil3.size.Dimension
 import coil3.size.Size
 import coil3.size.SizeResolver
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
@@ -76,6 +78,7 @@ internal fun BaseZoomAsyncImage(
 
     // Draw the content without a parent composable or subcomposition.
     val sizeResolver = request.sizeResolver
+    val layoutDirection = LocalLayoutDirection.current
     Content(
         modifier = if (sizeResolver is ConstraintsSizeResolver) {
             modifier.then(sizeResolver)
@@ -84,7 +87,7 @@ internal fun BaseZoomAsyncImage(
         },
         painter = painter,
         contentDescription = contentDescription,
-        alignment = Alignment.TopStart,
+        alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
         contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,
