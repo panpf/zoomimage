@@ -75,7 +75,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
     }
 
     override fun getStatusBarInsetsView(binding: FragmentPhotoPagerBinding): View {
-        return binding.statusBarInsetsLayout
+        return binding.topBarInsetsLayout
     }
 
     @SuppressLint("SetTextI18n")

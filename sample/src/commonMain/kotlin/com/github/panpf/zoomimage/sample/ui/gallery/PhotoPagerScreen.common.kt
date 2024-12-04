@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
@@ -22,11 +22,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -43,14 +45,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.github.panpf.sketch.LocalPlatformContext
-import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
@@ -71,11 +71,10 @@ import com.github.panpf.zoomimage.sample.util.isMobile
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
-expect fun getTopMargin(context: PlatformContext): Int
+val photoPagerTopBarHeight = 80.dp
 
 class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen() {
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
         val coroutineScope = rememberCoroutineScope()
@@ -160,7 +159,7 @@ expect fun PhotoPagerBackground(
 )
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun PhotoPagerHeaders(
     params: PhotoPagerScreenParams,
     pagerState: PagerState,
@@ -168,16 +167,11 @@ fun PhotoPagerHeaders(
     photoPaletteState: MutableState<PhotoPalette>
 ) {
     val context = LocalPlatformContext.current
-    val density = LocalDensity.current
     val appSettings = context.appSettings
-    val toolbarTopMarginDp = remember {
-        val toolbarTopMargin = getTopMargin(context)
-        with(density) { toolbarTopMargin.toDp() }
-    }
     val photoPalette by photoPaletteState
-    Box(modifier = Modifier.fillMaxSize().padding(top = toolbarTopMarginDp)) {
+    Box(modifier = Modifier.fillMaxSize().windowInsetsPadding(TopAppBarDefaults.windowInsets)) {
         Row(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier.height(photoPagerTopBarHeight).padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val navigator = LocalNavigator.current!!
@@ -196,27 +190,6 @@ fun PhotoPagerHeaders(
             }
 
             Spacer(Modifier.weight(1f))
-
-            IconButton(
-                onClick = { appSettings.horizontalPagerLayout.value = !horizontalLayout },
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = photoPalette.containerColor,
-                    contentColor = photoPalette.contentColor
-                )
-            ) {
-                val icon = if (horizontalLayout) {
-                    painterResource(Res.drawable.ic_swap_ver)
-                } else {
-                    painterResource(Res.drawable.ic_swap_hor)
-                }
-                Icon(
-                    painter = icon,
-                    contentDescription = "orientation",
-                    modifier = Modifier.size(40.dp).padding(8.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.size(10.dp))
 
             val switchImageLoaderDialogState = rememberMyDialogState()
             Box(
@@ -238,6 +211,27 @@ fun PhotoPagerHeaders(
                 SwitchImageLoader {
                     switchImageLoaderDialogState.dismiss()
                 }
+            }
+
+            Spacer(modifier = Modifier.size(10.dp))
+
+            IconButton(
+                onClick = { appSettings.horizontalPagerLayout.value = !horizontalLayout },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
+                )
+            ) {
+                val icon = if (horizontalLayout) {
+                    painterResource(Res.drawable.ic_swap_ver)
+                } else {
+                    painterResource(Res.drawable.ic_swap_hor)
+                }
+                Icon(
+                    painter = icon,
+                    contentDescription = "orientation",
+                    modifier = Modifier.size(40.dp).padding(8.dp)
+                )
             }
 
             Spacer(modifier = Modifier.size(10.dp))

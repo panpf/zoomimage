@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,7 @@ import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -73,6 +75,7 @@ import com.github.panpf.zoomimage.sample.ui.components.MyDialogState
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.components.rememberMoveKeyboardState
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.gallery.photoPagerTopBarHeight
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
@@ -82,6 +85,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : ZoomState> BaseZoomImageSample(
     photo: Photo,
@@ -219,7 +223,12 @@ fun <T : ZoomState> BaseZoomImageSample(
             }
         )
 
-        Row(Modifier.padding(20.dp).padding(top = 80.dp)) {
+        Row(
+            Modifier
+                .windowInsetsPadding(TopAppBarDefaults.windowInsets)
+                .padding(top = photoPagerTopBarHeight)
+                .padding(horizontal = 20.dp)
+        ) {
             val headerInfo = remember {
                 """
                     scale: 

@@ -79,8 +79,12 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
 
     }
 
+    override fun getStatusBarInsetsView(binding: FragmentZoomViewBinding): View {
+        return binding.topBarInsetsLayout
+    }
+
     override fun getNavigationBarInsetsView(binding: FragmentZoomViewBinding): View {
-        return binding.toolsLayout
+        return binding.bottomBarInsetsLayout
     }
 
     final override fun onViewCreated(
