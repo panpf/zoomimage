@@ -2,7 +2,6 @@
 
 package com.github.panpf.zoomimage.sample.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -82,7 +81,6 @@ enum class HomeTab(
 object VerHomeScreen : BaseScreen() {
 
     @Composable
-    @OptIn(ExperimentalFoundationApi::class)
     override fun DrawContent() {
         Column(Modifier.fillMaxSize()) {
             VerHomeHeader()

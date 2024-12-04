@@ -2,7 +2,6 @@
 
 package com.github.panpf.zoomimage.sample.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -36,7 +35,6 @@ import org.jetbrains.compose.resources.painterResource
 
 object HorHomeScreen : BaseScreen() {
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
         Row(Modifier.fillMaxSize()) {

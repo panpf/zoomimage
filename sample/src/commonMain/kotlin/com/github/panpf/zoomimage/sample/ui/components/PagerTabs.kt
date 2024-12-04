@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabPosition
@@ -17,7 +16,6 @@ import androidx.compose.ui.unit.lerp
  *
  * @sample com.google.accompanist.sample.pager.PagerWithTabs
  */
-@OptIn(ExperimentalFoundationApi::class)
 fun Modifier.pagerTabIndicatorOffset3(
     pagerState: PagerState,
     tabPositions: List<TabPosition>,

@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -46,7 +45,6 @@ import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 fun TurnPageIndicator(
     pagerState: PagerState,
     photoPaletteState: MutableState<PhotoPalette>? = null
@@ -155,13 +153,11 @@ fun TurnPageIndicator(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 suspend fun PagerState.nextPage() {
     val nextPageIndex = (currentPage + 1) % pageCount
     animateScrollToPage(nextPageIndex)
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 suspend fun PagerState.previousPage() {
     val previousPageIndex = (currentPage - 1).let { if (it < 0) pageCount + it else it }
     animateScrollToPage(previousPageIndex)

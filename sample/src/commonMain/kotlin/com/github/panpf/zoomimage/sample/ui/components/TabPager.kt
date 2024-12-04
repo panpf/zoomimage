@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +31,6 @@ data class PagerItem<T>(
     val contentFactory: @Composable (data: T, index: Int, pageSelected: Boolean) -> Unit
 )
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
     val pagerState = rememberPagerState { pagerItems.size }
