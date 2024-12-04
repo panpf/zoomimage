@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-rc03
 
 zoom:
 
@@ -11,6 +11,10 @@ zoom:
   mode. [#65](https://github.com/panpf/zoomimage/issues/65)
 * improve: Provide LayoutDirection RTL support for alignment and containerWhitespace properties of
   all components. [#66](https://github.com/panpf/zoomimage/issues/66)
+
+depend:
+
+* depend: Upgrade coil v3.0.4 version
 
 ## 1.1.0-rc02
 

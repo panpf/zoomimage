@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.1.0-rc03
 
 zoom:
 
@@ -11,6 +11,10 @@ zoom:
   bug. [#65](https://github.com/panpf/zoomimage/issues/65)
 * improve: 为所有组件的 alignment 和 containerWhitespace 属性提供 LayoutDirection RTL
   支持. [#66](https://github.com/panpf/zoomimage/issues/66)
+
+depend:
+
+* depend: 升级 coil v3.0.4 版本
 
 ## 1.1.0-rc02
 
