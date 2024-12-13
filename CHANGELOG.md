@@ -2,6 +2,109 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## 1.1.0 Stable
+
+> [!CAUTION]
+> To support js and iOS platforms, all `remove` and `change` tag changes are destructive
+
+zoom:
+
+* fix: Fix the inconsistent values returned by the contentSizeState property collect and value of
+  ZoomableEngine
+  bug. [#37](https://github.com/panpf/zoomimage/issues/37)
+* fix: Fixed offset error when LayoutDirection is in RTL mode
+  bug. [#65](https://github.com/panpf/zoomimage/issues/65)
+* remove: Remove the logger parameter of the 'remember\*ZoomState()' series of functions
+* change: The ZoomImage series components disable two-finger dragging gestures to avoid triggering
+  fling after rapid two-finger zooming, causing the image to
+  drift. [#28](https://github.com/panpf/zoomimage/issues/28)
+* change: The `contentSize` properties of ZoomableState and ZoomableEngine now no longer return
+  `containerSize` when empty
+* change: The minimum length of the scrollbar is now 10.dp
+* improve: The two-finger zoom gesture of ZoomImageView series components can now be triggered by
+  sliding a relatively short distance. [#61](https://github.com/panpf/zoomimage/issues/61)
+* improve: Provides LayoutDirection RTL support for the alignment property of all
+  components. [#66](https://github.com/panpf/zoomimage/issues/66)
+* new: Added support for mouse wheel zoom
+  function. [#35](https://github.com/panpf/zoomimage/issues/35)
+* new: Added support for keyboard zoom and drag
+  functions. [#42](https://github.com/panpf/zoomimage/issues/42)
+* new: 'remember\*ZoomState()' series of functions add 'logLevel: Level' parameter
+* new: New `containerWhitespaceMultiple` and `containerWhitespace` parameters are added to leave a
+  white space between the edge of the image and the edge of the
+  container. [#45](https://github.com/panpf/zoomimage/issues/45)
+
+subsampling:
+
+* fix: Fixed a bug that caused the Tile map to calculate abnormally and crash when encountering
+  images of extreme sizes (one side is extremely large and the other is extremely
+  small). [#32](https://github.com/panpf/zoomimage/issues/32)
+* fix: Fixed the bug that coil and glide series components do not support '/sdcard/sample.jpeg' type
+  model. [#34](https://github.com/panpf/zoomimage/issues/34)
+* remove: Remove the disallowReuseBitmap parameter of TileBitmapCache's put() method
+* remove: Remove BitmapFrom
+* change: Remove ignoreExifOrientation attribute
+* change: Remove disabledTileBitmapReuse and TileBitmapPool attributes
+* change: Non-Android platforms now use Skia to decode images
+* change: Use Jetbrains Lifecycle instead of StoppedController
+* change: ImageSource now uses okio's Source instead of InputStream
+* change: ImageSource.fromResource() on desktop platform changed to fromKotlinResource()
+* change: ImageSource.fromFile(File) is now a JVM platform-specific extension function
+* change: Remove the suspend modifier of ImageSource's openSource() method. If you need to suspend,
+  please use ImageSource.Factory
+* change: Decisions about whether to disable Tile's memory cache are now no longer based on the
+  memory cache setting of the thumbnail's image request
+* change: SubsamplingState.disabledTileBitmapCache renamed to disabledTileImageCache
+* change: SubsamplingState.tileBitmapCache renamed to tileImageCache
+* change: SubsamplingEngine.disabledTileBitmapCacheState renamed to disabledTileImageCacheState
+* change: SubsamplingEngine.tileBitmapCacheState renamed to tileImageCacheState
+* improve: Relax the aspect ratio restrictions between thumbnails and original
+  images. [#22](https://github.com/panpf/zoomimage/issues/22)
+* improve: Improved BitmapRegionDecoderDecodeHelper, now only closes the input stream on
+  destruction. [#29](https://github.com/panpf/zoomimage/issues/29)
+* improve: Tiles loaded from memory now also animate when displayed
+* improve: Now non-Android platforms will directly ignore gif images when subsampling
+* improve: Now subsampling cannot be used as long as either side of the thumbnail exceeds the
+  original image
+* improve: Improved SketchZoomImageview, CoilZoomImageView, GlideZoomImageView,
+  PicassoZoomImageView, now when setting ImageSource, the ImageSource will be cleared whenever it
+  fails.
+* improve: Improve the sketch series components so that the zoom will no longer be reset after
+  subsampling initialization is completed. [#50](https://github.com/panpf/zoomimage/issues/50)
+* improve: Now Sketch, Coil, and Glide series components will actively filter animations when
+  setting subsampling.
+* new: Added support for js, wasmJs, and iOS platforms
+* new: TileBitmap adds bitmapFrom attribute
+* new: GlideZoomAsyncImage, GlideZoomImageView, and PicassoZoomImageView support extended
+  ImageSource
+* new: Added ImageSource.Factory interface for creating ImageSource
+* new: ZoomState and ZoomImageView add `setSubsamplingImage()` method for setting ImageSource
+
+other:
+
+* remove: Remove the showThreadName parameter of Logger
+* remove: Remove the module attribute of Logger
+* change: The sketch-compose-coil module is renamed to sketch-compose-coil2, and the
+  sketch-compose-coil3 module is added
+* change: The sketch-compose-sketch module is renamed to sketch-compose-sketch3, and the
+  sketch-compose-sketch4 module is added
+* change: The sketch-core-coil module is renamed to sketch-compose-coil2, and the sketch-core-coil3
+  module is added
+* change: The sketch-core-sketch module is renamed to sketch-compose-sketch3, and the
+  sketch-core-sketch4 module is added
+* change: The sketch-view-coil module is renamed to sketch-compose-coil2, and the sketch-view-coil3
+  module is added
+* change: The sketch-view-sketch module is renamed to sketch-compose-sketch3, and the
+  sketch-view-sketch4 module is added
+* change: Logger.DEBUG changed to Logger.Level.Debug
+* change: Now each component's log tag is separate
+* change: The name of the `state: ZoomState` parameter of ZoomImage, SketchZoomAsyncImage,
+  CoilZoomAsyncImage, GlideZoomAsyncImage and other functions has been changed to
+  `zoomState: ZoomState`
+* depend: Upgrade kotlin 2.0.21, kotlinx coroutines 1.9.0
+* depend: Upgrade jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
+* depend: Upgrade coil 2.7.0
+
 ## 1.1.0-rc03
 
 zoom:
@@ -40,10 +143,27 @@ depend:
 
 ## 1.1.0-rc01
 
+zoom:
+
+* new: New `containerWhitespaceMultiple` parameter is added to leave a white space between the edge
+  of the image and the edge of the container. [#45](https://github.com/panpf/zoomimage/issues/45)
+
+subsampling:
+
+* remove: Remove BitmapFrom
 * change: SubsamplingState.disabledTileBitmapCache rename to disabledTileImageCache
 * change: SubsamplingState.tileBitmapCache rename to tileImageCache
 * change: SubsamplingEngine.disabledTileBitmapCacheState rename to disabledTileImageCacheState
 * change: SubsamplingEngine.tileBitmapCacheState rename to tileImageCacheState
+* improve: Improve the sketch series components so that the zoom will no longer be reset after
+  subsampling initialization is completed. [#50](https://github.com/panpf/zoomimage/issues/50)
+* improve: Now Sketch, Coil, Glide series components will actively filter the animation diagram when
+  setting subsampling.
+* new: \*ZoomState and \*ZoomImageView add a new setSubsamplingImage() method to replace the
+  setImageSource() method
+
+other:
+
 * change: sketch-compose-coil module renamed to sketch-compose-coil3
 * change: sketch-compose-coil-core module renamed to sketch-compose-coil3-core
 * change: sketch-compose-sketch module renamed to sketch-compose-sketch4
@@ -56,27 +176,24 @@ depend:
 * change: sketch-view-coil-core module renamed to sketch-view-coil3-core
 * change: sketch-view-sketch module renamed to sketch-view-sketch4
 * change: sketch-view-sketch-core module renamed to sketch-view-sketch4-core
-* remove: Remove BitmapFrom
-* improve: Improve the sketch series components so that the zoom will no longer be reset after
-  subsampling initialization is completed. [#50](https://github.com/panpf/zoomimage/issues/50)
-* improve: Now Sketch, Coil, Glide series components will actively filter the animation diagram when setting subsampling.
-* new: New `containerWhitespaceMultiple` parameter is added to leave a white space between the edge
-  of the image and the edge of the container. [#45](https://github.com/panpf/zoomimage/issues/45)
-* new: \*ZoomState and \*ZoomImageView add a new setSubsamplingImage() method to replace the
-  setImageSource() method
 * depend: Upgrade jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 
 ## 1.1.0-beta01
 
+zoom:
+
 * change: The `contentSize` properties of ZoomableState and ZoomableEngine now no longer return
   `containerSize` when empty
+* change: The minimum length of the scrollbar is now 10.dp
+* new: 'remember\*ZoomState()' series of functions add 'logLevel: Level' parameter
+
+subsampling:
+
 * change: Decisions about whether to disable Tile's memory cache are no longer based on the memory
   cache setting of the thumbnail's image request
-* change: The minimum length of the scrollbar is now 10.dp
 * improve: Improve SketchZoomImageview, CoilZoomImageView, GlideZoomImageView, PicassoZoomImageView.
   Now when setting ImageSource, the ImageSource will be cleared whenever it fails.
 * new: ZoomState and ZoomImageView add `setImageSource()` method for setting ImageSource
-* new: 'remember\*ZoomState()' series of functions add 'logLevel: Level' parameter
 
 ## 1.1.0-alpha06
 

@@ -2,6 +2,89 @@
 
 翻译：[English](CHANGELOG.md)
 
+## 1.1.0 Stable
+
+> [!CAUTION]
+> 为实现支持 js 和 iOS 平台，所有 `remove` 和 `change` 标签的变更都是破坏性的
+
+zoom:
+
+* fix: 修复 ZoomableEngine 的 contentSizeState 属性 collect 和 value 返回的值不一致的
+  bug。 [#37](https://github.com/panpf/zoomimage/issues/37)
+* fix: 修复在 LayoutDirection 为 RTL 模式下偏移错误的
+  bug. [#65](https://github.com/panpf/zoomimage/issues/65)
+* remove: 移除 'remember\*ZoomState()' 系列函数的 logger 参数
+* change: ZoomImage 系列组件禁用双指拖动手势，避免快速双指缩放后又触发 fling
+  导致图片漂移。 [#28](https://github.com/panpf/zoomimage/issues/28)
+* change: ZoomableState 和 ZoomableEngine 的 `contentSize` 属性现在为空时不再返回 `containerSize`
+* change: 滚动条的最小长度现在是 10.dp
+* improve: ZoomImageView
+  系列组件双指缩放手势现在只需滑动比较短的距离就可以触发. [#61](https://github.com/panpf/zoomimage/issues/61)
+* improve: 为所有组件的 alignment 属性提供 LayoutDirection RTL
+  支持. [#66](https://github.com/panpf/zoomimage/issues/66)
+* new: 新增支持鼠标滚轮缩放功能。 [#35](https://github.com/panpf/zoomimage/issues/35)
+* new: 新增支持键盘缩放和拖动功能。 [#42](https://github.com/panpf/zoomimage/issues/42)
+* new: 'remember\*ZoomState()' 系列函数增加 'logLevel: Level' 参数
+* new: 新增 `containerWhitespaceMultiple` 和 `containerWhitespace`
+  参数用于在图像边缘和容器边缘之间留出空白区域。 [#45](https://github.com/panpf/zoomimage/issues/45)
+
+subsampling:
+
+* fix: 修复在遇到极端尺寸（一边特别大一边特别小）的图片时导致 Tile 地图计算异常而崩溃的
+  bug。 [#32](https://github.com/panpf/zoomimage/issues/32)
+* fix: 修复 coil 和 glide 系列组件不支持 '/sdcard/sample.jpeg' 类型 model 的
+  bug。 [#34](https://github.com/panpf/zoomimage/issues/34)
+* remove: 移除 TileBitmapCache 的 put() 方法的 disallowReuseBitmap 参数
+* remove: 移除 BitmapFrom
+* change: 移除 ignoreExifOrientation 属性
+* change: 移除 disabledTileBitmapReuse 和 TileBitmapPool 属性
+* change: 非安卓平台现在使用 Skia 解码图片
+* change: 用 Jetbrains Lifecycle 代替 StoppedController
+* change: ImageSource 现在使用 okio 的 Source 代替 InputStream
+* change: 桌面平台的 ImageSource.fromResource() 改为 fromKotlinResource()
+* change: ImageSource.fromFile(File) 现在是 JVM 平台专属的扩展函数
+* change: 移除 ImageSource 的 openSource() 方法的 suspend 修饰符，需要 suspend 的话请使用
+  ImageSource.Factory
+* change: 现在不再根据缩略图的图像请求的内存缓存设置来决定是否禁用 Tile 的内存缓存
+* change: SubsamplingState.disabledTileBitmapCache 重命名为 disabledTileImageCache
+* change: SubsamplingState.tileBitmapCache 重命名为 tileImageCache
+* change: SubsamplingEngine.disabledTileBitmapCacheState 重命名为 disabledTileImageCacheState
+* change: SubsamplingEngine.tileBitmapCacheState 重命名为 tileImageCacheState
+* improve: 放宽缩略图和原图的宽高比限制。 [#22](https://github.com/panpf/zoomimage/issues/22)
+* improve: 改进
+  BitmapRegionDecoderDecodeHelper，现在只会在销毁时关闭输入流。 [#29](https://github.com/panpf/zoomimage/issues/29)
+* improve: 现在从内存中加载的图块在显示时也会有动画效果
+* improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
+* improve: 现在只要缩略图的任意一边超过原图就无法使用子采样
+* improve: 改进 SketchZoomImageview、CoilZoomImageView、GlideZoomImageView、PicassoZoomImageView，现在设置
+  ImageSource 时只要失败就会清空 ImageSource
+* improve: 改进 sketch
+  系列组件，子采样初始化完成后不会再重置变焦。 [#50](https://github.com/panpf/zoomimage/issues/50)
+* improve: 现在 Sketch、Coil、Glide 系列组件在设置子采样时会主动过滤动图
+* new: 新增支持 js、wasmJs、iOS 平台
+* new: TileBitmap 增加 bitmapFrom 属性
+* new: GlideZoomAsyncImage、GlideZoomImageView、PicassoZoomImageView 支持扩展 ImageSource
+* new: 新增 ImageSource.Factory 接口，用于创建 ImageSource
+* new: ZoomState 和 ZoomImageView 增加 `setSubsamplingImage()` 方法，用于设置 ImageSource
+
+other:
+
+* remove: 移除 Logger 的 showThreadName 参数
+* remove: 移除 Logger 的 module 属性
+* change: sketch-compose-coil 模块重命名为 sketch-compose-coil2，并新增 sketch-compose-coil3 模块
+* change: sketch-compose-sketch 模块重命名为 sketch-compose-sketch3，并新增 sketch-compose-sketch4 模块
+* change: sketch-core-coil 模块重命名为 sketch-compose-coil2，并新增 sketch-core-coil3 模块
+* change: sketch-core-sketch 模块重命名为 sketch-compose-sketch3，并新增 sketch-core-sketch4 模块
+* change: sketch-view-coil 模块重命名为 sketch-compose-coil2，并新增 sketch-view-coil3 模块
+* change: sketch-view-sketch 模块重命名为 sketch-compose-sketch3，并新增 sketch-view-sketch4 模块
+* change: Logger.DEBUG 改为 Logger.Level.Debug
+* change: 现在每个组件的日志的 tag 都是单独的
+* change: ZoomImage、SketchZoomAsyncImage、CoilZoomAsyncImage、GlideZoomAsyncImage
+  等函数的 `state: ZoomState` 参数的名字改为 `zoomState: ZoomState`
+* depend: 升级 kotlin 2.0.21, kotlinx coroutines 1.9.0
+* depend: 升级 jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
+* depend: 升级 coil 2.7.0
+
 ## 1.1.0-rc03
 
 zoom:
@@ -38,10 +121,25 @@ depend:
 
 ## 1.1.0-rc01
 
+zoom:
+
+* new: 新增 `containerWhitespaceMultiple`
+  参数用于在图像边缘和容器边缘之间留出空白区域。 [#45](https://github.com/panpf/zoomimage/issues/45)
+
+subsampling:
+
+* remove: 移除 BitmapFrom
 * change: SubsamplingState.disabledTileBitmapCache 重命名为 disabledTileImageCache
 * change: SubsamplingState.tileBitmapCache 重命名为 tileImageCache
 * change: SubsamplingEngine.disabledTileBitmapCacheState 重命名为 disabledTileImageCacheState
 * change: SubsamplingEngine.tileBitmapCacheState 重命名为 tileImageCacheState
+* improve: 改进 sketch
+  系列组件，子采样初始化完成后不会再重置变焦。 [#50](https://github.com/panpf/zoomimage/issues/50)
+* improve: 现在 Sketch、Coil、Glide 系列组件在设置子采样时会主动过滤动图
+* new: \*ZoomState 和 \*ZoomImageView 新增 setSubsamplingImage() 方法用于替代 setImageSource() 方法
+
+other:
+
 * change: sketch-compose-coil 模块重命名为 sketch-compose-coil3
 * change: sketch-compose-coil-core 模块重命名为 sketch-compose-coil3-core
 * change: sketch-compose-sketch 模块重命名为 sketch-compose-sketch4
@@ -54,24 +152,22 @@ depend:
 * change: sketch-view-coil-core 模块重命名为 sketch-view-coil3-core
 * change: sketch-view-sketch 模块重命名为 sketch-view-sketch4
 * change: sketch-view-sketch-core 模块重命名为 sketch-view-sketch4-core
-* remove: 移除 BitmapFrom
-* improve: 改进 sketch
-  系列组件，子采样初始化完成后不会再重置变焦。 [#50](https://github.com/panpf/zoomimage/issues/50)
-* improve: 现在 Sketch、Coil、Glide 系列组件在设置子采样时会主动过滤动图
-* new: 新增 `containerWhitespaceMultiple`
-  参数用于在图像边缘和容器边缘之间留出空白区域。 [#45](https://github.com/panpf/zoomimage/issues/45)
-* new: \*ZoomState 和 \*ZoomImageView 新增 setSubsamplingImage() 方法用于替代 setImageSource() 方法
 * depend: 升级 jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 
 ## 1.1.0-beta01
 
+zoom:
+
 * change: ZoomableState 和 ZoomableEngine 的 `contentSize` 属性现在为空时不再返回 `containerSize`
-* change: 现在不再根据缩略图的图像请求的内存缓存设置来决定是否禁用 Tile 的内存缓存
 * change: 滚动条的最小长度现在是 10.dp
+* new: 'remember\*ZoomState()' 系列函数增加 'logLevel: Level' 参数
+
+subsampling:
+
+* change: 现在不再根据缩略图的图像请求的内存缓存设置来决定是否禁用 Tile 的内存缓存
 * improve: 改进 SketchZoomImageview、CoilZoomImageView、GlideZoomImageView、PicassoZoomImageView，现在设置
   ImageSource 时只要失败就会清空 ImageSource
 * new: ZoomState 和 ZoomImageView 增加 `setImageSource()` 方法，用于设置 ImageSource
-* new: 'remember\*ZoomState()' 系列函数增加 'logLevel: Level' 参数
 
 ## 1.1.0-alpha06
 
