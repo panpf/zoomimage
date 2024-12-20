@@ -181,3 +181,27 @@ val AlignmentCompat.isBottom: Boolean
     get() = this == AlignmentCompat.BottomStart
             || this == AlignmentCompat.BottomCenter
             || this == AlignmentCompat.BottomEnd
+
+/**
+ * If [rtl] is null or true, returns the horizontally flipped [AlignmentCompat], otherwise returns itself
+ *
+ * @see com.github.panpf.zoomimage.view.test.util.ViewPlatformUtilsTest.testRtlFlipped
+ */
+fun AlignmentCompat.rtlFlipped(rtl: Boolean? = null): AlignmentCompat {
+    return if (rtl == null || rtl) {
+        when (this) {
+            AlignmentCompat.TopStart -> AlignmentCompat.TopEnd
+            AlignmentCompat.TopCenter -> AlignmentCompat.TopCenter
+            AlignmentCompat.TopEnd -> AlignmentCompat.TopStart
+            AlignmentCompat.CenterStart -> AlignmentCompat.CenterEnd
+            AlignmentCompat.Center -> AlignmentCompat.Center
+            AlignmentCompat.CenterEnd -> AlignmentCompat.CenterStart
+            AlignmentCompat.BottomStart -> AlignmentCompat.BottomEnd
+            AlignmentCompat.BottomCenter -> AlignmentCompat.BottomCenter
+            AlignmentCompat.BottomEnd -> AlignmentCompat.BottomStart
+            else -> this
+        }
+    } else {
+        this
+    }
+}

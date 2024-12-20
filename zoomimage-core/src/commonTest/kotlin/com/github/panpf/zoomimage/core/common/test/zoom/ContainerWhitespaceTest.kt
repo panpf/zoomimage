@@ -132,5 +132,17 @@ class ContainerWhitespaceTest {
             expected = ContainerWhitespace(left = 3f, top = 2f, right = 1f, bottom = 4f),
             actual = ContainerWhitespace(left = 1f, top = 2f, right = 3f, bottom = 4f).rtlFlipped()
         )
+        assertEquals(
+            expected = ContainerWhitespace(left = 3f, top = 2f, right = 1f, bottom = 4f),
+            actual = ContainerWhitespace(left = 1f, top = 2f, right = 3f, bottom = 4f).rtlFlipped(
+                true
+            )
+        )
+        assertEquals(
+            expected = ContainerWhitespace(left = 1f, top = 2f, right = 3f, bottom = 4f),
+            actual = ContainerWhitespace(left = 1f, top = 2f, right = 3f, bottom = 4f).rtlFlipped(
+                false
+            )
+        )
     }
 }

@@ -76,6 +76,10 @@ fun ContainerWhitespace.toShortString(): String {
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.ContainerWhitespaceTest.testRtlFlipped
  */
-fun ContainerWhitespace.rtlFlipped(): ContainerWhitespace {
-    return ContainerWhitespace(left = right, top = top, right = left, bottom = bottom)
+fun ContainerWhitespace.rtlFlipped(rtl: Boolean? = null): ContainerWhitespace {
+    return if (rtl == null || rtl) {
+        ContainerWhitespace(left = right, top = top, right = left, bottom = bottom)
+    } else {
+        this
+    }
 }
