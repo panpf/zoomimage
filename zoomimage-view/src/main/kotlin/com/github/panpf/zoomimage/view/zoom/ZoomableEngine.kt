@@ -18,7 +18,6 @@
 
 package com.github.panpf.zoomimage.view.zoom
 
-import android.graphics.Rect
 import android.view.View
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -308,7 +307,6 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     suspend fun reset(caller: String): Unit = coroutineScope {
         requiredMainThread()
         stopAllAnimation("reset:$caller")
-        view.layoutDirection
         val containerSize = containerSizeState.value
         val contentSize = contentSizeState.value
         val contentOriginSize = contentOriginSizeState.value
@@ -976,7 +974,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(view.layoutDirection),
         ).let {
-            Rect(
+            IntRectCompat(
                 /* left = */ it.left.roundToInt(),
                 /* top = */ it.top.roundToInt(),
                 /* right = */ it.right.roundToInt(),

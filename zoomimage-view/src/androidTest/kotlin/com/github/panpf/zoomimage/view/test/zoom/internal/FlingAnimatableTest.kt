@@ -1,11 +1,11 @@
 package com.github.panpf.zoomimage.view.test.zoom.internal
 
-import android.graphics.Rect
 import android.view.View
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4a.test.ktx.launchActivity
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -22,7 +22,7 @@ class FlingAnimatableTest {
         val activity = TestActivity::class.launchActivity().getActivitySync()
         val view = activity.findViewById<View>(android.R.id.content)
         val start = IntOffsetCompat(-3362, -5260)
-        val bounds = Rect(-5719, -6570, 0, -3601)
+        val bounds = IntRectCompat(-5719, -6570, 0, -3601)
         val velocity = IntOffsetCompat(-7773, -591)
 
         val values1 = mutableListOf<IntOffsetCompat>()
