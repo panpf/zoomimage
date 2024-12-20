@@ -202,7 +202,7 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     private val _minScaleState = MutableStateFlow(1.0f)
     private val _mediumScaleState = MutableStateFlow(1.0f)
     private val _maxScaleState = MutableStateFlow(1.0f)
-    internal val _continuousTransformTypeState = MutableStateFlow(0)
+    private val _continuousTransformTypeState = MutableStateFlow(0)
     private val _contentBaseDisplayRectState = MutableStateFlow(IntRectCompat.Zero)
     private val _contentBaseVisibleRectState = MutableStateFlow(IntRectCompat.Zero)
     private val _contentDisplayRectState = MutableStateFlow(IntRectCompat.Zero)
@@ -809,6 +809,10 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             coroutineScope.cancel("onDetachFromWindow")
             this.coroutineScope = null
         }
+    }
+
+    internal fun setContinuousTransformType(continuousTransformType: Int) {
+        _continuousTransformTypeState.value = continuousTransformType
     }
 
     internal fun stopAllAnimation(caller: String) {

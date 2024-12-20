@@ -130,8 +130,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                         oneFingerScaleExecuted = true
                         val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
                         val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)
-                        zoomable._continuousTransformTypeState.value =
-                            ContinuousTransformType.GESTURE
+                        zoomable.setContinuousTransformType(ContinuousTransformType.GESTURE)
                         zoomable.gestureTransform(
                             centroid = doubleTapPressPoint,
                             panChange = OffsetCompat.Zero,
@@ -143,8 +142,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                         if (supportTwoFingerScale || supportDrag) {
                             val finalPan = if (supportDrag) panChange else OffsetCompat.Zero
                             val finalZoom = if (supportTwoFingerScale) scaleFactor else 1f
-                            zoomable._continuousTransformTypeState.value =
-                                ContinuousTransformType.GESTURE
+                            zoomable.setContinuousTransformType(ContinuousTransformType.GESTURE)
                             zoomable.gestureTransform(
                                 centroid = focus,
                                 panChange = finalPan,
@@ -180,7 +178,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                     if (longPressExecuted) return@launch
                     if (supportOneFingerScale && oneFingerScaleExecuted && doubleTapPressPoint != null) {
                         if (!zoomable.rollbackScale(doubleTapPressPoint)) {
-                            zoomable._continuousTransformTypeState.value = 0
+                            zoomable.setContinuousTransformType(0)
                         }
                     } else {
                         val rollbackScaleExecuted =
@@ -190,7 +188,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                             flingExecuted = supportDrag && zoomable.fling(velocity)
                         }
                         if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
-                            zoomable._continuousTransformTypeState.value = 0
+                            zoomable.setContinuousTransformType(0)
                         }
                     }
                 }
