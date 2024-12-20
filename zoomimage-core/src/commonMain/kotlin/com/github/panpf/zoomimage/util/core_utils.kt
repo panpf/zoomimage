@@ -197,3 +197,23 @@ internal fun OffsetCompat.filterNegativeZeros(): OffsetCompat {
     }
     return this
 }
+
+/**
+ * Check if the current thread is the UI thread
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsIosTest.testRequiredMainThread
+ */
+internal expect fun requiredMainThread()
+
+/**
+ * Check if the current thread is the work thread
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread
+ * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredWorkThread
+ * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredWorkThread
+ * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsIosTest.testRequiredWorkThread
+ */
+internal expect fun requiredWorkThread()
