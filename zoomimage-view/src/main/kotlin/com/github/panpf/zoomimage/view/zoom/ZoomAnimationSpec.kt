@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.view.zoom
 
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
+import com.github.panpf.zoomimage.zoom.BaseZoomAnimationSpec
 
 /**
  * Animation-related configurations
@@ -27,7 +28,7 @@ import android.view.animation.Interpolator
 data class ZoomAnimationSpec(
     var durationMillis: Int = DEFAULT_DURATION_MILLIS,
     var interpolator: Interpolator = DEFAULT_INTERPOLATOR
-) {
+) : BaseZoomAnimationSpec {
     companion object {
         val DEFAULT_DURATION_MILLIS = 300
 

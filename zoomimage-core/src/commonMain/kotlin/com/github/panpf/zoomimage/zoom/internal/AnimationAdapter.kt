@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.compose.zoom
+package com.github.panpf.zoomimage.zoom.internal
 
-import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.runtime.Immutable
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.zoom.BaseZoomAnimationSpec
 
-/**
- * Animation-related configurations
- *
- * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomAnimationSpecTest
- */
-@Immutable
-data class ZoomAnimationSpec(
-    val durationMillis: Int = 300,
-    val easing: Easing = FastOutSlowInEasing,
-    val initialVelocity: Float = 0f,
-) : BaseZoomAnimationSpec {
-    companion object {
-        val Default = ZoomAnimationSpec()
-        val None = ZoomAnimationSpec(durationMillis = 0)
-    }
+interface AnimationAdapter {
+
+    fun startAnimation(
+        animationSpec: BaseZoomAnimationSpec?,
+        onProgress: (progress: Float) -> Unit,
+        onEnd: () -> Unit
+    )
+
+    fun stopAnimation(): Boolean
+
+    fun startFlingAnimation(
+        start: IntOffsetCompat,
+        bounds: IntRectCompat?,
+        velocity: IntOffsetCompat,
+        onUpdateValue: (value: IntOffsetCompat) -> Unit,
+        onEnd: () -> Unit = {}
+    )
+
+    fun stopFlingAnimation(): Boolean
 }
