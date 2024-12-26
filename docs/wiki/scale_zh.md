@@ -85,7 +85,7 @@ scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
     // 或
     zoomState.zoomable.scalesCalculator = MyScalesCalculator()
@@ -129,7 +129,7 @@ threeStepScale 属性为 true，如下：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.threeStepScale = true
 }
 
@@ -364,7 +364,7 @@ ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指�
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.rubberBandScale = false
 }
 
@@ -385,7 +385,7 @@ ZoomImage 提供了 `animationSpec` 参数用来修改缩放动画的时长、Ea
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.animationSpec = ZoomAnimationSpec(
         durationMillis = 500,
         easing = LinearOutSlowInEasing,
