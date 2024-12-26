@@ -105,7 +105,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
     // or
     zoomState.zoomable.scalesCalculator = MyScalesCalculator()
@@ -152,7 +152,7 @@ The threeStepScale property is true, as follows:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.threeStepScale = true
 }
 
@@ -397,7 +397,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.rubberBandScale = false
 }
 
@@ -419,7 +419,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.animationSpec = ZoomAnimationSpec(
         durationMillis = 500,
         easing = LinearOutSlowInEasing,
