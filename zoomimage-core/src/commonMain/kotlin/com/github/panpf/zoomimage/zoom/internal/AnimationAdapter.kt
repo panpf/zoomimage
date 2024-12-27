@@ -16,27 +16,28 @@
 
 package com.github.panpf.zoomimage.zoom.internal
 
-import com.github.panpf.zoomimage.util.IntOffsetCompat
-import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.zoom.BaseZoomAnimationSpec
 
 interface AnimationAdapter {
 
-    fun startAnimation(
+    suspend fun startAnimation(
         animationSpec: BaseZoomAnimationSpec?,
         onProgress: (progress: Float) -> Unit,
         onEnd: () -> Unit
     )
 
-    fun stopAnimation(): Boolean
+    suspend fun stopAnimation(): Boolean
 
-    fun startFlingAnimation(
-        start: IntOffsetCompat,
-        bounds: IntRectCompat?,
-        velocity: IntOffsetCompat,
-        onUpdateValue: (value: IntOffsetCompat) -> Unit,
+    suspend fun startFlingAnimation(
+        startUserOffset: OffsetCompat,
+        userOffsetBounds: RectCompat?,
+        velocity: OffsetCompat,
+        extras: Map<String, Any>,
+        onUpdateValue: (value: OffsetCompat) -> Boolean,
         onEnd: () -> Unit = {}
     )
 
-    fun stopFlingAnimation(): Boolean
+    suspend fun stopFlingAnimation(): Boolean
 }

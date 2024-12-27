@@ -17,37 +17,49 @@
 package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.view.View
-import com.github.panpf.zoomimage.util.IntOffsetCompat
-import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.BaseZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.internal.AnimationAdapter
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 class ViewAnimationAdapter(val view: View) : AnimationAdapter {
 
     private var lastAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
 
-    override fun startAnimation(
+    override suspend fun startAnimation(
         animationSpec: BaseZoomAnimationSpec?,
         onProgress: (progress: Float) -> Unit,
         onEnd: () -> Unit,
     ) {
-        val finalAnimationSpec = (animationSpec as? ZoomAnimationSpec) ?: ZoomAnimationSpec.Default
-        val scaleAnimatable = FloatAnimatable(
-            view = view,
-            startValue = 0f,
-            endValue = 1f,
-            durationMillis = finalAnimationSpec.durationMillis,
-            interpolator = finalAnimationSpec.interpolator,
-            onUpdateValue = onProgress,
-            onEnd = onEnd
-        )
-        lastAnimatable = scaleAnimatable
-        scaleAnimatable.start()
+        suspendCancellableCoroutine { continuation ->
+            val finalAnimationSpec =
+                (animationSpec as? ZoomAnimationSpec) ?: ZoomAnimationSpec.Default
+            val scaleAnimatable = FloatAnimatable(
+                view = view,
+                startValue = 0f,
+                endValue = 1f,
+                durationMillis = finalAnimationSpec.durationMillis,
+                interpolator = finalAnimationSpec.interpolator,
+                onUpdateValue = onProgress,
+                onEnd = {
+                    continuation.resumeWith(Result.success(0))
+                }
+            )
+            lastAnimatable = scaleAnimatable
+            scaleAnimatable.start()
+
+            continuation.invokeOnCancellation {
+                scaleAnimatable.stop()
+            }
+        }
     }
 
-    override fun stopAnimation(): Boolean {
+    override suspend fun stopAnimation(): Boolean {
         val lastScaleAnimatable = lastAnimatable
         val result = lastScaleAnimatable?.running == true
         if (result) {
@@ -56,26 +68,33 @@ class ViewAnimationAdapter(val view: View) : AnimationAdapter {
         return result
     }
 
-    override fun startFlingAnimation(
-        start: IntOffsetCompat,
-        bounds: IntRectCompat?,
-        velocity: IntOffsetCompat,
-        onUpdateValue: (value: IntOffsetCompat) -> Unit,
+    override suspend fun startFlingAnimation(
+        startUserOffset: OffsetCompat,
+        userOffsetBounds: RectCompat?,
+        velocity: OffsetCompat,
+        extras: Map<String, Any>,
+        onUpdateValue: (value: OffsetCompat) -> Boolean,
         onEnd: () -> Unit
     ) {
-        val flingAnimatable = FlingAnimatable(
-            view = view,
-            start = start,
-            bounds = bounds,
-            velocity = velocity,
-            onUpdateValue = onUpdateValue,
-            onEnd = onEnd
-        )
-        lastFlingAnimatable = flingAnimatable
-        flingAnimatable.start()
+        suspendCancellableCoroutine { continuation ->
+            val flingAnimatable = FlingAnimatable(
+                view = view,
+                start = startUserOffset.round(),
+                bounds = userOffsetBounds?.round(),
+                velocity = velocity.round(),
+                onUpdateValue = { onUpdateValue(it.toOffset()) },
+                onEnd = { continuation.resumeWith(Result.success(0)) }
+            )
+            lastFlingAnimatable = flingAnimatable
+            flingAnimatable.start()
+
+            continuation.invokeOnCancellation {
+                flingAnimatable.stop()
+            }
+        }
     }
 
-    override fun stopFlingAnimation(): Boolean {
+    override suspend fun stopFlingAnimation(): Boolean {
         val lastFlingAnimatable = lastFlingAnimatable
         val result = lastFlingAnimatable?.running == true
         if (result) {
