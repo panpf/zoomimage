@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+zoom:
+
+* improve: Now ZoomableState and ZoomableEngine are both wrappers based on ZoomableCore
+
 ## 1.1.0 Stable
 
 > [!CAUTION]

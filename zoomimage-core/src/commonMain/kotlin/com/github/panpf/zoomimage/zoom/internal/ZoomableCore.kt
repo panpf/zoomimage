@@ -75,8 +75,6 @@ import kotlinx.coroutines.launch
 
 /**
  * Core that control scale, pan, rotation, ZoomableState and ZoomableEngine are its UI wrappers
- *
- * @see com.github.panpf.zoomimage.view.test.zoom.ZoomableCoreTest
  */
 class ZoomableCore constructor(
     val logger: Logger,
@@ -109,7 +107,6 @@ class ZoomableCore constructor(
     var limitOffsetWithinBaseVisibleRect: Boolean = false
     var containerWhitespaceMultiple: Float = 0f
     var containerWhitespace: ContainerWhitespace = ContainerWhitespace.Zero
-    var disabledGestureTypes: Int = 0
 
     /* *********************************** Properties readable by the user ******************************* */
 
@@ -757,7 +754,7 @@ class ZoomableCore constructor(
         onTransformChanged(this@ZoomableCore)
     }
 
-    fun checkSupportGestureType(@GestureType gestureType: Int): Boolean =
+    fun checkSupportGestureType(disabledGestureTypes: Int, @GestureType gestureType: Int): Boolean =
         disabledGestureTypes.and(gestureType) == 0
 
     private fun limitUserScale(targetUserScale: Float): Float {

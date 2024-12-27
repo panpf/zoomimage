@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+zoom:
+
+* improve: 现在 ZoomableState 和 ZoomableEngine 都是基于 ZoomableCore 的包装器
+
 ## 1.1.0 Stable
 
 > [!CAUTION]
