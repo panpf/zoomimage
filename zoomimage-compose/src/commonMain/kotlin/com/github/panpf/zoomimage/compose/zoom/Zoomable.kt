@@ -216,7 +216,7 @@ internal class ZoomableNode(
                         oneFingerScaleExecuted = true
                         val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
                         val scale = oneFingerScaleSpec.panToScaleTransformer.transform(pan.y)
-                        zoomable.continuousTransformType = ContinuousTransformType.GESTURE
+                        zoomable.setContinuousTransformType(ContinuousTransformType.GESTURE)
                         zoomable.gestureTransform(
                             centroid = doubleTapPressPoint,
                             panChange = Offset.Zero,
@@ -229,7 +229,7 @@ internal class ZoomableNode(
                             // Only allow one-finger dragging
                             val finalPan = if (supportDrag && pointCount == 1) pan else Offset.Zero
                             val finalZoom = if (supportTwoFingerScale) zoom else 1f
-                            zoomable.continuousTransformType = ContinuousTransformType.GESTURE
+                            zoomable.setContinuousTransformType(ContinuousTransformType.GESTURE)
                             zoomable.gestureTransform(
                                 centroid = centroid,
                                 panChange = finalPan,
@@ -265,7 +265,7 @@ internal class ZoomableNode(
                     if (longPressExecuted) return@launch
                     if (supportOneFingerScale && oneFingerScaleExecuted && doubleTapPressPoint != null) {
                         if (!zoomable.rollbackScale(doubleTapPressPoint)) {
-                            zoomable.continuousTransformType = 0
+                            zoomable.setContinuousTransformType(0)
                         }
                     } else {
                         val rollbackScaleExecuted =
@@ -276,7 +276,7 @@ internal class ZoomableNode(
                             flingExecuted = supportDrag && zoomable.fling(velocity, density)
                         }
                         if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
-                            zoomable.continuousTransformType = 0
+                            zoomable.setContinuousTransformType(0)
                         }
                     }
                 }

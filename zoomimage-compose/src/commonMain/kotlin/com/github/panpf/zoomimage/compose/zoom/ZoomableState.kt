@@ -306,7 +306,7 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
      * @see ContinuousTransformType
      */
     var continuousTransformType: Int by mutableIntStateOf(0)
-        internal set
+        private set
 
     private var lastContainerSize: IntSize = containerSize
     private var lastContentSize: IntSize = contentSize
@@ -840,6 +840,10 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
             coroutineScope.cancel("onForgotten")
             this.coroutineScope = null
         }
+    }
+
+    internal fun setContinuousTransformType(continuousTransformType: Int) {
+        this.continuousTransformType = continuousTransformType
     }
 
     /**
