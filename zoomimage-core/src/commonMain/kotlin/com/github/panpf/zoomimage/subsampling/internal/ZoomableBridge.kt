@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
-/**
- * Tile bitmap cache configuration
- *
- * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileImageCacheSpecTest
- */
-class TileImageCacheSpec {
-    var disabled: Boolean = false
-    var tileImageCache: TileImageCache? = null
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.TransformCompat
+import kotlinx.coroutines.flow.Flow
+
+interface ZoomableBridge {
+    val contentVisibleRect: IntRectCompat
+    val transform: TransformCompat
+    val continuousTransformType: Int
+    val transformFlow: Flow<TransformCompat>
+    val continuousTransformTypeFlow: Flow<Int>
+    fun setContentOriginSize(contentOriginSize: IntSizeCompat)
 }

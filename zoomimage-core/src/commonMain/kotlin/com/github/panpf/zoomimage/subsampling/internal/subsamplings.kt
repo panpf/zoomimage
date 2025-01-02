@@ -43,7 +43,7 @@ suspend fun createTileDecoder(
     subsamplingImage: SubsamplingImage,
     contentSize: IntSizeCompat,
     regionDecoders: List<RegionDecoder.Factory>,
-    onImageInfoPassed: (ImageInfo) -> Unit,
+    onImageInfoPassed: suspend (ImageInfo) -> Unit,
 ): Result<TileDecoder> = runCatching {
     val regionDecoderFactory = regionDecoders
         .plus(defaultRegionDecoder())

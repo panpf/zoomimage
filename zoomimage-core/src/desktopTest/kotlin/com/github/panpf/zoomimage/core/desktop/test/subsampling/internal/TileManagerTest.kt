@@ -6,7 +6,6 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.subsampling.TileImageCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
@@ -525,7 +524,7 @@ class TileManagerTest {
         private val logger = Logger("Test").apply {
             level = Logger.Level.Debug
         }
-        private val tileImageCacheHelper = TileImageCacheHelper(TileImageCacheSpec())
+        private val tileImageCacheHelper = TileImageCacheHelper()
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32

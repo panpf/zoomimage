@@ -11,6 +11,7 @@ zoom:
 subsampling:
 
 * fix: Fixed the bug that the View version of Tile Bounds has incorrect colors
+* improve: Now SubsamplingState and SubsamplingEngine are both wrappers based on SubsamplingCore
 
 ## 1.1.0 Stable
 

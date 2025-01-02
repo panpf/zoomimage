@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.TileImageCacheSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileImageCacheHelper
 import com.github.panpf.zoomimage.test.TestTileImage
 import com.github.panpf.zoomimage.test.TestTileImageCache
@@ -14,9 +13,9 @@ class TileImageCacheHelperTest {
 
     @Test
     fun test() {
-        val helper = TileImageCacheHelper(TileImageCacheSpec())
-        assertEquals(false, helper.tileImageCacheSpec.disabled)
-        assertEquals(null, helper.tileImageCacheSpec.tileImageCache)
+        val helper = TileImageCacheHelper()
+        assertEquals(false, helper.disabled)
+        assertEquals(null, helper.tileImageCache)
 
         val key1 = "key1"
         val tileImage1 = TestTileImage(key1)
@@ -27,14 +26,14 @@ class TileImageCacheHelperTest {
         helper.put(key1, tileImage1, imageUrl1, imageInfo1)
         assertEquals(null, helper.get(key1))
 
-        helper.tileImageCacheSpec.tileImageCache = TestTileImageCache()
-        assertNotNull(helper.tileImageCacheSpec.tileImageCache)
+        helper.tileImageCache = TestTileImageCache()
+        assertNotNull(helper.tileImageCache)
 
         helper.put(key1, tileImage1, imageUrl1, imageInfo1)
         assertEquals(tileImage1, helper.get(key1))
 
-        helper.tileImageCacheSpec.disabled = true
-        assertEquals(true, helper.tileImageCacheSpec.disabled)
+        helper.disabled = true
+        assertEquals(true, helper.disabled)
 
         assertEquals(null, helper.get(key1))
 
@@ -46,8 +45,8 @@ class TileImageCacheHelperTest {
         helper.put(key2, tileImage2, imageUrl2, imageInfo2)
         assertEquals(null, helper.get(key2))
 
-        helper.tileImageCacheSpec.disabled = false
-        assertEquals(false, helper.tileImageCacheSpec.disabled)
+        helper.disabled = false
+        assertEquals(false, helper.disabled)
 
         assertEquals(null, helper.get(key2))
         helper.put(key2, tileImage2, imageUrl2, imageInfo2)

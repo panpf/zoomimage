@@ -19,20 +19,20 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.subsampling.TileImageCache
-import com.github.panpf.zoomimage.subsampling.TileImageCacheSpec
 
 /**
  * Assist [TileManager] to obtain and store Bitmap from [TileImageCache]
  *
  * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileImageCacheHelperTest
  */
-class TileImageCacheHelper(
-    val tileImageCacheSpec: TileImageCacheSpec
-) {
+class TileImageCacheHelper {
+
+    var disabled: Boolean = false
+    var tileImageCache: TileImageCache? = null
 
     fun get(key: String): TileImage? {
-        val disabled = tileImageCacheSpec.disabled
-        val tileMemoryCache = tileImageCacheSpec.tileImageCache
+        val disabled = disabled
+        val tileMemoryCache = tileImageCache
         if (disabled || tileMemoryCache == null) {
             return null
         }
@@ -45,8 +45,8 @@ class TileImageCacheHelper(
         imageUrl: String,
         imageInfo: ImageInfo,
     ): TileImage? {
-        val disabled = tileImageCacheSpec.disabled
-        val tileMemoryCache = tileImageCacheSpec.tileImageCache
+        val disabled = disabled
+        val tileMemoryCache = tileImageCache
         return if (!disabled && tileMemoryCache != null) {
             tileMemoryCache.put(
                 key = key,
