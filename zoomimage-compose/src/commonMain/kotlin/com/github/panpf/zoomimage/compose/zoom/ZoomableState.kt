@@ -414,12 +414,11 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
         rememberedCount--
         if (rememberedCount != 0) return
 
-        val coroutineScope = this.coroutineScope
-        if (coroutineScope != null) {
-            coroutineScope.cancel("onForgotten")
-            this.coroutineScope = null
-            zoomableCore.setCoroutineScope(null)
-        }
+        val coroutineScope = this.coroutineScope ?: return
+
+        zoomableCore.setCoroutineScope(null)
+        coroutineScope.cancel("onForgotten")
+        this.coroutineScope = null
     }
 
     private fun bindProperties(coroutineScope: CoroutineScope) {
@@ -428,82 +427,72 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
          */
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { containerSize }.collect {
-                zoomableCore.containerSize = it.toCompat()
-                zoomableCore.reset("containerSizeChanged")
+                zoomableCore.setContainerSize(it.toCompat())
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { contentSize }.collect {
-                zoomableCore.contentSize = it.toCompat()
-                zoomableCore.reset("contentSizeChanged")
+                zoomableCore.setContentSize(it.toCompat())
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { contentOriginSize }.collect {
-                zoomableCore.contentOriginSize = it.toCompat()
-                zoomableCore.reset("contentOriginSizeChanged")
+                zoomableCore.setContentOriginSize(it.toCompat())
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { contentScale }.collect {
-                zoomableCore.contentScale = it.toCompat()
-                zoomableCore.reset("contentScaleChanged")
+                zoomableCore.setContentScale(it.toCompat())
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { alignment }.collect {
-                zoomableCore.alignment = it.toCompat()
-                zoomableCore.reset("alignmentChanged")
+                zoomableCore.setAlignment(it.toCompat())
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { readMode }.collect {
-                zoomableCore.readMode = it
-                zoomableCore.reset("readModeChanged")
+                zoomableCore.setReadMode(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { scalesCalculator }.collect {
-                zoomableCore.scalesCalculator = it
-                zoomableCore.reset("scalesCalculatorChanged")
+                zoomableCore.setScalesCalculator(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { threeStepScale }.collect {
-                zoomableCore.threeStepScale = it
+                zoomableCore.setThreeStepScale(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { rubberBandScale }.collect {
-                zoomableCore.rubberBandScale = it
+                zoomableCore.setRubberBandScale(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { oneFingerScaleSpec }.collect {
-                zoomableCore.oneFingerScaleSpec = it
+                zoomableCore.setOneFingerScaleSpec(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { animationSpec }.collect {
-                zoomableCore.animationSpec = it
+                zoomableCore.setAnimationSpec(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { limitOffsetWithinBaseVisibleRect }.collect {
-                zoomableCore.limitOffsetWithinBaseVisibleRect = it
-                zoomableCore.reset("limitOffsetWithinBaseVisibleRectChanged")
+                zoomableCore.setLimitOffsetWithinBaseVisibleRect(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { containerWhitespaceMultiple }.collect {
-                zoomableCore.containerWhitespaceMultiple = it
-                zoomableCore.reset("containerWhitespaceMultipleChanged")
+                zoomableCore.setContainerWhitespaceMultiple(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { containerWhitespace }.collect {
-                zoomableCore.containerWhitespace = it
-                zoomableCore.reset("containerWhitespaceChanged")
+                zoomableCore.setContainerWhitespace(it)
             }
         }
     }

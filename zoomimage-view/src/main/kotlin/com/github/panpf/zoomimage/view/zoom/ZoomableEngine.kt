@@ -185,10 +185,12 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         MutableStateFlow(zoomableCore.userTransform)
     private val _transformState: MutableStateFlow<TransformCompat> =
         MutableStateFlow(zoomableCore.transform)
-    private val _minScaleState: MutableStateFlow<Float> = MutableStateFlow(zoomableCore.minScale)
+    private val _minScaleState: MutableStateFlow<Float> =
+        MutableStateFlow(zoomableCore.minScale)
     private val _mediumScaleState: MutableStateFlow<Float> =
         MutableStateFlow(zoomableCore.mediumScale)
-    private val _maxScaleState: MutableStateFlow<Float> = MutableStateFlow(zoomableCore.maxScale)
+    private val _maxScaleState: MutableStateFlow<Float> =
+        MutableStateFlow(zoomableCore.maxScale)
     private val _contentBaseDisplayRectState: MutableStateFlow<IntRectCompat> =
         MutableStateFlow(zoomableCore.contentBaseDisplayRect)
     private val _contentBaseVisibleRectState: MutableStateFlow<IntRectCompat> =
@@ -409,8 +411,8 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         val coroutineScope = this.coroutineScope ?: return
 
         zoomableCore.setCoroutineScope(null)
-        this.coroutineScope = null
         coroutineScope.cancel("onDetachFromWindow")
+        this.coroutineScope = null
     }
 
     private fun bindProperties(coroutineScope: CoroutineScope) {
@@ -419,82 +421,72 @@ class ZoomableEngine(val logger: Logger, val view: View) {
          */
         coroutineScope.launch(Dispatchers.Main.immediate) {
             containerSizeState.collect {
-                zoomableCore.containerSize = it
-                zoomableCore.reset("containerSizeChanged")
+                zoomableCore.setContainerSize(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             contentSizeState.collect {
-                zoomableCore.contentSize = it
-                zoomableCore.reset("contentSizeChanged")
+                zoomableCore.setContentSize(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             contentOriginSizeState.collect {
-                zoomableCore.contentOriginSize = it
-                zoomableCore.reset("contentOriginSizeChanged")
+                zoomableCore.setContentOriginSize(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             contentScaleState.collect {
-                zoomableCore.contentScale = it
-                zoomableCore.reset("contentScaleChanged")
+                zoomableCore.setContentScale(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             alignmentState.collect {
-                zoomableCore.alignment = it
-                zoomableCore.reset("alignmentChanged")
+                zoomableCore.setAlignment(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             readModeState.collect {
-                zoomableCore.readMode = it
-                zoomableCore.reset("readModeChanged")
+                zoomableCore.setReadMode(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             scalesCalculatorState.collect {
-                zoomableCore.scalesCalculator = it
-                zoomableCore.reset("scalesCalculatorChanged")
+                zoomableCore.setScalesCalculator(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             threeStepScaleState.collect {
-                zoomableCore.threeStepScale = it
+                zoomableCore.setThreeStepScale(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             rubberBandScaleState.collect {
-                zoomableCore.rubberBandScale = it
+                zoomableCore.setRubberBandScale(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             oneFingerScaleSpecState.collect {
-                zoomableCore.oneFingerScaleSpec = it
+                zoomableCore.setOneFingerScaleSpec(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             animationSpecState.collect {
-                zoomableCore.animationSpec = it
+                zoomableCore.setAnimationSpec(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             limitOffsetWithinBaseVisibleRectState.collect {
-                zoomableCore.limitOffsetWithinBaseVisibleRect = it
-                zoomableCore.reset("limitOffsetWithinBaseVisibleRectChanged")
+                zoomableCore.setLimitOffsetWithinBaseVisibleRect(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             containerWhitespaceMultipleState.collect {
-                zoomableCore.containerWhitespaceMultiple = it
-                zoomableCore.reset("containerWhitespaceMultipleChanged")
+                zoomableCore.setContainerWhitespaceMultiple(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
             containerWhitespaceState.collect {
-                zoomableCore.containerWhitespace = it
-                zoomableCore.reset("containerWhitespaceChanged")
+                zoomableCore.setContainerWhitespace(it)
             }
         }
     }

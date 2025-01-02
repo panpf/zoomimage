@@ -87,28 +87,35 @@ class ZoomableCore constructor(
     var rotation: Int = 0
         private set
 
-    /* *********************************** Properties initialized by the component ****************************** */
-
     var containerSize: IntSizeCompat = IntSizeCompat.Zero
+        private set
     var contentSize: IntSizeCompat = IntSizeCompat.Zero
+        private set
     var contentOriginSize: IntSizeCompat = IntSizeCompat.Zero
-
-
-    /* *********************************** Properties configured by the user ****************************** */
+        private set
 
     var contentScale: ContentScaleCompat = ContentScaleCompat.Fit
+        private set
     var alignment: AlignmentCompat = AlignmentCompat.Center
+        private set
     var readMode: ReadMode? = null
+        private set
     var scalesCalculator: ScalesCalculator = ScalesCalculator.Dynamic
+        private set
     var threeStepScale: Boolean = false
+        private set
     var rubberBandScale: Boolean = true
+        private set
     var oneFingerScaleSpec: OneFingerScaleSpec = OneFingerScaleSpec.Default
+        private set
     var animationSpec: BaseZoomAnimationSpec? = null
+        private set
     var limitOffsetWithinBaseVisibleRect: Boolean = false
+        private set
     var containerWhitespaceMultiple: Float = 0f
+        private set
     var containerWhitespace: ContainerWhitespace = ContainerWhitespace.Zero
-
-    /* *********************************** Properties readable by the user ******************************* */
+        private set
 
     var baseTransform: TransformCompat = TransformCompat.Origin
         private set
@@ -144,13 +151,6 @@ class ZoomableCore constructor(
     private var lastInitialUserTransform: TransformCompat = TransformCompat.Origin
 
 
-    /* *********************************** Interactive with user ******************************* */
-
-    /**
-     * Scale to the [targetScale] and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
-     *
-     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
-     */
     suspend fun scale(
         targetScale: Float,
         centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
@@ -223,14 +223,6 @@ class ZoomableCore constructor(
         true
     }
 
-    /**
-     * Scale to the next step scale and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
-     *
-     * If [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
-     * otherwise it will only cycle between [minScale] and [mediumScale]
-     *
-     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
-     */
     suspend fun switchScale(
         centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = false,
@@ -246,9 +238,6 @@ class ZoomableCore constructor(
         return if (scaleResult) nextScale else null
     }
 
-    /**
-     * Pan the image to the [targetOffset] position, and animation occurs when [animated] is true
-     */
     suspend fun offset(
         targetOffset: OffsetCompat,
         animated: Boolean = false,
@@ -293,11 +282,6 @@ class ZoomableCore constructor(
         true
     }
 
-    /**
-     * Pan the [contentPoint] on content to the center of the screen while zooming to [targetScale], and there will be an animation when [animated] is true
-     *
-     * @param targetScale The target scale, the default is the current scale
-     */
     suspend fun locate(
         contentPoint: IntOffsetCompat,
         targetScale: Float = transform.scaleX,
@@ -372,9 +356,6 @@ class ZoomableCore constructor(
         true
     }
 
-    /**
-     * Rotate the content to [targetRotation]
-     */
     suspend fun rotate(targetRotation: Int): Unit = coroutineScope {
         require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
         val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 + it else it }
@@ -384,11 +365,6 @@ class ZoomableCore constructor(
         reset("rotate")
     }
 
-    /**
-     * Gets the next step scale factor,
-     * and if [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
-     * otherwise it will only loop between [minScale], [mediumScale].
-     */
     fun getNextStepScale(): Float {
         val minScale = minScale
         val mediumScale = mediumScale
@@ -403,9 +379,6 @@ class ZoomableCore constructor(
         return calculateNextStepScale(stepScales, transform.scaleX)
     }
 
-    /**
-     * Converts touch points on the screen to points on content
-     */
     fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat {
         val containerSize =
             containerSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
@@ -428,31 +401,103 @@ class ZoomableCore constructor(
         return contentPoint.round()
     }
 
-    /**
-     * If true is returned, scrolling can continue on the specified axis and direction
-     *
-     * @param horizontal Whether to scroll horizontally
-     * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
-     */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
         return canScrollByEdge(scrollEdge, horizontal, direction)
     }
 
 
-    /* *************************************** Internal ***************************************** */
-
     fun setCoroutineScope(coroutineScope: CoroutineScope?) {
         this.coroutineScope = coroutineScope
     }
 
-    /**
-     * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
-     * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
+    suspend fun setContainerSize(containerSize: IntSizeCompat) {
+        if (this.containerSize != containerSize) {
+            this.containerSize = containerSize
+            reset("containerSizeChanged")
+        }
+    }
+
+    suspend fun setContentSize(contentSize: IntSizeCompat) {
+        if (this.contentSize != contentSize) {
+            this.contentSize = contentSize
+            reset("contentSizeChanged")
+        }
+    }
+
+    suspend fun setContentOriginSize(contentOriginSize: IntSizeCompat) {
+        if (this.contentOriginSize != contentOriginSize) {
+            this.contentOriginSize = contentOriginSize
+            reset("contentOriginSizeChanged")
+        }
+    }
+
+    suspend fun setContentScale(contentScale: ContentScaleCompat) {
+        if (this.contentScale != contentScale) {
+            this.contentScale = contentScale
+            reset("contentScaleChanged")
+        }
+    }
+
+    suspend fun setAlignment(alignment: AlignmentCompat) {
+        if (this.alignment != alignment) {
+            this.alignment = alignment
+            reset("alignmentChanged")
+        }
+    }
+
+    suspend fun setReadMode(readMode: ReadMode?) {
+        if (this.readMode != readMode) {
+            this.readMode = readMode
+            reset("readModeChanged")
+        }
+    }
+
+    suspend fun setScalesCalculator(scalesCalculator: ScalesCalculator) {
+        if (this.scalesCalculator != scalesCalculator) {
+            this.scalesCalculator = scalesCalculator
+            reset("scalesCalculatorChanged")
+        }
+    }
+
+    fun setThreeStepScale(threeStepScale: Boolean) {
+        this.threeStepScale = threeStepScale
+    }
+
+    fun setRubberBandScale(rubberBandScale: Boolean) {
+        this.rubberBandScale = rubberBandScale
+    }
+
+    fun setOneFingerScaleSpec(oneFingerScaleSpec: OneFingerScaleSpec) {
+        this.oneFingerScaleSpec = oneFingerScaleSpec
+    }
+
+    fun setAnimationSpec(animationSpec: BaseZoomAnimationSpec) {
+        this.animationSpec = animationSpec
+    }
+
+    suspend fun setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect: Boolean) {
+        if (this.limitOffsetWithinBaseVisibleRect != limitOffsetWithinBaseVisibleRect) {
+            this.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+            reset("limitOffsetWithinBaseVisibleRectChanged")
+        }
+    }
+
+    suspend fun setContainerWhitespaceMultiple(containerWhitespaceMultiple: Float) {
+        if (this.containerWhitespaceMultiple != containerWhitespaceMultiple) {
+            this.containerWhitespaceMultiple = containerWhitespaceMultiple
+            reset("containerWhitespaceMultipleChanged")
+        }
+    }
+
+    suspend fun setContainerWhitespace(containerWhitespace: ContainerWhitespace) {
+        if (this.containerWhitespace != containerWhitespace) {
+            this.containerWhitespace = containerWhitespace
+            reset("containerWhitespaceChanged")
+        }
+    }
+
     suspend fun reset(caller: String) {
         requiredMainThread()
-        stopAllAnimation("reset:$caller")
 
         val resetParams = ResetParams(
             containerSize = containerSize,
@@ -472,6 +517,8 @@ class ZoomableCore constructor(
             logger.d { "$module. reset:$caller. skipped. All parameters unchanged" }
             return
         }
+
+        stopAllAnimation("reset:$caller")
 
         val newInitialZoom = calculateInitialZoom(
             containerSize = resetParams.containerSize,
@@ -571,9 +618,6 @@ class ZoomableCore constructor(
         }
     }
 
-    /**
-     * Roll back to minimum or maximum scaling
-     */
     suspend fun rollbackScale(focus: OffsetCompat? = null): Boolean = coroutineScope {
         val containerSize =
             containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
@@ -869,7 +913,7 @@ class ZoomableCore constructor(
             userOffset = userTransform.offset,
         )
 
-        onTransformChanged.invoke(this@ZoomableCore)
+        onTransformChanged(this@ZoomableCore)
     }
 
     private fun calculateContainerWhitespace(): ContainerWhitespace {
