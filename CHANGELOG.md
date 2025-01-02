@@ -8,6 +8,10 @@ zoom:
 
 * improve: Now ZoomableState and ZoomableEngine are both wrappers based on ZoomableCore
 
+subsampling:
+
+* fix: Fixed the bug that the View version of Tile Bounds has incorrect colors
+
 ## 1.1.0 Stable
 
 > [!CAUTION]

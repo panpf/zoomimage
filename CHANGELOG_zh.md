@@ -8,6 +8,10 @@ zoom:
 
 * improve: 现在 ZoomableState 和 ZoomableEngine 都是基于 ZoomableCore 的包装器
 
+subsampling:
+
+* fix: 修复 View 版本的 Tile Bounds 颜色不正确的 bug
+
 ## 1.1.0 Stable
 
 > [!CAUTION]

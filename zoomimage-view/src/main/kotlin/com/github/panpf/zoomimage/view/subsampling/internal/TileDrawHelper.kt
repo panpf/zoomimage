@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.view.subsampling.internal
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Paint.Style.STROKE
@@ -27,7 +26,7 @@ import android.view.View
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.TileState
+import com.github.panpf.zoomimage.subsampling.tileColor
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
@@ -179,13 +178,11 @@ class TileDrawHelper(
         }
 
         val tileBoundsPaint = boundsPaint
-        val bitmapNoRecycled = tileSnapshot.tileImage?.isRecycled == false
-        val boundsColor = when {
-            bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
-            tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
-            tileSnapshot.state == TileState.STATE_NONE -> Color.GRAY
-            else -> Color.RED
-        }
+        val boundsColor = tileColor(
+            state = tileSnapshot.state,
+            withinLoadArea = true,
+            fromCache = tileSnapshot.tileImage?.fromCache ?: false,
+        )
         tileBoundsPaint.color = boundsColor
 
         canvas.drawRect(tileDrawRect, tileBoundsPaint)
