@@ -13,6 +13,10 @@ subsampling:
 * fix: Fixed the bug that the View version of Tile Bounds has incorrect colors
 * improve: Now SubsamplingState and SubsamplingEngine are both wrappers based on SubsamplingCore
 
+other:
+
+* depend: Upgrade sketch 4.0.1
+
 ## 1.1.0 Stable
 
 > [!CAUTION]

@@ -13,6 +13,10 @@ subsampling:
 * fix: 修复 View 版本的 Tile Bounds 颜色不正确的 bug
 * improve: 现在 SubsamplingState 和 SubsamplingEngine 都是基于 SubsamplingCore 的包装器
 
+other:
+
+* depend: 升级 sketch 4.0.1
+
 ## 1.1.0 Stable
 
 > [!CAUTION]
