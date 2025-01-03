@@ -131,8 +131,8 @@ Center，那么默认只显示图像中间的部分，然后你还可以单指�
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
-    zoomState.zommable.limitOffsetWithinBaseVisibleRect = true
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
 }
 
 SketchZoomAsyncImage(
@@ -153,18 +153,18 @@ ZoomImage 默认在拖动图像时图像的边缘始终和容器的边缘对齐�
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     // 通过 containerWhitespace 属性设置具体的大小
-    zoomState.zommable.containerWhitespace = ContainerWhitespace(
+    zoomState.zoomable.containerWhitespace = ContainerWhitespace(
         left = 4f, top = 3f, right = 2f, bottom = 1f
     )
     // or
-    zoomState.zommable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
+    zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
     // or
-    zoomState.zommable.containerWhitespace = ContainerWhitespace(size = 1f)
+    zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
 
     // 在图像边缘和容器边缘之间留有 50% 容器大小的空白区域
-    zoomState.zommable.containerWhitespaceMultiple = 0.5f
+    zoomState.zoomable.containerWhitespaceMultiple = 0.5f
 }
 
 SketchZoomAsyncImage(

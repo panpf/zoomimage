@@ -105,7 +105,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
     // or
     zoomState.zoomable.scalesCalculator = MyScalesCalculator()
@@ -152,7 +152,7 @@ The threeStepScale property is true, as follows:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.threeStepScale = true
 }
 
@@ -388,16 +388,14 @@ Button(
 
 ### Rubber Band Scale
 
-ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指或双指缩放时如果超过了这个范围依然可以继续缩放，
-但会有类似橡皮筋的阻尼效果，松手后会回弹到 `minScale`或 `maxScale`
-，此功能默认开启，你可通过 `rubberBandScale` 属性关闭它
+ZoomImage will limit the zoom factor to between `minScale` and `maxScale`. If you zoom beyond this range with one or two fingers, you can still zoom, but there will be a damping effect similar to a rubber band, and it will rebound to `minScale` or `maxScale` after releasing the finger. This feature is enabled by default, and you can turn it off with the `rubberBandScale` property
 
 example：
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.rubberBandScale = false
 }
 
@@ -419,7 +417,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.animationSpec = ZoomAnimationSpec(
         durationMillis = 500,
         easing = LinearOutSlowInEasing,

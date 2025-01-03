@@ -139,8 +139,8 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
-    zoomState.zommable.limitOffsetWithinBaseVisibleRect = true
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
 }
 
 SketchZoomAsyncImage(
@@ -163,18 +163,18 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
   // Set the specific size through the containerWhitespace property
-  zoomState.zommable.containerWhitespace = ContainerWhitespace(
+  zoomState.zoomable.containerWhitespace = ContainerWhitespace(
     left = 4f, top = 3f, right = 2f, bottom = 1f
   )
   // or
-  zoomState.zommable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
+  zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
   // or
-  zoomState.zommable.containerWhitespace = ContainerWhitespace(size = 1f)
+  zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
 
   // Leave 50% of the container size white space between the edge of the image and the edge of the container
-  zoomState.zommable.containerWhitespaceMultiple = 0.5f
+  zoomState.zoomable.containerWhitespaceMultiple = 0.5f
 }
 
 SketchZoomAsyncImage(

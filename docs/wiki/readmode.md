@@ -21,7 +21,7 @@ content of the long text image
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(zoomState.zommable) {
+LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.readMode = ReadMode.Default
 }
 
