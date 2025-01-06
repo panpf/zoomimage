@@ -104,9 +104,12 @@ class CoilHttpImageSourceTest {
             imageSourceFactory.create()
         }
         val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
-        val bitmap = BitmapFactory.decodeStream(bytes.inputStream())
+        val bitmap =
+            BitmapFactory.decodeStream(bytes.inputStream(), null, BitmapFactory.Options().apply {
+                inSampleSize = 8
+            })!!
         val imageSize = bitmap.let { IntSizeCompat(it.width, it.height) }
-        assertEquals(expected = IntSizeCompat(2832, 4240), actual = imageSize)
+        assertEquals(expected = IntSizeCompat(354, 530), actual = imageSize)
         assertNotEquals(
             illegal = null,
             actual = diskCache.openSnapshot(imageUri)?.apply { close() }
