@@ -227,7 +227,7 @@ class SubsamplingCore(
         } else {
             if (lastCoroutineScope != null) {
                 lifecycle?.removeObserver(stoppedLifecycleObserver)
-                clean("onViewDetachedFromWindow")
+                clean("setCoroutineScope")
             }
             this.coroutineScope = coroutineScope
         }
@@ -426,6 +426,7 @@ class SubsamplingCore(
             this@SubsamplingCore.sampleSize = 0
             this@SubsamplingCore.imageLoadRect = IntRectCompat.Zero
             refreshReadyState("cleanTileManager:$caller")
+            onTileChanged(this@SubsamplingCore)
         }
     }
 
