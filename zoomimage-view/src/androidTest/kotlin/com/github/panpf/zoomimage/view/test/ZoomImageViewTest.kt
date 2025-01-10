@@ -400,7 +400,7 @@ class ZoomImageViewTest {
             )
             assertEquals(
                 expected = IntRectCompat(-1, 0, -1, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH),
@@ -460,7 +460,7 @@ class ZoomImageViewTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.NONE),
@@ -493,7 +493,7 @@ class ZoomImageViewTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.right + 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right + 1f
                 val addOffset =
                     OffsetCompat(targetOffsetX - zoomable.userTransformState.value.offsetX, 0f)
                 zoomable.offset(
@@ -527,7 +527,7 @@ class ZoomImageViewTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.START, vertical = Edge.NONE),
@@ -560,7 +560,7 @@ class ZoomImageViewTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.left - 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left - 1f
                 val addOffset =
                     OffsetCompat(targetOffsetX - zoomable.userTransformState.value.offsetX, 0f)
                 zoomable.offset(
@@ -594,7 +594,7 @@ class ZoomImageViewTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.END, vertical = Edge.NONE),
@@ -627,7 +627,7 @@ class ZoomImageViewTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.bottom + 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom + 1f
                 val addOffset =
                     OffsetCompat(0f, targetOffsetY - zoomable.userTransformState.value.offsetY)
                 zoomable.offset(
@@ -661,7 +661,7 @@ class ZoomImageViewTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.START),
@@ -694,7 +694,7 @@ class ZoomImageViewTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.top - 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top - 1f
                 val addOffset =
                     OffsetCompat(0f, targetOffsetY - zoomable.userTransformState.value.offsetY)
                 zoomable.offset(
@@ -728,7 +728,7 @@ class ZoomImageViewTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.END),

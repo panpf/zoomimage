@@ -102,16 +102,16 @@ fun buildZoomImageViewInfos(
         offset: ${transform.offset.round().toShortString()}
         baseOffset: ${baseTransform.offset.round().toShortString()}
         userOffset: ${userTransform.offset.round().toShortString()}
-        userOffsetBounds: ${zoomable.userOffsetBoundsState.value.toShortString()}
+        userOffsetBounds: ${zoomable.userOffsetBoundsRectFState.value.round().toShortString()}
         edge: ${zoomable.scrollEdgeState.value.toShortString()}
     """.trimIndent()
     add(InfoItem(title = "Offset: ", content = offsetInfo))
 
     val displayAndVisibleInfo = """
-        contentBaseDisplay: ${zoomable.contentBaseDisplayRectState.value.toShortString()}
-        contentBaseVisible: ${zoomable.contentBaseVisibleRectState.value.toShortString()}
-        contentDisplay: ${zoomable.contentDisplayRectState.value.toShortString()}
-        contentVisible: ${zoomable.contentVisibleRectState.value.toShortString()}
+        contentBaseDisplay: ${zoomable.contentBaseDisplayRectFState.value.round().toShortString()}
+        contentBaseVisible: ${zoomable.contentBaseVisibleRectFState.value.round().toShortString()}
+        contentDisplay: ${zoomable.contentDisplayRectFState.value.round().toShortString()}
+        contentVisible: ${zoomable.contentVisibleRectFState.value.round().toShortString()}
     """.trimIndent()
     add(InfoItem(title = "Display&Visible: ", content = displayAndVisibleInfo))
 

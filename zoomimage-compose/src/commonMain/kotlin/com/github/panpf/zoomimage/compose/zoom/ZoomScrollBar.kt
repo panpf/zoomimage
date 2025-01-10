@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.compose.util.isEmpty
 import com.github.panpf.zoomimage.compose.util.rotate
 import com.github.panpf.zoomimage.compose.util.rotateInSpace
+import com.github.panpf.zoomimage.compose.util.round
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -94,7 +95,7 @@ internal class ZoomScrollBarNode(
         drawContent()
 
         val contentSize = zoomable.contentSize
-        val contentVisibleRect = zoomable.contentVisibleRect
+        val contentVisibleRect = zoomable.contentVisibleRectF.round()
         if (contentSize.isEmpty() || contentVisibleRect.isEmpty) return
 
         if (lastContentVisibleRect != contentVisibleRect) {

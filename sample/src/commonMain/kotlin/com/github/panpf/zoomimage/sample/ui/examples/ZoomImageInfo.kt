@@ -9,6 +9,7 @@ import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.sample.ui.components.InfoItems
 import com.github.panpf.zoomimage.sample.ui.model.InfoItem
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.util.round
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.formatFileSize
@@ -54,16 +55,20 @@ fun ZoomImageInfo(photo: Photo, zoomState: ZoomState) {
                         offset: ${zoomable.transform.offset.round().toShortString()}
                         baseOffset: ${zoomable.baseTransform.offset.round().toShortString()}
                         userOffset: ${zoomable.userTransform.offset.round().toShortString()}
-                        userOffsetBounds: ${zoomable.userOffsetBounds.toShortString()}
+                        userOffsetBounds: ${zoomable.userOffsetBoundsRectF.round().toShortString()}
                         edge: ${zoomable.scrollEdge.toShortString()}
                     """.trimIndent()
                 add(InfoItem("Offset：", offsetInfo))
 
                 val displayAndVisibleInfo = """
-                        contentBaseDisplay: ${zoomable.contentBaseDisplayRect.toShortString()}
-                        contentBaseVisible: ${zoomable.contentBaseVisibleRect.toShortString()}
-                        contentDisplay: ${zoomable.contentDisplayRect.toShortString()}
-                        contentVisible: ${zoomable.contentVisibleRect.toShortString()}
+                        contentBaseDisplay: ${
+                    zoomable.contentBaseDisplayRectF.round().toShortString()
+                }
+                        contentBaseVisible: ${
+                    zoomable.contentBaseVisibleRectF.round().toShortString()
+                }
+                        contentDisplay: ${zoomable.contentDisplayRectF.round().toShortString()}
+                        contentVisible: ${zoomable.contentVisibleRectF.round().toShortString()}
                     """.trimIndent()
                 add(InfoItem("Display&Visible：", displayAndVisibleInfo))
 

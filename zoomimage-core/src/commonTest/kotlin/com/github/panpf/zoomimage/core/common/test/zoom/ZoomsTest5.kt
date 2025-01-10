@@ -7,7 +7,6 @@ import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.copy
 import com.github.panpf.zoomimage.util.plus
-import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
@@ -527,7 +526,7 @@ class ZoomsTest5 {
                 rotation = rotation,
                 newBaseTransform = newBaseTransform,
                 lastTransform = lastTransform,
-                lastContentVisibleCenter = contentVisibleCenterPoint.round(),
+                lastContentVisibleCenter = contentVisibleCenterPoint,
             )
 
             val newContentVisibleCenterPoint = calculateContentVisibleRect(

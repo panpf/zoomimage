@@ -41,9 +41,9 @@ import com.github.panpf.zoomimage.subsampling.TileImageCache
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.internal.SubsamplingCore
 import com.github.panpf.zoomimage.subsampling.internal.ZoomableBridge
-import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -84,8 +84,8 @@ class SubsamplingState(
         logger = zoomableState.logger,
         tileImageConvertor = ComposeTileImageConvertor(),
         zoomableCore = object : ZoomableBridge {
-            override val contentVisibleRect: IntRectCompat
-                get() = zoomableState.contentVisibleRect.toCompat()
+            override val contentVisibleRect: RectCompat
+                get() = zoomableState.contentVisibleRectF.toCompat()
 
             override val transform: TransformCompat
                 get() = zoomableState.transform.toCompat()

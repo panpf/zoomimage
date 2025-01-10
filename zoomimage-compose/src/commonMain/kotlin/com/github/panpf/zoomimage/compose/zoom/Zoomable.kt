@@ -174,8 +174,11 @@ internal class ZoomableNode(
                 if (supportDoubleTapScale && !oneFingerScaleExecuted && !longPressExecuted) {
                     coroutineScope.launch {
                         val centroidContentPoint =
-                            zoomable.touchPointToContentPoint(touchPoint)
-                        zoomable.switchScale(centroidContentPoint, animated = true)
+                            zoomable.touchPointToContentPointF(touchPoint)
+                        zoomable.switchScale(
+                            centroidContentPointF = centroidContentPoint,
+                            animated = true
+                        )
                     }
                 }
             },

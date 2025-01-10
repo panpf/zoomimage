@@ -18,11 +18,10 @@
 
 package com.github.panpf.zoomimage.zoom.internal
 
-import com.github.panpf.zoomimage.util.IntOffsetCompat
-import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.center
@@ -34,7 +33,6 @@ import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.requiredMainThread
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.times
-import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
@@ -129,17 +127,17 @@ class ZoomableCore constructor(
         private set
     var maxScale: Float = 1.0f
         private set
-    var contentBaseDisplayRect: IntRectCompat = IntRectCompat.Zero
+    var contentBaseDisplayRect: RectCompat = RectCompat.Zero
         private set
-    var contentBaseVisibleRect: IntRectCompat = IntRectCompat.Zero
+    var contentBaseVisibleRect: RectCompat = RectCompat.Zero
         private set
-    var contentDisplayRect: IntRectCompat = IntRectCompat.Zero
+    var contentDisplayRect: RectCompat = RectCompat.Zero
         private set
-    var contentVisibleRect: IntRectCompat = IntRectCompat.Zero
+    var contentVisibleRect: RectCompat = RectCompat.Zero
         private set
     var scrollEdge: ScrollEdge = ScrollEdge.Default
         private set
-    var userOffsetBounds: IntRectCompat = IntRectCompat.Zero
+    var userOffsetBoundsRect: RectCompat = RectCompat.Zero
         private set
 
     @ContinuousTransformType
@@ -153,7 +151,7 @@ class ZoomableCore constructor(
 
     suspend fun scale(
         targetScale: Float,
-        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: OffsetCompat = contentVisibleRect.center,
         animated: Boolean = false,
         animationSpec: BaseZoomAnimationSpec? = null,
     ): Boolean = coroutineScope {
@@ -181,7 +179,7 @@ class ZoomableCore constructor(
             rotation = rotation,
             userScale = currentUserScale,
             userOffset = currentUserOffset,
-            contentPoint = centroidContentPoint.toOffset(),
+            contentPoint = centroidContentPoint,
         )
         val targetUserOffset = calculateScaleUserOffset(
             currentUserScale = currentUserTransform.scaleX,
@@ -224,7 +222,7 @@ class ZoomableCore constructor(
     }
 
     suspend fun switchScale(
-        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: OffsetCompat = contentVisibleRect.center,
         animated: Boolean = false,
         animationSpec: BaseZoomAnimationSpec? = null,
     ): Float? {
@@ -283,7 +281,7 @@ class ZoomableCore constructor(
     }
 
     suspend fun locate(
-        contentPoint: IntOffsetCompat,
+        contentPoint: OffsetCompat,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
         animationSpec: BaseZoomAnimationSpec? = null,
@@ -306,7 +304,7 @@ class ZoomableCore constructor(
             contentScale = contentScale,
             alignment = alignment.rtlFlipped(rtlLayoutDirection),
             rotation = rotation,
-            contentPoint = contentPoint.toOffset(),
+            contentPoint = contentPoint,
         )
 
         val targetUserScale = targetScale / currentBaseTransform.scaleX
@@ -379,11 +377,11 @@ class ZoomableCore constructor(
         return calculateNextStepScale(stepScales, transform.scaleX)
     }
 
-    fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat {
+    fun touchPointToContentPoint(touchPoint: OffsetCompat): OffsetCompat {
         val containerSize =
-            containerSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
+            containerSize.takeIf { it.isNotEmpty() } ?: return OffsetCompat.Zero
         val contentSize =
-            contentSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
+            contentSize.takeIf { it.isNotEmpty() } ?: return OffsetCompat.Zero
         val currentUserTransform = userTransform
         val contentScale = contentScale
         val alignment = alignment
@@ -398,7 +396,7 @@ class ZoomableCore constructor(
             userOffset = currentUserTransform.offset,
             touchPoint = touchPoint
         )
-        return contentPoint.round()
+        return contentPoint
     }
 
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
@@ -590,14 +588,14 @@ class ZoomableCore constructor(
             contentScale = resetParams.contentScale,
             alignment = resetParams.alignment.rtlFlipped(rtlLayoutDirection),
             rotation = resetParams.rotation,
-        ).round()
+        )
         contentBaseVisibleRect = calculateContentBaseVisibleRect(
             containerSize = resetParams.containerSize,
             contentSize = resetParams.contentSize,
             contentScale = resetParams.contentScale,
             alignment = resetParams.alignment.rtlFlipped(rtlLayoutDirection),
             rotation = resetParams.rotation,
-        ).round()
+        )
         baseTransform = newBaseTransform
         updateUserTransform(newUserTransform)
         lastResetParams = resetParams
@@ -885,7 +883,7 @@ class ZoomableCore constructor(
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
-        ).round()
+        )
         contentVisibleRect = calculateContentVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -894,7 +892,7 @@ class ZoomableCore constructor(
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
-        ).round()
+        )
 
         val userOffsetBounds = calculateUserOffsetBounds(
             containerSize = containerSize,
@@ -906,7 +904,7 @@ class ZoomableCore constructor(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
         )
-        this.userOffsetBounds = userOffsetBounds.round()
+        this.userOffsetBoundsRect = userOffsetBounds
 
         scrollEdge = calculateScrollEdge(
             userOffsetBounds = userOffsetBounds,

@@ -11,12 +11,14 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TopStart
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.toIntRect
 import com.github.panpf.zoomimage.util.toOffset
+import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.util.format
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
@@ -1076,6 +1078,14 @@ class ZoomableEngineTest {
                 expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
             )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentBaseDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentBaseVisibleRectFState.value.toString()
+            )
         }
 
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
@@ -1112,6 +1122,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentBaseDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentBaseVisibleRectFState.value.toString()
             )
         }
 
@@ -1153,6 +1171,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(244f, 0f, 273.2f, 516f).toString(),
+                actual = zoomable.contentBaseDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 86f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectFState.value.toString()
             )
         }
 
@@ -1195,6 +1221,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(244f, 0f, 273.2f, 516f).toString(),
+                actual = zoomable.contentBaseDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 86f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectFState.value.toString()
             )
         }
 
@@ -1239,6 +1273,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 718, 86, 804).toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, -4308f, 516f, 4824f).toString(),
+                actual = zoomable.contentBaseDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 718f, 86f, 804f).toString(),
+                actual = zoomable.contentBaseVisibleRectFState.value.toString()
             )
         }
 
@@ -1287,6 +1329,14 @@ class ZoomableEngineTest {
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
             )
+            assertEquals(
+                expected = RectCompat(487f, 0f, 516.2f, 516f).toString(),
+                actual = zoomable.contentBaseDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 86f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectFState.value.toString()
+            )
         }
 
         // rotation
@@ -1332,6 +1382,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 244f, 516f, 273.2f).toString(),
+                actual = zoomable.contentBaseDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 86f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectFState.value.toString()
             )
         }
     }
@@ -1370,6 +1428,14 @@ class ZoomableEngineTest {
                 expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
             )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
+            )
         }
 
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
@@ -1414,6 +1480,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
             )
         }
 
@@ -1463,6 +1537,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(244f, 0f, 273f, 516f).toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 86f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
             )
         }
 
@@ -1513,6 +1595,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(244f, 0f, 273f, 516f).toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 86f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
             )
         }
 
@@ -1565,6 +1655,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 718, 86, 804).toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, -4308f, 516f, 4824f).toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 718f, 86f, 804f).toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
             )
         }
 
@@ -1621,6 +1719,14 @@ class ZoomableEngineTest {
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
             )
+            assertEquals(
+                expected = RectCompat(487f, 0f, 516f, 516f).toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 85.5f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
+            )
         }
 
         // rotation
@@ -1674,6 +1780,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 244f, 516f, 273f).toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 0f, 86f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
             )
         }
 
@@ -1731,6 +1845,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = IntRectCompat(0, 254, 86, 1268).toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(236f, -128.9f, 279.5f, 645f).toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 253.7f, 86.0f, 1268.3f).toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
             )
         }
 
@@ -1790,6 +1912,14 @@ class ZoomableEngineTest {
                 expected = IntRectCompat(0, 338, 86, 1353).toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
             )
+            assertEquals(
+                expected = RectCompat(236f, -172f, 279.5f, 602f).toString(),
+                actual = zoomable.contentDisplayRectFState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, 338.2f, 86.0f, 1352.9f).toString(),
+                actual = zoomable.contentVisibleRectFState.value.toString()
+            )
         }
     }
 
@@ -1817,7 +1947,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat.Zero.toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -1854,7 +1988,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat.Zero.toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -1895,7 +2033,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-1, 0, -1, 0).toString(),    // TODO why -1?, should be 0
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(-0.5f, 0f, -0.5f, 0f).toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -1936,7 +2078,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-1, 0, -1, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(-0.5f, 0f, -0.5f, 0f).toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -1979,7 +2125,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(0, -4308, 0, 4308).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, -4308f, 0f, 4308f).toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -2025,7 +2175,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat.Zero.toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(-0.1f, 0.0f, -0.1f, 0.0f).toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -2070,7 +2224,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(0, -1, 0, -1).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(0f, -0.5f, 0f, -0.5f).toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -2118,7 +2276,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-130, -258, -130, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat(-129.8f, -257.9f, -129.8f, 0f).toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
 
@@ -2162,7 +2324,11 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat.Zero.toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = RectCompat.Zero.toString(),
+                actual = zoomable.userOffsetBoundsRectFState.value.toString()
             )
         }
     }
@@ -2206,7 +2372,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-1, 0, -1, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH),
@@ -2266,7 +2432,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.NONE),
@@ -2299,7 +2465,7 @@ class ZoomableEngineTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.right + 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right + 1f
                 val addOffset =
                     OffsetCompat(targetOffsetX - zoomable.userTransformState.value.offsetX, 0f)
                 zoomable.offset(
@@ -2333,7 +2499,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.START, vertical = Edge.NONE),
@@ -2366,7 +2532,7 @@ class ZoomableEngineTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.left - 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left - 1f
                 val addOffset =
                     OffsetCompat(targetOffsetX - zoomable.userTransformState.value.offsetX, 0f)
                 zoomable.offset(
@@ -2400,7 +2566,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.END, vertical = Edge.NONE),
@@ -2433,7 +2599,7 @@ class ZoomableEngineTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.bottom + 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom + 1f
                 val addOffset =
                     OffsetCompat(0f, targetOffsetY - zoomable.userTransformState.value.offsetY)
                 zoomable.offset(
@@ -2467,7 +2633,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.START),
@@ -2500,7 +2666,7 @@ class ZoomableEngineTest {
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
                 )
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.top - 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top - 1f
                 val addOffset =
                     OffsetCompat(0f, targetOffsetY - zoomable.userTransformState.value.offsetY)
                 zoomable.offset(
@@ -2534,7 +2700,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.END),
@@ -2824,6 +2990,69 @@ class ZoomableEngineTest {
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(18.0f),
                     offset = OffsetCompat(-0.3f, 0.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // targetScale centroidContentPointF bottom end
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(
+                    targetScale = 20f,
+                    centroidContentPointF = OffsetCompat(
+                        x = zoomable.contentSizeState.value.width.toFloat(),
+                        y = zoomable.contentSizeState.value.height.toFloat()
+                    ),
+                    animated = false,
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13987.0f, -26880.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-1032.3f, -26880.0f),
                     rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
                 ).toString(),
                 actual = zoomable.transformState.value.toString()
@@ -3154,14 +3383,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(53.09f),
-                    offset = OffsetCompat(-13470.46f, -13440.0f),
+                    offset = OffsetCompat(-13470.23f, -13440.0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(18f),
-                    offset = OffsetCompat(-515.77f, -13440.0f),
+                    offset = OffsetCompat(-515.53f, -13440.0f),
                     rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
                 ).toString(),
                 actual = zoomable.transformState.value.toString()
@@ -3307,6 +3536,80 @@ class ZoomableEngineTest {
             )
         }
 
+        // switchScale centroidContentPointF
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.switchScale(
+                    animated = false,
+                    centroidContentPointF = OffsetCompat(
+                        x = zoomable.contentSizeState.value.width.toFloat(),
+                        y = zoomable.contentSizeState.value.height.toFloat()
+                    )
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = listOf(0.34f, 6.0f, 18.0f),
+                actual = listOf(
+                    zoomable.minScaleState.value,
+                    zoomable.mediumScaleState.value,
+                    zoomable.maxScaleState.value
+                ).map { it.format(2) }
+            )
+            assertEquals(
+                expected = 0.34f,
+                actual = zoomable.getNextStepScale().format(2)
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(17.7f),
+                    offset = OffsetCompat(-4318.0f, -8616.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(6.0f),
+                    offset = OffsetCompat(0.23f, -8616.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
         // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
     }
 
@@ -3341,7 +3644,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-1, 0, -1, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3394,7 +3697,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3435,8 +3738,8 @@ class ZoomableEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
                 zoomable.scale(targetScale = 20f, animated = false)
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.right - 1f
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.bottom - 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right - 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom - 1f
                 val addOffset = OffsetCompat(
                     x = targetOffsetX - zoomable.userTransformState.value.offsetX,
                     y = targetOffsetY - zoomable.userTransformState.value.offsetY
@@ -3464,7 +3767,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3505,8 +3808,8 @@ class ZoomableEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
                 zoomable.scale(targetScale = 20f, animated = false)
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.right + 1f
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.bottom + 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right + 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom + 1f
                 val addOffset = OffsetCompat(
                     x = targetOffsetX - zoomable.userTransformState.value.offsetX,
                     y = targetOffsetY - zoomable.userTransformState.value.offsetY
@@ -3534,7 +3837,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3575,8 +3878,8 @@ class ZoomableEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
                 zoomable.scale(targetScale = 20f, animated = false)
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.left + 1f
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.top + 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left + 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top + 1f
                 val addOffset = OffsetCompat(
                     x = targetOffsetX - zoomable.userTransformState.value.offsetX,
                     y = targetOffsetY - zoomable.userTransformState.value.offsetY
@@ -3604,7 +3907,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3645,8 +3948,8 @@ class ZoomableEngineTest {
             zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
                 zoomable.scale(targetScale = 20f, animated = false)
-                val targetOffsetX = zoomable.userOffsetBoundsState.value.left - 1f
-                val targetOffsetY = zoomable.userOffsetBoundsState.value.top - 1f
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left - 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top - 1f
                 val addOffset = OffsetCompat(
                     x = targetOffsetX - zoomable.userTransformState.value.offsetX,
                     y = targetOffsetY - zoomable.userTransformState.value.offsetY
@@ -3674,7 +3977,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3721,7 +4024,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3764,7 +4067,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3814,7 +4117,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3864,7 +4167,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3914,7 +4217,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(-4128, -3353, 0, -774).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3964,7 +4267,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4014,7 +4317,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4064,7 +4367,7 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4114,7 +4417,450 @@ class ZoomableEngineTest {
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-1032.0f, -774.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-1032.0f, -516.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
+    }
+
+    @Test
+    fun testLocate2() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // locate center, keep scale
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
+                    targetScale = zoomable.transformState.value.scaleX,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.0f),
+                    offset = OffsetCompat(0f, 0.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // locate center, mediumScaleState.value
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
+                    targetScale = zoomable.mediumScaleState.value,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-516.0f, -515.77f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-516.0f, -257.77f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // locate center, out minScaleState.value
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
+                    targetScale = zoomable.minScaleState.value - 0.1f,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.0f),
+                    offset = OffsetCompat(0f, 0.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // locate center, out maxScaleState.value
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
+                    targetScale = zoomable.maxScaleState.value + 0.1f,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(-4128, -3353, 0, -774).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(9.0f),
+                    offset = OffsetCompat(-2064.0f, -2063.3f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(4.22f),
+                    offset = OffsetCompat(-2064.0f, -1289.3f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale, locate top start in bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center / 2f,
+                    targetScale = zoomable.mediumScaleState.value,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-129.0f, -258.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-129.0f, 0.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale, locate top start out bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect()
+                        .toRect().center / 2f * -1f,
+                    targetScale = zoomable.mediumScaleState.value,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(0.0f, -258.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(0.0f, 0.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale, locate bottom end in bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect()
+                        .toRect().center * 1.5f,
+                    targetScale = zoomable.mediumScaleState.value,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-903.0f, -773.65f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-903.0f, -515.65f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale, locate bottom end out bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.locate(
+                    contentPoint = zoomable.contentSizeState.value.toIntRect()
+                        .toRect().center * 2.5f,
+                    targetScale = zoomable.mediumScaleState.value,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntRectCompat(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4162,7 +4908,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4202,7 +4948,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4243,7 +4989,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4284,7 +5030,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4325,7 +5071,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4338,14 +5084,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(3.0f),
-                    offset = OffsetCompat(-516.0f, -515.37f),
+                    offset = OffsetCompat(-516.0f, -515.84f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1.41f),
-                    offset = OffsetCompat(-516.0f, -257.37f),
+                    offset = OffsetCompat(-516.0f, -257.84f),
                     rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
                 ).toString(),
                 actual = zoomable.transformState.value.toString()
@@ -4373,7 +5119,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-774, -1032, -258, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4387,14 +5133,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(3.0f),
-                    offset = OffsetCompat(-516.31f, -516.0f),
+                    offset = OffsetCompat(-515.84f, -516.0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1.41f),
-                    offset = OffsetCompat(-516.55f, -257.77f),
+                    offset = OffsetCompat(-516.08f, -257.77f),
                     rotation = 90f,
                     rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
                 ).toString(),
@@ -4423,7 +5169,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4437,14 +5183,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(3.0f),
-                    offset = OffsetCompat(-516.0f, -516.31f),
+                    offset = OffsetCompat(-516.0f, -515.84f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1.41f),
-                    offset = OffsetCompat(-516.0f, -258.31f),
+                    offset = OffsetCompat(-516.0f, -257.84f),
                     rotation = 180f,
                     rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
                 ).toString(),
@@ -4473,7 +5219,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(-774, -1032, -258, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4487,14 +5233,14 @@ class ZoomableEngineTest {
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(3.0f),
-                    offset = OffsetCompat(-515.37f, -516.0f),
+                    offset = OffsetCompat(-515.84f, -516.0f),
                 ).toString(),
                 actual = zoomable.userTransformState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
                     scale = ScaleFactorCompat(1.41f),
-                    offset = OffsetCompat(-515.61f, -257.77f),
+                    offset = OffsetCompat(-516.08f, -257.77f),
                     rotation = 270f,
                     rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
                 ).toString(),
@@ -4523,7 +5269,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4565,7 +5311,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4607,7 +5353,7 @@ class ZoomableEngineTest {
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBoundsState.value.toString()
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4664,6 +5410,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
         }
 
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
@@ -4708,6 +5464,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -4758,6 +5524,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -4809,6 +5585,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -4862,6 +5648,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(21.5, 380.5), OffsetCompat(43.0, 761.0), OffsetCompat(64.5, 1141.5), OffsetCompat(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -4920,6 +5716,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
         }
 
         // rotation
@@ -4973,6 +5779,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 1522.0), OffsetCompat(19.9, 1141.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 380.5), OffsetCompat(86.0, 0.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -5033,6 +5849,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(20.2, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.4, 1141.5), OffsetCompat(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
         }
 
         // offset
@@ -5090,6 +5916,16 @@ class ZoomableEngineTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(20.2, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.4, 1141.5), OffsetCompat(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }

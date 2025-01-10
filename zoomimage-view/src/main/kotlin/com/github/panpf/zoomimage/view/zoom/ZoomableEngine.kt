@@ -25,7 +25,10 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import com.github.panpf.zoomimage.view.util.format
@@ -68,11 +71,16 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             _minScaleState.value = it.minScale
             _mediumScaleState.value = it.mediumScale
             _maxScaleState.value = it.maxScale
-            _contentBaseDisplayRectState.value = it.contentBaseDisplayRect
-            _contentBaseVisibleRectState.value = it.contentBaseVisibleRect
-            _contentDisplayRectState.value = it.contentDisplayRect
-            _contentVisibleRectState.value = it.contentVisibleRect
-            _userOffsetBoundsState.value = it.userOffsetBounds
+            _contentBaseDisplayRectFState.value = it.contentBaseDisplayRect
+            _contentBaseDisplayRectState.value = it.contentBaseDisplayRect.round()
+            _contentBaseVisibleRectFState.value = it.contentBaseVisibleRect
+            _contentBaseVisibleRectState.value = it.contentBaseVisibleRect.round()
+            _contentDisplayRectFState.value = it.contentDisplayRect
+            _contentDisplayRectState.value = it.contentDisplayRect.round()
+            _contentVisibleRectFState.value = it.contentVisibleRect
+            _contentVisibleRectState.value = it.contentVisibleRect.round()
+            _userOffsetBoundsRectFState.value = it.userOffsetBoundsRect
+            _userOffsetBoundsRectState.value = it.userOffsetBoundsRect.round()
             _scrollEdgeState.value = it.scrollEdge
             _continuousTransformTypeState.value = it.continuousTransformType
         }
@@ -191,18 +199,28 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         MutableStateFlow(zoomableCore.mediumScale)
     private val _maxScaleState: MutableStateFlow<Float> =
         MutableStateFlow(zoomableCore.maxScale)
-    private val _contentBaseDisplayRectState: MutableStateFlow<IntRectCompat> =
+    private val _contentBaseDisplayRectFState: MutableStateFlow<RectCompat> =
         MutableStateFlow(zoomableCore.contentBaseDisplayRect)
-    private val _contentBaseVisibleRectState: MutableStateFlow<IntRectCompat> =
+    private val _contentBaseDisplayRectState: MutableStateFlow<IntRectCompat> =
+        MutableStateFlow(zoomableCore.contentBaseDisplayRect.round())
+    private val _contentBaseVisibleRectFState: MutableStateFlow<RectCompat> =
         MutableStateFlow(zoomableCore.contentBaseVisibleRect)
-    private val _contentDisplayRectState: MutableStateFlow<IntRectCompat> =
+    private val _contentBaseVisibleRectState: MutableStateFlow<IntRectCompat> =
+        MutableStateFlow(zoomableCore.contentBaseVisibleRect.round())
+    private val _contentDisplayRectFState: MutableStateFlow<RectCompat> =
         MutableStateFlow(zoomableCore.contentDisplayRect)
-    private val _contentVisibleRectState: MutableStateFlow<IntRectCompat> =
+    private val _contentDisplayRectState: MutableStateFlow<IntRectCompat> =
+        MutableStateFlow(zoomableCore.contentDisplayRect.round())
+    private val _contentVisibleRectFState: MutableStateFlow<RectCompat> =
         MutableStateFlow(zoomableCore.contentVisibleRect)
+    private val _contentVisibleRectState: MutableStateFlow<IntRectCompat> =
+        MutableStateFlow(zoomableCore.contentVisibleRect.round())
+    private val _userOffsetBoundsRectFState: MutableStateFlow<RectCompat> =
+        MutableStateFlow(zoomableCore.userOffsetBoundsRect)
+    private val _userOffsetBoundsRectState: MutableStateFlow<IntRectCompat> =
+        MutableStateFlow(zoomableCore.userOffsetBoundsRect.round())
     private val _scrollEdgeState: MutableStateFlow<ScrollEdge> =
         MutableStateFlow(zoomableCore.scrollEdge)
-    private val _userOffsetBoundsState: MutableStateFlow<IntRectCompat> =
-        MutableStateFlow(zoomableCore.userOffsetBounds)
     private val _continuousTransformTypeState: MutableStateFlow<Int> =
         MutableStateFlow(zoomableCore.continuousTransformType)
 
@@ -242,7 +260,17 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     /**
      * The content region in the container after the baseTransform transformation
      */
+    val contentBaseDisplayRectFState: StateFlow<RectCompat> = _contentBaseDisplayRectFState
+
+    /**
+     * The content region in the container after the baseTransform transformation
+     */
     val contentBaseDisplayRectState: StateFlow<IntRectCompat> = _contentBaseDisplayRectState
+
+    /**
+     * The content is visible region to the user after the baseTransform transformation
+     */
+    val contentBaseVisibleRectFState: StateFlow<RectCompat> = _contentBaseVisibleRectFState
 
     /**
      * The content is visible region to the user after the baseTransform transformation
@@ -252,7 +280,17 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     /**
      * The content region in the container after the final transform transformation
      */
+    val contentDisplayRectFState: StateFlow<RectCompat> = _contentDisplayRectFState
+
+    /**
+     * The content region in the container after the final transform transformation
+     */
     val contentDisplayRectState: StateFlow<IntRectCompat> = _contentDisplayRectState
+
+    /**
+     * The content is visible region to the user after the final transform transformation
+     */
+    val contentVisibleRectFState: StateFlow<RectCompat> = _contentVisibleRectFState
 
     /**
      * The content is visible region to the user after the final transform transformation
@@ -262,7 +300,18 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     /**
      * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
      */
-    val userOffsetBoundsState: StateFlow<IntRectCompat> = _userOffsetBoundsState
+    val userOffsetBoundsRectFState: StateFlow<RectCompat> = _userOffsetBoundsRectFState
+
+    /**
+     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     */
+    val userOffsetBoundsRectState: StateFlow<IntRectCompat> = _userOffsetBoundsRectState
+
+    /**
+     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     */
+    @Deprecated("Use userOffsetBoundsRectState instead", ReplaceWith("userOffsetBoundsRectState"))
+    val userOffsetBoundsState: StateFlow<IntRectCompat> = userOffsetBoundsRectState
 
     /**
      * Edge state for the current offset
@@ -302,12 +351,13 @@ class ZoomableEngine(val logger: Logger, val view: View) {
      */
     suspend fun scale(
         targetScale: Float,
-        centroidContentPoint: IntOffsetCompat = contentVisibleRectState.value.center,
+        centroidContentPoint: IntOffsetCompat? = null,
         animated: Boolean = false,
         animationSpec: ZoomAnimationSpec? = null,
+        centroidContentPointF: OffsetCompat = contentVisibleRectFState.value.center,
     ): Boolean = zoomableCore.scale(
         targetScale = targetScale,
-        centroidContentPoint = centroidContentPoint,
+        centroidContentPoint = centroidContentPoint?.toOffset() ?: centroidContentPointF,
         animated = animated,
         animationSpec = animationSpec
     )
@@ -321,11 +371,12 @@ class ZoomableEngine(val logger: Logger, val view: View) {
      * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
      */
     suspend fun switchScale(
-        centroidContentPoint: IntOffsetCompat = contentVisibleRectState.value.center,
+        centroidContentPoint: IntOffsetCompat? = null,
         animated: Boolean = false,
         animationSpec: ZoomAnimationSpec? = null,
+        centroidContentPointF: OffsetCompat = contentVisibleRectFState.value.center,
     ): Float? = zoomableCore.switchScale(
-        centroidContentPoint = centroidContentPoint,
+        centroidContentPoint = centroidContentPoint?.toOffset() ?: centroidContentPointF,
         animated = animated,
         animationSpec = animationSpec
     )
@@ -349,12 +400,29 @@ class ZoomableEngine(val logger: Logger, val view: View) {
      * @param targetScale The target scale, the default is the current scale
      */
     suspend fun locate(
-        contentPoint: IntOffsetCompat,
+        contentPoint: OffsetCompat,
         targetScale: Float = transformState.value.scaleX,
         animated: Boolean = false,
         animationSpec: ZoomAnimationSpec? = null,
     ): Boolean = zoomableCore.locate(
         contentPoint = contentPoint,
+        targetScale = targetScale,
+        animated = animated,
+        animationSpec = animationSpec
+    )
+
+    /**
+     * Pan the [contentPoint] on content to the center of the screen while zooming to [targetScale], and there will be an animation when [animated] is true
+     *
+     * @param targetScale The target scale, the default is the current scale
+     */
+    suspend fun locate(
+        contentPoint: IntOffsetCompat,
+        targetScale: Float = transformState.value.scaleX,
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
+    ): Boolean = zoomableCore.locate(
+        contentPoint = contentPoint.toOffset(),
         targetScale = targetScale,
         animated = animated,
         animationSpec = animationSpec
@@ -376,8 +444,14 @@ class ZoomableEngine(val logger: Logger, val view: View) {
     /**
      * Converts touch points on the screen to points on content
      */
-    fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat =
+    fun touchPointToContentPointF(touchPoint: OffsetCompat): OffsetCompat =
         zoomableCore.touchPointToContentPoint(touchPoint = touchPoint)
+
+    /**
+     * Converts touch points on the screen to points on content
+     */
+    fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat =
+        touchPointToContentPointF(touchPoint = touchPoint).round()
 
     /**
      * If true is returned, scrolling can continue on the specified axis and direction

@@ -4,6 +4,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toOffset
+import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.util.ScaleFactor
@@ -761,6 +763,14 @@ class ZoomableStateTest {
                 expected = IntRect.Zero.toString(),
                 actual = zoomable.contentBaseVisibleRect.toString()
             )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentBaseDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentBaseVisibleRectF.toString()
+            )
         }
 
         runComposeUiTest {
@@ -784,6 +794,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect.Zero.toString(),
                 actual = zoomable.contentBaseVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentBaseDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentBaseVisibleRectF.toString()
             )
         }
 
@@ -809,6 +827,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(244f, 0f, 273.2f, 516f).toString(),
+                actual = zoomable.contentBaseDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 86.0f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectF.toString()
             )
         }
 
@@ -835,6 +861,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(244f, 0f, 273.2f, 516f).toString(),
+                actual = zoomable.contentBaseDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 86.0f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectF.toString()
             )
         }
 
@@ -864,6 +898,14 @@ class ZoomableStateTest {
                 expected = IntRect(0, 718, 86, 804).toString(),
                 actual = zoomable.contentBaseVisibleRect.toString()
             )
+            assertEquals(
+                expected = Rect(0f, -4308f, 516f, 4824f).toString(),
+                actual = zoomable.contentBaseDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 718f, 86f, 804f).toString(),
+                actual = zoomable.contentBaseVisibleRectF.toString()
+            )
         }
 
         // alignment
@@ -891,6 +933,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(487f, 0f, 516.2f, 516f).toString(),
+                actual = zoomable.contentBaseDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 86.0f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectF.toString()
             )
         }
 
@@ -921,6 +971,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentBaseVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 244f, 516f, 273.2f).toString(),
+                actual = zoomable.contentBaseDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 86.0f, 1522f).toString(),
+                actual = zoomable.contentBaseVisibleRectF.toString()
             )
         }
     }
@@ -953,6 +1011,14 @@ class ZoomableStateTest {
                 expected = IntRect.Zero.toString(),
                 actual = zoomable.contentVisibleRect.toString()
             )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentVisibleRectF.toString()
+            )
         }
 
         runComposeUiTest {
@@ -981,6 +1047,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect.Zero.toString(),
                 actual = zoomable.contentVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.contentVisibleRectF.toString()
             )
         }
 
@@ -1011,6 +1085,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(244f, 0f, 273f, 516f).toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 86.0f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectF.toString()
             )
         }
 
@@ -1042,6 +1124,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(244f, 0f, 273f, 516f).toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 86.0f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectF.toString()
             )
         }
 
@@ -1076,6 +1166,14 @@ class ZoomableStateTest {
                 expected = IntRect(0, 718, 86, 804).toString(),
                 actual = zoomable.contentVisibleRect.toString()
             )
+            assertEquals(
+                expected = Rect(0f, -4308f, 516f, 4824f).toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 718f, 86f, 804f).toString(),
+                actual = zoomable.contentVisibleRectF.toString()
+            )
         }
 
         // alignment
@@ -1108,6 +1206,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(487f, 0f, 516f, 516f).toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 85.5f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectF.toString()
             )
         }
 
@@ -1143,6 +1249,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 0, 86, 1522).toString(),
                 actual = zoomable.contentVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 244f, 516f, 273f).toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 0f, 86.0f, 1522f).toString(),
+                actual = zoomable.contentVisibleRectF.toString()
             )
         }
 
@@ -1178,6 +1292,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = IntRect(0, 254, 86, 1268).toString(),
                 actual = zoomable.contentVisibleRect.toString()
+            )
+            assertEquals(
+                expected = Rect(236f, -128.9f, 279.5f, 645f).toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 253.7f, 86.0f, 1268.3f).toString(),
+                actual = zoomable.contentVisibleRectF.toString()
             )
         }
 
@@ -1215,6 +1337,14 @@ class ZoomableStateTest {
                 expected = IntRect(0, 338, 86, 1353).toString(),
                 actual = zoomable.contentVisibleRect.toString()
             )
+            assertEquals(
+                expected = Rect(236f, -172f, 279.5f, 602f).toString(),
+                actual = zoomable.contentDisplayRectF.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, 338.2f, 86.0f, 1352.9f).toString(),
+                actual = zoomable.contentVisibleRectF.toString()
+            )
         }
     }
 
@@ -1236,7 +1366,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect.Zero.toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1257,7 +1391,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect.Zero.toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1279,7 +1417,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-1, 0, -1, 0).toString(),    // TODO why -1?, should be 0
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect(-0.5f, 0f, -0.5f, 0f).toString(),    // TODO why -1?, should be 0
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1301,7 +1443,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-1, 0, -1, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect(-0.5f, 0f, -0.5f, 0f).toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1325,7 +1471,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(0, -4308, 0, 4308).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, -4308f, 0f, 4308f).toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1349,7 +1499,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect.Zero.toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect(-0.1f, 0.0f, -0.1f, 0.0f).toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1375,7 +1529,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(0, -1, 0, -1).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect(0f, -0.5f, 0f, -0.5f).toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1401,7 +1559,11 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-130, -258, -130, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect(-129.8f, -257.9f, -129.8f, 0f).toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
 
@@ -1428,7 +1590,11 @@ class ZoomableStateTest {
             assertEquals(expected = true, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect.Zero.toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Rect.Zero.toString(),
+                actual = zoomable.userOffsetBoundsRectF.toString()
             )
         }
     }
@@ -1453,7 +1619,7 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-1, 0, -1, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH),
@@ -1491,7 +1657,7 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.NONE),
@@ -1516,7 +1682,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
-                    val targetOffsetX = zoomable.userOffsetBounds.right + 1f
+                    val targetOffsetX = zoomable.userOffsetBoundsRect.right + 1f
                     val addOffset = Offset(targetOffsetX - zoomable.userTransform.offsetX, 0f)
                     zoomable.offset(
                         targetOffset = zoomable.transform.offset + addOffset, animated = false
@@ -1534,7 +1700,7 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.START, vertical = Edge.NONE),
@@ -1559,7 +1725,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
-                    val targetOffsetX = zoomable.userOffsetBounds.left - 1f
+                    val targetOffsetX = zoomable.userOffsetBoundsRect.left - 1f
                     val addOffset = Offset(targetOffsetX - zoomable.userTransform.offsetX, 0f)
                     zoomable.offset(
                         targetOffset = zoomable.transform.offset + addOffset, animated = false
@@ -1577,7 +1743,7 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.END, vertical = Edge.NONE),
@@ -1602,7 +1768,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
-                    val targetOffsetY = zoomable.userOffsetBounds.bottom + 1f
+                    val targetOffsetY = zoomable.userOffsetBoundsRect.bottom + 1f
                     val addOffset = Offset(0f, targetOffsetY - zoomable.userTransform.offsetY)
                     zoomable.offset(
                         targetOffset = zoomable.transform.offset + addOffset, animated = false
@@ -1620,7 +1786,7 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.START),
@@ -1645,7 +1811,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
-                    val targetOffsetY = zoomable.userOffsetBounds.top - 1f
+                    val targetOffsetY = zoomable.userOffsetBoundsRect.top - 1f
                     val addOffset = Offset(0f, targetOffsetY - zoomable.userTransform.offsetY)
                     zoomable.offset(
                         targetOffset = zoomable.transform.offset + addOffset, animated = false
@@ -1663,7 +1829,7 @@ class ZoomableStateTest {
             assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
             assertEquals(
                 expected = IntRect(-4947, -9804, -4880, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.END),
@@ -1885,6 +2051,56 @@ class ZoomableStateTest {
                 expected = Transform(
                     scale = ScaleFactor(18.0f),
                     offset = Offset(-0.3f, 0.0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // targetScale centroidContentPointF bottom end
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(
+                        targetScale = 20f,
+                        centroidContentPointF = Offset(
+                            x = zoomable.contentSize.width.toFloat(),
+                            y = zoomable.contentSize.height.toFloat()
+                        ),
+                        animated = false,
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(53.09f),
+                    offset = Offset(-13987.0f, -26880.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(18.0f),
+                    offset = Offset(-1032.3f, -26880.0f),
                     rotationOrigin = TransformOrigin(0.08f, 1.47f)
                 ).toString(),
                 actual = zoomable.transform.toString()
@@ -2135,14 +2351,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(53.09f),
-                    offset = Offset(-13470.46f, -13440.0f),
+                    offset = Offset(-13470.23f, -13440.0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(18f),
-                    offset = Offset(-515.77f, -13440.0f),
+                    offset = Offset(-515.53f, -13440.0f),
                     rotationOrigin = TransformOrigin(0.08f, 1.47f)
                 ).toString(),
                 actual = zoomable.transform.toString()
@@ -2256,6 +2472,64 @@ class ZoomableStateTest {
             )
         }
 
+        // switchScale centroidContentPointF
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.switchScale(
+                        animated = false,
+                        centroidContentPointF = Offset(
+                            x = zoomable.contentSize.width.toFloat(),
+                            y = zoomable.contentSize.height.toFloat()
+                        )
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = listOf(0.34f, 6.0f, 18.0f),
+                actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
+                    .map { it.format(2) }
+            )
+            assertEquals(
+                expected = 0.34f,
+                actual = zoomable.getNextStepScale().format(2)
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(17.7f),
+                    offset = Offset(-4318.0f, -8616.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(6.0f),
+                    offset = Offset(0.23f, -8616.0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
         // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
     }
 
@@ -2277,7 +2551,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-1, 0, -1, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2317,7 +2591,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2353,8 +2627,8 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
-                    val targetOffsetX = zoomable.userOffsetBounds.right - 1f
-                    val targetOffsetY = zoomable.userOffsetBounds.bottom - 1f
+                    val targetOffsetX = zoomable.userOffsetBoundsRect.right - 1f
+                    val targetOffsetY = zoomable.userOffsetBoundsRect.bottom - 1f
                     val addOffset = Offset(
                         x = targetOffsetX - zoomable.userTransform.offsetX,
                         y = targetOffsetY - zoomable.userTransform.offsetY
@@ -2373,7 +2647,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2409,8 +2683,8 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
-                    val targetOffsetX = zoomable.userOffsetBounds.right + 1f
-                    val targetOffsetY = zoomable.userOffsetBounds.bottom + 1f
+                    val targetOffsetX = zoomable.userOffsetBoundsRect.right + 1f
+                    val targetOffsetY = zoomable.userOffsetBoundsRect.bottom + 1f
                     val addOffset = Offset(
                         x = targetOffsetX - zoomable.userTransform.offsetX,
                         y = targetOffsetY - zoomable.userTransform.offsetY
@@ -2429,7 +2703,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2465,8 +2739,8 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
-                    val targetOffsetX = zoomable.userOffsetBounds.left + 1f
-                    val targetOffsetY = zoomable.userOffsetBounds.top + 1f
+                    val targetOffsetX = zoomable.userOffsetBoundsRect.left + 1f
+                    val targetOffsetY = zoomable.userOffsetBoundsRect.top + 1f
                     val addOffset = Offset(
                         x = targetOffsetX - zoomable.userTransform.offsetX,
                         y = targetOffsetY - zoomable.userTransform.offsetY
@@ -2485,7 +2759,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2521,8 +2795,8 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
-                    val targetOffsetX = zoomable.userOffsetBounds.left - 1f
-                    val targetOffsetY = zoomable.userOffsetBounds.top - 1f
+                    val targetOffsetX = zoomable.userOffsetBoundsRect.left - 1f
+                    val targetOffsetY = zoomable.userOffsetBoundsRect.top - 1f
                     val addOffset = Offset(
                         x = targetOffsetX - zoomable.userTransform.offsetX,
                         y = targetOffsetY - zoomable.userTransform.offsetY
@@ -2541,7 +2815,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-13987, -26880, -12955, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2584,7 +2858,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2623,7 +2897,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2669,7 +2943,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2715,7 +2989,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2761,7 +3035,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-4128, -3353, 0, -774).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2807,7 +3081,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2853,7 +3127,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2899,7 +3173,7 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2945,7 +3219,411 @@ class ZoomableStateTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-1032.0f, -774.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-1032.0f, -516.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
+    }
+
+    @Test
+    fun testLocate2() {
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, keep scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center,
+                        targetScale = zoomable.transform.scaleX,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.0f),
+                    offset = Offset(0f, 0.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, mediumScale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-516.0f, -515.77f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-516.0f, -257.77f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, out minScale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center,
+                        targetScale = zoomable.minScale - 0.1f,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.0f),
+                    offset = Offset(0f, 0.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, out maxScale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center,
+                        targetScale = zoomable.maxScale + 0.1f,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-4128, -3353, 0, -774).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(9.0f),
+                    offset = Offset(-2064.0f, -2063.3f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(4.22f),
+                    offset = Offset(-2064.0f, -1289.3f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate top start in bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center / 2f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-129.0f, -258.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-129.0f, 0.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate top start out bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center / 2f * -1f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(0.0f, -258.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(0.0f, 0.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate bottom end in bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center * 1.5f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-903.0f, -773.65f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-903.0f, -515.65f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate bottom end out bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().toRect().center * 2.5f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            waitMillis(100)
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -2989,7 +3667,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3025,7 +3703,7 @@ class ZoomableStateTest {
             assertEquals(expected = 90f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3062,7 +3740,7 @@ class ZoomableStateTest {
             assertEquals(expected = 180f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3099,7 +3777,7 @@ class ZoomableStateTest {
             assertEquals(expected = 270f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3136,7 +3814,7 @@ class ZoomableStateTest {
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3149,14 +3827,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(3.0f),
-                    offset = Offset(-516.0f, -515.37f),
+                    offset = Offset(-516.0f, -515.84f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1.41f),
-                    offset = Offset(-516.0f, -257.37f),
+                    offset = Offset(-516.0f, -257.84f),
                     rotationOrigin = TransformOrigin(1.07f, 0.71f)
                 ).toString(),
                 actual = zoomable.transform.toString()
@@ -3180,7 +3858,7 @@ class ZoomableStateTest {
             assertEquals(expected = 90f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-774, -1032, -258, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3194,14 +3872,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(3.0f),
-                    offset = Offset(-516.31f, -516.0f),
+                    offset = Offset(-515.84f, -516.0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1.41f),
-                    offset = Offset(-516.55f, -257.77f),
+                    offset = Offset(-516.08f, -257.77f),
                     rotation = 90f,
                     rotationOrigin = TransformOrigin(1.07f, 0.71f)
                 ).toString(),
@@ -3226,7 +3904,7 @@ class ZoomableStateTest {
             assertEquals(expected = 180f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3240,14 +3918,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(3.0f),
-                    offset = Offset(-516.0f, -516.31f),
+                    offset = Offset(-516.0f, -515.84f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1.41f),
-                    offset = Offset(-516.0f, -258.31f),
+                    offset = Offset(-516.0f, -257.84f),
                     rotation = 180f,
                     rotationOrigin = TransformOrigin(1.07f, 0.71f)
                 ).toString(),
@@ -3272,7 +3950,7 @@ class ZoomableStateTest {
             assertEquals(expected = 270f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(-774, -1032, -258, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3286,14 +3964,14 @@ class ZoomableStateTest {
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(3.0f),
-                    offset = Offset(-515.37f, -516.0f),
+                    offset = Offset(-515.84f, -516.0f),
                 ).toString(),
                 actual = zoomable.userTransform.toString()
             )
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(1.41f),
-                    offset = Offset(-515.61f, -257.77f),
+                    offset = Offset(-516.08f, -257.77f),
                     rotation = 270f,
                     rotationOrigin = TransformOrigin(1.07f, 0.71f)
                 ).toString(),
@@ -3318,7 +3996,7 @@ class ZoomableStateTest {
             assertEquals(expected = 90f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3356,7 +4034,7 @@ class ZoomableStateTest {
             assertEquals(expected = 180f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3394,7 +4072,7 @@ class ZoomableStateTest {
             assertEquals(expected = 270f, actual = zoomable.transform.rotation)
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
-                actual = zoomable.userOffsetBounds.toString()
+                actual = zoomable.userOffsetBoundsRect.toString()
             )
             assertEquals(
                 expected = Transform(
@@ -3445,6 +4123,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
         }
 
         runComposeUiTest {
@@ -3473,6 +4161,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -3504,6 +4202,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -3536,6 +4244,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -3572,6 +4290,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(21.5, 380.5), Offset(43.0, 761.0), Offset(64.5, 1141.5), Offset(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
         }
 
         // alignment
@@ -3604,6 +4332,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -3642,6 +4380,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
+            assertEquals(
+                expected = "Offset(0.0, 1522.0), Offset(19.9, 1141.5), Offset(41.3, 761.0), Offset(62.7, 380.5), Offset(86.0, 0.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
         }
 
         // scale
@@ -3676,6 +4424,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(20.2, 380.5), Offset(41.3, 761.0), Offset(62.4, 1141.5), Offset(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }
@@ -3713,6 +4471,16 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPoint(contentDisplayCenter),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add),
                     zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+            assertEquals(
+                expected = "Offset(0.0, 0.0), Offset(20.2, 380.5), Offset(41.3, 761.0), Offset(62.4, 1141.5), Offset(86.0, 1522.0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
         }

@@ -33,6 +33,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
@@ -358,7 +359,7 @@ class SubsamplingCore(
     }
 
     private fun refreshTiles(
-        contentVisibleRect: IntRectCompat = zoomableCore.contentVisibleRect,
+        contentVisibleRect: IntRectCompat = zoomableCore.contentVisibleRect.round(),
         scale: Float = zoomableCore.transform.scaleX,
         rotation: Int = zoomableCore.transform.rotation.roundToInt(),
         @ContinuousTransformType continuousTransformType: Int = zoomableCore.continuousTransformType,

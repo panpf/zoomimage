@@ -16,13 +16,13 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import kotlinx.coroutines.flow.Flow
 
 interface ZoomableBridge {
-    val contentVisibleRect: IntRectCompat
+    val contentVisibleRect: RectCompat
     val transform: TransformCompat
     val continuousTransformType: Int
     val transformFlow: Flow<TransformCompat>

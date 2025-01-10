@@ -207,10 +207,10 @@ open class ScaleKeyHandler(
         add: Float
     ) {
         val newScale = zoomableState.transform.scaleX + add
-        val centroidContentPoint = zoomableState.contentVisibleRect.center
+        val centroidContentPoint = zoomableState.contentVisibleRectF.center
         zoomableState.scale(
             targetScale = newScale,
-            centroidContentPoint = centroidContentPoint,
+            centroidContentPointF = centroidContentPoint,
             animated = animationSpec != null,
             animationSpec = animationSpec
         )

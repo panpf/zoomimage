@@ -36,7 +36,7 @@ import com.github.panpf.sketch.util.Size
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.subsampling.tileColor
-import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
 import kotlinx.coroutines.CoroutineScope
@@ -107,7 +107,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         }
 
         val contentVisibleRect =
-            zoomView.zoomable.contentVisibleRectState.value.takeIf { !it.isEmpty } ?: return
+            zoomView.zoomable.contentVisibleRectFState.value.takeIf { !it.isEmpty } ?: return
         val mapVisibleRect = mapVisibleRect.apply {
             val widthScaled = contentSize.width / viewWidth.toFloat()
             val heightScaled = contentSize.height / viewHeight.toFloat()
@@ -215,12 +215,12 @@ class ZoomImageMinimapView @JvmOverloads constructor(
 
         val widthScale = drawable.intrinsicWidth.toFloat() / viewWidth
         val heightScale = drawable.intrinsicHeight.toFloat() / viewHeight
-        val realX = (x * widthScale).roundToInt()
-        val realY = (y * heightScale).roundToInt()
+        val realX = x * widthScale
+        val realY = y * heightScale
 
         coroutineScope.launch {
             zoomView.zoomable.locate(
-                contentPoint = IntOffsetCompat(x = realX, y = realY),
+                contentPoint = OffsetCompat(x = realX, y = realY),
                 targetScale = zoomView.zoomable.transformState.value.scaleX
                     .coerceAtLeast(zoomView.zoomable.mediumScaleState.value),
                 animated = true

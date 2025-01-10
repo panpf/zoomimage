@@ -431,7 +431,7 @@ fun calculateRestoreContentVisibleCenterUserTransform(
     rotation: Int,
     newBaseTransform: TransformCompat,
     lastTransform: TransformCompat,
-    lastContentVisibleCenter: IntOffsetCompat,
+    lastContentVisibleCenter: OffsetCompat,
 ): TransformCompat {
     val contentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
@@ -442,11 +442,11 @@ fun calculateRestoreContentVisibleCenterUserTransform(
     )
     val rotatedContentSize = contentSize.rotate(rotation)
     val rotatedLastContentVisibleCenter =
-        lastContentVisibleCenter.rotateInSpace(contentSize, rotation)
+        lastContentVisibleCenter.rotateInSpace(contentSize.toSize(), rotation)
     val baseScaledRotatedContentSize = rotatedContentSize.toSize() * newBaseTransform.scale
     val rotatedCenterProportion = ScaleFactorCompat(
-        scaleX = rotatedLastContentVisibleCenter.x.toFloat() / rotatedContentSize.width,
-        scaleY = rotatedLastContentVisibleCenter.y.toFloat() / rotatedContentSize.height,
+        scaleX = rotatedLastContentVisibleCenter.x / rotatedContentSize.width,
+        scaleY = rotatedLastContentVisibleCenter.y / rotatedContentSize.height,
     )
 
     val sizeCompat = baseScaledRotatedContentSize * rotatedCenterProportion

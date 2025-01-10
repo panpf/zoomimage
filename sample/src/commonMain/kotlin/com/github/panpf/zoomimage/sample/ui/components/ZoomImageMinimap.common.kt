@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
@@ -23,12 +25,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toOffset
-import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.util.toCompat
@@ -90,7 +90,7 @@ fun ZoomImageMinimap(
                         )
                     }
 
-                    val contentVisibleRect = zoomableState.contentVisibleRect
+                    val contentVisibleRect = zoomableState.contentVisibleRectF
                     if (contentSize.isNotEmpty() && viewSize.isNotEmpty()) {
                         drawVisibleRect(
                             contentVisibleRect = contentVisibleRect,
@@ -109,9 +109,9 @@ fun ZoomImageMinimap(
                             if (!imageNodeSize.isEmpty()) {
                                 coroutineScope.launch {
                                     zoomableState.locate(
-                                        contentPoint = IntOffset(
-                                            x = ((it.x / imageNodeSize.width) * contentSize.width).roundToInt(),
-                                            y = ((it.y / imageNodeSize.height) * contentSize.height).roundToInt(),
+                                        contentPoint = Offset(
+                                            x = ((it.x / imageNodeSize.width) * contentSize.width),
+                                            y = ((it.y / imageNodeSize.height) * contentSize.height),
                                         ),
                                         targetScale = zoomableState.transform.scaleX
                                             .coerceAtLeast(zoomableState.mediumScale),
@@ -186,7 +186,7 @@ private fun ContentDrawScope.drawTilesBounds(
 }
 
 private fun ContentDrawScope.drawVisibleRect(
-    contentVisibleRect: IntRect,
+    contentVisibleRect: Rect,
     contentSize: IntSize,
     viewSize: IntSize,
     strokeWidth: Float,
@@ -195,7 +195,7 @@ private fun ContentDrawScope.drawVisibleRect(
         scaleX = viewSize.width / contentSize.width.toFloat(),
         scaleY = viewSize.height / contentSize.height.toFloat()
     )
-    val drawVisibleRect = contentVisibleRect.times(drawScaleWithContent).toRect()
+    val drawVisibleRect = contentVisibleRect.times(drawScaleWithContent)
     drawRect(
         color = Color.Magenta,
         topLeft = drawVisibleRect.topLeft,

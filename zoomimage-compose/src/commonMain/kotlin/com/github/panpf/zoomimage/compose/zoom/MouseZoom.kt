@@ -24,7 +24,6 @@ import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.unit.IntOffset
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
 
@@ -82,7 +81,7 @@ internal class MouseZoomNode(
                         zoomable.scale(
                             targetScale = newScale,
                             animated = true,
-                            centroidContentPoint = contentPosition
+                            centroidContentPointF = contentPosition
                         )
                     }
                 }
@@ -111,7 +110,7 @@ internal class MouseZoomNode(
     /**
      * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testContentPoint
      */
-    internal fun contentPoint(pointerPosition: Offset): IntOffset {
-        return zoomable.touchPointToContentPoint(pointerPosition)
+    internal fun contentPoint(pointerPosition: Offset): Offset {
+        return zoomable.touchPointToContentPointF(pointerPosition)
     }
 }

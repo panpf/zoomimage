@@ -25,6 +25,7 @@ import android.view.animation.DecelerateInterpolator
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
+import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlin.math.roundToInt
@@ -78,7 +79,7 @@ internal class ScrollBarHelper(
         val containerSize =
             zoomableEngine.containerSizeState.value.takeIf { !it.isEmpty() } ?: return
         val contentSize = zoomableEngine.contentSizeState.value.takeIf { !it.isEmpty() } ?: return
-        val contentVisibleRect = zoomableEngine.contentVisibleRectState.value
+        val contentVisibleRect = zoomableEngine.contentVisibleRectFState.value.round()
         val rotation = zoomableEngine.transformState.value.rotation.roundToInt()
 
         val rotatedContentVisibleRect = contentVisibleRect.rotateInSpace(contentSize, rotation)

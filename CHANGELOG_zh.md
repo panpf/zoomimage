@@ -7,6 +7,10 @@
 zoom:
 
 * improve: 现在 ZoomableState 和 ZoomableEngine 都是基于 ZoomableCore 的包装器
+* new: ZoomableState 和 ZoomableEngine 新增
+  contentBaseDisplayRectF、contentBaseVisibleRectF、contentDisplayRectF、contentVisibleRectF、userOffsetBoundsRectF
+  属性，scale() 和 switchScale() 方法增加 centroidContentPointF 参数，增加 locate(Offset)
+  、touchPointToContentPointF 方法
 
 subsampling:
 

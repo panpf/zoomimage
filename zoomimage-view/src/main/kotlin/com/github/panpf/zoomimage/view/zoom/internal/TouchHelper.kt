@@ -91,9 +91,12 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                     zoomable.checkSupportGestureType(GestureType.DOUBLE_TAP_SCALE)
                 if (supportDoubleTapScale && !oneFingerScaleExecuted && !longPressExecuted) {
                     val touchPoint = OffsetCompat(x = e.x, y = e.y)
-                    val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
+                    val centroidContentPoint = zoomable.touchPointToContentPointF(touchPoint)
                     coroutineScope.launch {
-                        zoomable.switchScale(centroidContentPoint, animated = true)
+                        zoomable.switchScale(
+                            centroidContentPointF = centroidContentPoint,
+                            animated = true
+                        )
                     }
                 }
                 true

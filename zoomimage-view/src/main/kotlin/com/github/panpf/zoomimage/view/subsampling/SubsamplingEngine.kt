@@ -31,6 +31,7 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlinx.coroutines.CoroutineScope
@@ -55,8 +56,8 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         logger = zoomableEngine.logger,
         tileImageConvertor = null,
         zoomableCore = object : ZoomableBridge {
-            override val contentVisibleRect: IntRectCompat
-                get() = zoomableEngine.contentVisibleRectState.value
+            override val contentVisibleRect: RectCompat
+                get() = zoomableEngine.contentVisibleRectFState.value
 
             override val transform: TransformCompat
                 get() = zoomableEngine.transformState.value

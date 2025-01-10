@@ -7,6 +7,10 @@ Translations: [简体中文](CHANGELOG_zh.md)
 zoom:
 
 * improve: Now ZoomableState and ZoomableEngine are both wrappers based on ZoomableCore
+* new: ZoomableState and ZoomableEngine add contentBaseDisplayRectF, contentBaseVisibleRectF,
+  contentDisplayRectF, contentVisibleRectF, userOffsetBoundsRectF attributes, scale() and
+  switchScale() methods add centroidContentPointF parameters, and add locate(Offset) and
+  touchPointToContentPointF methods.
 
 subsampling:
 
