@@ -747,15 +747,15 @@ class ZoomableCore constructor(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
         )
-        logger.d {
-            "$module. fling. start. " +
-                    "start=${startUserOffset.toShortString()}, " +
-                    "bounds=${userOffsetBounds.toShortString()}, " +
-                    "velocity=${velocity.toShortString()}"
-        }
 
         setContinuousTransformType(ContinuousTransformType.FLING)
         try {
+            logger.d {
+                "$module. fling. start. " +
+                        "offset=${startUserOffset.toShortString()}, " +
+                        "bounds=${userOffsetBounds.toShortString()}, " +
+                        "velocity=${velocity.toShortString()}"
+            }
             animationAdapter.startFlingAnimation(
                 startUserOffset = startUserOffset,
                 userOffsetBounds = userOffsetBounds,
@@ -771,7 +771,7 @@ class ZoomableCore constructor(
                     if (continue1) {
                         val newUserTransform = this@ZoomableCore.userTransform
                             .copy(offset = limitedTargetUserOffset)
-                        logger.d {
+                        logger.v {
                             "$module. fling. running. " +
                                     "velocity=$velocity. " +
                                     "startUserOffset=${startUserOffset.toShortString()}, " +
@@ -785,6 +785,12 @@ class ZoomableCore constructor(
                 onEnd = {
                 }
             )
+            logger.d {
+                "$module. fling. end. " +
+                        "offset=${userTransform.offset.toShortString()}, " +
+                        "bounds=${userOffsetBounds.toShortString()}, " +
+                        "velocity=${velocity.toShortString()}"
+            }
         } finally {
             setContinuousTransformType(0)
         }
@@ -843,6 +849,9 @@ class ZoomableCore constructor(
             setContinuousTransformType(newContinuousTransformType)
         }
         try {
+            logger.d {
+                "$module. $caller. animated started. transform=${transform.toShortString()}, userTransform=${userTransform.toShortString()}"
+            }
             animationAdapter.startAnimation(
                 animationSpec = finalAnimationSpec,
                 onProgress = { value ->
@@ -851,14 +860,17 @@ class ZoomableCore constructor(
                         stop = targetUserTransform,
                         fraction = value
                     )
-                    logger.d {
-                        "$module. $caller. animated running. fraction=$value, transform=${userTransform.toShortString()}"
+                    logger.v {
+                        "$module. $caller. animated running. fraction=$value, userTransform=${userTransform.toShortString()}"
                     }
                     updateUserTransform(userTransform)
                 },
                 onEnd = {
                 }
             )
+            logger.d {
+                "$module. $caller. animated end. transform=${transform.toShortString()}, userTransform=${userTransform.toShortString()}"
+            }
         } finally {
             if (newContinuousTransformType != null) {
                 setContinuousTransformType(0)

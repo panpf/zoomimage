@@ -176,10 +176,10 @@ class SubsamplingCore(
             newPreferredTileSize = newPreferredTileSize
         )
         logger.d {
-            "$module. reset preferredTileSize. " +
-                    "oldPreferredTileSize=$oldPreferredTileSize, " +
-                    "newPreferredTileSize=$newPreferredTileSize, " +
-                    "checkPassed=$checkPassed. " +
+            "$module. setContainerSize. preferredTileSize ${if (checkPassed) "changed" else "keep"}. " +
+                    "oldPreferredTileSize=${oldPreferredTileSize.toShortString()}, " +
+                    "newPreferredTileSize=${newPreferredTileSize.toShortString()}, " +
+                    "containerSize=${containerSize.toShortString()}. " +
                     "'${subsamplingImage?.key}'"
         }
         if (checkPassed) {

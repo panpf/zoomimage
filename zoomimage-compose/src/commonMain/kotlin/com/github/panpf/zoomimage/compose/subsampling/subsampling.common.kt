@@ -140,7 +140,7 @@ internal class SubsamplingDrawTilesNode(
             }
         }
 
-        subsampling.logger.d {
+        subsampling.logger.v {
             "SubsamplingState. drawTiles. tiles=${foregroundTiles.size}, " +
                     "insideLoadCount=${insideLoadCount}, " +
                     "outsideLoadCount=${outsideLoadCount}, " +

@@ -383,7 +383,7 @@ class TileManager(
     @MainThread
     private fun loadTile(tile: Tile): Boolean {
         if (tile.tileImage != null) {
-            logger.d {
+            logger.v {
                 "TileManager. loadTile. skipped, loaded. $tile. '${subsamplingImage.key}'"
             }
             return false
@@ -391,13 +391,13 @@ class TileManager(
 
         val job = tile.loadJob
         if (job?.isActive == true) {
-            logger.d {
+            logger.v {
                 "TileManager. loadTile. skipped, loading. $tile. '${subsamplingImage.key}'"
             }
             return false
         }
 
-        logger.d("TileManager. loadTile. started. $tile. '${subsamplingImage.key}'")
+        logger.v("TileManager. loadTile. started. $tile. '${subsamplingImage.key}'")
         tile.loadJob = coroutineScope.async {
             val tileKey =
                 "${subsamplingImage.imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
@@ -407,7 +407,7 @@ class TileManager(
                     tileImageConvertor?.convert(cachedValue) ?: cachedValue
                 tile.setTileImage(convertedTileImage, allowAnimate = true)
                 tile.state = TileState.STATE_LOADED
-                logger.d { "TileManager. loadTile. successful, fromMemory. $tile. '${subsamplingImage.key}'" }
+                logger.v { "TileManager. loadTile. successful, fromMemory. $tile. '${subsamplingImage.key}'" }
                 updateTileSnapshotList("loadTile:fromMemory")
             } else {
                 tile.cleanTileImage()
@@ -455,7 +455,7 @@ class TileManager(
                             tileImageConvertor?.convert(cacheTileImage) ?: cacheTileImage
                         tile.setTileImage(convertedTileImage, allowAnimate = true)
                         tile.state = TileState.STATE_LOADED
-                        logger.d { "TileManager. loadTile. successful. $tile. '${subsamplingImage.key}'" }
+                        logger.v { "TileManager. loadTile. successful. $tile. '${subsamplingImage.key}'" }
                         updateTileSnapshotList("loadTile:successful")
                     }
 
@@ -491,7 +491,7 @@ class TileManager(
 
         val tileImage = tile.tileImage
         if (tileImage != null) {
-            logger.d { "TileManager. freeTile. $tile. '${subsamplingImage.key}'" }
+            logger.v { "TileManager. freeTile. $tile. '${subsamplingImage.key}'" }
             tile.cleanTileImage()
         }
 
@@ -520,11 +520,15 @@ class TileManager(
 
     private fun updateTileSnapshotList(caller: String) {
         if (updateTileSnapshotListJob?.isActive == true) {
-            logger.d { "TileManager. updateTileSnapshotList:$caller. skipped, notifyTileSnapshotListJob is running. '${subsamplingImage.key}'" }
+            logger.v {
+                "TileManager. updateTileSnapshotList:$caller. " +
+                        "skipped, notifyTileSnapshotListJob is running. " +
+                        "'${subsamplingImage.key}'"
+            }
             return
         }
 
-        logger.d { "TileManager. updateTileSnapshotList:$caller. launched. '${subsamplingImage.key}'" }
+        logger.v { "TileManager. updateTileSnapshotList:$caller. launched. '${subsamplingImage.key}'" }
         updateTileSnapshotListJob = coroutineScope.launch {
             var running = true
             while (running && isActive) {
@@ -602,7 +606,7 @@ class TileManager(
                     }
                 }
 
-                logger.d {
+                logger.v {
                     "TileManager. updateTileSnapshotList. " +
                             "sampleSize=$sampleSize, " +
                             "foregroundTileCount=$foregroundTileCount, " +
@@ -625,7 +629,11 @@ class TileManager(
                 }
             }
 
-            logger.d { "TileManager. updateTileSnapshotList:$caller. end, running=$running, active=$isActive. '${subsamplingImage.key}'" }
+            logger.v {
+                "TileManager. updateTileSnapshotList:$caller. end. " +
+                        "running=$running, active=$isActive. " +
+                        "'${subsamplingImage.key}'"
+            }
         }
     }
 
