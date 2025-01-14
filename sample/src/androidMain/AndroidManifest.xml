@@ -27,6 +27,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.github.panpf.zoomimage.sample.ui.ComposeMainActivity" />
+        <activity android:name="com.github.panpf.zoomimage.sample.ui.ViewMainActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

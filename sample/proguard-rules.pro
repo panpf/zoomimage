@@ -69,6 +69,8 @@
 -keep class * extends com.github.panpf.zoomimage.sample.ui.base.BaseBindingDialogFragment
 -keep class com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 -keep class * extends com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+-keep class com.github.panpf.zoomimage.sample.ui.base.BaseBindingPermissionFragment
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.BaseBindingPermissionFragment
 -keep class com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 -keep class * extends com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 -keep class com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory

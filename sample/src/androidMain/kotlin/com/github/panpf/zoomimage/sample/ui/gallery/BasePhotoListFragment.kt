@@ -27,7 +27,7 @@ import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoListBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
-import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.BaseBindingPermissionFragment
 import com.github.panpf.zoomimage.sample.ui.common.list.LoadStateItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.list.MyLoadStateAdapter
 import com.github.panpf.zoomimage.sample.ui.examples.BasePhotoGridItemFactory
@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-abstract class BasePhotoListFragment : BaseBindingFragment<FragmentPhotoListBinding>() {
+abstract class BasePhotoListFragment : BaseBindingPermissionFragment<FragmentPhotoListBinding>() {
 
     abstract val animatedPlaceholder: Boolean
     abstract val photoPagingFlow: Flow<PagingData<Photo>>

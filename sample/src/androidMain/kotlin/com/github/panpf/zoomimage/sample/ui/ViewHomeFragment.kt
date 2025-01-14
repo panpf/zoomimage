@@ -24,7 +24,6 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.base.PermissionContainerFragment
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListFragment
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListFragment
 import com.github.panpf.zoomimage.sample.ui.test.TestHomeFragment
@@ -33,11 +32,7 @@ class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
 
     private val fragments = listOf(
         "Pexels" to PexelsPhotoListFragment(),
-        "Local" to PermissionContainerFragment.newInstance(
-            fragment = LocalPhotoListFragment(),
-            permission = android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            permissionRequired = false
-        ),
+        "Local" to LocalPhotoListFragment(),
         "Test" to TestHomeFragment(),
     )
 
