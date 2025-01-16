@@ -38,6 +38,7 @@ import com.github.panpf.zoomimage.sample.ui.components.PageState.Loading
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.util.capturable
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -107,7 +108,7 @@ class ImageSourceTestScreen : BaseScreen() {
             photoPaletteState = photoPaletteState,
             createZoomState = { rememberZoomState() },
             pageSelected = pageSelected,
-        ) { contentScale, alignment, zoomState, scrollBar, onLongClick, onTapClick ->
+        ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick, onTapClick ->
             val context = LocalPlatformContext.current
             val sketch = SingletonSketch.get(context)
             LaunchedEffect(Unit) {
@@ -153,15 +154,13 @@ class ImageSourceTestScreen : BaseScreen() {
                     contentDescription = "view image",
                     contentScale = contentScale,
                     alignment = alignment,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .capturable(capturableState),
                     zoomState = zoomState,
                     scrollBar = scrollBar,
-                    onLongPress = {
-                        onLongClick.invoke()
-                    },
-                    onTap = {
-                        onTapClick.invoke(it)
-                    }
+                    onLongPress = { onLongClick.invoke() },
+                    onTap = { onTapClick.invoke(it) }
                 )
             }
 

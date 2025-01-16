@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.content.res.Resources.Theme
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -29,7 +30,12 @@ import android.widget.ImageView.ScaleType
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.toAndroidRect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.core.content.res.ResourcesCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -53,6 +59,31 @@ actual fun windowSize(): IntSize {
     return context.resources.displayMetrics.let { displayMetrics ->
         IntSize(displayMetrics.widthPixels, displayMetrics.heightPixels)
     }
+}
+
+actual fun ImageBitmap.crop(rect: IntRect): ImageBitmap {
+    return this.asAndroidBitmap().crop(rect.toAndroidRect()).asImageBitmap()
+}
+
+fun Bitmap.crop(rect: Rect): Bitmap {
+    require(!rect.isEmpty) { "Rect must not be empty. rect=$rect" }
+    require(
+        rect.left >= 0
+                && rect.top >= 0
+                && rect.right <= this@crop.width
+                && rect.bottom <= this@crop.height
+    ) {
+        "Rect must be within the bounds of the image. imageSize=${this@crop.width}x${this@crop.height}, rect=$rect"
+    }
+    val androidBitmap = this
+    val croppedBitmap = Bitmap.createBitmap(
+        /* source = */ androidBitmap,
+        /* x = */ rect.left,
+        /* y = */ rect.top,
+        /* width = */ rect.width(),
+        /* height = */ rect.height()
+    )
+    return croppedBitmap
 }
 
 fun Resources.getDrawableCompat(@DrawableRes id: Int, theme: Theme? = null): Drawable {
@@ -123,6 +154,10 @@ fun Rect(left: Int, top: Int, right: Int, bottom: Int): Rect {
 
 internal fun Rect.toIntRectCompat(): IntRectCompat {
     return IntRectCompat(left, top, right, bottom)
+}
+
+internal fun IntRectCompat.toAndroidRect(): Rect {
+    return Rect(left, top, right, bottom)
 }
 
 
@@ -292,4 +327,15 @@ fun computeImageViewSize(context: Context): IntSizeCompat {
     val width = (displayMetrics.widthPixels * 0.7f).roundToInt()
     val height = (displayMetrics.widthPixels * 0.7f * 0.7f).roundToInt()
     return IntSizeCompat(width, height)
+}
+
+fun android.view.View.capture(): Bitmap {
+    val bitmap = Bitmap.createBitmap(
+        this.width,
+        this.height,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = android.graphics.Canvas(bitmap)
+    this.draw(canvas)
+    return bitmap
 }

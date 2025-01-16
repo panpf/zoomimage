@@ -70,7 +70,7 @@
 
             <LinearLayout
                 android:id="@+id/extraLayout"
-                android:layout_width="160dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end|right"
                 android:layout_marginEnd="20dp"
@@ -148,6 +148,14 @@
                     app:tint="@android:color/white" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/capture"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_photo_camera"
+                    app:tint="@android:color/white" />
+
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/info"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -169,5 +177,6 @@
     <com.github.panpf.zoomimage.sample.ui.components.StateView
         android:id="@+id/stateView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:visibility="gone" />
 </FrameLayout>

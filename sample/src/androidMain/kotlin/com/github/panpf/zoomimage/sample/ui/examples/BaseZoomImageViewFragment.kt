@@ -26,6 +26,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.panpf.tools4a.toast.ktx.showShortToast
@@ -36,15 +37,20 @@ import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.components.CaptureDialogFragment
 import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.components.buildZoomImageViewInfos
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
+import com.github.panpf.zoomimage.sample.ui.util.capture
+import com.github.panpf.zoomimage.sample.ui.util.crop
 import com.github.panpf.zoomimage.sample.ui.util.parentViewModels
+import com.github.panpf.zoomimage.sample.ui.util.toAndroidRect
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
@@ -63,6 +69,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
 
     private var zoomView: ZOOM_VIEW? = null
     private val photoPaletteViewModel by parentViewModels<PhotoPaletteViewModel>()
+    private val captureViewModel by activityViewModels<CaptureViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -265,6 +272,15 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 }
         }
 
+        binding.capture.setOnClickListener {
+            val bitmap = zoomImageView.capture()
+            val cropRect = zoomImageView.zoomable.contentDisplayRectState.value
+                .limitTo(zoomImageView.zoomable.containerSizeState.value)
+            val croppedBitmap = bitmap.crop(cropRect.toAndroidRect())
+            captureViewModel.capturedBitmap = croppedBitmap
+            CaptureDialogFragment().show(childFragmentManager, null)
+        }
+
         binding.info.setOnClickListener {
             InfoItemsDialogFragment().apply {
                 val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
@@ -440,5 +456,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 ${rotation.roundToInt()}
             """.trimIndent()
             }
+    }
+
+    override fun onDestroy() {
+        captureViewModel.capturedBitmap = null
+        super.onDestroy()
     }
 }

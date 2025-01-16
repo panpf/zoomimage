@@ -6,6 +6,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -44,3 +45,5 @@ fun Modifier.onPointerEvent(
         }
     }
 }
+
+expect fun ImageBitmap.crop(rect: androidx.compose.ui.unit.IntRect): ImageBitmap

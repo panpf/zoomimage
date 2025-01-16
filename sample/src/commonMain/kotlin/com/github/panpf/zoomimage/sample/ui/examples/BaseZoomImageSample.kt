@@ -3,7 +3,9 @@ package com.github.panpf.zoomimage.sample.ui.examples
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -24,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -44,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -66,6 +71,7 @@ import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_info
 import com.github.panpf.zoomimage.sample.resources.ic_more_vert
+import com.github.panpf.zoomimage.sample.resources.ic_photo_camera
 import com.github.panpf.zoomimage.sample.resources.ic_rotate_right
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_in
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_out
@@ -77,6 +83,10 @@ import com.github.panpf.zoomimage.sample.ui.components.rememberMoveKeyboardState
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.gallery.photoPagerTopBarHeight
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.util.CapturableState
+import com.github.panpf.zoomimage.sample.ui.util.crop
+import com.github.panpf.zoomimage.sample.ui.util.limitTo
+import com.github.panpf.zoomimage.sample.ui.util.rememberCapturableState
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
@@ -96,6 +106,7 @@ fun <T : ZoomState> BaseZoomImageSample(
         contentScale: ContentScale,
         alignment: Alignment,
         zoomState: T,
+        capturableState: CapturableState,
         scrollBar: ScrollBarSpec?,
         onLongClick: () -> Unit,
         onTapClick: (Offset) -> Unit,
@@ -116,7 +127,6 @@ fun <T : ZoomState> BaseZoomImageSample(
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
     val containerWhitespaceMultiple by settingsService.containerWhitespaceMultiple.collectAsState()
     val containerWhitespace by settingsService.containerWhitespace.collectAsState()
-//    val scalesCalculator by settingsService.scalesCalculator.collectAsState()
     val scalesCalculatorName by settingsService.scalesCalculatorName.collectAsState()
     val scalesMultiple by settingsService.scalesMultiple.collectAsState()
     val scalesCalculator = remember(scalesCalculatorName, scalesMultiple) {
@@ -209,11 +219,13 @@ fun <T : ZoomState> BaseZoomImageSample(
     val infoDialogState = rememberMyDialogState()
 
     val coroutineScope = rememberCoroutineScope()
+    val capturableState = rememberCapturableState()
     Box(modifier = Modifier.fillMaxSize()) {
         content(
             contentScale.toPlatform(),
             alignment.toPlatform(),
             zoomState,
+            capturableState,
             if (scrollBarEnabled) ScrollBarSpec.Default.copy(color = photoPaletteState.value.containerColor) else null,
             { infoDialogState.show() },
             { offset ->
@@ -274,10 +286,10 @@ fun <T : ZoomState> BaseZoomImageSample(
             photo = photo,
             zoomableState = zoomState.zoomable,
             subsamplingState = zoomState.subsampling,
+            capturableState = capturableState,
             infoDialogState = infoDialogState,
             photoPaletteState = photoPaletteState,
         )
-
 
         MyDialog(infoDialogState) {
             ZoomImageInfo(
@@ -293,6 +305,7 @@ fun ZoomImageTool(
     photo: Photo,
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState,
+    capturableState: CapturableState,
     infoDialogState: MyDialogState,
     photoPaletteState: MutableState<PhotoPalette>,
 ) {
@@ -309,7 +322,7 @@ fun ZoomImageTool(
                 .padding(20.dp)
                 .align(Alignment.BottomEnd)
                 .wrapContentHeight()
-                .width(164.dp),
+                .width(205.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val inspectionMode = LocalInspectionMode.current
@@ -411,7 +424,7 @@ fun ZoomImageTool(
                 }
             }
 
-            ButtonPad(infoDialogState, zoomableState, photoPaletteState) {
+            ButtonPad(infoDialogState, zoomableState, capturableState, photoPaletteState) {
                 moreShow = !moreShow
             }
         }
@@ -422,11 +435,14 @@ fun ZoomImageTool(
 private fun ButtonPad(
     infoDialogState: MyDialogState,
     zoomableState: ZoomableState,
+    capturableState: CapturableState,
     photoPaletteState: MutableState<PhotoPalette>,
     onClickMore: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val photoPalette by photoPaletteState
+    val screenshotDialog = rememberMyDialogState(false)
+    var screenshotBitmap by mutableStateOf<ImageBitmap?>(null)
     Row(
         Modifier
             .background(photoPalette.containerColor, RoundedCornerShape(50))
@@ -478,6 +494,25 @@ private fun ButtonPad(
         }
 
         IconButton(
+            onClick = {
+                coroutineScope.launch {
+                    val imageBitmap = capturableState.capture()
+                    val cropRect = zoomableState.contentDisplayRect
+                        .limitTo(zoomableState.containerSize)
+                    screenshotBitmap = imageBitmap.crop(cropRect)
+                    screenshotDialog.show()
+                }
+            },
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_photo_camera),
+                contentDescription = "Capture",
+                tint = photoPalette.contentColor
+            )
+        }
+
+        IconButton(
             onClick = { infoDialogState.showing = !infoDialogState.showing },
             modifier = Modifier.size(40.dp)
         ) {
@@ -497,6 +532,26 @@ private fun ButtonPad(
                 contentDescription = "More",
                 tint = photoPalette.contentColor
             )
+        }
+
+        MyDialog(screenshotDialog) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        screenshotDialog.dismiss()
+                    }
+                    .padding(40.dp)
+            ) {
+                Image(
+                    bitmap = screenshotBitmap!!,
+                    contentDescription = "screenshot",
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f))
+                        .align(Alignment.Center)
+                )
+            }
         }
     }
 }

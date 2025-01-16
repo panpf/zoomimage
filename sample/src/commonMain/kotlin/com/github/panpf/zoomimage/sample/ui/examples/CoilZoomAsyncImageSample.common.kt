@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.util.capturable
 import kotlinx.collections.immutable.toImmutableList
 
 expect fun platformCoilComposeSubsamplingImageGenerator(): List<CoilComposeSubsamplingImageGenerator>?
@@ -42,7 +43,7 @@ fun CoilZoomAsyncImageSample(
             rememberCoilZoomState(subsamplingImageGenerators = extensionsModelToImageSources)
         },
         pageSelected = pageSelected,
-    ) { contentScale, alignment, zoomState, scrollBar, onLongClick, onTapClick ->
+    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick, onTapClick ->
         var pageState by remember { mutableStateOf<PageState?>(null) }
         val context = LocalPlatformContext.current
         val request = remember(key1 = photo) {
@@ -69,15 +70,13 @@ fun CoilZoomAsyncImageSample(
             contentDescription = "view image",
             contentScale = contentScale,
             alignment = alignment,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .capturable(capturableState),
             zoomState = zoomState,
             scrollBar = scrollBar,
-            onLongPress = {
-                onLongClick.invoke()
-            },
-            onTap = {
-                onTapClick.invoke(it)
-            }
+            onLongPress = { onLongClick.invoke() },
+            onTap = { onTapClick.invoke(it) }
         )
 
         PageState(pageState = pageState)

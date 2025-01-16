@@ -19,6 +19,7 @@ import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.util.capturable
 
 expect fun getPlatformSketchZoomAsyncImageSampleImageOptions(): ImageOptions
 
@@ -33,7 +34,7 @@ fun SketchZoomAsyncImageSample(
         photoPaletteState = photoPaletteState,
         createZoomState = { rememberSketchZoomState() },
         pageSelected = pageSelected,
-    ) { contentScale, alignment, zoomState, scrollBar, onLongClick, onTapClick ->
+    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick, onTapClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(
             request = ComposableImageRequest(photo.originalUrl) {
@@ -46,14 +47,13 @@ fun SketchZoomAsyncImageSample(
             alignment = alignment,
             modifier = Modifier
                 .fillMaxSize()
-                .progressIndicator(imageState, rememberSectorProgressPainter()),
+                .progressIndicator(imageState, rememberSectorProgressPainter())
+                .capturable(capturableState),
             state = imageState,
             zoomState = zoomState,
             scrollBar = scrollBar,
             onLongPress = { onLongClick.invoke() },
-            onTap = {
-                onTapClick.invoke(it)
-            }
+            onTap = { onTapClick.invoke(it) }
         )
 
         val pageState by remember {
