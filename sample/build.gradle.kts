@@ -72,6 +72,7 @@ kotlin {
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.kotlinx.collections.immutable)
+            implementation(libs.multiplatformsettings)
             implementation(libs.panpf.sketch4.animated.gif)
             implementation(libs.panpf.sketch4.compose.resources)
             implementation(libs.panpf.sketch4.extensions.compose)
@@ -134,8 +135,6 @@ kotlin {
             }
         }
         nonJsCommonMain.dependencies {
-            implementation(libs.androidx.datastore.core.okio)
-            implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.cashapp.paging.compose.common)
         }
     }

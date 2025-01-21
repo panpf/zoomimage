@@ -17,75 +17,9 @@
 package com.github.panpf.zoomimage.sample.util
 
 import com.github.panpf.sketch.PlatformContext
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.StorageSettings
 
-actual fun stringSettingsStateFlow(
-    context: PlatformContext,
-    key: String,
-    initialize: String,
-): SettingsStateFlow<String> = SettingsStateFlowImpl(initialize)
-
-actual fun booleanSettingsStateFlow(
-    context: PlatformContext,
-    key: String,
-    initialize: Boolean,
-): SettingsStateFlow<Boolean> = SettingsStateFlowImpl(initialize)
-
-actual fun intSettingsStateFlow(
-    context: PlatformContext,
-    key: String,
-    initialize: Int,
-): SettingsStateFlow<Int> = SettingsStateFlowImpl(initialize)
-
-actual fun floatSettingsStateFlow(
-    context: PlatformContext,
-    key: String,
-    initialize: Float,
-): SettingsStateFlow<Float> = SettingsStateFlowImpl(initialize)
-
-actual fun <E : Enum<E>> enumSettingsStateFlow(
-    context: PlatformContext,
-    key: String,
-    initialize: E,
-    convert: (name: String) -> E,
-): SettingsStateFlow<E> = SettingsStateFlowImpl(initialize)
-
-private class SettingsStateFlowImpl<T>(initialize: T) : SettingsStateFlow<T> {
-    private val state = MutableStateFlow(initialize)
-
-    override var value: T
-        get() = state.value
-        set(value) {
-            state.value = value
-        }
-
-    override val replayCache: List<T>
-        get() = state.replayCache
-
-    override val subscriptionCount: StateFlow<Int>
-        get() = state.subscriptionCount
-
-    override suspend fun collect(collector: FlowCollector<T>): Nothing {
-        state.collect(collector)
-    }
-
-    override fun compareAndSet(expect: T, update: T): Boolean {
-        return state.compareAndSet(expect, update)
-    }
-
-    @ExperimentalCoroutinesApi
-    override fun resetReplayCache() {
-        state.resetReplayCache()
-    }
-
-    override fun tryEmit(value: T): Boolean {
-        return state.tryEmit(value)
-    }
-
-    override suspend fun emit(value: T) {
-        state.emit(value)
-    }
+actual fun createSettings(context: PlatformContext): Settings {
+    return StorageSettings()
 }
