@@ -21,7 +21,7 @@ other:
 
 * improve: Improved logs, now more detailed log information such as animation process, Tile loading,
   etc. The log level is adjusted to Verbose
-* depend: Upgrade sketch 4.0.1
+* depend: Upgrade sketch 4.0.2
 
 ## 1.1.0 Stable
 

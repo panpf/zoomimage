@@ -20,7 +20,7 @@ subsampling:
 other:
 
 * improve: 改进日志，现在更详细的日志信息例如动画过程、Tile 加载等日志级别调整为 Verbose
-* depend: 升级 sketch 4.0.1
+* depend: 升级 sketch 4.0.2
 
 ## 1.1.0 Stable
 
