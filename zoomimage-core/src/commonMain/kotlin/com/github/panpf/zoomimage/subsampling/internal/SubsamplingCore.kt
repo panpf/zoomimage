@@ -31,6 +31,7 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.round
@@ -402,7 +403,7 @@ class SubsamplingCore(
             logger.d { "$module. cleanTileDecoder:$caller. '${subsamplingImage?.key}'" }
             @Suppress("OPTthis@SubsamplingCore.IN_USAGE", "OPT_IN_USAGE")
             GlobalScope.launch(ioCoroutineDispatcher()) {
-                tileDecoder.close()
+                tileDecoder.closeQuietly()
             }
             this@SubsamplingCore.tileDecoder = null
             refreshReadyState("cleanTileDecoder:$caller")

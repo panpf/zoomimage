@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+subsampling:
+
+* fix: Catch the close exception. [#75](https://github.com/panpf/zoomimage/issues/75)
+
 ## 1.1.1
 
 zoom:

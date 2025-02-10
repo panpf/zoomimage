@@ -23,6 +23,7 @@ import coil.fetch.SourceResult
 import coil.request.CachePolicy.ENABLED
 import coil.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import okhttp3.internal.closeQuietly
 import okio.Buffer
 import okio.Source
 
@@ -89,8 +90,7 @@ class CoilHttpImageSource(
                 }
             }
             if (openSourceFactory1 != null) {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                fetchResult.source.close()
+                fetchResult.source.closeQuietly()
                 return openSourceFactory1
             }
 

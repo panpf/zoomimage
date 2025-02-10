@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+subsampling:
+
+* fix: 捕获 close 异常。 [#75](https://github.com/panpf/zoomimage/issues/75)
+
 ## 1.1.1
 
 zoom:

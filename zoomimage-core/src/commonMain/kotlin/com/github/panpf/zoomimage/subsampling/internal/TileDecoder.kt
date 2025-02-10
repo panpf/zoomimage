@@ -22,6 +22,7 @@ import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.closeQuietly
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 
@@ -77,7 +78,7 @@ class TileDecoder(
             if (!closed) {
                 decoderPool.add(regionDecoder)
             } else {
-                regionDecoder.close()
+                regionDecoder.closeQuietly()
             }
         }
 
@@ -91,7 +92,7 @@ class TileDecoder(
             this@TileDecoder.closed = true
             logger.d { "TileDecoder. close. $regionDecoder" }
             synchronized(poolSyncLock) {
-                decoderPool.forEach { it.close() }
+                decoderPool.forEach { it.closeQuietly() }
                 decoderPool.clear()
             }
         }

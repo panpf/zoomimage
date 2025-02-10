@@ -44,7 +44,12 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
             response.body() ?: throw IOException("HTTP response body is null. uri='$uri'")
 
         if (!response.isSuccessful) {
-            body.close()
+            try {
+                body.close()
+            } catch (e: RuntimeException) {
+                throw e
+            } catch (_: Exception) {
+            }
             throw IOException("HTTP ${response.code()} ${response.message()}. uri='$uri'")
         }
 
@@ -62,7 +67,12 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
         // Sometimes response content length is zero when requests are being replayed. Haven't found
         // root cause to this but retrying the request seems safe to do so.
         if (loadedFrom == LoadedFrom.DISK && body.contentLength() == 0L) {
-            body.close()
+            try {
+                body.close()
+            } catch (e: RuntimeException) {
+                throw e
+            } catch (_: Exception) {
+            }
             throw IOException("Received response with 0 content-length header. uri='$uri'")
         }
         return body.source().inputStream().source()

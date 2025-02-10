@@ -87,7 +87,12 @@ class CoilHttpImageSource(
                 }
             }
             if (openSourceFactory1 != null) {
-                fetchResult.source.close()
+                try {
+                    fetchResult.source.close()
+                } catch (e: RuntimeException) {
+                    throw e
+                } catch (_: Exception) {
+                }
                 return openSourceFactory1
             }
 

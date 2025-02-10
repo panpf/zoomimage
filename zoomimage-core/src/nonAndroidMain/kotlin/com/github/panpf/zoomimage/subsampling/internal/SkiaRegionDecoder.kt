@@ -96,7 +96,12 @@ class SkiaRegionDecoder(
     }
 
     override fun close() {
-        image.close()
+        try {
+            image.close()
+        } catch (e: RuntimeException) {
+            throw e
+        } catch (_: Exception) {
+        }
     }
 
     override fun copy(): RegionDecoder {

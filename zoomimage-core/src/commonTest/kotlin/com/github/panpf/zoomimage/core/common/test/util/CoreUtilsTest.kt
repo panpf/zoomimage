@@ -2,11 +2,10 @@ package com.github.panpf.zoomimage.core.common.test.util
 
 import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.current
+import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.compareVersions
 import com.github.panpf.zoomimage.util.format
-import com.github.panpf.zoomimage.util.quietClose
 import com.github.panpf.zoomimage.util.toHexString
-import okio.Closeable
 import okio.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,7 +41,7 @@ class CoreUtilsTest {
     }
 
     @Test
-    fun testQuietClose() {
+    fun testCloseQuietly() {
         if (Platform.current == Platform.iOS) {
             // TODO test: Will get stuck forever in iOS test environment.
             //  There are other places where this problem also occurs, search for it
@@ -55,7 +54,15 @@ class CoreUtilsTest {
             myCloseable.close()
         }
 
-        myCloseable.quietClose()
+        myCloseable.closeQuietly()
+
+        val myAutoCloseable = MyAutoCloseable()
+
+        assertFailsWith(IOException::class) {
+            myAutoCloseable.close()
+        }
+
+        myAutoCloseable.closeQuietly()
     }
 
     @Test
@@ -149,7 +156,14 @@ class CoreUtilsTest {
         assertEquals(1, compareVersions("0.8.1-SNAPSHOT.1", "0.8.0"))
     }
 
-    private class MyCloseable : Closeable {
+    private class MyCloseable : okio.Closeable {
+
+        override fun close() {
+            throw IOException("Closed")
+        }
+    }
+
+    private class MyAutoCloseable : AutoCloseable {
 
         override fun close() {
             throw IOException("Closed")

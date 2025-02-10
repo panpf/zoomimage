@@ -27,6 +27,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.closeQuietly
 import okio.buffer
 import java.io.BufferedInputStream
 
@@ -73,7 +74,7 @@ class AndroidRegionDecoder(
             }
         }.apply {
             if (isFailure) {
-                inputStream.close()
+                inputStream.closeQuietly()
                 throw exceptionOrNull()!!
             }
         }.getOrThrow()
@@ -99,7 +100,7 @@ class AndroidRegionDecoder(
 
     override fun close() {
         bitmapRegionDecoder?.recycle()
-        inputStream?.close()
+        inputStream?.closeQuietly()
     }
 
     override fun copy(): RegionDecoder {

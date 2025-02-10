@@ -31,9 +31,9 @@ internal expect fun defaultFileSystem(): FileSystem
  */
 internal fun FileSystem.createFile(file: Path, mustCreate: Boolean = false) {
     if (mustCreate) {
-        sink(file, mustCreate = true).quietClose()
+        sink(file, mustCreate = true).closeQuietly()
     } else if (!exists(file)) {
-        sink(file).quietClose()
+        sink(file).closeQuietly()
     }
 }
 

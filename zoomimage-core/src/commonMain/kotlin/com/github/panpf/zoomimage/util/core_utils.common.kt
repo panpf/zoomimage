@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.util
 
-import okio.Closeable
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.round
@@ -47,13 +46,28 @@ internal fun Any.toHexString(): String = this.hashCode().toString(16)
 /**
  * Close the Closeable quietly
  *
- * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testQuietClose
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testCloseQuietly
  */
-internal fun Closeable.quietClose() {
+internal fun okio.Closeable.closeQuietly() {
     try {
         close()
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } catch (e: RuntimeException) {
+        throw e
+    } catch (_: Exception) {
+    }
+}
+
+/**
+ * Close the Closeable quietly
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testCloseQuietly
+ */
+internal fun AutoCloseable.closeQuietly() {
+    try {
+        close()
+    } catch (e: RuntimeException) {
+        throw e
+    } catch (_: Exception) {
     }
 }
 

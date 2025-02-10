@@ -24,6 +24,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
@@ -70,7 +71,7 @@ suspend fun createTileDecoder(
 
                 regionDecoder.prepare()
             } catch (e: Exception) {
-                regionDecoder.close()
+                regionDecoder.closeQuietly()
                 throw e
             }
             regionDecoder
