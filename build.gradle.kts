@@ -26,7 +26,12 @@ buildscript {
         classpath(libs.gradlePlugin.kotlinxAtomicfu)
         classpath(libs.gradlePlugin.kotlinxCover)
         classpath(libs.gradlePlugin.mavenPublish)
+//        classpath(libs.gradlePlugin.dokka)
     }
+}
+
+plugins {
+    alias(libs.plugins.dokka)
 }
 
 allprojects {
@@ -51,6 +56,7 @@ allprojects {
     jvmTargetConfig()
     composeConfig()
     publishConfig()
+    dokkaConfig()
     applyOkioJsTestWorkaround()
     androidTestConfig()
 }
@@ -132,8 +138,23 @@ fun Project.publishConfig() {
                 && hasProperty("signing.secretKeyRingFile")    // configured in the ~/.gradle/gradle.properties file
             ) {
                 signAllPublications()
+            } else if (
+                System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey").orEmpty()
+                    .isNotEmpty()    // configured in the github workflow env
+                && System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword").orEmpty()
+                    .isNotEmpty()    // configured in the github workflow env
+            ) {
+                signAllPublications()
             }
         }
+    }
+}
+
+fun Project.dokkaConfig() {
+    if (
+        hasProperty("POM_ARTIFACT_ID")    // configured in the module/gradle.properties file
+    ) {
+        apply { plugin("org.jetbrains.dokka") }
     }
 }
 
