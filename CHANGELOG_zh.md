@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.1.2
 
 subsampling:
 
