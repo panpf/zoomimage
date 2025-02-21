@@ -1,0 +1,202 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ReadMode</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            zoomimage
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="zoomimage-core::com.github.panpf.zoomimage.zoom/ReadMode///PointingToDeclaration//843718319">
+  <div class="breadcrumbs"><a href="../../index.html">zoomimage-core</a><span class="delimiter">/</span><a href="../index.html">com.github.panpf.zoomimage.zoom</a><span class="delimiter">/</span><span class="current">ReadMode</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Read</span><wbr><span><span>Mode</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">ReadMode</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>sizeType<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>SIZE_TYPE_HORIZONTAL or SIZE_TYPE_VERTICAL<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>decider<span class="token operator">: </span><a href="-decider/index.html">ReadMode.Decider</a><span class="token operator"> = </span>Decider.Default</span></span><span class="token punctuation">)</span></div><p class="paragraph">Read mode allows long text images to be displayed in a way that fills the screen at the beginning and is positioned at the beginning of the image, so that users can directly start read the content of the image without double-clicking to enlarge and then sliding to the beginning position</p><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><span>com.</span><wbr><span>github.</span><wbr><span>panpf.</span><wbr><span>zoomimage.</span><wbr><span>core.</span><wbr><span>common.</span><wbr><span>test.</span><wbr><span>zoom.</span><wbr><span>Read</span><wbr><span>Mode</span><wbr><span><span>Test</span></span></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-940734235%2FConstructors%2F843718319" anchor-label="ReadMode" id="-940734235%2FConstructors%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-read-mode.html"><span>Read</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-940734235%2FConstructors%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sizeType<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>SIZE_TYPE_HORIZONTAL or SIZE_TYPE_VERTICAL<span class="token punctuation">, </span></span><span class="parameter ">decider<span class="token operator">: </span><a href="-decider/index.html">ReadMode.Decider</a><span class="token operator"> = </span>Decider.Default</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-214170979%2FClasslikes%2F843718319" anchor-label="Companion" id="-214170979%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-214170979%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="991906655%2FClasslikes%2F843718319" anchor-label="Decider" id="991906655%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-decider/index.html"><span><span>Decider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="991906655%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-decider/index.html">Decider</a></div><div class="brief "><p class="paragraph">Determines whether the image can use read mode</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="966843086%2FClasslikes%2F843718319" anchor-label="LongImageDecider" id="966843086%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-long-image-decider/index.html"><span>Long</span><wbr><span>Image</span><wbr><span><span>Decider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="966843086%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-long-image-decider/index.html">LongImageDecider</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>sameDirectionMultiple<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">2.5f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>notSameDirectionMultiple<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">5.0f</span></span></span><span class="token punctuation">)</span> : <a href="-decider/index.html">ReadMode.Decider</a></div><div class="brief "><p class="paragraph">When contentSize and containerSize are in the same direction, read mode can be used when the difference multiple is greater than <a href="-long-image-decider/same-direction-multiple.html">sameDirectionMultiple</a>, otherwise read mode can be used when the difference multiple is greater than <a href="-long-image-decider/not-same-direction-multiple.html">notSameDirectionMultiple</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-286502708%2FProperties%2F843718319" anchor-label="decider" id="-286502708%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="decider.html"><span><span>decider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-286502708%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="decider.html">decider</a><span class="token operator">: </span><a href="-decider/index.html">ReadMode.Decider</a></div><div class="brief "><p class="paragraph">Determines whether the image can use read mode</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1499914377%2FProperties%2F843718319" anchor-label="sizeType" id="1499914377%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="size-type.html"><span>size</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1499914377%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="size-type.html">sizeType</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Limit the size types of image that can use read mode. Both the default horizontal and vertical image are available</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-205485857%2FFunctions%2F843718319" anchor-label="accept" id="-205485857%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="accept.html"><span><span>accept</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-205485857%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="accept.html"><span class="token function">accept</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentSize<span class="token operator">: </span><a href="../../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter ">containerSize<span class="token operator">: </span><a href="../../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Based on contentSize and containerSize, determine whether read mode can be used</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

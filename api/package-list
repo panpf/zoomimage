@@ -1,0 +1,97 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.github.panpf.zoomimage.subsampling//fromKotlinResource/[Error type: Unresolved type for ImageSource.Companion]#kotlin.String/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]from-kotlin-resource.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource///PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/index.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/KotlinResourceImageSource/#kotlin.String/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/-kotlin-resource-image-source.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/equals/#kotlin.Any?/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/equals.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/hashCode/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/hash-code.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/key/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/key.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/openSource/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/open-source.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/resourcePath/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/resource-path.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/toString/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/to-string.html
+module:zoomimage-compose
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.compose
+com.github.panpf.zoomimage.compose.subsampling
+com.github.panpf.zoomimage.compose.util
+com.github.panpf.zoomimage.compose.zoom
+com.github.panpf.zoomimage.compose.zoom.internal
+module:zoomimage-compose-coil2
+com.github.panpf.zoomimage
+module:zoomimage-compose-coil2-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.compose.coil
+com.github.panpf.zoomimage.compose.coil.internal
+module:zoomimage-compose-coil3
+com.github.panpf.zoomimage
+module:zoomimage-compose-coil3-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.compose.coil
+com.github.panpf.zoomimage.compose.coil.internal
+module:zoomimage-compose-glide
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.compose.glide
+module:zoomimage-compose-resources
+com.github.panpf.zoomimage.subsampling
+module:zoomimage-compose-sketch3
+com.github.panpf.zoomimage
+module:zoomimage-compose-sketch3-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.compose.sketch
+com.github.panpf.zoomimage.compose.sketch.internal
+module:zoomimage-compose-sketch4
+com.github.panpf.zoomimage
+module:zoomimage-compose-sketch4-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.compose.sketch
+com.github.panpf.zoomimage.compose.sketch.internal
+module:zoomimage-core
+com.github.panpf.zoomimage.subsampling
+com.github.panpf.zoomimage.subsampling.internal
+com.github.panpf.zoomimage.util
+com.github.panpf.zoomimage.zoom
+com.github.panpf.zoomimage.zoom.internal
+module:zoomimage-core-coil2
+com.github.panpf.zoomimage.coil
+com.github.panpf.zoomimage.coil.internal
+module:zoomimage-core-coil3
+com.github.panpf.zoomimage.coil
+com.github.panpf.zoomimage.coil.internal
+module:zoomimage-core-glide
+com.bumptech.glide
+com.github.panpf.zoomimage.glide
+com.github.panpf.zoomimage.glide.internal
+module:zoomimage-core-picasso
+com.github.panpf.zoomimage.picasso
+com.github.panpf.zoomimage.picasso.internal
+module:zoomimage-core-sketch3
+com.github.panpf.zoomimage.sketch
+module:zoomimage-core-sketch4
+com.github.panpf.zoomimage.sketch
+module:zoomimage-view
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.view.subsampling
+com.github.panpf.zoomimage.view.subsampling.internal
+com.github.panpf.zoomimage.view.util
+com.github.panpf.zoomimage.view.zoom
+com.github.panpf.zoomimage.view.zoom.internal
+module:zoomimage-view-coil2-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.view.coil
+com.github.panpf.zoomimage.view.coil.internal
+module:zoomimage-view-coil3-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.view.coil
+com.github.panpf.zoomimage.view.coil.internal
+module:zoomimage-view-glide
+com.github.panpf.zoomimage
+module:zoomimage-view-picasso
+com.github.panpf.zoomimage
+module:zoomimage-view-sketch3-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.view.sketch
+com.github.panpf.zoomimage.view.sketch.internal
+module:zoomimage-view-sketch4-core
+com.github.panpf.zoomimage
+com.github.panpf.zoomimage.view.sketch
+com.github.panpf.zoomimage.view.sketch.internal

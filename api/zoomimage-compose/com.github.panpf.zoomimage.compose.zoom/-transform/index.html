@@ -1,0 +1,457 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Transform</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            zoomimage
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-compose:dokkaHtmlPartial/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="zoomimage-compose::com.github.panpf.zoomimage.compose.zoom/Transform///PointingToDeclaration//-2077833192">
+  <div class="breadcrumbs"><a href="../../index.html">zoomimage-compose</a><span class="delimiter">/</span><a href="../index.html">com.github.panpf.zoomimage.compose.zoom</a><span class="delimiter">/</span><span class="current">Transform</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Transform</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable.html"><span class="token annotation builtin">Immutable</span></a></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Transform</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>scale<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ScaleFactor.html">ScaleFactor</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>offset<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/Offset.html">Offset</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>rotation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>scaleOrigin<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/TransformOrigin.html">TransformOrigin</a><span class="token operator"> = </span>TransformOrigin.TopStart<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>rotationOrigin<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/TransformOrigin.html">TransformOrigin</a><span class="token operator"> = </span>TransformOrigin.TopStart</span></span><span class="token punctuation">)</span></div><p class="paragraph">A simple version of a 2D transformation that includes scale, pan, and rotation</p><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><span>com.</span><wbr><span>github.</span><wbr><span>panpf.</span><wbr><span>zoomimage.</span><wbr><span>compose.</span><wbr><span>common.</span><wbr><span>test.</span><wbr><span>zoom.</span><wbr><span>Transform</span><wbr><span><span>Test</span></span></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION,EXTENSION_PROPERTY,EXTENSION_FUNCTION">Members &amp; Extensions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-717254180%2FConstructors%2F-2077833192" anchor-label="Transform" id="-717254180%2FConstructors%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-transform.html"><span><span>Transform</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-717254180%2FConstructors%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scale<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ScaleFactor.html">ScaleFactor</a><span class="token punctuation">, </span></span><span class="parameter ">offset<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/Offset.html">Offset</a><span class="token punctuation">, </span></span><span class="parameter ">rotation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">scaleOrigin<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/TransformOrigin.html">TransformOrigin</a><span class="token operator"> = </span>TransformOrigin.TopStart<span class="token punctuation">, </span></span><span class="parameter ">rotationOrigin<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/TransformOrigin.html">TransformOrigin</a><span class="token operator"> = </span>TransformOrigin.TopStart</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1421528984%2FClasslikes%2F-2077833192" anchor-label="Companion" id="-1421528984%2FClasslikes%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1421528984%2FClasslikes%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1665604006%2FProperties%2F-2077833192" anchor-label="offset" id="1665604006%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="offset.html"><span><span>offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1665604006%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="offset.html">offset</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/Offset.html">Offset</a></div><div class="brief "><p class="paragraph">Pan position</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="822836636%2FProperties%2F-2077833192" anchor-label="offsetX" id="822836636%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="offset-x.html"><span>offset</span><wbr><span><span>X</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="822836636%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="offset-x.html">offsetX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The horizontal offset</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="853856443%2FProperties%2F-2077833192" anchor-label="offsetY" id="853856443%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="offset-y.html"><span>offset</span><wbr><span><span>Y</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="853856443%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="offset-y.html">offsetY</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The vertical offset</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-649288165%2FProperties%2F-2077833192" anchor-label="rotation" id="-649288165%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rotation.html"><span><span>rotation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-649288165%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="rotation.html">rotation</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span></div><div class="brief "><p class="paragraph">The degree of rotation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-892901611%2FProperties%2F-2077833192" anchor-label="rotationOrigin" id="-892901611%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rotation-origin.html"><span>rotation</span><wbr><span><span>Origin</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-892901611%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="rotation-origin.html">rotationOrigin</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/TransformOrigin.html">TransformOrigin</a></div><div class="brief "><p class="paragraph">The origin of the rotation operation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1181426163%2FProperties%2F-2077833192" anchor-label="rotationOriginX" id="-1181426163%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rotation-origin-x.html"><span>rotation</span><wbr><span>Origin</span><wbr><span><span>X</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1181426163%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="rotation-origin-x.html">rotationOriginX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The rotation horizontal pivot fraction</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1150406356%2FProperties%2F-2077833192" anchor-label="rotationOriginY" id="-1150406356%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rotation-origin-y.html"><span>rotation</span><wbr><span>Origin</span><wbr><span><span>Y</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1150406356%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="rotation-origin-y.html">rotationOriginY</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The rotation vertical pivot fraction</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1531916521%2FProperties%2F-2077833192" anchor-label="scale" id="-1531916521%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scale.html"><span><span>scale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1531916521%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scale.html">scale</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ScaleFactor.html">ScaleFactor</a></div><div class="brief "><p class="paragraph">Scale factor</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2029001967%2FProperties%2F-2077833192" anchor-label="scaleOrigin" id="-2029001967%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scale-origin.html"><span>scale</span><wbr><span><span>Origin</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2029001967%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scale-origin.html">scaleOrigin</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/TransformOrigin.html">TransformOrigin</a></div><div class="brief "><p class="paragraph">The origin of the scaling operation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2040798831%2FProperties%2F-2077833192" anchor-label="scaleOriginX" id="-2040798831%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scale-origin-x.html"><span>scale</span><wbr><span>Origin</span><wbr><span><span>X</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2040798831%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scale-origin-x.html">scaleOriginX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The scale horizontal pivot fraction</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2009779024%2FProperties%2F-2077833192" anchor-label="scaleOriginY" id="-2009779024%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scale-origin-y.html"><span>scale</span><wbr><span>Origin</span><wbr><span><span>Y</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2009779024%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scale-origin-y.html">scaleOriginY</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The scale vertical pivot fraction</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="483948107%2FProperties%2F-2077833192" anchor-label="scaleX" id="483948107%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scale-x.html"><span>scale</span><wbr><span><span>X</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="483948107%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scale-x.html">scaleX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The horizontal scale factor</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="514967914%2FProperties%2F-2077833192" anchor-label="scaleY" id="514967914%2FProperties%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scale-y.html"><span>scale</span><wbr><span><span>Y</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="514967914%2FProperties%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scale-y.html">scaleY</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The vertical scale factor</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="15223680%2FFunctions%2F-2077833192" anchor-label="div" id="15223680%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../div.html"><span><span>div</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="15223680%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../div.html"><span class="token function">div</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scaleFactor<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ScaleFactor.html">ScaleFactor</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Transform</a></div><div class="brief "><p class="paragraph">Returns an Transform scaled by multiplying <a href="../div.html">scaleFactor</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1265830784%2FFunctions%2F-2077833192" anchor-label="isEmpty" id="-1265830784%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../is-empty.html"><span>is</span><wbr><span><span>Empty</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1265830784%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../is-empty.html"><span class="token function">isEmpty</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns whether the Transform is empty, that is, the scale is 1, the offset is 0, and the rotation is 0</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1384877091%2FFunctions%2F-2077833192" anchor-label="isNotEmpty" id="-1384877091%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../is-not-empty.html"><span>is</span><wbr><span>Not</span><wbr><span><span>Empty</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1384877091%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../is-not-empty.html"><span class="token function">isNotEmpty</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns whether the Transform is not empty</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-245558487%2FFunctions%2F-2077833192" anchor-label="minus" id="-245558487%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../minus.html"><span><span>minus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-245558487%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../minus.html"><span class="token function">minus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="index.html">Transform</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Transform</a></div><div class="brief "><p class="paragraph">Subtract other Transform from the current Transform, and the scale origin or rotation origin of both must be the same when neither is scaled or rotated equal to the default value</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1247922205%2FFunctions%2F-2077833192" anchor-label="plus" id="-1247922205%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../plus.html"><span><span>plus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1247922205%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../plus.html"><span class="token function">plus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="index.html">Transform</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Transform</a></div><div class="brief "><p class="paragraph">Add other Transform to the current Transform, and the scale origin or rotation origin of both must be the same when neither is scaled or rotated equal to the default value</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1115798603%2FFunctions%2F-2077833192" anchor-label="times" id="-1115798603%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../times.html"><span><span>times</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1115798603%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../times.html"><span class="token function">times</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scaleFactor<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ScaleFactor.html">ScaleFactor</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Transform</a></div><div class="brief "><p class="paragraph">Returns an Transform scaled by multiplying <a href="../times.html">scaleFactor</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2067125467%2FFunctions%2F-2077833192" anchor-label="toCompat" id="-2067125467%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../com.github.panpf.zoomimage.compose.util/to-compat.html"><span>to</span><wbr><span><span>Compat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2067125467%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../../com.github.panpf.zoomimage.compose.util/to-compat.html"><span class="token function">toCompat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-transform-compat/index.html">TransformCompat</a></div><div class="brief "><p class="paragraph">Convert <a href="index.html">Transform</a> to <a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-transform-compat/index.html">TransformCompat</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-459476945%2FFunctions%2F-2077833192" anchor-label="toShortString" id="-459476945%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../to-short-string.html"><span>to</span><wbr><span>Short</span><wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-459476945%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html">Transform</a><span class="token punctuation">.</span><a href="../to-short-string.html"><span class="token function">toShortString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Return short string descriptions, for example: '(3.45x9.87,10.56x20.56,45.03,0.52x0.52,0.52x0.52)'</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1763120403%2FFunctions%2F-2077833192" anchor-label="toString" id="-1763120403%2FFunctions%2F-2077833192" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-compose:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-compose:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-string.html"><span>to</span><wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1763120403%2FFunctions%2F-2077833192"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

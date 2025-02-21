@@ -1,0 +1,779 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.github.panpf.zoomimage.subsampling</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../index.html">
+                            zoomimage
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/desktopMain">desktop</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/iosMain">ios</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain">jvmCommon</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain">nonAndroid</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="package" id="content" pageids="zoomimage-core::com.github.panpf.zoomimage.subsampling////PointingToDeclaration//-972736984">
+  <div class="breadcrumbs"><a href="../index.html">zoomimage-core</a><span class="delimiter">/</span><span class="current">com.github.panpf.zoomimage.subsampling</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1339938428%2FClasslikes%2F1423716683" anchor-label="AssetImageSource" id="-1339938428%2FClasslikes%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-asset-image-source/index.html"><span>Asset</span><wbr><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1339938428%2FClasslikes%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-asset-image-source/index.html">AssetImageSource</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>assetFileName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">An image source created from an asset file name.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-359315174%2FClasslikes%2F843718319" anchor-label="BitmapTileImage" id="-359315174%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-bitmap-tile-image/index.html"><span>Bitmap</span><wbr><span>Tile</span><wbr><span><span>Image</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-359315174%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-bitmap-tile-image/index.html">BitmapTileImage</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>bitmap<span class="token operator">: </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>key<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fromCache<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span> : <a href="-tile-image/index.html">TileImage</a></div><div class="brief "><p class="paragraph">A <a href="-tile-image/index.html">TileImage</a> implementation based Bitmap</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="28500933%2FClasslikes%2F843718319" anchor-label="ByteArrayImageSource" id="28500933%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-byte-array-image-source/index.html"><span>Byte</span><wbr><span>Array</span><wbr><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="28500933%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-byte-array-image-source/index.html">ByteArrayImageSource</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>byteArray<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></span></span><span class="token punctuation">)</span> : <a href="-image-source/index.html">ImageSource</a></div><div class="brief "><p class="paragraph">Image source for subsampling from a ByteArray.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="763646029%2FClasslikes%2F1423716683" anchor-label="ContentImageSource" id="763646029%2FClasslikes%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-content-image-source/index.html"><span>Content</span><wbr><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="763646029%2FClasslikes%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-content-image-source/index.html">ContentImageSource</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>uri<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">An image source that reads from a content URI.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-289569474%2FClasslikes%2F843718319" anchor-label="FileImageSource" id="-289569474%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-file-image-source/index.html"><span>File</span><wbr><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-289569474%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-file-image-source/index.html">FileImageSource</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>path<span class="token operator">: </span><span data-unresolved-link="okio/Path///PointingToDeclaration/">Path</span></span></span><span class="token punctuation">)</span> : <a href="-image-source/index.html">ImageSource</a></div><div class="brief "><p class="paragraph">Image source from a file path.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1078214929%2FClasslikes%2F843718319" anchor-label="ImageInfo" id="-1078214929%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-image-info/index.html"><span>Image</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1078214929%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-image-info/index.html">ImageInfo</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>size<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>mimeType<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Image information</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2046704350%2FClasslikes%2F843718319" anchor-label="ImageSource" id="-2046704350%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-image-source/index.html"><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2046704350%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-image-source/index.html">ImageSource</a></div><div class="brief "><p class="paragraph">Image source for subsampling.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1202453071%2FClasslikes%2F-1668980270" anchor-label="KotlinResourceImageSource" id="-1202453071%2FClasslikes%2F-1668980270" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/desktopMain,:zoomimage-core:dokkaHtmlPartial/iosMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/desktopMain,:zoomimage-core:dokkaHtmlPartial/iosMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/desktopMain,:zoomimage-core:dokkaHtmlPartial/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/index.html"><span>Kotlin</span><wbr><span>Resource</span><wbr><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1202453071%2FClasslikes%2F-1668980270"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/desktopMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/desktopMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/desktopMain">desktop</button><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/iosMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/iosMain" data-toggle=":zoomimage-core:dokkaHtmlPartial/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/desktopMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="[desktop]-kotlin-resource-image-source/index.html">KotlinResourceImageSource</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>resourcePath<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">An image source created from a kotlin resource path.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":zoomimage-core:dokkaHtmlPartial/iosMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="[ios]-kotlin-resource-image-source/index.html">KotlinResourceImageSource</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>resourcePath<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">An image source that reads images from a kotlin resource path.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="312542024%2FClasslikes%2F843718319" anchor-label="RegionDecoder" id="312542024%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-region-decoder/index.html"><span>Region</span><wbr><span><span>Decoder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="312542024%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-region-decoder/index.html">RegionDecoder</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-auto-closeable/index.html">AutoCloseable</a></div><div class="brief "><p class="paragraph">Region decoding interface, used to decode the specified region of the image</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-119957680%2FClasslikes%2F1423716683" anchor-label="ResourceImageSource" id="-119957680%2FClasslikes%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-resource-image-source/index.html"><span>Resource</span><wbr><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-119957680%2FClasslikes%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-resource-image-source/index.html">ResourceImageSource</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>resources<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/res/Resources.html">Resources</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RawRes.html"><span class="token annotation builtin">RawRes</span></a>&nbsp;<span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/DrawableRes.html"><span class="token annotation builtin">DrawableRes</span></a>&nbsp;</span><span class="token keyword">val </span>resId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Image source from resource</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1975051814%2FClasslikes%2F843718319" anchor-label="SamplingTiles" id="-1975051814%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-sampling-tiles/index.html"><span>Sampling</span><wbr><span><span>Tiles</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1975051814%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-sampling-tiles/index.html">SamplingTiles</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>sampleSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>tiles<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="-tile/index.html">Tile</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sampling tiles</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-566255082%2FClasslikes%2F843718319" anchor-label="SubsamplingImage" id="-566255082%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-subsampling-image/index.html"><span>Subsampling</span><wbr><span><span>Image</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-566255082%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-subsampling-image/index.html">SubsamplingImage</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>imageSource<span class="token operator">: </span><a href="-image-source/-factory/index.html">ImageSource.Factory</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>imageInfo<span class="token operator">: </span><a href="-image-info/index.html">ImageInfo</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Subsampling image</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1829594236%2FClasslikes%2F843718319" anchor-label="SubsamplingImageGenerateResult" id="-1829594236%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-subsampling-image-generate-result/index.html"><span>Subsampling</span><wbr><span>Image</span><wbr><span>Generate</span><wbr><span><span>Result</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1829594236%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">interface </span><a href="-subsampling-image-generate-result/index.html">SubsamplingImageGenerateResult</a></div><div class="brief "><p class="paragraph">Result of generating a <a href="-subsampling-image/index.html">SubsamplingImage</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2113334684%2FClasslikes%2F843718319" anchor-label="Tile" id="2113334684%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile/index.html"><span><span>Tile</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2113334684%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-tile/index.html">Tile</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>coordinate<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-offset-compat/index.html">IntOffsetCompat</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>srcRect<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>sampleSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="761472071%2FClasslikes%2F843718319" anchor-label="TileAnimationSpec" id="761472071%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-animation-spec/index.html"><span>Tile</span><wbr><span>Animation</span><wbr><span><span>Spec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="761472071%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-tile-animation-spec/index.html">TileAnimationSpec</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>duration<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span>DEFAULT_DURATION<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>interval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span>DEFAULT_INTERVAL</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Tile animation configuration</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1594238227%2FClasslikes%2F-581487285" anchor-label="TileBitmap" id="-1594238227%2FClasslikes%2F-581487285" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain,:zoomimage-core:dokkaHtmlPartial/androidMain,:zoomimage-core:dokkaHtmlPartial/nonAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain,:zoomimage-core:dokkaHtmlPartial/androidMain,:zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain,:zoomimage-core:dokkaHtmlPartial/androidMain,:zoomimage-core:dokkaHtmlPartial/nonAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-bitmap/index.html"><span>Tile</span><wbr><span><span>Bitmap</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1594238227%2FClasslikes%2F-581487285"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain" data-toggle=":zoomimage-core:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-toggle=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain">nonAndroid</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">typealias </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token operator"> = </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Bitmap.html">Bitmap</a></div><div class="brief "><p class="paragraph">Bitmap, which is a alias of <a href="https://developer.android.com/reference/kotlin/android/graphics/Bitmap.html">android.graphics.Bitmap</a></p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">class </span><a href="-tile-bitmap/index.html">TileBitmap</a></div><div class="brief "><p class="paragraph">Bitmap, which is a alias of platform Bitmap</p></div></div><div class="content sourceset-dependent-content" data-togglable=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">typealias </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token operator"> = </span><span data-unresolved-link="org.jetbrains.skia/Bitmap///PointingToDeclaration/">Bitmap</span></div><div class="brief "><p class="paragraph">Bitmap, which is a alias of <span data-unresolved-link="org.jetbrains.skia/Bitmap///PointingToDeclaration/">org.jetbrains.skia.Bitmap</span></p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1047840565%2FClasslikes%2F843718319" anchor-label="TileImage" id="-1047840565%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-image/index.html"><span>Tile</span><wbr><span><span>Image</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1047840565%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-tile-image/index.html">TileImage</a></div><div class="brief "><p class="paragraph">Tile bitmap interface, you need to implement it to customize tile bitmap</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="222951093%2FClasslikes%2F843718319" anchor-label="TileImageCache" id="222951093%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-image-cache/index.html"><span>Tile</span><wbr><span>Image</span><wbr><span><span>Cache</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="222951093%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-tile-image-cache/index.html">TileImageCache</a></div><div class="brief "><p class="paragraph">Tile memory cache container interface, you need to implement it to customize tile memory cache</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1511702216%2FClasslikes%2F843718319" anchor-label="TileSnapshot" id="-1511702216%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-snapshot/index.html"><span>Tile</span><wbr><span><span>Snapshot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1511702216%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-tile-snapshot/index.html">TileSnapshot</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>coordinate<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-offset-compat/index.html">IntOffsetCompat</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>srcRect<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>sampleSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>tileImage<span class="token operator">: </span><a href="-tile-image/index.html">TileImage</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>state<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>alpha<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Tile-related information provided to users</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-761854379%2FClasslikes%2F843718319" anchor-label="TileState" id="-761854379%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-state/index.html"><span>Tile</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-761854379%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-target/index.html"><span class="token annotation builtin">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-v-a-l-u-e_-p-a-r-a-m-e-t-e-r/index.html">AnnotationTarget.VALUE_PARAMETER</a><span class="token punctuation">, </span></span><wbr><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-f-i-e-l-d/index.html">AnnotationTarget.FIELD</a><span class="token punctuation">, </span></span><wbr><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-tile-state/index.html">TileState</a></div><div class="brief "><p class="paragraph">Tile state</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="538439233%2FProperties%2F843718319" anchor-label="byteCount" id="538439233%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="byte-count.html"><span>byte</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="538439233%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="byte-count.html">byteCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a></div><div class="brief "><p class="paragraph">Returns the minimum number of bytes that can be used to store this bitmap's pixels.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="969519057%2FProperties%2F843718319" anchor-label="height" id="969519057%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="height.html"><span><span>height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="969519057%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="height.html">height</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Get the height of the bitmap</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1291896210%2FProperties%2F843718319" anchor-label="isImmutable" id="1291896210%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-immutable.html"><span>is</span><wbr><span><span>Immutable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1291896210%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="is-immutable.html">isImmutable</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if the bitmap is immutable</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1357430346%2FProperties%2F843718319" anchor-label="isMutable" id="-1357430346%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-mutable.html"><span>is</span><wbr><span><span>Mutable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1357430346%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="is-mutable.html">isMutable</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if the bitmap is mutable</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-820717275%2FProperties%2F843718319" anchor-label="isRecycled" id="-820717275%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-recycled.html"><span>is</span><wbr><span><span>Recycled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-820717275%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="is-recycled.html">isRecycled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if the bitmap is recycled</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="885149739%2FProperties%2F843718319" anchor-label="size" id="885149739%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="size.html"><span><span>size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="885149739%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="size.html">size</a><span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a></div><div class="brief "><p class="paragraph">Get image size</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2119390081%2FProperties%2F843718319" anchor-label="TILE_COLOR_GREEN" id="-2119390081%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-i-l-e_-c-o-l-o-r_-g-r-e-e-n.html"><span><span>TILE_COLOR_GREEN</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2119390081%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-t-i-l-e_-c-o-l-o-r_-g-r-e-e-n.html">TILE_COLOR_GREEN</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-921036276%2FProperties%2F843718319" anchor-label="TILE_COLOR_LIGHT_GRAY" id="-921036276%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-i-l-e_-c-o-l-o-r_-l-i-g-h-t_-g-r-a-y.html"><span><span>TILE_COLOR_LIGHT_GRAY</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-921036276%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-t-i-l-e_-c-o-l-o-r_-l-i-g-h-t_-g-r-a-y.html">TILE_COLOR_LIGHT_GRAY</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-570306575%2FProperties%2F843718319" anchor-label="TILE_COLOR_RED" id="-570306575%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-i-l-e_-c-o-l-o-r_-r-e-d.html"><span><span>TILE_COLOR_RED</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-570306575%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-t-i-l-e_-c-o-l-o-r_-r-e-d.html">TILE_COLOR_RED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1339072128%2FProperties%2F843718319" anchor-label="TILE_COLOR_SKY_BLUE" id="-1339072128%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-i-l-e_-c-o-l-o-r_-s-k-y_-b-l-u-e.html"><span><span>TILE_COLOR_SKY_BLUE</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1339072128%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-t-i-l-e_-c-o-l-o-r_-s-k-y_-b-l-u-e.html">TILE_COLOR_SKY_BLUE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1028641828%2FProperties%2F843718319" anchor-label="TILE_COLOR_YELLOW" id="1028641828%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-i-l-e_-c-o-l-o-r_-y-e-l-l-o-w.html"><span><span>TILE_COLOR_YELLOW</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1028641828%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-t-i-l-e_-c-o-l-o-r_-y-e-l-l-o-w.html">TILE_COLOR_YELLOW</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-835313568%2FProperties%2F843718319" anchor-label="width" id="-835313568%2FProperties%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="width.html"><span><span>width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-835313568%2FProperties%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="width.html">width</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Get the width of the bitmap</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="852200971%2FFunctions%2F310675285" anchor-label="FileImageSource" id="852200971%2FFunctions%2F310675285" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-file-image-source.html"><span>File</span><wbr><span>Image</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="852200971%2FFunctions%2F310675285"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain">jvmCommon</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-file-image-source.html"><span class="token function">FileImageSource</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">file<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></div><div class="brief "><p class="paragraph">Create a FileImageSource using File</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1186820165%2FFunctions%2F1423716683" anchor-label="fromAsset" id="1186820165%2FFunctions%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-asset.html"><span>from</span><wbr><span><span>Asset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1186820165%2FFunctions%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">.</span><a href="from-asset.html"><span class="token function">fromAsset</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">assetFileName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-asset-image-source/index.html">AssetImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from an asset file name.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1475647672%2FFunctions%2F843718319" anchor-label="fromByteArray" id="-1475647672%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-byte-array.html"><span>from</span><wbr><span>Byte</span><wbr><span><span>Array</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1475647672%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-image-source/-companion/index.html">ImageSource.Companion</a><span class="token punctuation">.</span><a href="from-byte-array.html"><span class="token function">fromByteArray</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">byteArray<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-byte-array-image-source/index.html">ByteArrayImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from a ByteArray.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1286144354%2FFunctions%2F1423716683" anchor-label="fromContent" id="-1286144354%2FFunctions%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-content.html"><span>from</span><wbr><span><span>Content</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1286144354%2FFunctions%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">.</span><a href="from-content.html"><span class="token function">fromContent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">uri<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-content-image-source/index.html">ContentImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from a content URI.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="429726016%2FFunctions%2F521195666" anchor-label="fromFile" id="429726016%2FFunctions%2F521195666" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain,:zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain,:zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain,:zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-file.html"><span>from</span><wbr><span><span>File</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="429726016%2FFunctions%2F521195666"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain" data-toggle=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain">jvmCommon</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-image-source/-companion/index.html">ImageSource.Companion</a><span class="token punctuation">.</span><a href="from-file.html"><span class="token function">fromFile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">path<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-file-image-source/index.html">FileImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from a file path.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="-image-source/-companion/index.html">ImageSource.Companion</a><span class="token punctuation">.</span><a href="from-file.html"><span class="token function">fromFile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">path<span class="token operator">: </span><span data-unresolved-link="okio/Path///PointingToDeclaration/">Path</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-file-image-source/index.html">FileImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from a path.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/jvmCommonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-image-source/-companion/index.html#-1617830108%2FMain%2F310675285">ImageSource.Companion</a><span class="token punctuation">.</span><a href="from-file.html"><span class="token function">fromFile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">file<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../zoomimage-core/com.github.panpf.zoomimage.subsampling/-file-image-source/index.html">FileImageSource</a></div><div class="brief "><p class="paragraph">Create a FileImageSource using File</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1046221530%2FFunctions%2F-1668980270" anchor-label="fromKotlinResource" id="1046221530%2FFunctions%2F-1668980270" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/desktopMain,:zoomimage-core:dokkaHtmlPartial/iosMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/desktopMain,:zoomimage-core:dokkaHtmlPartial/iosMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/desktopMain,:zoomimage-core:dokkaHtmlPartial/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../zoomimage-compose-resources/com.github.panpf.zoomimage.subsampling/index.html"><span>from</span><wbr><span>Kotlin</span><wbr><span><span>Resource</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1046221530%2FFunctions%2F-1668980270"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/desktopMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/desktopMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/desktopMain">desktop</button><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/iosMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/iosMain" data-toggle=":zoomimage-core:dokkaHtmlPartial/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/desktopMain"><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">.</span><a href="[desktop]from-kotlin-resource.html"><span class="token function">fromKotlinResource</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">resourcePath<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="[desktop]-kotlin-resource-image-source/index.html">KotlinResourceImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from a kotlin resource path.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":zoomimage-core:dokkaHtmlPartial/iosMain"><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">.</span><a href="[ios]from-kotlin-resource.html"><span class="token function">fromKotlinResource</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">resourcePath<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="[ios]-kotlin-resource-image-source/index.html">KotlinResourceImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from a kotlin resource path.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1351842650%2FFunctions%2F1423716683" anchor-label="fromResource" id="1351842650%2FFunctions%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-resource.html"><span>from</span><wbr><span><span>Resource</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1351842650%2FFunctions%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">.</span><a href="from-resource.html"><span class="token function">fromResource</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RawRes.html"><span class="token annotation builtin">RawRes</span></a>&nbsp;<span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/DrawableRes.html"><span class="token annotation builtin">DrawableRes</span></a>&nbsp;</span>resId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-resource-image-source/index.html">ResourceImageSource</a></div><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">.</span><a href="from-resource.html"><span class="token function">fromResource</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">resources<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/res/Resources.html">Resources</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RawRes.html"><span class="token annotation builtin">RawRes</span></a>&nbsp;<span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/DrawableRes.html"><span class="token annotation builtin">DrawableRes</span></a>&nbsp;</span>resId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-resource-image-source/index.html">ResourceImageSource</a></div><div class="brief "><p class="paragraph">Create an image source from a resource id.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="737004269%2FFunctions%2F843718319" anchor-label="recycle" id="737004269%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="recycle.html"><span><span>recycle</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="737004269%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="recycle.html"><span class="token function">recycle</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Recycle the bitmap</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1770500914%2FFunctions%2F843718319" anchor-label="tileColor" id="-1770500914%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="tile-color.html"><span>tile</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1770500914%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="tile-color.html"><span class="token function">tileColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">state<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">withinLoadArea<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">fromCache<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Get the color of the tile according to the state</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1250329926%2FFunctions%2F843718319" anchor-label="toFactory" id="1250329926%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-factory.html"><span>to</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1250329926%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-image-source/index.html">ImageSource</a><span class="token punctuation">.</span><a href="to-factory.html"><span class="token function">toFactory</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-image-source/-factory/index.html">ImageSource.Factory</a></div><div class="brief "><p class="paragraph">Convert <a href="-image-source/index.html">ImageSource</a> to <a href="-image-source/-factory/index.html">ImageSource.Factory</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1159555028%2FFunctions%2F843718319" anchor-label="toLogString" id="1159555028%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-log-string.html"><span>to</span><wbr><span>Log</span><wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1159555028%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="-tile-bitmap/index.html">TileBitmap</a><span class="token punctuation">.</span><a href="to-log-string.html"><span class="token function">toLogString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Convert SkiaBitmap to a log string</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-678464838%2FFunctions%2F843718319" anchor-label="toSnapshot" id="-678464838%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-snapshot.html"><span>to</span><wbr><span><span>Snapshot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-678464838%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-tile/index.html">Tile</a><span class="token punctuation">.</span><a href="to-snapshot.html"><span class="token function">toSnapshot</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-tile-snapshot/index.html">TileSnapshot</a></div><div class="brief "><p class="paragraph">Convert <a href="-tile/index.html">Tile</a> to <a href="-tile-snapshot/index.html">TileSnapshot</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

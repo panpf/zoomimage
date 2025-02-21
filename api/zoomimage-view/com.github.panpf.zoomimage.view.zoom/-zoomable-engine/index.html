@@ -1,0 +1,843 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ZoomableEngine</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            zoomimage
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":zoomimage-view:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="zoomimage-view::com.github.panpf.zoomimage.view.zoom/ZoomableEngine///PointingToDeclaration//1155038313">
+  <div class="breadcrumbs"><a href="../../index.html">zoomimage-view</a><span class="delimiter">/</span><a href="../index.html">com.github.panpf.zoomimage.view.zoom</a><span class="delimiter">/</span><span class="current">ZoomableEngine</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Zoomable</span><wbr><span><span>Engine</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">ZoomableEngine</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>logger<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>view<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/view/View.html">View</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Engines that control scale, pan, rotation</p><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><span>com.</span><wbr><span>github.</span><wbr><span>panpf.</span><wbr><span>zoomimage.</span><wbr><span>view.</span><wbr><span>test.</span><wbr><span>zoom.</span><wbr><span>Zoomable</span><wbr><span>Engine</span><wbr><span><span>Test</span></span></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-797332489%2FConstructors%2F1155038313" anchor-label="ZoomableEngine" id="-797332489%2FConstructors%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-zoomable-engine.html"><span>Zoomable</span><wbr><span><span>Engine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-797332489%2FConstructors%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">logger<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter ">view<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/view/View.html">View</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="845826529%2FProperties%2F1155038313" anchor-label="alignmentState" id="845826529%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="alignment-state.html"><span>alignment</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="845826529%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="alignment-state.html">alignmentState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-alignment-compat/index.html">AlignmentCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The alignment of the content, usually set by <a href="../../com.github.panpf.zoomimage/-zoom-image-view/index.html">ZoomImageView</a> component</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="180999005%2FProperties%2F1155038313" anchor-label="animationSpecState" id="180999005%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="animation-spec-state.html"><span>animation</span><wbr><span>Spec</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="180999005%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="animation-spec-state.html">animationSpecState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../-zoom-animation-spec/index.html">ZoomAnimationSpec</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The animation configuration for the zoom animation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="357874841%2FProperties%2F1155038313" anchor-label="baseTransformState" id="357874841%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="base-transform-state.html"><span>base</span><wbr><span>Transform</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="357874841%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="base-transform-state.html">baseTransformState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-transform-compat/index.html">TransformCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Base transformation, include the base scale, offset, rotation, which is affected by <a href="content-scale-state.html">contentScaleState</a>, <a href="alignment-state.html">alignmentState</a> properties and <a href="rotate.html">rotate</a> method</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="657075936%2FProperties%2F1155038313" anchor-label="containerSizeState" id="657075936%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="container-size-state.html"><span>container</span><wbr><span>Size</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="657075936%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="container-size-state.html">containerSizeState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The size of the container that holds the content, this is usually the size of the <a href="../../com.github.panpf.zoomimage/-zoom-image-view/index.html">ZoomImageView</a> component</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="385603660%2FProperties%2F1155038313" anchor-label="containerWhitespaceMultipleState" id="385603660%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="container-whitespace-multiple-state.html"><span>container</span><wbr><span>Whitespace</span><wbr><span>Multiple</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="385603660%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="container-whitespace-multiple-state.html">containerWhitespaceMultipleState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Add whitespace around containers based on container size</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-119180772%2FProperties%2F1155038313" anchor-label="containerWhitespaceState" id="-119180772%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="container-whitespace-state.html"><span>container</span><wbr><span>Whitespace</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-119180772%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="container-whitespace-state.html">containerWhitespaceState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-container-whitespace/index.html">ContainerWhitespace</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Add whitespace around containers, has higher priority than <a href="container-whitespace-multiple-state.html">containerWhitespaceMultipleState</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-198888056%2FProperties%2F1155038313" anchor-label="contentBaseDisplayRectFState" id="-198888056%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-base-display-rect-f-state.html"><span>content</span><wbr><span>Base</span><wbr><span>Display</span><wbr><span>Rect</span><wbr><span><span>FState</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-198888056%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-base-display-rect-f-state.html">contentBaseDisplayRectFState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-rect-compat/index.html">RectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content region in the container after the baseTransform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1899836842%2FProperties%2F1155038313" anchor-label="contentBaseDisplayRectState" id="-1899836842%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-base-display-rect-state.html"><span>content</span><wbr><span>Base</span><wbr><span>Display</span><wbr><span>Rect</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1899836842%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-base-display-rect-state.html">contentBaseDisplayRectState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content region in the container after the baseTransform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-263733288%2FProperties%2F1155038313" anchor-label="contentBaseVisibleRectFState" id="-263733288%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-base-visible-rect-f-state.html"><span>content</span><wbr><span>Base</span><wbr><span>Visible</span><wbr><span>Rect</span><wbr><span><span>FState</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-263733288%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-base-visible-rect-f-state.html">contentBaseVisibleRectFState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-rect-compat/index.html">RectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content is visible region to the user after the baseTransform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-100813306%2FProperties%2F1155038313" anchor-label="contentBaseVisibleRectState" id="-100813306%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-base-visible-rect-state.html"><span>content</span><wbr><span>Base</span><wbr><span>Visible</span><wbr><span>Rect</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-100813306%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-base-visible-rect-state.html">contentBaseVisibleRectState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content is visible region to the user after the baseTransform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-620186281%2FProperties%2F1155038313" anchor-label="contentDisplayRectFState" id="-620186281%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-display-rect-f-state.html"><span>content</span><wbr><span>Display</span><wbr><span>Rect</span><wbr><span><span>FState</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-620186281%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-display-rect-f-state.html">contentDisplayRectFState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-rect-compat/index.html">RectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content region in the container after the final transform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="580424871%2FProperties%2F1155038313" anchor-label="contentDisplayRectState" id="580424871%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-display-rect-state.html"><span>content</span><wbr><span>Display</span><wbr><span>Rect</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="580424871%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-display-rect-state.html">contentDisplayRectState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content region in the container after the final transform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-993535266%2FProperties%2F1155038313" anchor-label="contentOriginSizeState" id="-993535266%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-origin-size-state.html"><span>content</span><wbr><span>Origin</span><wbr><span>Size</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-993535266%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-origin-size-state.html">contentOriginSizeState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The original size of the content, it is usually set by <a href="../../com.github.panpf.zoomimage.view.subsampling/-subsampling-engine/index.html">SubsamplingEngine</a> after parsing the original size of the image</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1537473301%2FProperties%2F1155038313" anchor-label="contentScaleState" id="-1537473301%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-scale-state.html"><span>content</span><wbr><span>Scale</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1537473301%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-scale-state.html">contentScaleState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-content-scale-compat/index.html">ContentScaleCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The scale of the content, usually set by <a href="../../com.github.panpf.zoomimage/-zoom-image-view/index.html">ZoomImageView</a> component</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1324260008%2FProperties%2F1155038313" anchor-label="contentSizeState" id="-1324260008%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-size-state.html"><span>content</span><wbr><span>Size</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1324260008%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-size-state.html">contentSizeState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The size of the content, this is usually the size of the thumbnail Drawable, setup by the <a href="../../com.github.panpf.zoomimage/-zoom-image-view/index.html">ZoomImageView</a> component</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-685031513%2FProperties%2F1155038313" anchor-label="contentVisibleRectFState" id="-685031513%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-visible-rect-f-state.html"><span>content</span><wbr><span>Visible</span><wbr><span>Rect</span><wbr><span><span>FState</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-685031513%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-visible-rect-f-state.html">contentVisibleRectFState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-rect-compat/index.html">RectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content is visible region to the user after the final transform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1915518889%2FProperties%2F1155038313" anchor-label="contentVisibleRectState" id="-1915518889%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-visible-rect-state.html"><span>content</span><wbr><span>Visible</span><wbr><span>Rect</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1915518889%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="content-visible-rect-state.html">contentVisibleRectState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The content is visible region to the user after the final transform transformation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="316201845%2FProperties%2F1155038313" anchor-label="continuousTransformTypeState" id="316201845%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="continuous-transform-type-state.html"><span>continuous</span><wbr><span>Transform</span><wbr><span>Type</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="316201845%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="continuous-transform-type-state.html">continuousTransformTypeState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The type of transformation currently in progress</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1527999142%2FProperties%2F1155038313" anchor-label="disabledGestureTypesState" id="1527999142%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="disabled-gesture-types-state.html"><span>disabled</span><wbr><span>Gesture</span><wbr><span>Types</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1527999142%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="disabled-gesture-types-state.html">disabledGestureTypesState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Disabled gesture types. Allow multiple types to be combined through the 'and' operator</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-585976122%2FProperties%2F1155038313" anchor-label="limitOffsetWithinBaseVisibleRectState" id="-585976122%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="limit-offset-within-base-visible-rect-state.html"><span>limit</span><wbr><span>Offset</span><wbr><span>Within</span><wbr><span>Base</span><wbr><span>Visible</span><wbr><span>Rect</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-585976122%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="limit-offset-within-base-visible-rect-state.html">limitOffsetWithinBaseVisibleRectState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Whether to limit the offset of the user's pan to within the base visible rect</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1347279103%2FProperties%2F1155038313" anchor-label="logger" id="1347279103%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="logger.html"><span><span>logger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1347279103%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="logger.html">logger</a><span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-logger/index.html">Logger</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2015528160%2FProperties%2F1155038313" anchor-label="maxScaleState" id="-2015528160%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="max-scale-state.html"><span>max</span><wbr><span>Scale</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2015528160%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="max-scale-state.html">maxScaleState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1267109165%2FProperties%2F1155038313" anchor-label="mediumScaleState" id="-1267109165%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="medium-scale-state.html"><span>medium</span><wbr><span>Scale</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1267109165%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="medium-scale-state.html">mediumScaleState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Medium scale factor, only as a target value for one of when switch scale</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1700535438%2FProperties%2F1155038313" anchor-label="minScaleState" id="-1700535438%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="min-scale-state.html"><span>min</span><wbr><span>Scale</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1700535438%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="min-scale-state.html">minScaleState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1331271376%2FProperties%2F1155038313" anchor-label="oneFingerScaleSpecState" id="1331271376%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="one-finger-scale-spec-state.html"><span>one</span><wbr><span>Finger</span><wbr><span>Scale</span><wbr><span>Spec</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1331271376%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="one-finger-scale-spec-state.html">oneFingerScaleSpecState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-one-finger-scale-spec/index.html">OneFingerScaleSpec</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">One finger double-click and hold the screen and slide up and down to scale the configuration</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2136994291%2FProperties%2F1155038313" anchor-label="readModeState" id="2136994291%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="read-mode-state.html"><span>read</span><wbr><span>Mode</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2136994291%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="read-mode-state.html">readModeState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-read-mode/index.html">ReadMode</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Setup whether to enable read mode and configure read mode</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1037836477%2FProperties%2F1155038313" anchor-label="rubberBandScaleState" id="-1037836477%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rubber-band-scale-state.html"><span>rubber</span><wbr><span>Band</span><wbr><span>Scale</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1037836477%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="rubber-band-scale-state.html">rubberBandScaleState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">If true, when the user zooms to the minimum or maximum zoom factor through a gesture, continuing to zoom will have a rubber band effect, and when the hand is released, it will spring back to the minimum or maximum zoom factor</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="751475813%2FProperties%2F1155038313" anchor-label="scalesCalculatorState" id="751475813%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scales-calculator-state.html"><span>scales</span><wbr><span>Calculator</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="751475813%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="scales-calculator-state.html">scalesCalculatorState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-scales-calculator/index.html">ScalesCalculator</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Set up <a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-scales-calculator/index.html">ScalesCalculator</a> for custom calculations mediumScale and maxScale</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1650067324%2FProperties%2F1155038313" anchor-label="scrollEdgeState" id="-1650067324%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scroll-edge-state.html"><span>scroll</span><wbr><span>Edge</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1650067324%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="scroll-edge-state.html">scrollEdgeState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.zoom/-scroll-edge/index.html">ScrollEdge</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Edge state for the current offset</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-196382022%2FProperties%2F1155038313" anchor-label="threeStepScaleState" id="-196382022%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="three-step-scale-state.html"><span>three</span><wbr><span>Step</span><wbr><span>Scale</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-196382022%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="three-step-scale-state.html">threeStepScaleState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">If true, the switchScale() method will cycle between minScale, mediumScale, maxScale, otherwise only cycle between minScale and mediumScale</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-988381782%2FProperties%2F1155038313" anchor-label="transformState" id="-988381782%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transform-state.html"><span>transform</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-988381782%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="transform-state.html">transformState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-transform-compat/index.html">TransformCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Final transformation, include the final scale, offset, rotation, which is the sum of baseTransform and userTransform</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-612365811%2FProperties%2F1155038313" anchor-label="userOffsetBoundsRectFState" id="-612365811%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user-offset-bounds-rect-f-state.html"><span>user</span><wbr><span>Offset</span><wbr><span>Bounds</span><wbr><span>Rect</span><wbr><span><span>FState</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-612365811%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-offset-bounds-rect-f-state.html">userOffsetBoundsRectFState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-rect-compat/index.html">RectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1411961137%2FProperties%2F1155038313" anchor-label="userOffsetBoundsRectState" id="1411961137%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user-offset-bounds-rect-state.html"><span>user</span><wbr><span>Offset</span><wbr><span>Bounds</span><wbr><span>Rect</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1411961137%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-offset-bounds-rect-state.html">userOffsetBoundsRectState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1200854355%2FProperties%2F1155038313" anchor-label="userOffsetBoundsState" id="-1200854355%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user-offset-bounds-state.html"><span>user</span><wbr><span>Offset</span><wbr><span>Bounds</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1200854355%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-offset-bounds-state.html"><strike>userOffsetBoundsState</strike></a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-rect-compat/index.html">IntRectCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1511035487%2FProperties%2F1155038313" anchor-label="userTransformState" id="1511035487%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user-transform-state.html"><span>user</span><wbr><span>Transform</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1511035487%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-transform-state.html">userTransformState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-transform-compat/index.html">TransformCompat</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">User transformation, include the user scale, offset, rotation, which is affected by the user's gesture, <a href="read-mode-state.html">readModeState</a> properties and <a href="scale.html">scale</a>, <a href="offset.html">offset</a>, <a href="locate.html">locate</a> method</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1659507210%2FProperties%2F1155038313" anchor-label="view" id="1659507210%2FProperties%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="view.html"><span><span>view</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1659507210%2FProperties%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="view.html">view</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/view/View.html">View</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="796912426%2FFunctions%2F1155038313" anchor-label="canScroll" id="796912426%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="can-scroll.html"><span>can</span><wbr><span><span>Scroll</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="796912426%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="can-scroll.html"><span class="token function">canScroll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">horizontal<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">direction<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">If true is returned, scrolling can continue on the specified axis and direction</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-467982534%2FFunctions%2F1155038313" anchor-label="getNextStepScale" id="-467982534%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-next-step-scale.html"><span>get</span><wbr><span>Next</span><wbr><span>Step</span><wbr><span><span>Scale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-467982534%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-next-step-scale.html"><span class="token function">getNextStepScale</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Gets the next step scale factor, and if <a href="three-step-scale-state.html">threeStepScaleState</a> is true, it will cycle between <a href="min-scale-state.html">minScaleState</a>, <a href="medium-scale-state.html">mediumScaleState</a>, <a href="max-scale-state.html">maxScaleState</a>, otherwise it will only loop between <a href="min-scale-state.html">minScaleState</a>, <a href="medium-scale-state.html">mediumScaleState</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-515469127%2FFunctions%2F1155038313" anchor-label="locate" id="-515469127%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="locate.html"><span><span>locate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-515469127%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="locate.html"><span class="token function">locate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentPoint<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-offset-compat/index.html">IntOffsetCompat</a><span class="token punctuation">, </span></span><span class="parameter ">targetScale<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>transformState.value.scaleX<span class="token punctuation">, </span></span><span class="parameter ">animated<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">animationSpec<span class="token operator">: </span><a href="../-zoom-animation-spec/index.html">ZoomAnimationSpec</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="locate.html"><span class="token function">locate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentPoint<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-offset-compat/index.html">OffsetCompat</a><span class="token punctuation">, </span></span><span class="parameter ">targetScale<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>transformState.value.scaleX<span class="token punctuation">, </span></span><span class="parameter ">animated<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">animationSpec<span class="token operator">: </span><a href="../-zoom-animation-spec/index.html">ZoomAnimationSpec</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Pan the <a href="locate.html">contentPoint</a> on content to the center of the screen while zooming to <a href="locate.html">targetScale</a>, and there will be an animation when <a href="locate.html">animated</a> is true</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="390650281%2FFunctions%2F1155038313" anchor-label="offset" id="390650281%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="offset.html"><span><span>offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="390650281%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="offset.html"><span class="token function">offset</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetOffset<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-offset-compat/index.html">OffsetCompat</a><span class="token punctuation">, </span></span><span class="parameter ">animated<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">animationSpec<span class="token operator">: </span><a href="../-zoom-animation-spec/index.html">ZoomAnimationSpec</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Pan the image to the <a href="offset.html">targetOffset</a> position, and animation occurs when <a href="offset.html">animated</a> is true</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1514355328%2FFunctions%2F1155038313" anchor-label="onAttachToWindow" id="-1514355328%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-attach-to-window.html"><span>on</span><wbr><span>Attach</span><wbr><span>To</span><wbr><span><span>Window</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1514355328%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-attach-to-window.html"><span class="token function">onAttachToWindow</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1603795229%2FFunctions%2F1155038313" anchor-label="onDetachFromWindow" id="-1603795229%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-detach-from-window.html"><span>on</span><wbr><span>Detach</span><wbr><span>From</span><wbr><span><span>Window</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1603795229%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-detach-from-window.html"><span class="token function">onDetachFromWindow</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="494465096%2FFunctions%2F1155038313" anchor-label="reset" id="494465096%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset.html"><span><span>reset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="494465096%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="reset.html"><span class="token function">reset</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">caller<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1840165838%2FFunctions%2F1155038313" anchor-label="rotate" id="-1840165838%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rotate.html"><span><span>rotate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1840165838%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="rotate.html"><span class="token function">rotate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetRotation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Rotate the content to <a href="rotate.html">targetRotation</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1680188289%2FFunctions%2F1155038313" anchor-label="scale" id="-1680188289%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scale.html"><span><span>scale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1680188289%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="scale.html"><span class="token function">scale</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetScale<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">centroidContentPoint<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-offset-compat/index.html">IntOffsetCompat</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">animated<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">animationSpec<span class="token operator">: </span><a href="../-zoom-animation-spec/index.html">ZoomAnimationSpec</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">centroidContentPointF<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-offset-compat/index.html">OffsetCompat</a><span class="token operator"> = </span>contentVisibleRectFState.value.center</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Scale to the <a href="scale.html">targetScale</a> and move the focus around <a href="scale.html">centroidContentPoint</a>, and animation occurs when <a href="scale.html">animated</a> is true.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="574481127%2FFunctions%2F1155038313" anchor-label="switchScale" id="574481127%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="switch-scale.html"><span>switch</span><wbr><span><span>Scale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="574481127%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="switch-scale.html"><span class="token function">switchScale</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">centroidContentPoint<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-offset-compat/index.html">IntOffsetCompat</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">animated<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">animationSpec<span class="token operator">: </span><a href="../-zoom-animation-spec/index.html">ZoomAnimationSpec</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">centroidContentPointF<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-offset-compat/index.html">OffsetCompat</a><span class="token operator"> = </span>contentVisibleRectFState.value.center</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Scale to the next step scale and move the focus around <a href="switch-scale.html">centroidContentPoint</a>, and animation occurs when <a href="switch-scale.html">animated</a> is true.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-505184477%2FFunctions%2F1155038313" anchor-label="toString" id="-505184477%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-string.html"><span>to</span><wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-505184477%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1148374998%2FFunctions%2F1155038313" anchor-label="touchPointToContentPoint" id="-1148374998%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="touch-point-to-content-point.html"><span>touch</span><wbr><span>Point</span><wbr><span>To</span><wbr><span>Content</span><wbr><span><span>Point</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1148374998%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="touch-point-to-content-point.html"><span class="token function">touchPointToContentPoint</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">touchPoint<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-offset-compat/index.html">OffsetCompat</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-int-offset-compat/index.html">IntOffsetCompat</a></div><div class="brief "><p class="paragraph">Converts touch points on the screen to points on content</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="578364518%2FFunctions%2F1155038313" anchor-label="touchPointToContentPointF" id="578364518%2FFunctions%2F1155038313" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-view:dokkaHtmlPartial/release" data-filterable-set=":zoomimage-view:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="touch-point-to-content-point-f.html"><span>touch</span><wbr><span>Point</span><wbr><span>To</span><wbr><span>Content</span><wbr><span>Point</span><wbr><span><span>F</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="578364518%2FFunctions%2F1155038313"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-view:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="touch-point-to-content-point-f.html"><span class="token function">touchPointToContentPointF</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">touchPoint<span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-offset-compat/index.html">OffsetCompat</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../zoomimage-core/com.github.panpf.zoomimage.util/-offset-compat/index.html">OffsetCompat</a></div><div class="brief "><p class="paragraph">Converts touch points on the screen to points on content</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

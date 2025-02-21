@@ -1,0 +1,355 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.github.panpf.zoomimage.subsampling.internal</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../index.html">
+                            zoomimage
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/commonMain">common</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain">nonAndroid</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="package" id="content" pageids="zoomimage-core::com.github.panpf.zoomimage.subsampling.internal////PointingToDeclaration//-581487285">
+  <div class="breadcrumbs"><a href="../index.html">zoomimage-core</a><span class="delimiter">/</span><span class="current">com.github.panpf.zoomimage.subsampling.internal</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="1810244%2FClasslikes%2F1423716683" anchor-label="AndroidRegionDecoder" id="1810244%2FClasslikes%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-android-region-decoder/index.html"><span>Android</span><wbr><span>Region</span><wbr><span><span>Decoder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1810244%2FClasslikes%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-android-region-decoder/index.html">AndroidRegionDecoder</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>subsamplingImage<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>imageSource<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">imageInfo<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token operator">?</span><span class="token operator"> = </span>subsamplingImage.imageInfo</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Use <a href="https://developer.android.com/reference/kotlin/android/graphics/BitmapRegionDecoder.html">BitmapRegionDecoder</a> to decode the image</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1508978801%2FClasslikes%2F1423716683" anchor-label="ExifOrientationHelper" id="-1508978801%2FClasslikes%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-exif-orientation-helper/index.html"><span>Exif</span><wbr><span>Orientation</span><wbr><span><span>Helper</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1508978801%2FClasslikes%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-exif-orientation-helper/index.html">ExifOrientationHelper</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>exifOrientation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Helper class to handle image orientation based on Exif tags.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1894687459%2FClasslikes%2F-2053571633" anchor-label="SkiaRegionDecoder" id="-1894687459%2FClasslikes%2F-2053571633" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-skia-region-decoder/index.html"><span>Skia</span><wbr><span>Region</span><wbr><span><span>Decoder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1894687459%2FClasslikes%2F-2053571633"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain">nonAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-skia-region-decoder/index.html">SkiaRegionDecoder</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>subsamplingImage<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-subsampling-image/index.html">SubsamplingImage</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>imageSource<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-image-source/index.html">ImageSource</a><span class="token punctuation">, </span></span><span class="parameter ">imageInfo<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-image-info/index.html">ImageInfo</a><span class="token operator">?</span><span class="token operator"> = </span>subsamplingImage.imageInfo<span class="token punctuation">, </span></span><span class="parameter ">bytes<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="../com.github.panpf.zoomimage.subsampling/-region-decoder/index.html">RegionDecoder</a></div><div class="brief "><p class="paragraph">Use <span data-unresolved-link="org.jetbrains.skia/Image///PointingToDeclaration/">Image</span> to decode the image</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="791168919%2FClasslikes%2F843718319" anchor-label="SubsamplingCore" id="791168919%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-subsampling-core/index.html"><span>Subsampling</span><wbr><span><span>Core</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="791168919%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-subsampling-core/index.html">SubsamplingCore</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>module<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>logger<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>tileImageConvertor<span class="token operator">: </span><a href="-tile-image-convertor/index.html">TileImageConvertor</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>zoomableCore<span class="token operator">: </span><a href="-zoomable-bridge/index.html">ZoomableBridge</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onReadyChanged<span class="token operator">: </span><span class="token punctuation">(</span><a href="-subsampling-core/index.html">SubsamplingCore</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onTileChanged<span class="token operator">: </span><span class="token punctuation">(</span><a href="-subsampling-core/index.html">SubsamplingCore</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Core that control subsampling</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2099764295%2FClasslikes%2F843718319" anchor-label="TileDecoder" id="2099764295%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-decoder/index.html"><span>Tile</span><wbr><span><span>Decoder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2099764295%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-tile-decoder/index.html">TileDecoder</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>logger<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter ">regionDecoder<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-region-decoder/index.html">RegionDecoder</a></span></span><span class="token punctuation">)</span> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-auto-closeable/index.html">AutoCloseable</a></div><div class="brief "><p class="paragraph">Decode the tile bitmap of the image</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="832774594%2FClasslikes%2F843718319" anchor-label="TileImageCacheHelper" id="832774594%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-image-cache-helper/index.html"><span>Tile</span><wbr><span>Image</span><wbr><span>Cache</span><wbr><span><span>Helper</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="832774594%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-tile-image-cache-helper/index.html">TileImageCacheHelper</a></div><div class="brief "><p class="paragraph">Assist <a href="-tile-manager/index.html">TileManager</a> to obtain and store Bitmap from <a href="../com.github.panpf.zoomimage.subsampling/-tile-image-cache/index.html">TileImageCache</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1649569860%2FClasslikes%2F843718319" anchor-label="TileImageConvertor" id="-1649569860%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-image-convertor/index.html"><span>Tile</span><wbr><span>Image</span><wbr><span><span>Convertor</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1649569860%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-tile-image-convertor/index.html">TileImageConvertor</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1967722242%2FClasslikes%2F843718319" anchor-label="TileManager" id="-1967722242%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tile-manager/index.html"><span>Tile</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1967722242%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-tile-manager/index.html">TileManager</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">logger<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter ">subsamplingImage<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-subsampling-image/index.html">SubsamplingImage</a><span class="token punctuation">, </span></span><span class="parameter ">tileDecoder<span class="token operator">: </span><a href="-tile-decoder/index.html">TileDecoder</a><span class="token punctuation">, </span></span><span class="parameter ">tileImageConvertor<span class="token operator">: </span><a href="-tile-image-convertor/index.html">TileImageConvertor</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">tileImageCacheHelper<span class="token operator">: </span><a href="-tile-image-cache-helper/index.html">TileImageCacheHelper</a><span class="token punctuation">, </span></span><span class="parameter ">imageInfo<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-image-info/index.html">ImageInfo</a><span class="token punctuation">, </span></span><span class="parameter ">contentSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter ">preferredTileSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter ">onTileChanged<span class="token operator">: </span><span class="token punctuation">(</span>tileManager<span class="token operator">: </span><a href="-tile-manager/index.html">TileManager</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">onSampleSizeChanged<span class="token operator">: </span><span class="token punctuation">(</span>tileManager<span class="token operator">: </span><a href="-tile-manager/index.html">TileManager</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">onImageLoadRectChanged<span class="token operator">: </span><span class="token punctuation">(</span>tileManager<span class="token operator">: </span><a href="-tile-manager/index.html">TileManager</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Manage the loading and release of tiles</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1923690801%2FClasslikes%2F843718319" anchor-label="ZoomableBridge" id="-1923690801%2FClasslikes%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-zoomable-bridge/index.html"><span>Zoomable</span><wbr><span><span>Bridge</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1923690801%2FClasslikes%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-zoomable-bridge/index.html">ZoomableBridge</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="1079346504%2FFunctions%2F1423716683" anchor-label="applyToImageInfo" id="1079346504%2FFunctions%2F1423716683" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="apply-to-image-info.html"><span>apply</span><wbr><span>To</span><wbr><span>Image</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1079346504%2FFunctions%2F1423716683"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-exif-orientation-helper/index.html">ExifOrientationHelper</a><span class="token punctuation">.</span><a href="apply-to-image-info.html"><span class="token function">applyToImageInfo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">imageInfo<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1448839091%2FFunctions%2F843718319" anchor-label="calculatePreferredTileSize" id="-1448839091%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="calculate-preferred-tile-size.html"><span>calculate</span><wbr><span>Preferred</span><wbr><span>Tile</span><wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1448839091%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="calculate-preferred-tile-size.html"><span class="token function">calculatePreferredTileSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">containerSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a></div><div class="brief "><p class="paragraph">Calculates the preferred size of the tile based on the container size, typically half the container size</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-767652893%2FFunctions%2F843718319" anchor-label="canUseSubsamplingByAspectRatio" id="-767652893%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="can-use-subsampling-by-aspect-ratio.html"><span>can</span><wbr><span>Use</span><wbr><span>Subsampling</span><wbr><span>By</span><wbr><span>Aspect</span><wbr><span><span>Ratio</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-767652893%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="can-use-subsampling-by-aspect-ratio.html"><span class="token function">canUseSubsamplingByAspectRatio</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">imageSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter ">thumbnailSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter ">maxDifference<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Determine whether Subsampling can be used based on the difference between the width and height scaling factors of the original image and the thumbnail. The difference cannot exceed <a href="can-use-subsampling-by-aspect-ratio.html">maxDifference</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1837559999%2FFunctions%2F843718319" anchor-label="checkImageInfo" id="-1837559999%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="check-image-info.html"><span>check</span><wbr><span>Image</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1837559999%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="check-image-info.html"><span class="token function">checkImageInfo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">imageInfo<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-image-info/index.html">ImageInfo</a><span class="token punctuation">, </span></span><span class="parameter ">factory<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-region-decoder/-factory/index.html">RegionDecoder.Factory</a><span class="token punctuation">, </span></span><span class="parameter ">contentSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Check the image information, including the image size, aspect ratio, and whether the image type is supported</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-798177229%2FFunctions%2F843718319" anchor-label="checkNewPreferredTileSize" id="-798177229%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="check-new-preferred-tile-size.html"><span>check</span><wbr><span>New</span><wbr><span>Preferred</span><wbr><span>Tile</span><wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-798177229%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="check-new-preferred-tile-size.html"><span class="token function">checkNewPreferredTileSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">oldPreferredTileSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter ">newPreferredTileSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if the new preferred tile size is doubled in width or height or reduced by half, which can significantly reduce the number of times the TileManager is reset when the container size changes frequently (window resizing)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1720460561%2FFunctions%2F843718319" anchor-label="createTileDecoder" id="-1720460561%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-tile-decoder.html"><span>create</span><wbr><span>Tile</span><wbr><span><span>Decoder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1720460561%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/MainThread.html"><span class="token annotation builtin">MainThread</span></a></div></div><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="create-tile-decoder.html"><span class="token function">createTileDecoder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">logger<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter ">subsamplingImage<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-subsampling-image/index.html">SubsamplingImage</a><span class="token punctuation">, </span></span><span class="parameter ">contentSize<span class="token operator">: </span><a href="../com.github.panpf.zoomimage.util/-int-size-compat/index.html">IntSizeCompat</a><span class="token punctuation">, </span></span><span class="parameter ">regionDecoders<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../com.github.panpf.zoomimage.subsampling/-region-decoder/-factory/index.html">RegionDecoder.Factory</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">onImageInfoPassed<span class="token operator">: </span><span class="token keyword">suspend </span><span class="token punctuation">(</span><a href="../com.github.panpf.zoomimage.subsampling/-image-info/index.html">ImageInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="-tile-decoder/index.html">TileDecoder</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Create <a href="-tile-decoder/index.html">TileDecoder</a>. If the image type is not supported or the thumbnail size is larger than the original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1733117131%2FFunctions%2F-581487285" anchor-label="defaultRegionDecoder" id="1733117131%2FFunctions%2F-581487285" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain,:zoomimage-core:dokkaHtmlPartial/androidMain,:zoomimage-core:dokkaHtmlPartial/nonAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain,:zoomimage-core:dokkaHtmlPartial/androidMain,:zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain,:zoomimage-core:dokkaHtmlPartial/androidMain,:zoomimage-core:dokkaHtmlPartial/nonAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="default-region-decoder.html"><span>default</span><wbr><span>Region</span><wbr><span><span>Decoder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1733117131%2FFunctions%2F-581487285"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/androidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/androidMain" data-active="" data-toggle=":zoomimage-core:dokkaHtmlPartial/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain" data-toggle=":zoomimage-core:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain" data-toggle=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain">nonAndroid</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":zoomimage-core:dokkaHtmlPartial/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="default-region-decoder.html"><span class="token function">defaultRegionDecoder</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../zoomimage-core/com.github.panpf.zoomimage.subsampling/-region-decoder/-factory/index.html">RegionDecoder.Factory</a></div><div class="brief "><p class="paragraph">Get the platform's default RegionDecoder</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="default-region-decoder.html"><span class="token function">defaultRegionDecoder</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-region-decoder/-factory/index.html">RegionDecoder.Factory</a></div><div class="brief "><p class="paragraph">Get the platform's default RegionDecoder</p></div></div><div class="content sourceset-dependent-content" data-togglable=":zoomimage-core:dokkaHtmlPartial/nonAndroidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="default-region-decoder.html"><span class="token function">defaultRegionDecoder</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../com.github.panpf.zoomimage.subsampling/-region-decoder/-factory/index.html">RegionDecoder.Factory</a></div><div class="brief "><p class="paragraph">Create a <a href="../com.github.panpf.zoomimage.subsampling/-region-decoder/index.html">RegionDecoder</a>.Factory</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-345022516%2FFunctions%2F843718319" anchor-label="toIntroString" id="-345022516%2FFunctions%2F843718319" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":zoomimage-core:dokkaHtmlPartial/commonMain" data-filterable-set=":zoomimage-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-intro-string.html"><span>to</span><wbr><span>Intro</span><wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-345022516%2FFunctions%2F843718319"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../com.github.panpf.zoomimage.subsampling/-sampling-tiles/index.html">SamplingTiles</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="to-intro-string.html"><span class="token function">toIntroString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns a string consisting of sample size, number of tiles, and grid size</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
