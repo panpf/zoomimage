@@ -75,3 +75,11 @@
 -keepclassmembers class com.github.panpf.zoomimage.sample.<1>$Companion {
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+# ----------------------------------------- Sketch Privider --------------------------------------------- #
+-keep class * implements com.github.panpf.sketch.util.DecoderProvider { *; }
+-keep class * implements com.github.panpf.sketch.util.FetcherProvider { *; }
+
+# ----------------------------------------- Coil Privider --------------------------------------------- #
+-keep class * implements coil3.util.FetcherServiceLoaderTarget { *; }
+-keep class * implements coil3.util.DecoderServiceLoaderTarget { *; }
