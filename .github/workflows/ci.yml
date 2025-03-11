@@ -72,7 +72,7 @@ jobs:
           echo "version_name=$versionName" >> $GITHUB_OUTPUT
 
       - name: File name add version
-        run: mv "sample/build/ios/outputs/Build/Products/Debug-iphonesimulator/Sketch4 Sample.app" "sample/build/ios/outputs/Build/Products/Debug-iphonesimulator/Sketch4 Sample-${{ steps.version_name_step.outputs.version_name }}.app"
+        run: mv "sample/build/ios/outputs/Build/Products/Debug-iphonesimulator/ZoomImage Sample.app" "sample/build/ios/outputs/Build/Products/Debug-iphonesimulator/ZoomImage Sample-${{ steps.version_name_step.outputs.version_name }}.app"
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
@@ -173,7 +173,7 @@ jobs:
           echo "version_name=$versionName" >> $GITHUB_OUTPUT
 
       - name: Compress
-        run: cd sample/build/dist/js/productionExecutable; zip -r "sketch-sample-js-${{ steps.version_name_step.outputs.version_name }}.zip" *; cd -
+        run: cd sample/build/dist/js/productionExecutable; zip -r "zoomimage-sample-js-${{ steps.version_name_step.outputs.version_name }}.zip" *; cd -
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
@@ -205,7 +205,7 @@ jobs:
           echo "version_name=$versionName" >> $GITHUB_OUTPUT
 
       - name: Compress
-        run: cd sample/build/dist/wasmJs/productionExecutable; zip -r "sketch-sample-wasmJs-${{ steps.version_name_step.outputs.version_name }}.zip" *; cd -
+        run: cd sample/build/dist/wasmJs/productionExecutable; zip -r "zoomimage-sample-wasmJs-${{ steps.version_name_step.outputs.version_name }}.zip" *; cd -
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
