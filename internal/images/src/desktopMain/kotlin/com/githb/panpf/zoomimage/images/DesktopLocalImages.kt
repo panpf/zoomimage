@@ -182,12 +182,12 @@ class DesktopLocalImages private constructor() {
     )
 }
 
-fun appCacheDirectory(): Path? {
+fun appCacheDirectory(): Path {
     val appName = (getComposeResourcesPath() ?: getJarPath(DesktopLocalImages::class.java))
         ?.md5()
         ?: throw UnsupportedOperationException(
             "Unable to generate application aliases to automatically initialize downloadCache and resultCache, " +
-                    "please configure them manually. Documentation address 'https://github.com/panpf/sketch/blob/main/docs/wiki/getting_started.md'"
+                    "please configure them manually. Documentation address 'https://github.com/panpf/sketch/blob/main/docs/getting_started.md'"
         )
     return requireNotNull(
         AppDirsFactory.getInstance().getUserCacheDir(

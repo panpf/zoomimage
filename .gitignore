@@ -40,3 +40,10 @@ webpack.config.d/
 
 .kotlin/
 .run/iosSample.run.xml
+
+# docs
+site/
+docs/index.md
+docs/index.zh.md
+docs/CHANGELOG.md
+docs/CHANGELOG.zh.md

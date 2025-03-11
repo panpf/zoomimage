@@ -1,6 +1,6 @@
 ## Scale
 
-Translations: [简体中文](scale_zh.md)
+Translations: [简体中文](scale.zh.md)
 
 > [!TIP]
 > * The following example takes precedence over the Compose version component for demonstration
@@ -388,7 +388,10 @@ Button(
 
 ### Rubber Band Scale
 
-ZoomImage will limit the zoom factor to between `minScale` and `maxScale`. If you zoom beyond this range with one or two fingers, you can still zoom, but there will be a damping effect similar to a rubber band, and it will rebound to `minScale` or `maxScale` after releasing the finger. This feature is enabled by default, and you can turn it off with the `rubberBandScale` property
+ZoomImage will limit the zoom factor to between `minScale` and `maxScale`. If you zoom beyond this
+range with one or two fingers, you can still zoom, but there will be a damping effect similar to a
+rubber band, and it will rebound to `minScale` or `maxScale` after releasing the finger. This
+feature is enabled by default, and you can turn it off with the `rubberBandScale` property
 
 example：
 
@@ -473,15 +476,15 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 * The relevant properties of the view are wrapped in StateFlow, and its collect function can be
   called to implement the listening
 
-[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[ZoomableState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
+[ZoomableState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
 
-[ScalesCalculator]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ScalesCalculator.kt
+[ScalesCalculator]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ScalesCalculator.kt
 
 [ContentScale]: https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale
 

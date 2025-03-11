@@ -1,6 +1,6 @@
 ## Modifier.zoom()
 
-Translations: [简体中文](modifier_zoom_zh.md)
+Translations: [简体中文](modifier_zoom.zh.md)
 
 The Compose version of the ZoomImage component relies on `Modifier.zoom()` for scaling, and it can
 also be used on any Compose component

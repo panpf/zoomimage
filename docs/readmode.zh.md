@@ -34,7 +34,8 @@ SketchZoomAsyncImage(
 [ReadMode] 类用来控制阅读模式，它有两个参数：
 
 * `sizeType: Int = ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL`:
-  用来控制哪种尺寸类型的图片可以使用阅读模式，默认是横图和竖图都可以，取值为 `ReadMode.SIZE_TYPE_HORIZONTA`
+  用来控制哪种尺寸类型的图片可以使用阅读模式，默认是横图和竖图都可以，取值为
+  `ReadMode.SIZE_TYPE_HORIZONTA`
   或 `ReadMode.SIZE_TYPE_VERTICAL`
 * `decider: ReadMode.Decider = ReadMode.Decider.Default`: decider 根据 contentSize 和 containerSize
   来判断是否可以使用阅读模式，默认实现是 ReadMode.LongImageDecider，仅对长图使用阅读模式
@@ -43,13 +44,13 @@ SketchZoomAsyncImage(
 > * ReadMode 的默认配置是 ReadMode.Default
 > * 你可以实现 ReadMode.Decider 接口实现你自己的判定规则
 
-[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[ReadMode]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ReadMode.kt
+[ReadMode]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ReadMode.kt
 
 [ContentScale]: https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale
 

@@ -1,6 +1,6 @@
 # Change Log
 
-Translations: [简体中文](CHANGELOG_zh.md)
+Translations: [简体中文](CHANGELOG.zh.md)
 
 ## 1.1.2
 

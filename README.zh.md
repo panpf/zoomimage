@@ -38,11 +38,9 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ## 示例 App
 
-* Android：请到 [Releases](https://github.com/panpf/zoomimage/releases) 页面下载最新版本的安装包
-* Web：https://panpf.github.io/zoomimage/app
-* 桌面：使用 [kdoctor] 检查运行环境，并按照提示安装需要的软件，然后在项目根目录执行
-  `./package_desktop.sh` 命令打包，安装包位置包含在输出中
-* iOS：请参考 [运行示例 App](#运行示例-app) 部分自行编译运行
+* Android、iOS、桌面版、Web 可部署包请到 [Releases](https://github.com/panpf/zoomimage/releases)
+  页面下载最新版本
+* Web 示例：https://panpf.github.io/zoomimage/app
 
 ## 下载
 
@@ -199,17 +197,17 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 ## 文档
 
-* [开始使用](docs/wiki/getstarted_zh.md)
-* [Scale: 缩放图片以查看更清晰的细节](docs/wiki/scale_zh.md)
-* [Offset: 移动图片以查看容器之外的内容](docs/wiki/offset_zh.md)
-* [Rotate: 旋转图片以不同角度查看内容](docs/wiki/rotate_zh.md)
-* [Locate: 定位到图片的任意位置](docs/wiki/locate_zh.md)
-* [Read Mode: 长图初始时充满屏幕方便阅读](docs/wiki/readmode_zh.md)
-* [Click: 接收点击事件](docs/wiki/click_zh.md)
-* [Subsampling: 通过子采样的方式显示大图避免 OOM](docs/wiki/subsampling_zh.md)
-* [Scroll Bar: 显示水平和垂直滚动条](docs/wiki/scrollbar_zh.md)
-* [Log: 修改日志等级以及输出管道](docs/wiki/log_zh.md)
-* [Modifier.zoom()](docs/wiki/modifier_zoom_zh.md)
+* [开始使用](docs/getting_started.zh.md)
+* [Scale: 缩放图片以查看更清晰的细节](docs/scale.zh.md)
+* [Offset: 移动图片以查看容器之外的内容](docs/offset.zh.md)
+* [Rotate: 旋转图片以不同角度查看内容](docs/rotate.zh.md)
+* [Locate: 定位到图片的任意位置](docs/locate.zh.md)
+* [Read Mode: 长图初始时充满屏幕方便阅读](docs/readmode.zh.md)
+* [Click: 接收点击事件](docs/click.zh.md)
+* [Subsampling: 通过子采样的方式显示大图避免 OOM](docs/subsampling.zh.md)
+* [Scroll Bar: 显示水平和垂直滚动条](docs/scrollbar.zh.md)
+* [Log: 修改日志等级以及输出管道](docs/log.zh.md)
+* [Modifier.zoom()](docs/modifier_zoom.zh.md)
 
 ## 示例
 
@@ -218,7 +216,7 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 ## 更新日志
 
-请查看 [CHANGELOG](CHANGELOG_zh.md) 文件
+请查看 [CHANGELOG](CHANGELOG.zh) 文件
 
 ## 测试平台
 
@@ -260,7 +258,7 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 Apache 2.0. 有关详细信息，请参阅 [LICENSE](LICENSE.txt) 文件.
 
-[logo_image]: docs/res/logo_mini.png
+[logo_image]: docs/images/logo_mini.png
 
 [platform_image]: https://img.shields.io/badge/Platform-Android-brightgreen.svg
 

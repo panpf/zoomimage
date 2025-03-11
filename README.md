@@ -6,7 +6,7 @@
 [![License][license_image]][license_link]
 [![version_icon]][version_link]
 
-Translations: [简体中文](README_zh.md)
+Translations: [简体中文](README.zh.md)
 
 ZoomImage is an gesture zoom viewing of images library specially designed for Compose Multiplatform
 and Android View. It has the following features and functions:
@@ -48,13 +48,9 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ## Sample App
 
-* Android: Please go to the [Releases](https://github.com/panpf/zoomimage/releases) page to download
-  the latest version of the installation package
-* Web: https://panpf.github.io/zoomimage/app
-* Desktop: Use [kdoctor] to check the running environment, and follow the prompts to install the
-  required software, and then execute the `./package_desktop.sh` command in the project root
-  directory to package. The installation package location is included in the output.
-* iOS: Please refer to the [Run Sample App](#Run-Sample-app) section to compile and run it yourself
+* For Android, iOS, desktop version, and web deployable packages, please go to
+  the [Releases](https://github.com/panpf/zoomimage/releases) page to download.
+* Web example：https://panpf.github.io/zoomimage/app
 
 ## Download
 
@@ -213,17 +209,17 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 ## Document
 
-* [Get Started](docs/wiki/getstarted.md)
-* [Scale: Scale the image to see clearer details](docs/wiki/scale.md)
-* [Offset: Move the image to see content outside the container](docs/wiki/offset.md)
-* [Rotate: Rotate the image to view content from different angles](docs/wiki/rotate.md)
-* [Locate: Locate anywhere in the image](docs/wiki/locate.md)
-* [Read Mode: Long images initially fill the screen for easy reading](docs/wiki/readmode.md)
-* [Click: Receive click events](docs/wiki/click.md)
-* [Subsampling: Display large images through subsampling to avoid OOM](docs/wiki/subsampling.md)
-* [Scroll Bar: Displays horizontal and vertical scroll bars](docs/wiki/scrollbar.md)
-* [Log: Modify log level and output pipeline](docs/wiki/log.md)
-* [Modifier.zoom()](docs/wiki/modifier_zoom.md)
+* [Get Started](docs/getting_started.md)
+* [Scale: Scale the image to see clearer details](docs/scale.md)
+* [Offset: Move the image to see content outside the container](docs/offset.md)
+* [Rotate: Rotate the image to view content from different angles](docs/rotate.md)
+* [Locate: Locate anywhere in the image](docs/locate.md)
+* [Read Mode: Long images initially fill the screen for easy reading](docs/readmode.md)
+* [Click: Receive click events](docs/click.md)
+* [Subsampling: Display large images through subsampling to avoid OOM](docs/subsampling.md)
+* [Scroll Bar: Displays horizontal and vertical scroll bars](docs/scrollbar.md)
+* [Log: Modify log level and output pipeline](docs/log.md)
+* [Modifier.zoom()](docs/modifier_zoom.md)
 
 ## Samples
 
@@ -283,7 +279,7 @@ The following are my other open source projects. If you are interested, you can 
 
 Apache 2.0. See the [LICENSE](LICENSE.txt) file for details.
 
-[logo_image]: docs/res/logo_mini.png
+[logo_image]: docs/images/logo_mini.png
 
 [platform_image]: https://img.shields.io/badge/Platform-Android-brightgreen.svg
 

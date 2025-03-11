@@ -1,6 +1,6 @@
 ## Offset
 
-Translations: [简体中文](offset_zh.md)
+Translations: [简体中文](offset.zh.md)
 
 > [!TIP]
 > * The following example takes precedence over the Compose version component for demonstration
@@ -146,8 +146,8 @@ LaunchEffect(zoomState.zoomable) {
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
 )
 ```
 
@@ -164,22 +164,22 @@ example：
 val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.zoomable) {
-  // Set the specific size through the containerWhitespace property
-  zoomState.zoomable.containerWhitespace = ContainerWhitespace(
-    left = 4f, top = 3f, right = 2f, bottom = 1f
-  )
-  // or
-  zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
-  // or
-  zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
+    // Set the specific size through the containerWhitespace property
+    zoomState.zoomable.containerWhitespace = ContainerWhitespace(
+        left = 4f, top = 3f, right = 2f, bottom = 1f
+    )
+    // or
+    zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
+    // or
+    zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
 
-  // Leave 50% of the container size white space between the edge of the image and the edge of the container
-  zoomState.zoomable.containerWhitespaceMultiple = 0.5f
+    // Leave 50% of the container size white space between the edge of the image and the edge of the container
+    zoomState.zoomable.containerWhitespaceMultiple = 0.5f
 }
 
 SketchZoomAsyncImage(
-  imageUri = "https://sample.com/sample.jpeg",
-  contentDescription = "view image",
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
 )
@@ -216,16 +216,16 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 * The relevant properties of the view are wrapped in StateFlow, and its collect function can be
   called to implement the listening
 
-[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
 [ContentScale]: https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale
 
 [Alignment]: https://developer.android.com/reference/kotlin/androidx/compose/ui/Alignment
 
-[ZoomableState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
+[ZoomableState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
 
-[ScrollEdge]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ScrollEdge.kt
+[ScrollEdge]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ScrollEdge.kt

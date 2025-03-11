@@ -1,6 +1,6 @@
 ## Subsampling
 
-Translations: [简体中文](subsampling_zh.md)
+Translations: [简体中文](subsampling.zh.md)
 
 > [!TIP]
 > * The following example takes precedence over the Compose version component for demonstration
@@ -448,40 +448,40 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * The relevant properties of the view are wrapped in StateFlow, and its collect function can be
   called to implement the listening
 
-[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[TileImageCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileImageCache.kt
+[TileImageCache]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileImageCache.kt
 
-[SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+[SubsamplingState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 
-[ImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ImageSource.kt
+[ImageSource]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ImageSource.kt
 
-[AssetImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/AssetImageSource.kt
+[AssetImageSource]: ../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/AssetImageSource.kt
 
-[ByteArrayImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ByteArrayImageSource.kt
+[ByteArrayImageSource]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ByteArrayImageSource.kt
 
-[ComposeResourceImageSource]: ../../zoomimage-compose-resources/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ComposeResourceImageSource.kt
+[ComposeResourceImageSource]: ../zoomimage-compose-resources/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ComposeResourceImageSource.kt
 
-[ContentImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ContentImageSource.kt
+[ContentImageSource]: ../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ContentImageSource.kt
 
-[FileImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/FileImageSource.kt
+[FileImageSource]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/FileImageSource.kt
 
-[KotlinResourceImageSource]: ../../zoomimage-core/src/desktopMain/kotlin/com/github/panpf/zoomimage/subsampling/KotlinResourceImageSource.kt
+[KotlinResourceImageSource]: ../zoomimage-core/src/desktopMain/kotlin/com/github/panpf/zoomimage/subsampling/KotlinResourceImageSource.kt
 
-[ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
+[ResourceImageSource]: ../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
 
-[SubsamplingImage]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/SubsamplingImage.kt
+[SubsamplingImage]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/SubsamplingImage.kt
 
-[RegionDecoder]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/RegionDecoder.kt
+[RegionDecoder]: ../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/RegionDecoder.kt
 
-[SkiaRegionDecoder]: ../../zoomimage-core/src/nonAndroidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder.kt
+[SkiaRegionDecoder]: ../zoomimage-core/src/nonAndroidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder.kt
 
-[AndroidRegionDecoder]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/AndroidRegionDecoder.kt
+[AndroidRegionDecoder]: ../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/internal/AndroidRegionDecoder.kt
 
-[SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+[SubsamplingState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 
-[SubsamplingEngine]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt
+[SubsamplingEngine]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt
