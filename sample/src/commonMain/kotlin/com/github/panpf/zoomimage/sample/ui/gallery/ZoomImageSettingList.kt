@@ -425,37 +425,41 @@ fun <T> DropdownSettingItem(
             }
 
             Spacer(modifier = Modifier.width(10.dp))
-            val value by state.collectAsState()
-            Text(text = value.toString(), fontSize = 10.sp)
-            Icon(
-                painter = painterResource(Res.drawable.ic_expand_more),
-                contentDescription = "more"
-            )
-        }
 
-        DropdownMenu(
-            expanded = expanded,
-            modifier = Modifier.align(Alignment.CenterEnd),
-            onDismissRequest = { expanded = false },
-        ) {
-            values.forEachIndexed { index, value ->
-                if (index > 0) {
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp)
+            Box {
+                Row {
+                    val value by state.collectAsState()
+                    Text(text = value.toString(), fontSize = 10.sp)
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_expand_more),
+                        contentDescription = "more"
                     )
                 }
-                DropdownMenuItem(
-                    text = { Text(text = value.toString()) },
-                    onClick = {
-                        state.value = value
-                        expanded = false
-                        coroutineScope.launch {
-                            onItemClick?.invoke(value)
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    values.forEachIndexed { index, value ->
+                        if (index > 0) {
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 14.dp)
+                            )
                         }
+                        DropdownMenuItem(
+                            text = { Text(text = value.toString()) },
+                            onClick = {
+                                state.value = value
+                                expanded = false
+                                coroutineScope.launch {
+                                    onItemClick?.invoke(value)
+                                }
+                            }
+                        )
                     }
-                )
+                }
             }
         }
     }
