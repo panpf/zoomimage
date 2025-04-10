@@ -42,6 +42,7 @@ import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
+import com.github.panpf.zoomimage.zoom.InitialZoom
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -144,9 +145,9 @@ class ZoomableCore constructor(
     var continuousTransformType: Int = 0
         private set
 
-    private var lastResetParams: ResetParams? = null
+    private var initialZoom: InitialZoom = InitialZoom.Origin
+    private var resetParams: ResetParams? = null
     private var coroutineScope: CoroutineScope? = null
-    private var lastInitialUserTransform: TransformCompat = TransformCompat.Origin
 
 
     suspend fun scale(
@@ -497,7 +498,7 @@ class ZoomableCore constructor(
     suspend fun reset(caller: String) {
         requiredMainThread()
 
-        val resetParams = ResetParams(
+        val newResetParams = ResetParams(
             containerSize = containerSize,
             contentSize = contentSize,
             contentOriginSize = contentOriginSize,
@@ -510,42 +511,48 @@ class ZoomableCore constructor(
             containerWhitespaceMultiple = containerWhitespaceMultiple,
             containerWhitespace = containerWhitespace,
         )
-        val paramsChanged = resetParams.different(lastResetParams)
+        val paramsChanged = newResetParams.different(resetParams)
         if (paramsChanged == 0) {
             logger.d { "$module. reset:$caller. skipped. All parameters unchanged" }
             return
         }
 
+        val newInitialZoom = calculateInitialZoom(
+            containerSize = newResetParams.containerSize,
+            contentSize = newResetParams.contentSize,
+            contentOriginSize = newResetParams.contentOriginSize,
+            contentScale = newResetParams.contentScale,
+            alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+            rotation = newResetParams.rotation,
+            readMode = newResetParams.readMode,
+            scalesCalculator = newResetParams.scalesCalculator,
+        )
+        // Can't be one-size-fits-all, because resets caused by other attribute changes such as limitOffsetWithinBaseVisibleRect are always true here
+//        val lastInitialZoom = initialZoom
+//        if (lastInitialZoom == newInitialZoom) {
+//            logger.d { "$module. reset:$caller. skipped. Initial zoom unchanged" }
+//            return
+//        }
+
         stopAllAnimation("reset:$caller")
 
-        val newInitialZoom = calculateInitialZoom(
-            containerSize = resetParams.containerSize,
-            contentSize = resetParams.contentSize,
-            contentOriginSize = resetParams.contentOriginSize,
-            contentScale = resetParams.contentScale,
-            alignment = resetParams.alignment.rtlFlipped(rtlLayoutDirection),
-            rotation = resetParams.rotation,
-            readMode = resetParams.readMode,
-            scalesCalculator = resetParams.scalesCalculator,
-        )
         val newBaseTransform = newInitialZoom.baseTransform
 
         val onlyContainerSizeChanged = paramsChanged == 1
-        val lastInitialUserTransform = lastInitialUserTransform
         val lastUserTransform = userTransform
-        val thereAreUserActions = !transformAboutEquals(
-            one = lastInitialUserTransform,
-            two = lastUserTransform
+        val hasUserActions = !transformAboutEquals(
+            one = lastUserTransform,
+            two = TransformCompat.Origin
         )
-        val newUserTransform = if (onlyContainerSizeChanged && thereAreUserActions) {
+        val newUserTransform = if (onlyContainerSizeChanged && hasUserActions) {
             val lastTransform = transform
             val lastContentVisibleCenter = contentVisibleRect.center
             calculateRestoreContentVisibleCenterUserTransform(
-                containerSize = resetParams.containerSize,
-                contentSize = resetParams.contentSize,
-                contentScale = resetParams.contentScale,
-                alignment = resetParams.alignment.rtlFlipped(rtlLayoutDirection),
-                rotation = resetParams.rotation,
+                containerSize = newResetParams.containerSize,
+                contentSize = newResetParams.contentSize,
+                contentScale = newResetParams.contentScale,
+                alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+                rotation = newResetParams.rotation,
                 newBaseTransform = newBaseTransform,
                 lastTransform = lastTransform,
                 lastContentVisibleCenter = lastContentVisibleCenter,
@@ -563,14 +570,14 @@ class ZoomableCore constructor(
         logger.d {
             val transform = newBaseTransform + newUserTransform
             "$module. reset:$caller. " +
-                    "containerSize=${resetParams.containerSize.toShortString()}, " +
-                    "contentSize=${resetParams.contentSize.toShortString()}, " +
-                    "contentOriginSize=${resetParams.contentOriginSize.toShortString()}, " +
-                    "contentScale=${resetParams.contentScale.name}, " +
-                    "alignment=${resetParams.alignment.name}, " +
-                    "rotation=${resetParams.rotation}, " +
-                    "scalesCalculator=${resetParams.scalesCalculator}, " +
-                    "readMode=${resetParams.readMode}. " +
+                    "containerSize=${newResetParams.containerSize.toShortString()}, " +
+                    "contentSize=${newResetParams.contentSize.toShortString()}, " +
+                    "contentOriginSize=${newResetParams.contentOriginSize.toShortString()}, " +
+                    "contentScale=${newResetParams.contentScale.name}, " +
+                    "alignment=${newResetParams.alignment.name}, " +
+                    "rotation=${newResetParams.rotation}, " +
+                    "scalesCalculator=${newResetParams.scalesCalculator}, " +
+                    "readMode=${newResetParams.readMode}. " +
                     "minScale=${newInitialZoom.minScale.format(4)}, " +
                     "mediumScale=${newInitialZoom.mediumScale.format(4)}, " +
                     "maxScale=${newInitialZoom.maxScale.format(4)}, " +
@@ -583,22 +590,23 @@ class ZoomableCore constructor(
         mediumScale = newInitialZoom.mediumScale
         maxScale = newInitialZoom.maxScale
         contentBaseDisplayRect = calculateContentBaseDisplayRect(
-            containerSize = resetParams.containerSize,
-            contentSize = resetParams.contentSize,
-            contentScale = resetParams.contentScale,
-            alignment = resetParams.alignment.rtlFlipped(rtlLayoutDirection),
-            rotation = resetParams.rotation,
+            containerSize = newResetParams.containerSize,
+            contentSize = newResetParams.contentSize,
+            contentScale = newResetParams.contentScale,
+            alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+            rotation = newResetParams.rotation,
         )
         contentBaseVisibleRect = calculateContentBaseVisibleRect(
-            containerSize = resetParams.containerSize,
-            contentSize = resetParams.contentSize,
-            contentScale = resetParams.contentScale,
-            alignment = resetParams.alignment.rtlFlipped(rtlLayoutDirection),
-            rotation = resetParams.rotation,
+            containerSize = newResetParams.containerSize,
+            contentSize = newResetParams.contentSize,
+            contentScale = newResetParams.contentScale,
+            alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+            rotation = newResetParams.rotation,
         )
         baseTransform = newBaseTransform
         updateUserTransform(newUserTransform)
-        lastResetParams = resetParams
+        resetParams = newResetParams
+        initialZoom = newInitialZoom
     }
 
     suspend fun stopAllAnimation(caller: String) {
@@ -834,6 +842,7 @@ class ZoomableCore constructor(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
         ).round().toRect()      // round() makes sense
+        // TODO limit 时如果是往回拖动，就不一步到位的限制到最低
         return userOffset.limitTo(userOffsetBounds)
     }
 
