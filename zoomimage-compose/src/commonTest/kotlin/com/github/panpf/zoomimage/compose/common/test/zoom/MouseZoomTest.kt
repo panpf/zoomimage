@@ -98,11 +98,11 @@ class MouseZoomTest {
 
             val mouseZoomNode = MouseZoomNode(zoomable)
             assertEquals(
-                expected = "(33, 768)",
+                expected = "Offset(33.3, 768.0)",
                 actual = mouseZoomNode.contentPoint(Offset(200f, 300f)).toString()
             )
             assertEquals(
-                expected = "(17, 785)",
+                expected = "Offset(16.6, 784.7)",
                 actual = mouseZoomNode.contentPoint(Offset(100f, 400f)).toString()
             )
         }
