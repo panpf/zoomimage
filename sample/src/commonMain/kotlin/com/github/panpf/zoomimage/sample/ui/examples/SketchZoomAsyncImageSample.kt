@@ -34,7 +34,7 @@ fun SketchZoomAsyncImageSample(
         photoPaletteState = photoPaletteState,
         createZoomState = { rememberSketchZoomState() },
         pageSelected = pageSelected,
-    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick, onTapClick ->
+    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(
             request = ComposableImageRequest(photo.originalUrl) {
@@ -53,7 +53,6 @@ fun SketchZoomAsyncImageSample(
             zoomState = zoomState,
             scrollBar = scrollBar,
             onLongPress = { onLongClick.invoke() },
-            onTap = { onTapClick.invoke(it) }
         )
 
         val pageState by remember {

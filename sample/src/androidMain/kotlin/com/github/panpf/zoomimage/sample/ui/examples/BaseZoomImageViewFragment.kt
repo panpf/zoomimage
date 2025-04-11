@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples
 
-import com.github.panpf.zoomimage.sample.R as CommonR
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -29,10 +28,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.sample.R as CommonR
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
@@ -53,7 +52,6 @@ import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
-import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
@@ -108,9 +106,6 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             )
         )
         zoomImageView.apply {
-            onViewTapListener = OnViewTapListener { _, offset ->
-                showShortToast("offset: $offset")
-            }
             onViewLongPressListener = OnViewLongPressListener { _, _ ->
                 InfoItemsDialogFragment().apply {
                     val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)

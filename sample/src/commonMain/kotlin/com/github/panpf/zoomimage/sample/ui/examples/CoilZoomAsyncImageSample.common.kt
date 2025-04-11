@@ -43,7 +43,7 @@ fun CoilZoomAsyncImageSample(
             rememberCoilZoomState(subsamplingImageGenerators = extensionsModelToImageSources)
         },
         pageSelected = pageSelected,
-    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick, onTapClick ->
+    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick ->
         var pageState by remember { mutableStateOf<PageState?>(null) }
         val context = LocalPlatformContext.current
         val request = remember(key1 = photo) {
@@ -76,7 +76,6 @@ fun CoilZoomAsyncImageSample(
             zoomState = zoomState,
             scrollBar = scrollBar,
             onLongPress = { onLongClick.invoke() },
-            onTap = { onTapClick.invoke(it) }
         )
 
         PageState(pageState = pageState)

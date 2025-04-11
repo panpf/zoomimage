@@ -39,7 +39,7 @@ fun BasicZoomImageSample(
         photoPaletteState = photoPaletteState,
         createZoomState = { rememberZoomState() },
         pageSelected = pageSelected,
-    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick, onTapClick ->
+    ) { contentScale, alignment, zoomState, capturableState, scrollBar, onLongClick ->
         val context = LocalPlatformContext.current
         val sketch = SingletonSketch.get(context)
         LaunchedEffect(Unit) {
@@ -93,7 +93,6 @@ fun BasicZoomImageSample(
                 zoomState = zoomState,
                 scrollBar = scrollBar,
                 onLongPress = { onLongClick.invoke() },
-                onTap = { onTapClick.invoke(it) }
             )
         }
 
