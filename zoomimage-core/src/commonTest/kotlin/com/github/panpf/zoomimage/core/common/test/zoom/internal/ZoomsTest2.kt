@@ -1,15 +1,14 @@
-package com.github.panpf.zoomimage.core.common.test.zoom
+package com.github.panpf.zoomimage.core.common.test.zoom.internal
 
+import com.github.panpf.zoomimage.test.Item
+import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntRectCompat as IntRect
 import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
 import com.github.panpf.zoomimage.util.OffsetCompat as Offset
 import com.github.panpf.zoomimage.util.RectCompat as Rect
-import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
-import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
-import com.github.panpf.zoomimage.test.Item
-import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomStart
@@ -19,6 +18,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.CenterStart
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopEnd
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopStart
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Crop
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillBounds
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillHeight
@@ -26,10 +26,10 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillWidth
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Fit
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Inside
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.None
-import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
-import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
-import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
-import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
+import com.github.panpf.zoomimage.zoom.internal.calculateContentBaseDisplayRect
+import com.github.panpf.zoomimage.zoom.internal.calculateContentBaseVisibleRect
+import com.github.panpf.zoomimage.zoom.internal.calculateContentDisplayRect
+import com.github.panpf.zoomimage.zoom.internal.calculateContentVisibleRect
 import com.github.panpf.zoomimage.zoom.name
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -54,7 +54,12 @@ class ZoomsTest2 {
                 ),
                 p3s = listOf(0, 90, 180, 270),
                 buildItem = { p1, p2, p3 ->
-                    Item5(p1, p2, p3, IntRect.Zero)
+                    Item5(
+                        p1,
+                        p2,
+                        p3,
+                        IntRect.Zero
+                    )
                 },
             ) { item ->
                 calculateContentBaseDisplayRect(
@@ -388,7 +393,12 @@ class ZoomsTest2 {
                 ),
                 p3s = listOf(0, 90, 180, 270),
                 buildItem = { p1, p2, p3 ->
-                    Item5(contentScale = p1, alignment = p2, rotation = p3, expected = IntRect.Zero)
+                    Item5(
+                        contentScale = p1,
+                        alignment = p2,
+                        rotation = p3,
+                        expected = IntRect.Zero
+                    )
                 },
             ) { item ->
                 calculateContentBaseVisibleRect(
@@ -722,7 +732,12 @@ class ZoomsTest2 {
                 ),
                 p3s = listOf(0, 90, 180, 270),
                 buildItem = { p1, p2, p3 ->
-                    Item5(contentScale = p1, alignment = p2, rotation = p3, expected = IntRect.Zero)
+                    Item5(
+                        contentScale = p1,
+                        alignment = p2,
+                        rotation = p3,
+                        expected = IntRect.Zero
+                    )
                 },
             ) { item ->
                 calculateContentBaseVisibleRect(

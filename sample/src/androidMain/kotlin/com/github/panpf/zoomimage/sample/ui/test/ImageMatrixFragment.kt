@@ -31,7 +31,7 @@ import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.zoom.calculateBaseTransform
+import com.github.panpf.zoomimage.zoom.internal.calculateBaseTransform
 import kotlin.math.min
 
 class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBinding>() {

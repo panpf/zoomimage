@@ -42,32 +42,13 @@ import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
-import com.github.panpf.zoomimage.zoom.InitialZoom
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScrollEdge
-import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
-import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
-import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
-import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
-import com.github.panpf.zoomimage.zoom.calculateInitialZoom
-import com.github.panpf.zoomimage.zoom.calculateLocateUserOffset
-import com.github.panpf.zoomimage.zoom.calculateNextStepScale
-import com.github.panpf.zoomimage.zoom.calculateRestoreContentVisibleCenterUserTransform
-import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
-import com.github.panpf.zoomimage.zoom.calculateScrollEdge
-import com.github.panpf.zoomimage.zoom.calculateTransformOffset
-import com.github.panpf.zoomimage.zoom.calculateUserOffsetBounds
-import com.github.panpf.zoomimage.zoom.canScrollByEdge
-import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
-import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.isEmpty
-import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.rtlFlipped
-import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
-import com.github.panpf.zoomimage.zoom.transformAboutEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -188,7 +169,11 @@ class ZoomableCore constructor(
             targetUserScale = limitedTargetUserScale,
             centroid = touchPoint,
         )
-        val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
+        val limitedTargetUserOffset = limitUserOffset(
+            userOffset = targetUserOffset,
+            userScale = limitedTargetUserScale,
+//            addOffset = null
+        )
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactorCompat(limitedTargetUserScale),
             offset = limitedTargetUserOffset
@@ -252,7 +237,12 @@ class ZoomableCore constructor(
         val scaledBaseOffset = currentBaseTransform.offset.times(currentUserTransform.scale)
         val targetUserOffset = targetOffset - scaledBaseOffset
         val currentUserScale = currentUserTransform.scaleX
-        val limitedTargetUserOffset = limitUserOffset(targetUserOffset, currentUserScale)
+//        val addOffset = targetOffset - transform.offset
+        val limitedTargetUserOffset = limitUserOffset(
+            userOffset = targetUserOffset,
+            userScale = currentUserScale,
+//            addOffset = addOffset
+        )
         val limitedTargetUserTransform = currentUserTransform.copy(offset = limitedTargetUserOffset)
         logger.d {
             val currentUserOffset = currentUserTransform.offset
@@ -316,7 +306,11 @@ class ZoomableCore constructor(
             containerPoint = containerPoint,
             userScale = limitedTargetUserScale,
         )
-        val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
+        val limitedTargetUserOffset = limitUserOffset(
+            userOffset = targetUserOffset,
+            userScale = limitedTargetUserScale,
+//            addOffset = null
+        )
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactorCompat(limitedTargetUserScale),
             offset = limitedTargetUserOffset
@@ -545,24 +539,23 @@ class ZoomableCore constructor(
             two = TransformCompat.Origin
         )
         val newUserTransform = if (onlyContainerSizeChanged && hasUserActions) {
-            val lastTransform = transform
-            val lastContentVisibleCenter = contentVisibleRect.center
-            calculateRestoreContentVisibleCenterUserTransform(
-                containerSize = newResetParams.containerSize,
-                contentSize = newResetParams.contentSize,
-                contentScale = newResetParams.contentScale,
-                alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
-                rotation = newResetParams.rotation,
-                newBaseTransform = newBaseTransform,
-                lastTransform = lastTransform,
-                lastContentVisibleCenter = lastContentVisibleCenter,
-            ).let {
-                val limitUserOffset = limitUserOffset(
-                    userOffset = it.offset,
-                    userScale = it.scaleX
+            val restoreContentVisibleCenterUserTransform =
+                calculateRestoreContentVisibleCenterUserTransform(
+                    containerSize = newResetParams.containerSize,
+                    contentSize = newResetParams.contentSize,
+                    contentScale = newResetParams.contentScale,
+                    alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+                    rotation = newResetParams.rotation,
+                    newBaseTransform = newBaseTransform,
+                    lastTransform = transform,
+                    lastContentVisibleCenter = contentVisibleRect.center,
                 )
-                it.copy(offset = limitUserOffset)
-            }
+            val limitUserOffset = limitUserOffset(
+                userOffset = restoreContentVisibleCenterUserTransform.offset,
+                userScale = restoreContentVisibleCenterUserTransform.scaleX,
+//                addOffset = null,
+            )
+            restoreContentVisibleCenterUserTransform.copy(offset = limitUserOffset)
         } else {
             newInitialZoom.userTransform
         }
@@ -707,7 +700,11 @@ class ZoomableCore constructor(
             pan = panChange,
             gestureRotate = 0f,
         )
-        val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
+        val limitedTargetUserOffset = limitUserOffset(
+            userOffset = targetUserOffset,
+            userScale = limitedTargetUserScale,
+//            addOffset = panChange
+        )
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactorCompat(limitedTargetUserScale),
             offset = limitedTargetUserOffset
@@ -771,9 +768,11 @@ class ZoomableCore constructor(
                 extras = extras,
                 onUpdateValue = { newUserOffset ->
                     val currentUserTransform2 = this@ZoomableCore.userTransform
+//                    val addOffset = newUserOffset - currentUserTransform2.offset
                     val limitedTargetUserOffset = limitUserOffset(
                         userOffset = newUserOffset,
-                        userScale = currentUserTransform2.scaleX
+                        userScale = currentUserTransform2.scaleX,
+//                        addOffset = addOffset,
                     )
                     val continue1 = limitedTargetUserOffset != currentUserTransform2.offset
                     if (continue1) {
@@ -845,6 +844,64 @@ class ZoomableCore constructor(
         // TODO limit 时如果是往回拖动，就不一步到位的限制到最低
         return userOffset.limitTo(userOffsetBounds)
     }
+
+//    private fun limitUserOffset(
+//        userOffset: OffsetCompat,
+//        userScale: Float,
+//        addOffset: OffsetCompat?
+//    ): OffsetCompat {
+//        val userOffsetBounds = calculateUserOffsetBounds(
+//            containerSize = containerSize,
+//            contentSize = contentSize,
+//            contentScale = contentScale,
+//            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+//            rotation = rotation,
+//            userScale = userScale,
+//            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+//            containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
+//        ).round().toRect()      // round() makes sense
+//        val limittedUserOffset = if (addOffset != null) {
+//            val x = if (userOffset.x < userOffsetBounds.left) {
+//                if (addOffset.x > 0) {
+//                    userOffset.x
+//                } else {
+//                    userOffset.x - addOffset.x
+//                }
+//            } else if (userOffset.x > userOffsetBounds.right) {
+//                if (addOffset.x < 0) {
+//                    userOffset.x
+//                } else {
+//                    userOffset.x - addOffset.x
+//                }
+//            } else {
+//                userOffset.x
+//            }
+//
+//            val y = if (userOffset.y < userOffsetBounds.top) {
+//                if (addOffset.y > 0) {
+//                    userOffset.y
+//                } else {
+//                    userOffset.y - addOffset.y
+//                }
+//            } else if (userOffset.y > userOffsetBounds.bottom) {
+//                if (addOffset.y < 0) {
+//                    userOffset.y
+//                } else {
+//                    userOffset.y - addOffset.y
+//                }
+//            } else {
+//                userOffset.y
+//            }
+//
+//            OffsetCompat(x, y)
+//        } else {
+//            userOffset.limitTo(userOffsetBounds)
+//        }
+//        // TODO limit 时如果是往回拖动，就不一步到位的限制到最低
+//
+//        println("limitUserOffset: userOffset=$userOffset -> $limittedUserOffset, userOffsetBounds=$userOffsetBounds, addOffset=$addOffset")
+//        return limittedUserOffset
+//    }
 
     private suspend fun animatedUpdateUserTransform(
         targetUserTransform: TransformCompat,

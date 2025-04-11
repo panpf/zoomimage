@@ -32,8 +32,6 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import com.github.panpf.zoomimage.zoom.calculateContentRotateOrigin
-import com.github.panpf.zoomimage.zoom.calculateRotatedContentMoveToTopLeftOffset
 
 /**
  * Calculate basic transformations such as contentScale, alignment, rotation, etc.

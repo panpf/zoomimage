@@ -14,8 +14,8 @@ import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import com.github.panpf.zoomimage.zoom.calculateRotatedContentMoveToTopLeftOffset
 import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
+import com.github.panpf.zoomimage.zoom.internal.calculateRotatedContentMoveToTopLeftOffset
 import com.github.panpf.zoomimage.zoom.name
 import kotlin.test.Test
 import kotlin.test.assertEquals

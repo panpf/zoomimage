@@ -1,13 +1,12 @@
-package com.github.panpf.zoomimage.core.common.test.zoom
+package com.github.panpf.zoomimage.core.common.test.zoom.internal
 
-import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
-import com.github.panpf.zoomimage.util.OffsetCompat as Offset
-import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
-import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import com.github.panpf.zoomimage.test.Item
 import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
+import com.github.panpf.zoomimage.util.OffsetCompat as Offset
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomStart
@@ -17,6 +16,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.CenterStart
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopEnd
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopStart
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Crop
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillBounds
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillHeight
@@ -24,13 +24,13 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillWidth
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Fit
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Inside
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.None
-import com.github.panpf.zoomimage.zoom.containerPointToContentPoint
-import com.github.panpf.zoomimage.zoom.containerPointToTouchPoint
-import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
-import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
+import com.github.panpf.zoomimage.zoom.internal.containerPointToContentPoint
+import com.github.panpf.zoomimage.zoom.internal.containerPointToTouchPoint
+import com.github.panpf.zoomimage.zoom.internal.contentPointToContainerPoint
+import com.github.panpf.zoomimage.zoom.internal.contentPointToTouchPoint
+import com.github.panpf.zoomimage.zoom.internal.touchPointToContainerPoint
+import com.github.panpf.zoomimage.zoom.internal.touchPointToContentPoint
 import com.github.panpf.zoomimage.zoom.name
-import com.github.panpf.zoomimage.zoom.touchPointToContainerPoint
-import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

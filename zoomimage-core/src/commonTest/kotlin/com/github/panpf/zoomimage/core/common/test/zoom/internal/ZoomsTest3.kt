@@ -1,19 +1,18 @@
-package com.github.panpf.zoomimage.core.common.test.zoom
+package com.github.panpf.zoomimage.core.common.test.zoom.internal
 
-import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
-import com.github.panpf.zoomimage.util.OffsetCompat as Offset
-import com.github.panpf.zoomimage.util.RectCompat as Rect
-import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
-import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import com.github.panpf.zoomimage.test.Item
 import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
+import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
+import com.github.panpf.zoomimage.util.OffsetCompat as Offset
 import com.github.panpf.zoomimage.util.RectCompat
+import com.github.panpf.zoomimage.util.RectCompat as Rect
 import com.github.panpf.zoomimage.util.filterNegativeZeros
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
+import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomStart
@@ -24,6 +23,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopEnd
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.TopStart
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Crop
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillBounds
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillHeight
@@ -33,15 +33,15 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Inside
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.None
 import com.github.panpf.zoomimage.zoom.Edge
 import com.github.panpf.zoomimage.zoom.ScrollEdge
-import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
-import com.github.panpf.zoomimage.zoom.calculateLocateUserOffset
-import com.github.panpf.zoomimage.zoom.calculateNextStepScale
-import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
-import com.github.panpf.zoomimage.zoom.calculateScrollEdge
-import com.github.panpf.zoomimage.zoom.calculateTransformOffset
-import com.github.panpf.zoomimage.zoom.calculateUserOffsetBounds
-import com.github.panpf.zoomimage.zoom.canScrollByEdge
-import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.zoom.internal.calculateContentBaseDisplayRect
+import com.github.panpf.zoomimage.zoom.internal.calculateLocateUserOffset
+import com.github.panpf.zoomimage.zoom.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.zoom.internal.calculateScaleUserOffset
+import com.github.panpf.zoomimage.zoom.internal.calculateScrollEdge
+import com.github.panpf.zoomimage.zoom.internal.calculateTransformOffset
+import com.github.panpf.zoomimage.zoom.internal.calculateUserOffsetBounds
+import com.github.panpf.zoomimage.zoom.internal.canScrollByEdge
+import com.github.panpf.zoomimage.zoom.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.name
 import kotlin.test.Test
 import kotlin.test.assertEquals

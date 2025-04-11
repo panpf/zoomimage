@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core.common.test.zoom
+package com.github.panpf.zoomimage.core.common.test.zoom.internal
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
@@ -12,11 +12,11 @@ import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
-import com.github.panpf.zoomimage.zoom.calculateInitialZoom
-import com.github.panpf.zoomimage.zoom.calculateRestoreContentVisibleCenterUserTransform
-import com.github.panpf.zoomimage.zoom.checkParamsChanges
-import com.github.panpf.zoomimage.zoom.transformAboutEquals
+import com.github.panpf.zoomimage.zoom.internal.calculateContentVisibleRect
+import com.github.panpf.zoomimage.zoom.internal.calculateInitialZoom
+import com.github.panpf.zoomimage.zoom.internal.calculateRestoreContentVisibleCenterUserTransform
+import com.github.panpf.zoomimage.zoom.internal.checkParamsChanges
+import com.github.panpf.zoomimage.zoom.internal.transformAboutEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

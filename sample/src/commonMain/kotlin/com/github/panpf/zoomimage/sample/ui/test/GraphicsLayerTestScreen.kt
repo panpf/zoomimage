@@ -78,8 +78,8 @@ import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.windowSize
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.zoom.calculateBaseTransform
-import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
+import com.github.panpf.zoomimage.zoom.internal.calculateBaseTransform
+import com.github.panpf.zoomimage.zoom.internal.calculateContentDisplayRect
 import kotlinx.coroutines.flow.filter
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.min

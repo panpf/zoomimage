@@ -1,9 +1,9 @@
-package com.github.panpf.zoomimage.core.common.test.zoom
+package com.github.panpf.zoomimage.core.common.test.zoom.internal
 
-import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
 import com.github.panpf.zoomimage.test.Item
 import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
@@ -28,16 +28,16 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillWidth
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Fit
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Inside
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.None
-import com.github.panpf.zoomimage.zoom.InitialZoom
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import com.github.panpf.zoomimage.zoom.calculateBaseTransform
-import com.github.panpf.zoomimage.zoom.calculateContentRotateOrigin
-import com.github.panpf.zoomimage.zoom.calculateInitialZoom
-import com.github.panpf.zoomimage.zoom.calculateReadModeTransform
-import com.github.panpf.zoomimage.zoom.calculateRotatedContentMoveToTopLeftOffset
-import com.github.panpf.zoomimage.zoom.calculateRotatedContentRect
-import com.github.panpf.zoomimage.zoom.calculateScales
+import com.github.panpf.zoomimage.zoom.internal.InitialZoom
+import com.github.panpf.zoomimage.zoom.internal.calculateBaseTransform
+import com.github.panpf.zoomimage.zoom.internal.calculateContentRotateOrigin
+import com.github.panpf.zoomimage.zoom.internal.calculateInitialZoom
+import com.github.panpf.zoomimage.zoom.internal.calculateReadModeTransform
+import com.github.panpf.zoomimage.zoom.internal.calculateRotatedContentMoveToTopLeftOffset
+import com.github.panpf.zoomimage.zoom.internal.calculateRotatedContentRect
+import com.github.panpf.zoomimage.zoom.internal.calculateScales
 import com.github.panpf.zoomimage.zoom.name
 import kotlin.test.Test
 import kotlin.test.assertEquals

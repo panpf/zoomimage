@@ -16,7 +16,7 @@
 
 @file:Suppress("UnnecessaryVariable")
 
-package com.github.panpf.zoomimage.zoom
+package com.github.panpf.zoomimage.zoom.internal
 
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -42,7 +42,18 @@ import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toSize
-import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContainerWhitespace
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.Edge
+import com.github.panpf.zoomimage.zoom.ReadMode
+import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import com.github.panpf.zoomimage.zoom.ScrollEdge
+import com.github.panpf.zoomimage.zoom.check
+import com.github.panpf.zoomimage.zoom.isBottom
+import com.github.panpf.zoomimage.zoom.isEnd
+import com.github.panpf.zoomimage.zoom.isStart
+import com.github.panpf.zoomimage.zoom.isTop
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -54,7 +65,7 @@ import kotlin.math.sin
 /**
  * Calculate the position of content after rotate in the container
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest.testCalculateRotatedContentRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateRotatedContentRect
  */
 fun calculateRotatedContentRect(
     containerSize: IntSizeCompat,
@@ -96,7 +107,7 @@ fun calculateRotatedContentRect(
 /**
  * Calculate the offset of the content after it is rotated in the container and then moved back to the upper left corner
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest.testCalculateRotatedContentMoveToTopLeftOffset
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateRotatedContentMoveToTopLeftOffset
  */
 fun calculateRotatedContentMoveToTopLeftOffset(
     containerSize: IntSizeCompat,
@@ -121,7 +132,7 @@ fun calculateRotatedContentMoveToTopLeftOffset(
 /**
  * Calculate the rotation origin of content, usually the percentage of the center of content relative to container
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest.testCalculateContentRotateOrigin
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateContentRotateOrigin
  */
 fun calculateContentRotateOrigin(
     containerSize: IntSizeCompat,
@@ -144,7 +155,7 @@ fun calculateContentRotateOrigin(
 /**
  * Calculate the basic transformation of content. The basic transformation is affected by contentScale, alignment, and rotation.
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest.testCalculateBaseTransform
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateBaseTransform
  */
 fun calculateBaseTransform(
     containerSize: IntSizeCompat,
@@ -180,7 +191,7 @@ fun calculateBaseTransform(
  * The reading mode will make the picture fill the screen and move to the starting position,
  * allowing the user to read the picture content immediately
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest.testCalculateReadModeTransform
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateReadModeTransform
  */
 fun calculateReadModeTransform(
     containerSize: IntSizeCompat,
@@ -245,7 +256,7 @@ fun calculateReadModeTransform(
 /**
  * Calculate the minimum, medium, and maximum scale factor
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest.testCalculateScales
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateScales
  */
 fun calculateScales(
     containerSize: IntSizeCompat,
@@ -289,7 +300,7 @@ fun calculateScales(
 /**
  * Calculate initial zoom information, including minimum, medium, maximum scale factor, base transformation and user transformation
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest.testCalculateInitialZoom
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateInitialZoom
  */
 fun calculateInitialZoom(
     containerSize: IntSizeCompat,
@@ -373,7 +384,7 @@ data class InitialZoom(
  * Check whether the parameters have changed
  *
  * @return 0: All unchanged; 1: Only containerSize changes; -1: More changes
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest5.testCheckParamsChanges
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCheckParamsChanges
  */
 fun checkParamsChanges(
     containerSize: IntSizeCompat,
@@ -421,7 +432,7 @@ fun checkParamsChanges(
 /**
  * Calculates the user transform required to restore the last content-visible hub
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest5.testCalculateRestoreContentVisibleCenterUserTransform
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreContentVisibleCenterUserTransform
  */
 fun calculateRestoreContentVisibleCenterUserTransform(
     containerSize: IntSizeCompat,
@@ -468,7 +479,7 @@ fun calculateRestoreContentVisibleCenterUserTransform(
  * Calculate the base display area of content in the container,
  * controlled by basic parameters such as [contentScale], [alignment], [rotation]
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest2.testCalculateContentBaseDisplayRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentBaseDisplayRect
  */
 fun calculateContentBaseDisplayRect(
     containerSize: IntSizeCompat,
@@ -503,7 +514,7 @@ fun calculateContentBaseDisplayRect(
  * The base visible area for calculating content,
  * controlled by basic parameters such as [contentScale], [alignment], [rotation]
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest2.testCalculateContentBaseVisibleRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentBaseVisibleRect
  */
 fun calculateContentBaseVisibleRect(
     containerSize: IntSizeCompat,
@@ -584,7 +595,7 @@ fun calculateContentBaseVisibleRect(
  * controlled by basic parameters such as [contentScale], [alignment], [rotation],
  * and user behavior parameters such as [userScale], [userOffset].
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest2.testCalculateContentDisplayRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentDisplayRect
  */
 fun calculateContentDisplayRect(
     containerSize: IntSizeCompat,
@@ -631,7 +642,7 @@ fun calculateContentDisplayRect(
  * controlled by basic parameters such as [contentScale], [alignment], [rotation],
  * and user behavior parameters such as [userScale], [userOffset].
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest2.testCalculateContentVisibleRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentVisibleRect
  */
 fun calculateContentVisibleRect(
     containerSize: IntSizeCompat,
@@ -696,7 +707,7 @@ fun calculateContentVisibleRect(
  * Calculates the bounds of the user offset at the specified [userScale],
  * and can only be offset within the underlying visible area when the [limitBaseVisibleRect] parameter is true
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testCalculateUserOffsetBounds
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateUserOffsetBounds
  */
 fun calculateUserOffsetBounds(
     containerSize: IntSizeCompat,
@@ -800,7 +811,7 @@ fun calculateUserOffsetBounds(
 /**
  * Calculates the user offset required to locate to the specified point of the container at the specified user scaling
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testCalculateLocateUserOffset
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateLocateUserOffset
  */
 fun calculateLocateUserOffset(
     containerSize: IntSizeCompat,
@@ -828,7 +839,7 @@ fun calculateLocateUserOffset(
 /**
  * Calculates the user offset required to maintain the centroid when scaling to a specified user scaling factor
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testCalculateScaleUserOffset
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateScaleUserOffset
  */
 fun calculateScaleUserOffset(
     currentUserScale: Float,
@@ -856,7 +867,7 @@ fun calculateScaleUserOffset(
 /**
  * Calculates the offset required to keep the centroid unchanged when the user gesture transforms
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testCalculateTransformOffset
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateTransformOffset
  */
 fun calculateTransformOffset(
     currentScale: Float,
@@ -901,7 +912,7 @@ fun calculateTransformOffset(
 /**
  * Calculate scroll edge
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testCalculateScrollEdge
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateScrollEdge
  */
 fun calculateScrollEdge(
     userOffsetBounds: RectCompat,
@@ -934,7 +945,7 @@ fun calculateScrollEdge(
  *
  * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testCanScrollByEdge
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCanScrollByEdge
  */
 fun canScrollByEdge(scrollEdge: ScrollEdge, horizontal: Boolean, direction: Int): Boolean {
     return if (horizontal) {
@@ -958,8 +969,8 @@ fun canScrollByEdge(scrollEdge: ScrollEdge, horizontal: Boolean, direction: Int)
 /**
  * Limiting the scaling factor by means of a rubber band effect exceeds the maximum scaling limit, which has a damping effect when exceeded
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testLimitScaleWithRubberBand
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testLimitScaleWithRubberBand2
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testLimitScaleWithRubberBand
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testLimitScaleWithRubberBand2
  */
 fun limitScaleWithRubberBand(
     currentScale: Float,
@@ -1005,7 +1016,7 @@ fun limitScaleWithRubberBand(
  * Calculates the next scale factor for double-click scaling
  *
  * @param delta – the maximum delta between expected and actual for which both numbers are still considered equal.
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest3.testCalculateNextStepScale
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateNextStepScale
  */
 fun calculateNextStepScale(
     stepScales: FloatArray,
@@ -1025,7 +1036,7 @@ fun calculateNextStepScale(
 /**
  * Converts on-screen touch points to points on a container, supports scaling, panning, and ignoring rotation of the container
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest4.testTouchPointToContainerPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testTouchPointToContainerPoint
  */
 fun touchPointToContainerPoint(
     containerSize: IntSizeCompat,
@@ -1052,7 +1063,7 @@ fun touchPointToContainerPoint(
 /**
  * Converts points on a container to on-screen touch points, supports zooming, panning, and ignoring rotation of the container
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest4.testContainerPointToTouchPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContainerPointToTouchPoint
  */
 fun containerPointToTouchPoint(
     containerSize: IntSizeCompat,
@@ -1078,7 +1089,7 @@ fun containerPointToTouchPoint(
 /**
  * Convert points on containers to points on content
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest4.testContainerPointToContentPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContainerPointToContentPoint
  */
 fun containerPointToContentPoint(
     containerSize: IntSizeCompat,
@@ -1123,7 +1134,7 @@ fun containerPointToContentPoint(
 /**
  * Converts points on content to points on containers
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest4.testContentPointToContainerPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContentPointToContainerPoint
  */
 fun contentPointToContainerPoint(
     containerSize: IntSizeCompat,
@@ -1166,7 +1177,7 @@ fun contentPointToContainerPoint(
 /**
  * Converts touch points on the screen into points on content, and supports scaling, panning, and rotating containers
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest4.testTouchPointToContentPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testTouchPointToContentPoint
  */
 fun touchPointToContentPoint(
     containerSize: IntSizeCompat,
@@ -1209,7 +1220,7 @@ fun touchPointToContentPoint(
 /**
  * Converts points on content into touch points on the screen, and supports scaling, panning, and rotating containers
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest4.testContentPointToTouchPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContentPointToTouchPoint
  */
 fun contentPointToTouchPoint(
     containerSize: IntSizeCompat,
@@ -1253,7 +1264,7 @@ fun contentPointToTouchPoint(
 /**
  * Rough comparison TransformCompat
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest5.testTransformAboutEquals
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testTransformAboutEquals
  */
 fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
     return one.scaleX.aboutEquals(two.scaleX, delta = 0.1f, scale = 2)
