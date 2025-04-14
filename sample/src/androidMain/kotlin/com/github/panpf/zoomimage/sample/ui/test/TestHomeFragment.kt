@@ -75,13 +75,28 @@ class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
             navDirections = NavMainDirections.actionGlobalImageMatrixFragment(),
         ),
         Link(
-            title = "PhotoView",
-            navDirections = NavMainDirections.actionGlobalPhotoViewTestFragment(),
+            title = "SketchZoomImageView (Switch)",
+            navDirections = NavMainDirections.actionGlobalSketchZoomImageViewSwitchTestFragment(),
             minSdk = 21,
         ),
         Link(
-            title = "SubsamplingScaleImageView",
-            navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewTestFragment(),
+            title = "PhotoView (Pager)",
+            navDirections = NavMainDirections.actionGlobalPhotoViewPagerTestFragment(),
+            minSdk = 21,
+        ),
+        Link(
+            title = "PhotoView (Switch)",
+            navDirections = NavMainDirections.actionGlobalPhotoViewSwitchTestFragment(),
+            minSdk = 21,
+        ),
+        Link(
+            title = "SubsamplingScaleImageView (Pager)",
+            navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewPagerTestFragment(),
+            minSdk = 21,
+        ),
+        Link(
+            title = "SubsamplingScaleImageView (Switch)",
+            navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewSwitchTestFragment(),
             minSdk = 21,
         ),
     )

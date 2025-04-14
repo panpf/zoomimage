@@ -128,4 +128,11 @@ object ResourceImages {
         exifTranspose,
         exifTransverse,
     )
+
+    val snalls: Array<ResourceImageFile> = arrayOf(
+        cat,
+        dog,
+        longEnd,
+        longWhale,
+    )
 }

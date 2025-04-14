@@ -87,24 +87,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/photoViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.PhotoViewFragment">
-        <argument
-            android:name="imageUri"
-            app:argType="string"
-            app:nullable="false" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/subsamplingScaleImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.SubsamplingScaleImageViewFragment">
-        <argument
-            android:name="imageUri"
-            app:argType="string"
-            app:nullable="false" />
-    </fragment>
-
-    <fragment
         android:id="@+id/exifOrientationTestFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.test.ExifOrientationTestFragment" />
     <action
@@ -127,22 +109,73 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/photoViewTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.PhotoViewTestFragment" />
+        android:id="@+id/photoViewPagerTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.PhotoViewPagerTestFragment" />
     <action
-        android:id="@+id/action_global_photoViewTestFragment"
-        app:destination="@id/photoViewTestFragment"
+        android:id="@+id/action_global_photoViewPagerTestFragment"
+        app:destination="@id/photoViewPagerTestFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/subsamplingScaleImageViewTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.SubsamplingScaleImageViewTestFragment" />
+        android:id="@+id/subsamplingScaleImageViewPagerTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.SubsamplingScaleImageViewPagerTestFragment" />
     <action
-        android:id="@+id/action_global_subsamplingScaleImageViewTestFragment"
-        app:destination="@id/subsamplingScaleImageViewTestFragment"
+        android:id="@+id/action_global_subsamplingScaleImageViewPagerTestFragment"
+        app:destination="@id/subsamplingScaleImageViewPagerTestFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/photoViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.PhotoViewFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/subsamplingScaleImageViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.SubsamplingScaleImageViewFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photoViewSwitchTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.PhotoViewSwitchTestFragment" />
+    <action
+        android:id="@+id/action_global_photoViewSwitchTestFragment"
+        app:destination="@id/photoViewSwitchTestFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/subsamplingScaleImageViewSwitchTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.SubsamplingScaleImageViewSwitchTestFragment" />
+    <action
+        android:id="@+id/action_global_subsamplingScaleImageViewSwitchTestFragment"
+        app:destination="@id/subsamplingScaleImageViewSwitchTestFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/sketchZoomImageViewSwitchTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.SketchZoomImageViewSwitchTestFragment" />
+    <action
+        android:id="@+id/action_global_sketchZoomImageViewSwitchTestFragment"
+        app:destination="@id/sketchZoomImageViewSwitchTestFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"

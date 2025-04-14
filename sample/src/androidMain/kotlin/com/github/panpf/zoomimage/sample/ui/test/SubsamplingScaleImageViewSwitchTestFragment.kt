@@ -14,38 +14,46 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.sample.ui.examples
+package com.github.panpf.zoomimage.sample.ui.test
 
 import android.annotation.SuppressLint
 import android.graphics.PointF
 import android.graphics.RectF
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
+import android.view.View
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener
-import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.sketch.fetch.isAssetUri
 import com.github.panpf.sketch.util.toUri
-import com.github.panpf.zoomimage.sample.databinding.FragmentSubsamplingViewBinding
-import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.databinding.FragmentSubsamplingViewSwitchBinding
+import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.common.list.ImageThumbnailItemFactory
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
+import kotlinx.coroutines.launch
 
-class SubsamplingScaleImageViewFragment : BaseBindingFragment<FragmentSubsamplingViewBinding>() {
+class SubsamplingScaleImageViewSwitchTestFragment :
+    BaseToolbarBindingFragment<FragmentSubsamplingViewSwitchBinding>() {
 
-    private val args by navArgs<SubsamplingScaleImageViewFragmentArgs>()
+    private val viewModel by viewModels<ImageSwitchViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        screenMode = false
+    override fun getNavigationBarInsetsView(binding: FragmentSubsamplingViewSwitchBinding): View {
+        return binding.root
     }
 
     override fun onViewCreated(
-        binding: FragmentSubsamplingViewBinding,
+        toolbar: Toolbar,
+        binding: FragmentSubsamplingViewSwitchBinding,
         savedInstanceState: Bundle?
     ) {
+        toolbar.title = "SubsamplingScaleImageView (Switch)"
+
         binding.subsamplingView.apply {
             setOnStateChangedListener(object : OnStateChangedListener {
                 override fun onScaleChanged(newScale: Float, origin: Int) {
@@ -58,12 +66,31 @@ class SubsamplingScaleImageViewFragment : BaseBindingFragment<FragmentSubsamplin
             })
         }
 
+        binding.images.apply {
+            layoutManager = LinearLayoutManager(
+                /* context = */ requireContext(),
+                /* orientation = */ LinearLayoutManager.HORIZONTAL,
+                /* reverseLayout = */ false
+            )
+            adapter = AssemblyRecyclerAdapter(
+                itemFactoryList = listOf(ImageThumbnailItemFactory {
+                    viewModel.setImageUri(it)
+                }),
+                initDataList = viewModel.imageUris
+            )
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentImageUri.collect { imageUri ->
+                setImage(binding, imageUri)
+            }
+        }
+
         updateInfo(binding)
-        setImage(binding)
     }
 
-    private fun setImage(binding: FragmentSubsamplingViewBinding) {
-        val imageSource = newImageSource(args.imageUri)
+    private fun setImage(binding: FragmentSubsamplingViewSwitchBinding, imageUri: String) {
+        val imageSource = newImageSource(imageUri)
         if (imageSource != null) {
             binding.subsamplingView.setImage(imageSource)
         }
@@ -79,7 +106,7 @@ class SubsamplingScaleImageViewFragment : BaseBindingFragment<FragmentSubsamplin
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateInfo(binding: FragmentSubsamplingViewBinding) {
+    private fun updateInfo(binding: FragmentSubsamplingViewSwitchBinding) {
         binding.infoHeaderText.text = """
                 scale: 
                 space: 
@@ -91,17 +118,6 @@ class SubsamplingScaleImageViewFragment : BaseBindingFragment<FragmentSubsamplin
                 ${RectF().apply { getPanRemaining(this) }.toVeryShortString()}
                 ${center?.toShortString()}
             """.trimIndent()
-        }
-    }
-
-    class ItemFactory : FragmentItemFactory<String>(String::class) {
-
-        override fun createFragment(
-            bindingAdapterPosition: Int,
-            absoluteAdapterPosition: Int,
-            data: String
-        ): Fragment = SubsamplingScaleImageViewFragment().apply {
-            arguments = SubsamplingScaleImageViewFragmentArgs(data).toBundle()
         }
     }
 }

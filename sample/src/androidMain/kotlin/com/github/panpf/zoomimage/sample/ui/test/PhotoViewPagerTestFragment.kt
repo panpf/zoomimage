@@ -2,21 +2,25 @@ package com.github.panpf.zoomimage.sample.ui.test
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.databinding.FragmentTabPagerBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
-import com.github.panpf.zoomimage.sample.ui.examples.PhotoViewFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
-class PhotoViewTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBinding>() {
+class PhotoViewPagerTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBinding>() {
+
+    override fun getNavigationBarInsetsView(binding: FragmentTabPagerBinding): View {
+        return binding.root
+    }
 
     override fun onViewCreated(
         toolbar: Toolbar, binding: FragmentTabPagerBinding, savedInstanceState: Bundle?
     ) {
-        toolbar.title = "PhotoView"
+        toolbar.title = "PhotoView (Pager)"
 
         val images = ResourceImages.values
 
@@ -25,7 +29,7 @@ class PhotoViewTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBinding
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
-                fragment = this@PhotoViewTestFragment,
+                fragment = this@PhotoViewPagerTestFragment,
                 itemFactoryList = listOf(PhotoViewFragment.ItemFactory()),
                 initDataList = images.map { it.uri }
             )

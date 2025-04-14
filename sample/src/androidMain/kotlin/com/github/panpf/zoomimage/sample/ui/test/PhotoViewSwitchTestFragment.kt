@@ -14,38 +14,45 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.sample.ui.examples
+package com.github.panpf.zoomimage.sample.ui.test
 
 import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
+import android.view.View
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.chrisbanes.photoview.PhotoView
-import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.sketch.loadImage
-import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoViewBinding
-import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoViewSwitchBinding
+import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.common.list.ImageThumbnailItemFactory
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.toShortString
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
+class PhotoViewSwitchTestFragment : BaseToolbarBindingFragment<FragmentPhotoViewSwitchBinding>() {
 
-    private val args by navArgs<PhotoViewFragmentArgs>()
+    private val viewModel by viewModels<ImageSwitchViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        screenMode = false
+    override fun getNavigationBarInsetsView(binding: FragmentPhotoViewSwitchBinding): View {
+        return binding.root
     }
 
     override fun onViewCreated(
-        binding: FragmentPhotoViewBinding,
+        toolbar: Toolbar,
+        binding: FragmentPhotoViewSwitchBinding,
         savedInstanceState: Bundle?
     ) {
+        toolbar.title = "PhotoView (Switch)"
+
         binding.photoView.apply {
             setOnScaleChangeListener { _, _, _ ->
                 updateInfo(binding)
@@ -55,34 +62,35 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
             }
         }
 
-        updateInfo(binding)
-        setImage(binding)
-    }
-
-    private fun setImage(binding: FragmentPhotoViewBinding) {
-        binding.photoView.loadImage(args.imageUri) {
-            crossfade()
-            addListener(
-                onStart = {
-                    binding.stateView.loading()
-                },
-                onSuccess = { _, _ ->
-                    binding.stateView.gone()
-                },
-                onError = { _, result ->
-                    binding.stateView.error {
-                        message(result.throwable)
-                        retryAction {
-                            setImage(binding)
-                        }
-                    }
-                },
+        binding.images.apply {
+            layoutManager = LinearLayoutManager(
+                /* context = */ requireContext(),
+                /* orientation = */ LinearLayoutManager.HORIZONTAL,
+                /* reverseLayout = */ false
+            )
+            adapter = AssemblyRecyclerAdapter(
+                itemFactoryList = listOf(ImageThumbnailItemFactory {
+                    viewModel.setImageUri(it)
+                }),
+                initDataList = viewModel.imageUris
             )
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentImageUri.collect { imageUri ->
+                setImage(binding, imageUri)
+            }
+        }
+
+        updateInfo(binding)
+    }
+
+    private fun setImage(binding: FragmentPhotoViewSwitchBinding, imageUri: String) {
+        binding.photoView.loadImage(imageUri)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateInfo(binding: FragmentPhotoViewBinding) {
+    private fun updateInfo(binding: FragmentPhotoViewSwitchBinding) {
         binding.infoHeaderText.text = """
                 scale: 
                 offset: 
@@ -96,17 +104,6 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
                 ${imageMatrix?.getTranslation()?.toShortString()}
                 ${displayRect?.toVeryShortString()}
             """.trimIndent()
-        }
-    }
-
-    class ItemFactory : FragmentItemFactory<String>(String::class) {
-
-        override fun createFragment(
-            bindingAdapterPosition: Int,
-            absoluteAdapterPosition: Int,
-            data: String
-        ): Fragment = PhotoViewFragment().apply {
-            arguments = PhotoViewFragmentArgs(data).toBundle()
         }
     }
 
@@ -133,4 +130,5 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
 
     private val PhotoView.displayScale: Float
         get() = Matrix().apply { getDisplayMatrix(this) }.getScale()
+
 }

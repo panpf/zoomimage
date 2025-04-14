@@ -39,7 +39,15 @@ import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
 import org.jetbrains.compose.resources.painterResource
 
-expect fun testItems(): List<TestItem>
+fun testItems(): List<TestItem> = listOf(
+    TestItem("ImageSource", ImageSourceTestScreen()),
+    TestItem("Exif Orientation", ExifOrientationTestScreen()),
+    TestItem("Graphics Layer", GraphicsLayerTestScreen()),
+    TestItem("Modifier.zoom()", ModifierZoomTestScreen()),
+    TestItem("Mouse", MouseTestScreen()),
+    TestItem("KeyZoom", KeyTestScreen()),
+    // TODO SketchZoomImage (Switch)
+)
 
 @Composable
 fun TestPage() {
