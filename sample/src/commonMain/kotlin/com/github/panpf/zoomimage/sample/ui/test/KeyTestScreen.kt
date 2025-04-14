@@ -20,7 +20,7 @@ class KeyTestScreen : BaseScreen() {
 
     @Composable
     override fun DrawContent() {
-        ToolbarScaffold("Key", ignoreNavigationBarInsets = true) {
+        ToolbarScaffold("Key") {
             val focusRequester = remember { FocusRequester() }
             val zoomState = rememberSketchZoomState()
             zoomState.logger.level = Logger.Level.Debug

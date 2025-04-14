@@ -27,7 +27,7 @@ class ModifierZoomTestScreen : BaseScreen() {
 
     @Composable
     override fun DrawContent() {
-        ToolbarScaffold("Modifier.Zoom", ignoreNavigationBarInsets = true) {
+        ToolbarScaffold("Modifier.Zoom") {
             val zoomableState = rememberZoomableState()
             zoomableState.logger.level = Logger.Level.Debug
             val text = remember {

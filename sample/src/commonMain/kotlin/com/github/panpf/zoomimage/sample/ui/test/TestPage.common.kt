@@ -46,7 +46,7 @@ fun testItems(): List<TestItem> = listOf(
     TestItem("Modifier.zoom()", ModifierZoomTestScreen()),
     TestItem("Mouse", MouseTestScreen()),
     TestItem("KeyZoom", KeyTestScreen()),
-    // TODO SketchZoomImage (Switch)
+    TestItem("ZoomImage (Switch)", ZoomImageSwitchTestScreen()),
 )
 
 @Composable

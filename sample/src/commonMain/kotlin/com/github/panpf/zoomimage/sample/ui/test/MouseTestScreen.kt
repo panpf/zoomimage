@@ -25,7 +25,7 @@ class MouseTestScreen : BaseScreen() {
     @Composable
     @OptIn(ExperimentalComposeUiApi::class)
     override fun DrawContent() {
-        ToolbarScaffold("Mouse", ignoreNavigationBarInsets = true) {
+        ToolbarScaffold("Mouse") {
             var number by remember { mutableStateOf(0f) }
             var color by remember { mutableStateOf(Color(0, 0, 0)) }
             var pointerPosition by remember { mutableStateOf(Offset(0f, 0f)) }
