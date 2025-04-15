@@ -121,6 +121,7 @@ kotlin {
             implementation(libs.panpf.tools4k)
             implementation(libs.photoview)
             implementation(libs.subsamplingscaleimageview)
+            implementation(libs.telephoto.coil3)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -188,6 +189,7 @@ androidApplication(
     nameSpace = appId,
     applicationId = appId
 ) {
+    compileSdkVersion(project.compileSdk.coerceAtLeast(35)) // androidx.core:core:1.15.0 Must be 35
     defaultConfig {
         buildConfigField("String", "VERSION_NAME", "\"${property("versionName").toString()}\"")
         buildConfigField("int", "VERSION_CODE", property("versionCode").toString())

@@ -63,6 +63,8 @@ photoview = "2.3.0"
 skiko = "0.8.15"    # sync with jetbrains-compose
 subsamplingscaleimageview = "3.10.0"
 
+telephoto = "0.15.1"
+
 voyager = "1.1.0-alpha03"
 
 [libraries]
@@ -189,6 +191,8 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
+
+telephoto-coil3 = { module = "me.saket.telephoto:zoomable-image-coil3", version.ref = "telephoto" }
 
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }

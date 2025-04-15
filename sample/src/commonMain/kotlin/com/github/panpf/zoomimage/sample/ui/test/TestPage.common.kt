@@ -47,7 +47,9 @@ fun testItems(): List<TestItem> = listOf(
     TestItem("Mouse", MouseTestScreen()),
     TestItem("KeyZoom", KeyTestScreen()),
     TestItem("ZoomImage (Switch)", ZoomImageSwitchTestScreen()),
-)
+).plus(platformTestItems())
+
+expect fun platformTestItems(): List<TestItem>
 
 @Composable
 fun TestPage() {
