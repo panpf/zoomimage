@@ -2,12 +2,16 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-## new
+## 1.2.0-SNAPSHOT
 
 zoom:
 
-* new: Add the default value to the caller parameter of the reset() method of ZoomableState and ZoomableEngine
-* new: ZoomableState and ZoomableEngine have added the keepTransformWhenSameAspectRatioContentSizeChanged parameter. After turning on, you can keep the transformation state when switching pictures with the same aspect ratio. [#58](https://github.com/panpf/zoomimage/issues/58)
+* new: Add the default value to the caller parameter of the reset() method of ZoomableState and
+  ZoomableEngine
+* new: ZoomableState and ZoomableEngine have added the
+  keepTransformWhenSameAspectRatioContentSizeChanged parameter. After turning on, you can keep the
+  transformation state when switching pictures with the same aspect
+  ratio. [#58](https://github.com/panpf/zoomimage/issues/58)
 
 ## 1.1.2
 
