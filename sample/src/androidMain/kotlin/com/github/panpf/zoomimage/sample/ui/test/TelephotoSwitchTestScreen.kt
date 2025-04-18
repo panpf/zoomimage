@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.sample.ui.test
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,11 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
@@ -42,21 +43,75 @@ class TelephotoSwitchTestScreen : BaseScreen() {
     override fun DrawContent() {
         ToolbarScaffold("Telephoto (Switch)") {
             val zoomState = rememberZoomableImageState(rememberZoomableState())
-            Column(Modifier.fillMaxSize().background(Color.Black)) {
-                val imageUris = remember { ResourceImages.snalls.map { it.uri } }
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            ) {
+                val imageUris = remember { imageSwitchTestResources.map { it.uri } }
                 var currentImageUri by remember { mutableStateOf(imageUris.first()) }
-                ZoomableAsyncImage(
-                    model = currentImageUri,
-                    contentDescription = "Image",
-                    modifier = Modifier.fillMaxWidth().weight(1f),
-                    state = zoomState,
-                )
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    ZoomableAsyncImage(
+                        model = currentImageUri,
+                        contentDescription = "Image",
+                        modifier = Modifier.fillMaxSize(),
+                        state = zoomState,
+                    )
 
-                LazyRow(Modifier.fillMaxWidth().height(100.dp)) {
+                    Row(Modifier.padding(20.dp)) {
+                        val headerInfo = remember {
+                            """
+                                scale:
+                                offset:
+                                rotation:
+                            """.trimIndent()
+                        }
+                        Text(
+                            text = headerInfo,
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            lineHeight = 16.sp,
+                            style = LocalTextStyle.current.copy(
+                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                            ),
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        val transformInfo =
+                            remember(zoomState.zoomableState.contentTransformation) {
+                                val transform = zoomState.zoomableState.contentTransformation
+                                """
+                                    ${transform.scale.toShortString()}
+                                    ${transform.offset.round().toShortString()}
+                                    ${transform.rotationZ.roundToInt()}
+                                """.trimIndent()
+                            }
+                        Text(
+                            text = transformInfo,
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            lineHeight = 16.sp,
+                            style = LocalTextStyle.current.copy(
+                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                            ),
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+
+                LazyRow(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                ) {
                     items(imageUris) { uri ->
                         AsyncImage(
                             uri = uri,
                             contentDescription = "ThumbnailImage",
+                            contentScale = ContentScale.Inside,
                             modifier = Modifier
                                 .padding(10.dp)
                                 .size(80.dp)
@@ -64,44 +119,6 @@ class TelephotoSwitchTestScreen : BaseScreen() {
                         )
                     }
                 }
-            }
-
-            Row(Modifier.padding(20.dp)) {
-                val headerInfo = remember {
-                    """
-                    scale:
-                    offset:
-                    rotation:
-                """.trimIndent()
-                }
-                Text(
-                    text = headerInfo,
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    lineHeight = 16.sp,
-                    style = LocalTextStyle.current.copy(
-                        shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                    ),
-                    overflow = TextOverflow.Ellipsis,
-                )
-                val transformInfo = remember(zoomState.zoomableState.contentTransformation) {
-                    val transform = zoomState.zoomableState.contentTransformation
-                    """
-                    ${transform.scale.toShortString()}
-                    ${transform.offset.round().toShortString()}
-                    ${transform.rotationZ.roundToInt()}
-                """.trimIndent()
-                }
-                Text(
-                    text = transformInfo,
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    lineHeight = 16.sp,
-                    style = LocalTextStyle.current.copy(
-                        shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                    ),
-                    overflow = TextOverflow.Ellipsis,
-                )
             }
         }
     }

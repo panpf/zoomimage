@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,6 +47,18 @@
                 android:textColor="@android:color/white"
                 tools:text="draw：\nvisible: \nscales: " />
         </LinearLayout>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/rotateButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="20dp"
+            android:background="@color/md_theme_primary"
+            app:contentPadding="10dp"
+            app:shapeAppearance="@style/CircleStyle"
+            app:srcCompat="@drawable/ic_rotate_right"
+            app:tint="@android:color/white" />
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView

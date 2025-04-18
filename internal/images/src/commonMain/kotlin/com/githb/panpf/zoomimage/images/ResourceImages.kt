@@ -30,20 +30,48 @@ object ResourceImages {
     val longWhale: ResourceImageFile =
         ResourceImageFile("long_whale.jpg", "WHALE", IntSizeCompat(672, 1916))
 
-    val hugeCard: ResourceImageFile =
-        ResourceImageFile(
-            "huge_card.jpg",
-            "CARD",
-            IntSizeCompat(7557, 5669),
-            ExifOrientation.NORMAL
-        )
-    val hugeChina: ResourceImageFile =
-        ResourceImageFile("huge_china.jpg", "CHINA", IntSizeCompat(6799, 4882))
-
-    val hugeLongComic: ResourceImageFile =
-        ResourceImageFile("huge_long_comic.jpg", "COMIC", IntSizeCompat(690, 12176))
-    val hugeLongQmsht: ResourceImageFile =
-        ResourceImageFile("huge_long_qmsht.jpg", "QMSHT", IntSizeCompat(30000, 926))
+    val hugeCard: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_card.jpg",
+        name = "CARD",
+        size = IntSizeCompat(7557, 5669),
+        exifOrientation = ExifOrientation.NORMAL
+    )
+    val hugeCardThumbnail: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_card_thumbnail.jpg",
+        name = "CARD_T",
+        size = IntSizeCompat(500, 375),
+        exifOrientation = ExifOrientation.NORMAL
+    )
+    val hugeChina: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_china.jpg",
+        name = "CHINA",
+        size = IntSizeCompat(6799, 4882)
+    )
+    val hugeChinaThumbnail: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_china_thumbnail.jpg",
+        name = "CHINA_T",
+        size = IntSizeCompat(500, 359)
+    )
+    val hugeLongComic: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_long_comic.jpg",
+        name = "COMIC",
+        size = IntSizeCompat(690, 12176)
+    )
+    val hugeLongComicThumbnail: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_long_comic_thumbnail.jpg",
+        name = "COMIC_T",
+        size = IntSizeCompat(57, 1000)
+    )
+    val hugeLongQmsht: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_long_qmsht.jpg",
+        name = "QMSHT",
+        size = IntSizeCompat(30000, 926)
+    )
+    val hugeLongQmshtThumbnail: ResourceImageFile = ResourceImageFile(
+        resourceName = "huge_long_qmsht_thumbnail.jpg",
+        name = "QMSHT_T",
+        size = IntSizeCompat(1000, 31)
+    )
 
     val exifFlipHorizontal: ResourceImageFile = ResourceImageFile(
         "exif_flip_horizontal.jpg",
@@ -127,12 +155,5 @@ object ResourceImages {
         exifRotate270,
         exifTranspose,
         exifTransverse,
-    )
-
-    val snalls: Array<ResourceImageFile> = arrayOf(
-        cat,
-        dog,
-        longEnd,
-        longWhale,
     )
 }
