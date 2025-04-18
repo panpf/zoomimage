@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+## new
+
+zoom:
+
+* new: Add the default value to the caller parameter of the reset() method of ZoomableState and ZoomableEngine
+
 ## 1.1.2
 
 subsampling:

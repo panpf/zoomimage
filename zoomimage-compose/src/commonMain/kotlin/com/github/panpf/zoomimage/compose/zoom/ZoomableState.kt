@@ -571,7 +571,7 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
         }
     }
 
-    suspend fun reset(caller: String) = zoomableCore.reset(caller = caller)
+    suspend fun reset(caller: String = "fromUser") = zoomableCore.reset(caller = caller)
 
     internal suspend fun stopAllAnimation(caller: String) = zoomableCore.stopAllAnimation(caller)
 

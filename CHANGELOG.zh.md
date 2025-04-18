@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+zoom:
+
+* new: ZoomableState 和 ZoomableEngine 的 reset() 方法的 caller 参数增加默认值
+
 ## 1.1.2
 
 subsampling:
