@@ -17,13 +17,11 @@
 package com.github.panpf.zoomimage.zoom.internal
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import com.github.panpf.zoomimage.zoom.isEmpty
 
 // TODO test
 data class ResetParams(
@@ -38,93 +36,133 @@ data class ResetParams(
     val limitOffsetWithinBaseVisibleRect: Boolean,
     val containerWhitespaceMultiple: Float,
     val containerWhitespace: ContainerWhitespace,
-) {
-
-    val realContainerWhitespace: ContainerWhitespace by lazy {
-        val containerWhitespace = containerWhitespace
-        val containerSize = containerSize
-        val containerWhitespaceMultiple = containerWhitespaceMultiple
-        if (!containerWhitespace.isEmpty()) {
-            containerWhitespace
-        } else if (containerSize.isNotEmpty() && containerWhitespaceMultiple != 0f) {
-            ContainerWhitespace(
-                horizontal = containerSize.width * containerWhitespaceMultiple,
-                vertical = containerSize.height * containerWhitespaceMultiple
-            )
-        } else {
-            ContainerWhitespace.Zero
-        }
-    }
-}
+)
 
 /**
  * Check whether the parameters have changed
  *
  * @return 0: All unchanged; 1: Only containerSize changes; -1: More changes
- * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest5.testCheckParamsChanges
  */
-fun ResetParams.different(other: ResetParams?): Int {
-    if (null == other) {
-        return -1
+fun ResetParams.diff(other: ResetParams?): ResetParamsDiffResult {
+    var result = 0
+    if (other == null || containerSize != other.containerSize) {
+        result = result or ResetParamsDiffResult.FLAG_CONTAINER_SIZE
     }
-    if (this == other) {
-        return 0
+    if (other == null || contentSize != other.contentSize) {
+        result = result or ResetParamsDiffResult.FLAG_CONTENT_SIZE
     }
-
-    if (other.containerSize.isNotEmpty()
-        && other.contentSize.isNotEmpty()
-        && containerSize.isNotEmpty()
-        && contentSize.isNotEmpty()
-        && other.containerSize != containerSize
-    ) {
-        val resetContainerSizeSelf = copy(containerSize = IntSizeCompat.Zero)
-        val resetContainerSizeOther = other.copy(containerSize = IntSizeCompat.Zero)
-        if (resetContainerSizeSelf == resetContainerSizeOther) {
-            return 1
-        }
+    if (other == null || contentOriginSize != other.contentOriginSize) {
+        result = result or ResetParamsDiffResult.FLAG_CONTENT_ORIGIN_SIZE
     }
-
-    return -1
+    if (other == null || rotation != other.rotation) {
+        result = result or ResetParamsDiffResult.FLAG_ROTATION
+    }
+    if (other == null || contentScale != other.contentScale) {
+        result = result or ResetParamsDiffResult.FLAG_CONTENT_SCALE
+    }
+    if (other == null || alignment != other.alignment) {
+        result = result or ResetParamsDiffResult.FLAG_ALIGNMENT
+    }
+    if (other == null || readMode != other.readMode) {
+        result = result or ResetParamsDiffResult.FLAG_READ_MODE
+    }
+    if (other == null || scalesCalculator != other.scalesCalculator) {
+        result = result or ResetParamsDiffResult.FLAG_SCALES_CALCULATOR
+    }
+    if (other == null || limitOffsetWithinBaseVisibleRect != other.limitOffsetWithinBaseVisibleRect) {
+        result = result or ResetParamsDiffResult.FLAG_LIMIT_OFFSET_WITHIN_BASE_VISIBLE_RECT
+    }
+    if (other == null || containerWhitespaceMultiple != other.containerWhitespaceMultiple) {
+        result = result or ResetParamsDiffResult.FLAG_CONTAINER_WHITESPACE_MULTIPLE
+    }
+    if (other == null || containerWhitespace != other.containerWhitespace) {
+        result = result or ResetParamsDiffResult.FLAG_CONTAINER_WHITESPACE
+    }
+    return ResetParamsDiffResult(result)
 }
 
-fun ResetParams.differentProperties(other: ResetParams): String? {
-    val differentProperties = mutableListOf<String>()
-    if (containerSize != other.containerSize) {
-        differentProperties.add("containerSize")
+class ResetParamsDiffResult(val result: Int) {
+
+    val isContainerSizeChanged: Boolean = result and FLAG_CONTAINER_SIZE != 0
+    val isContentSizeChanged: Boolean = result and FLAG_CONTENT_SIZE != 0
+    val isContentOriginSizeChanged: Boolean = result and FLAG_CONTENT_ORIGIN_SIZE != 0
+    val isRotationChanged: Boolean = result and FLAG_ROTATION != 0
+    val isContentScaleChanged: Boolean = result and FLAG_CONTENT_SCALE != 0
+    val isAlignmentChanged: Boolean = result and FLAG_ALIGNMENT != 0
+    val isReadModeChanged: Boolean = result and FLAG_READ_MODE != 0
+    val isScalesCalculatorChanged: Boolean = result and FLAG_SCALES_CALCULATOR != 0
+    val isLimitOffsetWithinBaseVisibleRectChanged: Boolean =
+        result and FLAG_LIMIT_OFFSET_WITHIN_BASE_VISIBLE_RECT != 0
+    val isContainerWhitespaceMultipleChanged: Boolean =
+        result and FLAG_CONTAINER_WHITESPACE_MULTIPLE != 0
+    val isContainerWhitespaceChanged: Boolean = result and FLAG_CONTAINER_WHITESPACE != 0
+
+    private val changeCount: Int = run {
+        var count = 0
+        if (isContainerSizeChanged) count++
+        if (isContentSizeChanged) count++
+        if (isContentOriginSizeChanged) count++
+        if (isRotationChanged) count++
+        if (isContentScaleChanged) count++
+        if (isAlignmentChanged) count++
+        if (isReadModeChanged) count++
+        if (isScalesCalculatorChanged) count++
+        if (isLimitOffsetWithinBaseVisibleRectChanged) count++
+        if (isContainerWhitespaceMultipleChanged) count++
+        if (isContainerWhitespaceChanged) count++
+        count
     }
-    if (contentSize != other.contentSize) {
-        differentProperties.add("contentSize")
+
+    val isNotChanged: Boolean = changeCount == 0
+
+    val isOnlyContainerSizeChanged: Boolean = changeCount == 1 && isContainerSizeChanged
+    val isOnlyContentSizeChanged: Boolean = changeCount == 1 && isContentSizeChanged
+    val isOnlyContentOriginSizeChanged: Boolean = changeCount == 1 && isContentOriginSizeChanged
+    val isOnlyContentSizeOrContentOriginSizeChanged: Boolean =
+        isOnlyContentSizeChanged || isOnlyContentOriginSizeChanged || (changeCount == 2 && isContentSizeChanged && isContentOriginSizeChanged)
+
+    private val changePropertyNames: String by lazy {
+        val properties = mutableListOf<String>()
+        if (isContainerSizeChanged) properties.add("containerSize")
+        if (isContentSizeChanged) properties.add("contentSize")
+        if (isContentOriginSizeChanged) properties.add("contentOriginSize")
+        if (isRotationChanged) properties.add("rotation")
+        if (isContentScaleChanged) properties.add("contentScale")
+        if (isAlignmentChanged) properties.add("alignment")
+        if (isReadModeChanged) properties.add("readMode")
+        if (isScalesCalculatorChanged) properties.add("scalesCalculator")
+        if (isLimitOffsetWithinBaseVisibleRectChanged) properties.add("limitOffsetWithinBaseVisibleRect")
+        if (isContainerWhitespaceMultipleChanged) properties.add("containerWhitespaceMultiple")
+        if (isContainerWhitespaceChanged) properties.add("containerWhitespace")
+        properties.toList().joinToString()
     }
-    if (contentOriginSize != other.contentOriginSize) {
-        differentProperties.add("contentOriginSize")
+
+    companion object {
+        const val FLAG_CONTAINER_SIZE = 0x01
+        const val FLAG_CONTENT_SIZE = 0x02
+        const val FLAG_CONTENT_ORIGIN_SIZE = 0x04
+        const val FLAG_ROTATION = 0x08
+        const val FLAG_CONTENT_SCALE = 0x10
+        const val FLAG_ALIGNMENT = 0x20
+        const val FLAG_READ_MODE = 0x40
+        const val FLAG_SCALES_CALCULATOR = 0x80
+        const val FLAG_LIMIT_OFFSET_WITHIN_BASE_VISIBLE_RECT = 0x100
+        const val FLAG_CONTAINER_WHITESPACE_MULTIPLE = 0x200
+        const val FLAG_CONTAINER_WHITESPACE = 0x400
     }
-    if (contentScale != other.contentScale) {
-        differentProperties.add("contentScale")
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as ResetParamsDiffResult
+        return result == other.result
     }
-    if (rotation != other.rotation) {
-        differentProperties.add("rotation")
+
+    override fun hashCode(): Int {
+        return result
     }
-    if (alignment != other.alignment) {
-        differentProperties.add("alignment")
-    }
-    if (readMode != other.readMode) {
-        differentProperties.add("readMode")
-    }
-    if (scalesCalculator != other.scalesCalculator) {
-        differentProperties.add("scalesCalculator")
-    }
-    if (limitOffsetWithinBaseVisibleRect != other.limitOffsetWithinBaseVisibleRect) {
-        differentProperties.add("limitOffsetWithinBaseVisibleRect")
-    }
-    if (containerWhitespaceMultiple != other.containerWhitespaceMultiple) {
-        differentProperties.add("containerWhitespaceMultiple")
-    }
-    if (containerWhitespace != other.containerWhitespace) {
-        differentProperties.add("containerWhitespace")
-    }
-    return if (differentProperties.isNotEmpty()) {
-        differentProperties.joinToString()
-    } else {
-        null
+
+    override fun toString(): String {
+        return "ResetParamsDiffResult(${changePropertyNames})"
     }
 }

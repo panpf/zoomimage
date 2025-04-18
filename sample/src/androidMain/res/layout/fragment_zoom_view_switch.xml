@@ -48,6 +48,29 @@
                 tools:text="draw：\nvisible: \nscales: " />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="20dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="4"
+                android:text="Keep: "
+                android:textColor="@android:color/white" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/rotateButton"
             android:layout_width="50dp"

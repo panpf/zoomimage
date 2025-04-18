@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +38,7 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.rememberSketchZoomState
+import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_rotate_right
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
@@ -124,19 +127,27 @@ class ZoomImageSwitchTestScreen : BaseScreen() {
                         modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-//                        Text(text = "KeepZoom: ", color = Color.White)
-//                        Checkbox(
-//                            checked = zoomState.zoomable.resetMode == ResetMode.Keep,
-//                            onCheckedChange = {
-//                                zoomState.zoomable.resetMode =
-//                                    if (it) ResetMode.Keep else ResetMode.Clear
-//                                coroutineScope.launch {
-//                                    EventBus.toastFlow.emit("Keep zoom only when pictures with the same aspect ratio switch")
-//                                }
-//                            }
-//                        )
-//
-//                        Spacer(Modifier.size(20.dp))
+                        Text(
+                            text = "Keep: ",
+                            style = LocalTextStyle.current.copy(
+                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                            ),
+                            color = Color.White
+                        )
+                        Switch(
+                            checked = zoomState.zoomable.keepTransformWhenSameAspectRatioContentSizeChanged,
+                            onCheckedChange = { isChecked ->
+                                zoomState.zoomable.keepTransformWhenSameAspectRatioContentSizeChanged =
+                                    isChecked
+                                if (isChecked) {
+                                    coroutineScope.launch {
+                                        EventBus.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
+                                    }
+                                }
+                            }
+                        )
+
+                        Spacer(Modifier.weight(1f))
 
                         FilledIconButton(onClick = {
                             coroutineScope.launch {

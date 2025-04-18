@@ -32,7 +32,7 @@ import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.filterNegativeZeros
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
-import com.github.panpf.zoomimage.util.isNotEmpty
+import com.github.panpf.zoomimage.util.isSameAspectRatio
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
@@ -381,59 +381,21 @@ data class InitialZoom(
 }
 
 /**
- * Check whether the parameters have changed
- *
- * @return 0: All unchanged; 1: Only containerSize changes; -1: More changes
- * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCheckParamsChanges
- */
-fun checkParamsChanges(
-    containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    contentOriginSize: IntSizeCompat,
-    contentScale: ContentScaleCompat,
-    alignment: AlignmentCompat,
-    rotation: Int,
-    readMode: ReadMode?,
-    scalesCalculator: ScalesCalculator,
-    limitOffsetWithinBaseVisibleRect: Boolean,
-    containerWhitespace: ContainerWhitespace,
-    lastContainerSize: IntSizeCompat,
-    lastContentSize: IntSizeCompat,
-    lastContentOriginSize: IntSizeCompat,
-    lastContentScale: ContentScaleCompat,
-    lastAlignment: AlignmentCompat,
-    lastRotation: Int,
-    lastReadMode: ReadMode?,
-    lastScalesCalculator: ScalesCalculator,
-    lastLimitOffsetWithinBaseVisibleRect: Boolean,
-    lastContainerWhitespace: ContainerWhitespace,
-): Int {
-    return if (
-        lastContainerSize.isNotEmpty()
-        && lastContentSize.isNotEmpty()
-        && containerSize.isNotEmpty()
-        && contentSize.isNotEmpty()
-        && contentSize == lastContentSize
-        && lastContentOriginSize == contentOriginSize
-        && lastContentScale == contentScale
-        && lastAlignment == alignment
-        && lastRotation == rotation
-        && lastReadMode == readMode
-        && lastScalesCalculator == scalesCalculator
-        && lastLimitOffsetWithinBaseVisibleRect == limitOffsetWithinBaseVisibleRect
-        && lastContainerWhitespace == containerWhitespace
-    ) {
-        if (lastContainerSize == containerSize) 0 else 1
-    } else {
-        -1
-    }
-}
-
-/**
  * Calculates the user transform required to restore the last content-visible hub
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreContentVisibleCenterUserTransform
  */
+// TODO change to calculateRestoreContentVisibleCenterUserTransform
+//fun calculateRestoreTransformWhenOnlyContainerSizeChanged(
+//    oldContainerSize: IntSizeCompat,
+//    newContainerSize: IntSizeCompat,
+//    contentSize: IntSizeCompat,
+//    contentScale: ContentScaleCompat,
+//    alignment: AlignmentCompat,
+//    rotation: Int,
+//    transform: TransformCompat,
+//    contentVisibleCenter: OffsetCompat,
+//): TransformCompat {}
 fun calculateRestoreContentVisibleCenterUserTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -470,6 +432,21 @@ fun calculateRestoreContentVisibleCenterUserTransform(
     val containerSizeCenter = containerSize.center
     val newUserOffset = containerSizeCenter - scaledContentVisibleCenterOnBaseDisplay
     return TransformCompat(scale = newUserScale, offset = newUserOffset)
+}
+
+// TODO test
+fun calculateRestoreTransformWhenOnlyContentSizeChanged(
+    oldContentSize: IntSizeCompat,
+    newContentSize: IntSizeCompat,
+    transform: TransformCompat,
+): TransformCompat {
+    require(isSameAspectRatio(oldContentSize, newContentSize))
+    val scaleFactor = if (oldContentSize.width > oldContentSize.height) {
+        (oldContentSize.width * transform.scaleX) / newContentSize.width
+    } else {
+        (oldContentSize.height * transform.scaleY) / newContentSize.height
+    }
+    return transform.copy(scale = ScaleFactorCompat(scaleFactor), offset = transform.offset)
 }
 
 
@@ -1272,3 +1249,67 @@ fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
             && one.offsetX.aboutEquals(two.offsetX, delta = 1f, scale = 2)
             && one.offsetY.aboutEquals(two.offsetY, delta = 1f, scale = 2)
 }
+//
+//
+///* ******************************************* Other ***************************************** */
+//
+///**
+// * 在范围之外移动时不会立即回到范围内，只能朝着范围内移动，朝着范围外移动时将原地不动
+// */
+//fun OffsetCompat.softLimitTo(bounds: RectCompat, currentOffset: OffsetCompat): OffsetCompat {
+//    val offset = this
+//    val addOffset = this - currentOffset
+//    if (offset.x < bounds.left || offset.x > bounds.right || offset.y < bounds.top || offset.y > bounds.bottom) {
+//        val x = if (offset.x < bounds.left) {
+//            if (currentOffset.x < bounds.left) {
+//                if (addOffset.x > 0) {
+//                    offset.x
+//                } else {
+//                    currentOffset.x
+//                }
+//            } else {
+//                bounds.left
+//            }
+//        } else if (offset.x > bounds.right) {
+//            if (currentOffset.x > bounds.right) {
+//                if (addOffset.x < 0) {
+//                    offset.x
+//                } else {
+//                    currentOffset.x
+//                }
+//            } else {
+//                bounds.right
+//            }
+//        } else {
+//            offset.x
+//        }
+//
+//        val y = if (offset.y < bounds.top) {
+//            if (currentOffset.y < bounds.top) {
+//                if (addOffset.y > 0) {
+//                    offset.y
+//                } else {
+//                    currentOffset.y
+//                }
+//            } else {
+//                bounds.top
+//            }
+//        } else if (offset.y > bounds.bottom) {
+//            if (currentOffset.y > bounds.bottom) {
+//                if (addOffset.y < 0) {
+//                    offset.y
+//                } else {
+//                    currentOffset.y
+//                }
+//            } else {
+//                bounds.bottom
+//            }
+//        } else {
+//            offset.y
+//        }
+//
+//        return OffsetCompat(x, y)
+//    } else {
+//        return this
+//    }
+//}

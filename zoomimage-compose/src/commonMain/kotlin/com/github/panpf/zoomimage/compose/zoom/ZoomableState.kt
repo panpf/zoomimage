@@ -197,6 +197,11 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
     var containerWhitespace: ContainerWhitespace by mutableStateOf(zoomableCore.containerWhitespace)
 
     /**
+     * Transform are keep when content with the same aspect ratio is switched
+     */
+    var keepTransformWhenSameAspectRatioContentSizeChanged: Boolean by mutableStateOf(zoomableCore.keepTransformWhenSameAspectRatioContentSizeChanged)
+
+    /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
      *
      * @see com.github.panpf.zoomimage.zoom.GestureType
@@ -428,6 +433,7 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
     /**
      * Rotate the content to [targetRotation]
      */
+    // TODO rotateBy
     suspend fun rotate(targetRotation: Int): Unit =
         zoomableCore.rotate(targetRotation = targetRotation)
 
@@ -567,6 +573,11 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { containerWhitespace }.collect {
                 zoomableCore.setContainerWhitespace(it)
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { keepTransformWhenSameAspectRatioContentSizeChanged }.collect {
+                zoomableCore.setKeepTransformWhenSameAspectRatioContentSizeChanged(it)
             }
         }
     }

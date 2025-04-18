@@ -7,6 +7,8 @@
 zoom:
 
 * new: ZoomableState 和 ZoomableEngine 的 reset() 方法的 caller 参数增加默认值
+* new: ZoomableState 和 ZoomableEngine 新增 keepTransformWhenSameAspectRatioContentSizeChanged 参数，开启后可以在切换宽高比一样的图片时保持
+  变换状态。 [#58](https://github.com/panpf/zoomimage/issues/58)
 
 ## 1.1.2
 

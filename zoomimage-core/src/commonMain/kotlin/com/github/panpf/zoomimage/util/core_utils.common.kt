@@ -231,3 +231,20 @@ internal expect fun requiredMainThread()
  * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsIosTest.testRequiredWorkThread
  */
 internal expect fun requiredWorkThread()
+
+
+// TODO test
+internal fun isSameAspectRatio(
+    size: IntSizeCompat,
+    otherSize: IntSizeCompat,
+    maxDifference: Float = 1f
+): Boolean {
+    // TODO There is a problem, cats and dogs are equal when switching
+    if (size.isEmpty() || otherSize.isEmpty()) return false
+    val widthScale = size.width / otherSize.width.toFloat()
+    val heightScale = size.height / otherSize.height.toFloat()
+    val diff = abs(widthScale - heightScale)
+    val diffFormatted = diff.format(1)
+    val maxDiffFormatted = maxDifference.format(1)
+    return diffFormatted <= maxDiffFormatted
+}

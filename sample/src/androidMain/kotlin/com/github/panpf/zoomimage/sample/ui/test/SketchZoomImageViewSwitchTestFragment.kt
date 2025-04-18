@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.sketch.loadImage
+import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewSwitchBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.list.ImageThumbnailItemFactory
@@ -67,6 +68,19 @@ class SketchZoomImageViewSwitchTestFragment :
                 }),
                 initDataList = viewModel.imageUris
             )
+        }
+
+        binding.switchButton.apply {
+            val zoomable = binding.zoomImageView.zoomable
+            isChecked = zoomable.keepTransformWhenSameAspectRatioContentSizeChangedState.value
+            setOnCheckedChangeListener { _, isChecked ->
+                zoomable.keepTransformWhenSameAspectRatioContentSizeChangedState.value = isChecked
+                if (isChecked) {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        EventBus.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
+                    }
+                }
+            }
         }
 
         binding.rotateButton.setOnClickListener {
