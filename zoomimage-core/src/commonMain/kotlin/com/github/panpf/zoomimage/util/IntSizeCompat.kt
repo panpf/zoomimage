@@ -234,3 +234,21 @@ fun lerp(start: IntSizeCompat, stop: IntSizeCompat, fraction: Float): IntSizeCom
  */
 fun IntSizeCompat.copy(width: Int = this.width, height: Int = this.height) =
     IntSizeCompat(width = width, height = height)
+
+/**
+ * Return the results of two IntSizeCompat addition operations
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testPlus
+ */
+operator fun IntSizeCompat.plus(other: IntSizeCompat): IntSizeCompat {
+    return IntSizeCompat(this.width + other.width, this.height + other.height)
+}
+
+/**
+ * Return the results of two IntSizeCompat subtraction operations
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testMinus
+ */
+operator fun IntSizeCompat.minus(other: IntSizeCompat): IntSizeCompat {
+    return IntSizeCompat(this.width - other.width, this.height - other.height)
+}

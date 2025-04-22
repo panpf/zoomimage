@@ -4,6 +4,8 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.isSameAspectRatio
+import com.github.panpf.zoomimage.util.minus
+import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.reverseRotate
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.round
@@ -205,6 +207,30 @@ class SizeCompatTest {
                 (size / 3f).copy(height = size.height / 3 + 1),
                 delta = 0.1f
             )
+        )
+    }
+
+    @Test
+    fun testPlus() {
+        assertEquals(
+            expected = "15.5x35.5",
+            actual = (SizeCompat(10.1f, 20.2f) + SizeCompat(5.4f, 15.3f)).toShortString()
+        )
+        assertEquals(
+            expected = "4.7x4.9",
+            actual = (SizeCompat(10.1f, 20.2f) + SizeCompat(-5.4f, -15.3f)).toShortString()
+        )
+    }
+
+    @Test
+    fun testMinus() {
+        assertEquals(
+            expected = "4.7x4.9",
+            actual = (SizeCompat(10.1f, 20.2f) - SizeCompat(5.4f, 15.3f)).toShortString()
+        )
+        assertEquals(
+            expected = "15.5x35.5",
+            actual = (SizeCompat(10.1f, 20.2f) - SizeCompat(-5.4f, -15.3f)).toShortString()
         )
     }
 }
