@@ -2,14 +2,21 @@ package com.github.panpf.zoomimage.core.common.test.util
 
 import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.current
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.compareVersions
 import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.isThumbnailWithSize
+import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.toHexString
+import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.util.toSize
 import okio.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 
 class CoreUtilsTest {
@@ -154,6 +161,146 @@ class CoreUtilsTest {
         assertEquals(1, compareVersions("0.8.1-beta.1", "0.8.1-alpha.01"))
         assertEquals(1, compareVersions("0.8.1-alpha.01", "0.8.1-SNAPSHOT.1"))
         assertEquals(1, compareVersions("0.8.1-SNAPSHOT.1", "0.8.0"))
+    }
+
+    @Test
+    fun testIsThumbnailWithSize() {
+        assertFalse(isThumbnailWithSize(IntSizeCompat(0, 2000), IntSizeCompat(500, 1000)))
+        assertFalse(isThumbnailWithSize(IntSizeCompat(1000, 0), IntSizeCompat(500, 1000)))
+        assertFalse(isThumbnailWithSize(IntSizeCompat(1000, 2000), IntSizeCompat(0, 1000)))
+        assertFalse(isThumbnailWithSize(IntSizeCompat(1000, 2000), IntSizeCompat(500, 0)))
+        assertFalse(isThumbnailWithSize(IntSizeCompat(1000, 2000), IntSizeCompat(1001, 200)))
+        assertFalse(isThumbnailWithSize(IntSizeCompat(1000, 2000), IntSizeCompat(100, 2001)))
+        assertFalse(isThumbnailWithSize(IntSizeCompat(100, 200), IntSizeCompat(1000, 100)))
+
+        var imageSize = IntSizeCompat(29999, 325)
+        val maxMultiple = 257
+
+        val nextFunction: (Float) -> Float = { it + 0.1f }
+        val calculateThumbnailSize: (IntSizeCompat, Float) -> SizeCompat =
+            { size, multiple -> size.toSize() / multiple }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.CEIL)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = isThumbnailWithSize(imageSize, thumbnailSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            assertFalse(
+                actual = isThumbnailWithSize(imageSize, thumbnailSize2),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.FLOOR)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = isThumbnailWithSize(imageSize, thumbnailSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            assertFalse(
+                actual = isThumbnailWithSize(imageSize, thumbnailSize2),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.ROUND)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = isThumbnailWithSize(imageSize, thumbnailSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            assertFalse(
+                actual = isThumbnailWithSize(imageSize, thumbnailSize2),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        imageSize = IntSizeCompat(325, 29999)
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.CEIL)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = isThumbnailWithSize(thumbnailSize, imageSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(2, 0)
+            assertFalse(
+                actual = isThumbnailWithSize(thumbnailSize2, imageSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.FLOOR)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = isThumbnailWithSize(thumbnailSize, imageSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(2, 0)
+            assertFalse(
+                actual = isThumbnailWithSize(thumbnailSize2, imageSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.ROUND)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = isThumbnailWithSize(thumbnailSize, imageSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(2, 0)
+            assertFalse(
+                actual = isThumbnailWithSize(thumbnailSize2, imageSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
     }
 
     private class MyCloseable : okio.Closeable {

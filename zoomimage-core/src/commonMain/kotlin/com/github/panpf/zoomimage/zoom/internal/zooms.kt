@@ -32,7 +32,6 @@ import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.filterNegativeZeros
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
-import com.github.panpf.zoomimage.util.isSameAspectRatio
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
@@ -434,13 +433,16 @@ fun calculateRestoreContentVisibleCenterUserTransform(
     return TransformCompat(scale = newUserScale, offset = newUserOffset)
 }
 
-// TODO test
+/**
+ * Calculate the restore of content transformation when only content size changes
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreTransformWhenOnlyContentSizeChanged
+ */
 fun calculateRestoreTransformWhenOnlyContentSizeChanged(
     oldContentSize: IntSizeCompat,
     newContentSize: IntSizeCompat,
     transform: TransformCompat,
 ): TransformCompat {
-    require(isSameAspectRatio(oldContentSize, newContentSize))
     val scaleFactor = if (oldContentSize.width > oldContentSize.height) {
         (oldContentSize.width * transform.scaleX) / newContentSize.width
     } else {

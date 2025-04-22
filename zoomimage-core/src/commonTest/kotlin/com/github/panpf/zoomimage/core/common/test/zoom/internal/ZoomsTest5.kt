@@ -117,6 +117,11 @@ class ZoomsTest5 {
     }
 
     @Test
+    fun testCalculateRestoreTransformWhenOnlyContentSizeChanged(){
+        // TODO test
+    }
+
+    @Test
     fun testTransformAboutEquals() {
         val transform = TransformCompat(
             scale = ScaleFactorCompat(1.3487f, 8.44322f),

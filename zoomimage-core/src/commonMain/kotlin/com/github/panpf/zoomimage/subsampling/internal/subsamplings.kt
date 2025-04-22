@@ -25,9 +25,9 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.closeQuietly
-import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.isThumbnailWithSize
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
@@ -103,6 +103,9 @@ fun checkImageInfo(
     if (imageSize.isEmpty()) {
         throw Exception("image size invalid: ${imageInfo.width}x${imageInfo.height}")
     }
+    if (contentSize.isEmpty()) {
+        throw Exception("content size invalid: ${contentSize.width}x${contentSize.height}")
+    }
     if (contentSize.width >= imageSize.width || contentSize.height >= imageSize.height) {
         throw Exception(
             "the thumbnail size is greater than or equal to the original image. " +
@@ -112,9 +115,9 @@ fun checkImageInfo(
     }
 
     // Check aspect ratio
-    if (!canUseSubsamplingByAspectRatio(imageSize, thumbnailSize = contentSize)) {
+    if (!isThumbnailWithSize(imageSize, contentSize)) {
         throw Exception(
-            "The aspect ratio of the thumbnail is too different from that of the original image. " +
+            "The aspect ratio of thumbnail and original image is different. " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "imageSize=${imageSize.toShortString()}"
         )
@@ -133,19 +136,27 @@ fun checkImageInfo(
  *
  * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCanUseSubsamplingByAspectRatio
  */
+@Deprecated("Use isThumbnailWithSize instead")
 fun canUseSubsamplingByAspectRatio(
     imageSize: IntSizeCompat,
     thumbnailSize: IntSizeCompat,
     maxDifference: Float = 1f
 ): Boolean {
     if (imageSize.isEmpty() || thumbnailSize.isEmpty()) return false
-    if (imageSize.width < thumbnailSize.width || imageSize.height < thumbnailSize.height) return false
-    val widthScale = imageSize.width / thumbnailSize.width.toFloat()
-    val heightScale = imageSize.height / thumbnailSize.height.toFloat()
-    val diff = abs(widthScale - heightScale)
-    val diffFormatted = diff.format(1)
-    val maxDiffFormatted = maxDifference.format(1)
-    return diffFormatted <= maxDiffFormatted
+    if (imageSize.width <= thumbnailSize.width || imageSize.height <= thumbnailSize.height) return false
+//    val widthScale = imageSize.width / thumbnailSize.width.toFloat()
+//    val heightScale = imageSize.height / thumbnailSize.height.toFloat()
+//    val diff = abs(widthScale - heightScale)
+//    val diffFormatted = diff.format(1)
+//    val maxDiffFormatted = maxDifference.format(1)
+//    println("canUseSubsamplingByAspectRatio. " +
+//            "imageSize=${imageSize.toShortString()}, " +
+//            "thumbnailSize=${thumbnailSize.toShortString()}, " +
+//            "widthScale=${widthScale.format(2)}, " +
+//            "heightScale=${heightScale.format(2)}, " +
+//            "diff=${diff.format(2)}" +
+//            "")
+    return isThumbnailWithSize(imageSize, thumbnailSize)
 }
 
 /**

@@ -26,8 +26,9 @@ import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
-import com.github.panpf.zoomimage.util.isSameAspectRatio
+import com.github.panpf.zoomimage.util.isThumbnailWithSize
 import com.github.panpf.zoomimage.util.lerp
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
@@ -57,6 +58,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Core that control scale, pan, rotation, ZoomableState and ZoomableEngine are its UI wrappers
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomableCoreTest
  */
 class ZoomableCore constructor(
     val logger: Logger,
@@ -536,7 +539,12 @@ class ZoomableCore constructor(
             one = lastUserTransform,
             two = TransformCompat.Origin
         )
-        val newUserTransform = if (hasUserActions && diffResult.isOnlyContainerSizeChanged) {
+        val mode: String
+        val newUserTransform = if (
+            hasUserActions
+            && diffResult.isOnlyContainerSizeChanged
+        ) {
+            mode = "RestoreVisibleCenter"
             val restoreUserTransform = calculateRestoreContentVisibleCenterUserTransform(
                 containerSize = newResetParams.containerSize,
                 contentSize = newResetParams.contentSize,
@@ -553,13 +561,17 @@ class ZoomableCore constructor(
             )
             restoreUserTransform.copy(offset = limitUserOffset)
         } else if (
-            keepTransformWhenSameAspectRatioContentSizeChanged
-            && hasUserActions
-            && lastResetParams != null
-            && lastResetParams.contentSize.isNotEmpty()
+            hasUserActions
+            && keepTransformWhenSameAspectRatioContentSizeChanged
             && diffResult.isOnlyContentSizeOrContentOriginSizeChanged
-            && isSameAspectRatio(lastResetParams.contentSize, newResetParams.contentSize)
+            && lastResetParams != null
+            && shouldRestoreVisibleRectWithContentSize(
+                lastResetParams = lastResetParams,
+                newResetParams = newResetParams,
+                diffResult = diffResult
+            )
         ) {
+            mode = "RestoreVisibleRect"
             val restoreTransform = calculateRestoreTransformWhenOnlyContentSizeChanged(
                 oldContentSize = lastResetParams.contentSize,
                 newContentSize = newResetParams.contentSize,
@@ -572,12 +584,13 @@ class ZoomableCore constructor(
             )
             restoreUserTransform.copy(offset = limitUserOffset)
         } else {
+            mode = "Reset"
             newInitialZoom.userTransform
         }
 
         logger.d {
             val transform = newBaseTransform + newUserTransform
-            "$module. reset:$caller. " +
+            "$module. reset:$caller. $mode. " +
                     "containerSize=${newResetParams.containerSize.toShortString()}, " +
                     "contentSize=${newResetParams.contentSize.toShortString()}, " +
                     "contentOriginSize=${newResetParams.contentOriginSize.toShortString()}, " +
@@ -586,6 +599,9 @@ class ZoomableCore constructor(
                     "rotation=${newResetParams.rotation}, " +
                     "scalesCalculator=${newResetParams.scalesCalculator}, " +
                     "readMode=${newResetParams.readMode}. " +
+                    "keepTransform=${keepTransformWhenSameAspectRatioContentSizeChanged}. " +
+                    "hasUserActions=${hasUserActions}. " +
+                    "diffResult=${diffResult}. " +
                     "minScale=${newInitialZoom.minScale.format(4)}, " +
                     "mediumScale=${newInitialZoom.mediumScale.format(4)}, " +
                     "maxScale=${newInitialZoom.maxScale.format(4)}, " +
@@ -615,6 +631,27 @@ class ZoomableCore constructor(
         updateUserTransform(newUserTransform)
         resetParams = newResetParams
         initialZoom = newInitialZoom
+    }
+
+    private fun shouldRestoreVisibleRectWithContentSize(
+        lastResetParams: ResetParams,
+        newResetParams: ResetParams,
+        diffResult: ResetParamsDiffResult,
+    ): Boolean {
+        val oldContentSize: IntSizeCompat = lastResetParams.contentSize
+        val newContentSize: IntSizeCompat = newResetParams.contentSize
+        if (oldContentSize.isEmpty() || newContentSize.isEmpty()) {
+            return false
+        }
+
+        val isThumbnail = isThumbnailWithSize(
+            size = oldContentSize,
+            otherSize = newContentSize
+        )
+        if (diffResult.isContentSizeChanged && isThumbnail) {
+            return true
+        }
+        return diffResult.isContentOriginSizeChanged
     }
 
     suspend fun stopAllAnimation(caller: String) {

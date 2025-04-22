@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-## 1.2.0-SNAPSHOT
+## new
 
 zoom:
 
@@ -12,6 +12,7 @@ zoom:
   keepTransformWhenSameAspectRatioContentSizeChanged parameter. After turning on, you can keep the
   transformation state when switching pictures with the same aspect
   ratio. [#58](https://github.com/panpf/zoomimage/issues/58)
+* improve: Improve the logic of judging whether it is a thumbnail based on size. Now it can be correctly judged no matter how many times it is zoomed, and the error range is within 1 pixel.
 
 ## 1.1.2
 

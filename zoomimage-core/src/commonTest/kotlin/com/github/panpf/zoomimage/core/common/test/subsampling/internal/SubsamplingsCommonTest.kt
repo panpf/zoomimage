@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling.internal
 
+import com.github.panpf.zoomimage.core.common.test.util.RoundMode
+import com.github.panpf.zoomimage.core.common.test.util.roundToIntWithMode
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
@@ -9,8 +11,11 @@ import com.github.panpf.zoomimage.subsampling.internal.checkNewPreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.test.TestRegionDecoder
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.SizeCompat
+import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.plus
+import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.util.toSize
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -22,9 +27,9 @@ class SubsamplingsCommonTest {
     fun testCheckImageInfo() {
         // success
         checkImageInfo(
-            imageInfo = ImageInfo(100, 100, "image/jpeg"),
-            factory = TestRegionDecoder.Factory(ImageInfo(100, 100, "image/jpeg")),
-            contentSize = IntSizeCompat(50, 40)
+            imageInfo = ImageInfo(100, 200, "image/jpeg"),
+            factory = TestRegionDecoder.Factory(ImageInfo(100, 200, "image/jpeg")),
+            contentSize = IntSizeCompat(50, 100)
         )
 
         // error: imageSize empty
@@ -40,6 +45,22 @@ class SubsamplingsCommonTest {
                 imageInfo = ImageInfo(100, 0, "image/jpeg"),
                 factory = TestRegionDecoder.Factory(ImageInfo(100, 0, "image/jpeg")),
                 contentSize = IntSizeCompat(50, 40)
+            )
+        }
+
+        // error: contentSize empty
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(100, 200, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(ImageInfo(100, 200, "image/jpeg")),
+                contentSize = IntSizeCompat(50, 0)
+            )
+        }
+        assertFailsWith(Exception::class) {
+            checkImageInfo(
+                imageInfo = ImageInfo(100, 200, "image/jpeg"),
+                factory = TestRegionDecoder.Factory(ImageInfo(100, 200, "image/jpeg")),
+                contentSize = IntSizeCompat(0, 40)
             )
         }
 
@@ -60,12 +81,34 @@ class SubsamplingsCommonTest {
         }
 
         // error: aspect ratio too different
-        assertFailsWith(Exception::class) {
-            checkImageInfo(
-                imageInfo = ImageInfo(100, 100, "image/jpeg"),
-                factory = TestRegionDecoder.Factory(ImageInfo(100, 100, "image/jpeg")),
-                contentSize = IntSizeCompat(50, 30)
-            )
+        val imageSize = IntSizeCompat(29999, 325)
+        generateSequence(1f) { it + 0.1f }.takeWhile { it <= 257 }.forEach { multiple ->
+            val thumbnailSize = (imageSize.toSize() / multiple).roundToIntWithMode(RoundMode.CEIL)
+
+            if (imageSize != thumbnailSize) {
+                checkImageInfo(
+                    imageInfo = ImageInfo(imageSize, "image/jpeg"),
+                    factory = TestRegionDecoder.Factory(ImageInfo(imageSize, "image/jpeg")),
+                    contentSize = thumbnailSize
+                )
+            } else {
+                assertFailsWith(Exception::class) {
+                    checkImageInfo(
+                        imageInfo = ImageInfo(imageSize, "image/jpeg"),
+                        factory = TestRegionDecoder.Factory(ImageInfo(imageSize, "image/jpeg")),
+                        contentSize = thumbnailSize
+                    )
+                }
+            }
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            assertFailsWith(Exception::class) {
+                checkImageInfo(
+                    imageInfo = ImageInfo(imageSize, "image/jpeg"),
+                    factory = TestRegionDecoder.Factory(ImageInfo(imageSize, "image/jpeg")),
+                    contentSize = thumbnailSize2
+                )
+            }
         }
 
         // error: unsupported mimeTypes
@@ -83,43 +126,6 @@ class SubsamplingsCommonTest {
 
     @Test
     fun testCanUseSubsamplingByAspectRatio() {
-        val imageSize = IntSizeCompat(1000, 2000)
-
-        listOf(
-            (ScaleFactorCompat(17f, 17f) to null as Float?) to true,
-            (ScaleFactorCompat(17f, 17.5f) to null as Float?) to true,
-            (ScaleFactorCompat(17f, 17.93f) to null as Float?) to true,
-            (ScaleFactorCompat(17f, 17.94f) to null as Float?) to false,
-            (ScaleFactorCompat(17f, 17.94f) to 1.1f) to true,
-            (ScaleFactorCompat(17.5f, 17f) to null as Float?) to true,
-            (ScaleFactorCompat(18.01f, 17f) to null as Float?) to true,
-            (ScaleFactorCompat(18.02f, 17f) to null as Float?) to false,
-            (ScaleFactorCompat(18.02f, 17f) to 1.2f) to true,
-        ).forEachIndexed { index, it ->
-            val (scaleFactor, minDifference) = it.first
-            val expected = it.second
-            if (minDifference != null) {
-                assertEquals(
-                    expected = expected,
-                    actual = canUseSubsamplingByAspectRatio(
-                        imageSize = imageSize,
-                        thumbnailSize = imageSize / scaleFactor,
-                        maxDifference = minDifference
-                    ),
-                    message = "item=${index + 1}, scaleFactor=$scaleFactor, minDifference=$minDifference"
-                )
-            } else {
-                assertEquals(
-                    expected = expected,
-                    actual = canUseSubsamplingByAspectRatio(
-                        imageSize = imageSize,
-                        thumbnailSize = imageSize / scaleFactor
-                    ),
-                    message = "item=${index + 1}, scaleFactor=$scaleFactor, minDifference=$minDifference"
-                )
-            }
-        }
-
         assertFalse(
             canUseSubsamplingByAspectRatio(
                 imageSize = IntSizeCompat(0, 2000),
@@ -157,6 +163,102 @@ class SubsamplingsCommonTest {
                 thumbnailSize = IntSizeCompat(500, 20001),
             )
         )
+
+        var imageSize = IntSizeCompat(29999, 325)
+        val maxMultiple = 257
+
+        val nextFunction: (Float) -> Float = { it + 0.1f }
+        val calculateThumbnailSize: (IntSizeCompat, Float) -> SizeCompat =
+            { size, multiple -> size.toSize() / multiple }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.CEIL)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            assertFalse(
+                actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize2),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.FLOOR)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            assertFalse(
+                actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize2),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.ROUND)
+            assertEquals(
+                expected = imageSize != thumbnailSize,
+                actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            assertFalse(
+                actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize2),
+                message = "imageSize=${imageSize.toShortString()}, " +
+                        "thumbnailSize=${thumbnailSize2.toShortString()}, " +
+                        "multiple=${multiple.format(2)}"
+            )
+        }
+
+        imageSize = IntSizeCompat(325, 29999)
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.CEIL)
+            assertFalse(
+                canUseSubsamplingByAspectRatio(thumbnailSize, imageSize),
+                "imageSize=${imageSize.toShortString()}, thumbnailSize=${thumbnailSize.toShortString()}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.FLOOR)
+            assertFalse(
+                canUseSubsamplingByAspectRatio(thumbnailSize, imageSize),
+                "imageSize=${imageSize.toShortString()}, thumbnailSize=${thumbnailSize.toShortString()}"
+            )
+        }
+
+        generateSequence(1f, nextFunction).takeWhile { it <= maxMultiple }.forEach { multiple ->
+            val thumbnailSize =
+                calculateThumbnailSize(imageSize, multiple).roundToIntWithMode(RoundMode.ROUND)
+            assertFalse(
+                canUseSubsamplingByAspectRatio(thumbnailSize, imageSize),
+                "imageSize=${imageSize.toShortString()}, thumbnailSize=${thumbnailSize.toShortString()}"
+            )
+        }
     }
 
     @Test
