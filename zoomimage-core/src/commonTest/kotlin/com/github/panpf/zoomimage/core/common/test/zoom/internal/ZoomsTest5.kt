@@ -5,14 +5,17 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
+import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import com.github.panpf.zoomimage.zoom.internal.calculateBaseTransform
 import com.github.panpf.zoomimage.zoom.internal.calculateContentVisibleRect
 import com.github.panpf.zoomimage.zoom.internal.calculateInitialZoom
 import com.github.panpf.zoomimage.zoom.internal.calculateRestoreContentVisibleCenterUserTransform
+import com.github.panpf.zoomimage.zoom.internal.calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged
 import com.github.panpf.zoomimage.zoom.internal.transformAboutEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -117,7 +120,95 @@ class ZoomsTest5 {
     }
 
     @Test
-    fun testCalculateRestoreTransformWhenOnlyContentSizeChanged(){
+    fun testCalculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged() {
+        val containerSize = IntSizeCompat(800, 572)
+        val contentSize = IntSizeCompat(6799, 4882)
+        val contentScale = ContentScaleCompat.Fit
+        val alignment = AlignmentCompat.Center
+        val rotation = 0
+        val lastBaseTransform = TransformCompat(
+            scale = ScaleFactorCompat(0.117165096f, 0.117165096f),
+            offset = OffsetCompat(2.0f, 0.0f),
+            rotationOrigin = TransformOriginCompat(4.249375f, 4.2674823f)
+        )
+        val lastUserTransform = TransformCompat(
+            scale = ScaleFactorCompat(8.5349655f, 8.5349655f),
+            offset = OffsetCompat(-3948.0999f, -2968.974f),
+            rotationOrigin = TransformOriginCompat(4.249375f, 4.2674823f)
+        )
+        val lastTransform = (lastBaseTransform + lastUserTransform).apply {
+            assertEquals(
+                "TransformCompat(scale=1.0x1.0, " +
+                        "offset=-3931.03x-2968.97, " +
+                        "rotation=0.0, " +
+                        "scaleOrigin=0.0x0.0, " +
+                        "rotationOrigin=4.25x4.27)",
+                this.toString()
+            )
+        }
+        val contentVisibleCenterPoint = calculateContentVisibleRect(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            userScale = lastUserTransform.scaleX,
+            userOffset = lastUserTransform.offset,
+        ).center.apply {
+            assertEquals("OffsetCompat(4331.0, 3255.0)", this.toString())
+        }
+
+        listOf(
+            IntSizeCompat(1900, 1072),
+            IntSizeCompat(1072, 1900),
+            IntSizeCompat(880, 433),
+            IntSizeCompat(433, 880),
+        ).forEach { newContainerSize ->
+            val newBaseTransform = calculateBaseTransform(
+                containerSize = newContainerSize,
+                contentSize = contentSize,
+                contentScale = contentScale,
+                alignment = alignment,
+                rotation = rotation,
+            )
+            val newTransform = calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
+                oldContainerSize = containerSize,
+                newContainerSize = newContainerSize,
+                contentSize = contentSize,
+                contentScale = contentScale,
+                alignment = alignment,
+                rotation = rotation,
+                transform = lastTransform,
+            )
+            val newUserTransform = newTransform - newBaseTransform
+
+            val newContentVisibleCenterPoint = calculateContentVisibleRect(
+                containerSize = newContainerSize,
+                contentSize = contentSize,
+                contentScale = contentScale,
+                alignment = alignment,
+                rotation = rotation,
+                userScale = newUserTransform.scaleX,
+                userOffset = newUserTransform.offset,
+            ).center
+
+            assertEquals(
+                expected = contentVisibleCenterPoint.x,
+                actual = newContentVisibleCenterPoint.x,
+                absoluteTolerance = 1f,
+                message = "newContainerSize: $newContainerSize. assert x",
+            )
+            assertEquals(
+                expected = contentVisibleCenterPoint.y,
+                actual = newContentVisibleCenterPoint.y,
+                absoluteTolerance = 1f,
+                message = "newContainerSize: $newContainerSize. assert y",
+            )
+        }
+    }
+
+    @Test
+    fun testCalculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged() {
         // TODO test
     }
 

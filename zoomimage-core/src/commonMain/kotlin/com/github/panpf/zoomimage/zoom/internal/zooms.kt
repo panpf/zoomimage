@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
+import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
@@ -361,40 +362,12 @@ fun calculateInitialZoom(
     )
 }
 
-data class InitialZoom(
-    val minScale: Float,
-    val mediumScale: Float,
-    val maxScale: Float,
-    val baseTransform: TransformCompat,
-    val userTransform: TransformCompat,
-) {
-    companion object {
-        val Origin = InitialZoom(
-            minScale = 1.0f,
-            mediumScale = 1.0f,
-            maxScale = 1.0f,
-            baseTransform = TransformCompat.Origin,
-            userTransform = TransformCompat.Origin,
-        )
-    }
-}
-
 /**
  * Calculates the user transform required to restore the last content-visible hub
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreContentVisibleCenterUserTransform
  */
-// TODO change to calculateRestoreContentVisibleCenterUserTransform
-//fun calculateRestoreTransformWhenOnlyContainerSizeChanged(
-//    oldContainerSize: IntSizeCompat,
-//    newContainerSize: IntSizeCompat,
-//    contentSize: IntSizeCompat,
-//    contentScale: ContentScaleCompat,
-//    alignment: AlignmentCompat,
-//    rotation: Int,
-//    transform: TransformCompat,
-//    contentVisibleCenter: OffsetCompat,
-//): TransformCompat {}
+@Deprecated("Please use calculateRestoreContentVisibleCenterUserTransform instead")
 fun calculateRestoreContentVisibleCenterUserTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -434,11 +407,80 @@ fun calculateRestoreContentVisibleCenterUserTransform(
 }
 
 /**
+ * Calculates the user transform required to restore the last content-visible hub
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged
+ */
+fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
+    oldContainerSize: IntSizeCompat,
+    newContainerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    transform: TransformCompat,
+): TransformCompat {
+    val oldBaseTransform = calculateBaseTransform(
+        containerSize = oldContainerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+    )
+    val oldUserTransform = transform - oldBaseTransform
+    val contentVisibleRect = calculateContentVisibleRect(
+        containerSize = oldContainerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+        userScale = oldUserTransform.scaleX,
+        userOffset = oldUserTransform.offset,
+    )
+    val contentVisibleCenter = contentVisibleRect.center
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedLastContentVisibleCenter =
+        contentVisibleCenter.rotateInSpace(contentSize.toSize(), rotation)
+    val rotatedCenterProportion = ScaleFactorCompat(
+        scaleX = rotatedLastContentVisibleCenter.x / rotatedContentSize.width,
+        scaleY = rotatedLastContentVisibleCenter.y / rotatedContentSize.height,
+    )
+
+    val newBaseTransform = calculateBaseTransform(
+        containerSize = newContainerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+    )
+    val newContentBaseDisplayRect = calculateContentBaseDisplayRect(
+        containerSize = newContainerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+    )
+    val newBaseScaledRotatedContentSize = rotatedContentSize.toSize() * newBaseTransform.scale
+    val sizeCompat = newBaseScaledRotatedContentSize * rotatedCenterProportion
+    val contentVisibleCenterOnBaseDisplay =
+        newContentBaseDisplayRect.topLeft + sizeCompat.let { OffsetCompat(it.width, it.height) }
+    // The purpose of the user to expand the window is to see more content, so keep the total zoom factor unchanged, and more content can be displayed
+//    val newUserScale = oldUserTransform.scale    // This causes the window to always show the contents of a fixed area and not see more
+    val newUserScale = transform.scale / newBaseTransform.scale
+    val scaledContentVisibleCenterOnBaseDisplay = contentVisibleCenterOnBaseDisplay * newUserScale
+    val containerSizeCenter = newContainerSize.center
+    val newUserOffset = containerSizeCenter - scaledContentVisibleCenterOnBaseDisplay
+    val newUserTransform = TransformCompat(scale = newUserScale, offset = newUserOffset)
+    val newTransform = newBaseTransform + newUserTransform
+    return newTransform
+}
+
+/**
  * Calculate the restore of content transformation when only content size changes
  *
- * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreTransformWhenOnlyContentSizeChanged
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged
  */
-fun calculateRestoreTransformWhenOnlyContentSizeChanged(
+fun calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged(
     oldContentSize: IntSizeCompat,
     newContentSize: IntSizeCompat,
     transform: TransformCompat,

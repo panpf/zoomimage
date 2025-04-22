@@ -26,7 +26,6 @@ import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.format
-import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.isThumbnailWithSize
 import com.github.panpf.zoomimage.util.lerp
@@ -543,18 +542,22 @@ class ZoomableCore constructor(
         val newUserTransform = if (
             hasUserActions
             && diffResult.isOnlyContainerSizeChanged
+            && lastResetParams != null
+            && lastResetParams.containerSize.isNotEmpty()
+            && newResetParams.containerSize.isNotEmpty()
         ) {
             mode = "RestoreVisibleCenter"
-            val restoreUserTransform = calculateRestoreContentVisibleCenterUserTransform(
-                containerSize = newResetParams.containerSize,
-                contentSize = newResetParams.contentSize,
-                contentScale = newResetParams.contentScale,
-                alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
-                rotation = newResetParams.rotation,
-                newBaseTransform = newBaseTransform,
-                lastTransform = transform,
-                lastContentVisibleCenter = contentVisibleRect.center,
-            )
+            val restoreTransform =
+                calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
+                    oldContainerSize = lastResetParams.containerSize,
+                    newContainerSize = newResetParams.containerSize,
+                    contentSize = newResetParams.contentSize,
+                    contentScale = newResetParams.contentScale,
+                    alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+                    rotation = newResetParams.rotation,
+                    transform = transform,
+                )
+            val restoreUserTransform = restoreTransform - newBaseTransform
             val limitUserOffset = limitUserOffset(
                 newUserOffset = restoreUserTransform.offset,
                 userScale = restoreUserTransform.scaleX,
@@ -565,18 +568,21 @@ class ZoomableCore constructor(
             && keepTransformWhenSameAspectRatioContentSizeChanged
             && diffResult.isOnlyContentSizeOrContentOriginSizeChanged
             && lastResetParams != null
+            && lastResetParams.contentSize.isNotEmpty()
+            && newResetParams.contentSize.isNotEmpty()
             && shouldRestoreVisibleRectWithContentSize(
-                lastResetParams = lastResetParams,
-                newResetParams = newResetParams,
+                oldContentSize = lastResetParams.contentSize,
+                newContentSize = newResetParams.contentSize,
                 diffResult = diffResult
             )
         ) {
             mode = "RestoreVisibleRect"
-            val restoreTransform = calculateRestoreTransformWhenOnlyContentSizeChanged(
-                oldContentSize = lastResetParams.contentSize,
-                newContentSize = newResetParams.contentSize,
-                transform = transform,
-            ).copy(rotationOrigin = newBaseTransform.rotationOrigin)
+            val restoreTransform =
+                calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged(
+                    oldContentSize = lastResetParams.contentSize,
+                    newContentSize = newResetParams.contentSize,
+                    transform = transform,
+                ).copy(rotationOrigin = newBaseTransform.rotationOrigin)
             val restoreUserTransform = restoreTransform - newBaseTransform
             val limitUserOffset = limitUserOffset(
                 newUserOffset = restoreUserTransform.offset,
@@ -634,16 +640,10 @@ class ZoomableCore constructor(
     }
 
     private fun shouldRestoreVisibleRectWithContentSize(
-        lastResetParams: ResetParams,
-        newResetParams: ResetParams,
+        oldContentSize: IntSizeCompat,
+        newContentSize: IntSizeCompat,
         diffResult: ResetParamsDiffResult,
     ): Boolean {
-        val oldContentSize: IntSizeCompat = lastResetParams.contentSize
-        val newContentSize: IntSizeCompat = newResetParams.contentSize
-        if (oldContentSize.isEmpty() || newContentSize.isEmpty()) {
-            return false
-        }
-
         val isThumbnail = isThumbnailWithSize(
             size = oldContentSize,
             otherSize = newContentSize
