@@ -18,6 +18,11 @@ package com.github.panpf.zoomimage.zoom.internal
 
 import com.github.panpf.zoomimage.util.TransformCompat
 
+/**
+ * Initial zoom parameters
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ResetParamsTest
+ */
 data class InitialZoom(
     val minScale: Float,
     val mediumScale: Float,

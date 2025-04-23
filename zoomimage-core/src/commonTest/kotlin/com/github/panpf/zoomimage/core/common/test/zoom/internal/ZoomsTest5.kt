@@ -16,6 +16,7 @@ import com.github.panpf.zoomimage.zoom.internal.calculateContentVisibleRect
 import com.github.panpf.zoomimage.zoom.internal.calculateInitialZoom
 import com.github.panpf.zoomimage.zoom.internal.calculateRestoreContentVisibleCenterUserTransform
 import com.github.panpf.zoomimage.zoom.internal.calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged
+import com.github.panpf.zoomimage.zoom.internal.calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged
 import com.github.panpf.zoomimage.zoom.internal.transformAboutEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -209,7 +210,66 @@ class ZoomsTest5 {
 
     @Test
     fun testCalculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged() {
-        // TODO test
+        val containerSize = IntSizeCompat(1080, 1920)
+        val contentSize = IntSizeCompat(679, 488)
+        val baseTransform = calculateBaseTransform(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = ContentScaleCompat.Fit,
+            alignment = AlignmentCompat.Center,
+            rotation = 90
+        )
+        val userTransform =
+            TransformCompat(scale = ScaleFactorCompat(8f), offset = OffsetCompat(300f, 500f))
+        val transform = baseTransform + userTransform
+
+        val newContentSize = contentSize * 3
+        calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged(
+            oldContentSize = contentSize,
+            newContentSize = newContentSize,
+            transform = transform
+        ).apply {
+            assertEquals(
+                expected = ScaleFactorCompat((contentSize.width * transform.scaleX) / newContentSize.width),
+                actual = scale
+            )
+            assertEquals(expected = transform.offset, actual = offset)
+            assertEquals(expected = transform.rotation, actual = rotation)
+            assertEquals(expected = transform.rotationOrigin, actual = rotationOrigin)
+            assertEquals(expected = transform.scaleOrigin, actual = scaleOrigin)
+        }
+    }
+
+    @Test
+    fun testCalculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged2() {
+        val containerSize = IntSizeCompat(1080, 1920)
+        val contentSize = IntSizeCompat(488, 679)
+        val baseTransform = calculateBaseTransform(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = ContentScaleCompat.Fit,
+            alignment = AlignmentCompat.Center,
+            rotation = 90
+        )
+        val userTransform =
+            TransformCompat(scale = ScaleFactorCompat(8f), offset = OffsetCompat(300f, 500f))
+        val transform = baseTransform + userTransform
+
+        val newContentSize = contentSize * 3
+        calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged(
+            oldContentSize = contentSize,
+            newContentSize = newContentSize,
+            transform = transform
+        ).apply {
+            assertEquals(
+                expected = ScaleFactorCompat((contentSize.width * transform.scaleX) / newContentSize.width),
+                actual = scale
+            )
+            assertEquals(expected = transform.offset, actual = offset)
+            assertEquals(expected = transform.rotation, actual = rotation)
+            assertEquals(expected = transform.rotationOrigin, actual = rotationOrigin)
+            assertEquals(expected = transform.scaleOrigin, actual = scaleOrigin)
+        }
     }
 
     @Test

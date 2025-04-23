@@ -23,7 +23,11 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 
-// TODO test
+/**
+ * Parameters for resetting the zoom transform
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ResetParamsTest
+ */
 data class ResetParams(
     val containerSize: IntSizeCompat,
     val contentSize: IntSizeCompat,

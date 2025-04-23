@@ -191,8 +191,7 @@ class ZoomableStateTest {
 
     @Test
     fun testContainerWhitespace() {
-        // TODO test
-        // TODO test LayoutDirection
+        // TODO test, LayoutDirection
     }
 
     @Test
