@@ -5,6 +5,7 @@ import coil3.util.DebugLogger
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.util.Logger
+import com.github.panpf.zoomimage.sample.image.DelayedLoadRequestInterceptor
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

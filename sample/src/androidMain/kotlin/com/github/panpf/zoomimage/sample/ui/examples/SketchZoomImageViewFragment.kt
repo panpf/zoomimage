@@ -29,6 +29,7 @@ import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
+import com.github.panpf.zoomimage.sample.image.DelayedLoadRequestInterceptor
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.model.Photo
@@ -76,6 +77,9 @@ class SketchZoomImageViewFragment : BaseZoomImageViewFragment<SketchZoomImageVie
         zoomView.loadImage(args.imageUri) {
             placeholder(ThumbnailMemoryCacheStateImage(args.placeholderImageUri))
             crossfade(fadeStart = false)
+            addComponents {
+                addRequestInterceptor(DelayedLoadRequestInterceptor(2000L))
+            }
         }
     }
 

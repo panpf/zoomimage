@@ -217,6 +217,11 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.disabledGestureTypes.collectWithLifecycle(viewLifecycleOwner) {
                     disabledGestureTypesState.value = it
                 }
+                appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectWithLifecycle(
+                    viewLifecycleOwner
+                ) {
+                    keepTransformWhenSameAspectRatioContentSizeChangedState.value = it
+                }
             }
             subsampling.apply {
                 appSettings.showTileBounds.collectWithLifecycle(viewLifecycleOwner) {

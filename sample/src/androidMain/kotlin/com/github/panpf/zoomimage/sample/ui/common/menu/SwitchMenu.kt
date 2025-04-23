@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 
 interface SwitchMenu {
     val title: String
+    val desc: String?
     var isChecked: Boolean
     val disabled: Boolean
     val onLongClick: (() -> Unit)?
@@ -27,6 +28,7 @@ interface SwitchMenu {
 
 class SwitchMenuFlow(
     override val title: String,
+    override val desc: String?,
     private val data: SettingsStateFlow<Boolean>,
     override val disabled: Boolean = false,
     private val reverse: Boolean = false,

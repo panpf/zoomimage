@@ -100,24 +100,28 @@ class ZoomImageSettingsViewModel(
         add(
             SwitchMenuFlow(
                 title = "Animate Scale",
+                desc = null,
                 data = appSettings.animateScale,
             )
         )
         add(
             SwitchMenuFlow(
                 title = "Rubber Band Scale",
+                desc = null,
                 data = appSettings.rubberBandScale,
             )
         )
         add(
             SwitchMenuFlow(
                 title = "Three Step Scale",
+                desc = null,
                 data = appSettings.threeStepScale,
             )
         )
         add(
             SwitchMenuFlow(
                 title = "Slower Scale Animation",
+                desc = null,
                 data = appSettings.slowerScaleAnimation,
             )
         )
@@ -179,6 +183,7 @@ class ZoomImageSettingsViewModel(
         add(
             SwitchMenuFlow(
                 title = "Limit Offset Within Base Visible Rect",
+                desc = null,
                 data = appSettings.limitOffsetWithinBaseVisibleRect,
             )
         )
@@ -198,6 +203,7 @@ class ZoomImageSettingsViewModel(
         add(
             SwitchMenuFlow(
                 title = "Container Whitespace",
+                desc = null,
                 data = appSettings.containerWhitespace,
             )
         )
@@ -207,12 +213,14 @@ class ZoomImageSettingsViewModel(
         add(
             SwitchMenuFlow(
                 title = "Read Mode",
+                desc = null,
                 data = appSettings.readModeEnabled,
             )
         )
         add(
             SwitchMenuFlow(
                 title = "Read Mode - Both",
+                desc = null,
                 data = appSettings.readModeAcceptedBoth,
             )
         )
@@ -222,6 +230,7 @@ class ZoomImageSettingsViewModel(
         add(
             SwitchMenuFlow(
                 title = "Tile Memory Cache",
+                desc = null,
                 data = appSettings.tileMemoryCache,
             )
         )
@@ -249,18 +258,21 @@ class ZoomImageSettingsViewModel(
         add(
             SwitchMenuFlow(
                 title = "Disabled Background Tiles",
+                desc = null,
                 data = appSettings.disabledBackgroundTiles,
             )
         )
         add(
             SwitchMenuFlow(
                 title = "Show Tile Bounds",
+                desc = null,
                 data = appSettings.showTileBounds,
             )
         )
         add(
             SwitchMenuFlow(
                 title = "Tile Animation",
+                desc = null,
                 data = appSettings.tileAnimation,
             )
         )
@@ -270,7 +282,24 @@ class ZoomImageSettingsViewModel(
         add(
             SwitchMenuFlow(
                 title = "Scroll Bar",
+                desc = null,
                 data = appSettings.scrollBarEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
+                title = "Keep Transform",
+                desc = "Works only when switching images with the same aspect ratio",
+                data = appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
+                title = "Delayed loading of images from local",
+                desc = "Only for Sketch ImageLoader",
+                data = appSettings.delayImageLoadEnabled,
             )
         )
 

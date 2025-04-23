@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.sample.ui.common.menu
 
 import android.content.Context
+import androidx.core.view.isVisible
 import com.github.panpf.zoomimage.sample.databinding.ListItemMenuSwitchBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory
 
@@ -54,9 +55,12 @@ class SwitchMenuItemFactory :
     ) {
         binding.root.isEnabled = !data.disabled
         binding.titleText.isEnabled = !data.disabled
+        binding.descText.isEnabled = !data.disabled && data.desc != null
         binding.switchView.isEnabled = !data.disabled
+        binding.descText.isVisible = data.desc != null
 
         binding.titleText.text = data.title
+        binding.descText.text = data.desc
         binding.switchView.isChecked = if (data.disabled) false else data.isChecked
     }
 }

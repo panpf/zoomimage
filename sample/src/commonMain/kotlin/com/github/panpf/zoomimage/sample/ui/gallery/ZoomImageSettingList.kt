@@ -267,6 +267,18 @@ fun ZoomImageSettingList() {
             state = appSettings.scrollBarEnabled,
         )
 
+        SwitchSettingItem(
+            title = "Keep Transform",
+            desc = "Works only when switching images with the same aspect ratio",
+            state = appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled,
+        )
+
+        SwitchSettingItem(
+            title = "Delayed loading of images from local",
+            desc = "Only for Sketch ImageLoader",
+            state = appSettings.delayImageLoadEnabled,
+        )
+
         DividerSettingItem()
 
         val logLevelValues = remember {

@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/menu_item_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/menu_item_height"
     android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingTop="6dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="6dp">
 
     <TextView
         android:id="@+id/titleText"
@@ -13,16 +16,28 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="2"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/descText"
         app:layout_constraintEnd_toStartOf="@id/switchView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Display pressed state Display pressed state Display pressed state Display pressed state" />
+
+    <TextView
+        android:id="@+id/descText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/titleText"
+        app:layout_constraintStart_toStartOf="@id/titleText"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        tools:text="Display pressed state" />
 
     <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/switchView"

@@ -149,6 +149,14 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         booleanSettingsStateFlow(context, "scrollBarEnabled", true)
     }
 
+    actual val keepTransformWhenSameAspectRatioContentSizeChangedEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "keepTransformWhenSameAspectRatioContentSizeChangedEnabled", true)
+    }
+
+    actual val delayImageLoadEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "delayImageLoadEnabled", false)
+    }
+
 
     // ------------------------------------------ other --------------------------------------------
 

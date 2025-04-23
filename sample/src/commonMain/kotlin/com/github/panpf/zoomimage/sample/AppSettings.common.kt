@@ -84,6 +84,10 @@ expect class AppSettings(context: PlatformContext) {
 
     val scrollBarEnabled: SettingsStateFlow<Boolean>
 
+    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled: SettingsStateFlow<Boolean>
+
+    val delayImageLoadEnabled: SettingsStateFlow<Boolean>
+
 
     // ------------------------------------------ other --------------------------------------------
 

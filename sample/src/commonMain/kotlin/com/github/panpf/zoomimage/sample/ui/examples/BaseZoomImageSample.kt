@@ -119,6 +119,7 @@ fun <T : ZoomState> BaseZoomImageSample(
     val readModeEnabled by settingsService.readModeEnabled.collectAsState()
     val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.collectAsState()
     val scrollBarEnabled by settingsService.scrollBarEnabled.collectAsState()
+    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by settingsService.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectAsState()
     val logLevel by settingsService.logLevel.collectAsState()
     val animateScale by settingsService.animateScale.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
@@ -197,6 +198,9 @@ fun <T : ZoomState> BaseZoomImageSample(
         }
         LaunchedEffect(disabledGestureTypes) {
             zoomable.disabledGestureTypes = disabledGestureTypes
+        }
+        LaunchedEffect(keepTransformWhenSameAspectRatioContentSizeChangedEnabled) {
+            zoomable.keepTransformWhenSameAspectRatioContentSizeChanged = keepTransformWhenSameAspectRatioContentSizeChangedEnabled
         }
         LaunchedEffect(pausedContinuousTransformTypes) {
             subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
