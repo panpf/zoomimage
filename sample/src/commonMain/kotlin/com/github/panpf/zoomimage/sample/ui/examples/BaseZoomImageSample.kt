@@ -335,7 +335,7 @@ fun ZoomImageTool(
                     }
                     LaunchedEffect(Unit) {
                         moveKeyboardState.moveFlow.collect {
-                            zoomableState.offset(zoomableState.transform.offset + it * -1f)
+                            zoomableState.offsetBy(it * -1f)
                         }
                     }
                     MoveKeyboard(
@@ -350,10 +350,7 @@ fun ZoomImageTool(
                         FilledIconButton(
                             onClick = {
                                 coroutineScope.launch {
-                                    zoomableState.scale(
-                                        targetScale = zoomableState.transform.scaleX - 0.5f,
-                                        animated = true
-                                    )
+                                    zoomableState.scaleBy(addScale = 0.67f, animated = true)
                                 }
                             },
                             modifier = Modifier.size(30.dp),
@@ -377,10 +374,7 @@ fun ZoomImageTool(
                         FilledIconButton(
                             onClick = {
                                 coroutineScope.launch {
-                                    zoomableState.scale(
-                                        targetScale = zoomableState.transform.scaleX + 0.5f,
-                                        animated = true
-                                    )
+                                    zoomableState.scaleBy(addScale = 1.5f, animated = true)
                                 }
                             },
                             modifier = Modifier.size(30.dp),
@@ -408,8 +402,11 @@ fun ZoomImageTool(
                         },
                         steps = 8,
                         colors = SliderDefaults.colors(
-                            thumbColor = photoPalette.accentColor,
+                            thumbColor = photoPalette.containerColor,
+                            activeTickColor = photoPalette.contentColor,
                             activeTrackColor = photoPalette.containerColor,
+                            inactiveTickColor = photoPalette.contentColor,
+                            inactiveTrackColor = photoPalette.containerColor,
                         ),
                     )
 
@@ -444,7 +441,7 @@ private fun ButtonPad(
         IconButton(
             onClick = {
                 coroutineScope.launch {
-                    zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
+                    zoomableState.rotateBy(90)
                 }
             },
             modifier = Modifier.size(40.dp)

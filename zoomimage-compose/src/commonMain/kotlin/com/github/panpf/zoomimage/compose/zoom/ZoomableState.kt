@@ -364,6 +364,44 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
     )
 
     /**
+     * Zoom in multiplication [addScale] multiples and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
+     *
+     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
+     */
+    suspend fun scaleBy(
+        addScale: Float,
+        centroidContentPoint: IntOffset? = null,
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
+        centroidContentPointF: Offset = contentVisibleRectF.center,
+    ): Boolean = zoomableCore.scale(
+        targetScale = zoomableCore.transform.scaleX * addScale,
+        centroidContentPoint = centroidContentPoint?.toCompatOffset()
+            ?: centroidContentPointF.toCompat(),
+        animated = animated,
+        animationSpec = animationSpec
+    )
+
+    /**
+     * Zoom in image by addition [addScale] multiple and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
+     *
+     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
+     */
+    suspend fun scaleByPlus(
+        addScale: Float,
+        centroidContentPoint: IntOffset? = null,
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
+        centroidContentPointF: Offset = contentVisibleRectF.center,
+    ): Boolean = zoomableCore.scale(
+        targetScale = zoomableCore.transform.scaleX + addScale,
+        centroidContentPoint = centroidContentPoint?.toCompatOffset()
+            ?: centroidContentPointF.toCompat(),
+        animated = animated,
+        animationSpec = animationSpec
+    )
+
+    /**
      * Scale to the next step scale and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
      *
      * If [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
@@ -392,6 +430,19 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
         animationSpec: ZoomAnimationSpec? = null,
     ): Boolean = zoomableCore.offset(
         targetOffset = targetOffset.toCompat(),
+        animated = animated,
+        animationSpec = animationSpec
+    )
+
+    /**
+     * Pan the image by the [addOffset] position, and animation occurs when [animated] is true
+     */
+    suspend fun offsetBy(
+        addOffset: Offset,
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
+    ): Boolean = zoomableCore.offset(
+        targetOffset = zoomableCore.transform.offset + addOffset.toCompat(),
         animated = animated,
         animationSpec = animationSpec
     )
@@ -433,9 +484,14 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
     /**
      * Rotate the content to [targetRotation]
      */
-    // TODO rotateBy
     suspend fun rotate(targetRotation: Int): Unit =
         zoomableCore.rotate(targetRotation = targetRotation)
+
+    /**
+     * Rotate the content by [addRotation]
+     */
+    suspend fun rotateBy(addRotation: Int): Unit =
+        zoomableCore.rotate(targetRotation = zoomableCore.rotation + addRotation)
 
     /**
      * Gets the next step scale factor,

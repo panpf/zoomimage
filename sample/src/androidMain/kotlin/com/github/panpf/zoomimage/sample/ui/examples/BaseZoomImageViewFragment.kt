@@ -244,7 +244,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
 
         binding.rotate.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                zoomImageView.zoomable.rotate(zoomImageView.zoomable.transformState.value.rotation.roundToInt() + 90)
+                zoomImageView.zoomable.rotateBy(90)
             }
         }
 
@@ -325,8 +325,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         }
 
         binding.moveKeyboard.moveFlow.collectWithLifecycle(viewLifecycleOwner) {
-            val offset = zoomImageView.zoomable.transformState.value.offset
-            zoomImageView.zoomable.offset(offset + it * -1f)
+            zoomImageView.zoomable.offsetBy(it * -1f)
         }
 
         binding.more.apply {
@@ -368,15 +367,13 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
 
         binding.zoomOut.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                val targetScale = zoomImageView.zoomable.transformState.value.scaleX - 0.5f
-                zoomImageView.zoomable.scale(targetScale = targetScale, animated = true)
+                zoomImageView.zoomable.scaleBy(addScale = 0.67f, animated = true)
             }
         }
 
         binding.zoomIn.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                val targetScale = zoomImageView.zoomable.transformState.value.scaleX + 0.5f
-                zoomImageView.zoomable.scale(targetScale = targetScale, animated = true)
+                zoomImageView.zoomable.scaleBy(addScale = 1.5f, animated = true)
             }
         }
 

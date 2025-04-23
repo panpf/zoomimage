@@ -151,7 +151,7 @@ class ZoomImageSwitchTestScreen : BaseScreen() {
 
                         FilledIconButton(onClick = {
                             coroutineScope.launch {
-                                zoomState.zoomable.rotate((zoomState.zoomable.transform.rotation + 90).roundToInt())
+                                zoomState.zoomable.rotateBy(90)
                             }
                         }) {
                             androidx.compose.material3.Icon(

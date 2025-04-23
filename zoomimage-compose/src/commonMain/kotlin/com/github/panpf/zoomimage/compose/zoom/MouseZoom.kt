@@ -76,10 +76,10 @@ internal class MouseZoomNode(
                 if (event.type == PointerEventType.Scroll) {
                     val scrollDelta = event.changes.first().scrollDelta.y
                     coroutineScope.launch {
-                        val newScale = newScale(scrollDelta)
+                        val addScale = convertAddScale(scrollDelta)
                         val contentPosition = contentPoint(pointerPosition)
-                        zoomable.scale(
-                            targetScale = newScale,
+                        zoomable.scaleByPlus(
+                            addScale = addScale,
                             animated = true,
                             centroidContentPointF = contentPosition
                         )
@@ -96,14 +96,14 @@ internal class MouseZoomNode(
     }
 
     /**
-     * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testNewScale
+     * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testConvertAddScale
      */
-    internal fun newScale(scrollDelta: Float): Float {
+    internal fun convertAddScale(scrollDelta: Float): Float {
         val finalScrollDelta = zoomable.mouseWheelScaleScrollDeltaConverter(scrollDelta)
-        return if (!zoomable.reverseMouseWheelScale) {
-            zoomable.transform.scaleX - finalScrollDelta
+        return if (zoomable.reverseMouseWheelScale) {
+            finalScrollDelta
         } else {
-            zoomable.transform.scaleX + finalScrollDelta
+            -finalScrollDelta
         }
     }
 

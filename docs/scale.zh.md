@@ -12,7 +12,7 @@ ZoomImage 支持多种方式缩放图片，例如双指缩放、单指缩放、�
 ### 特点
 
 * 支持[单指缩放](#单指缩放)、[双指缩放](#双指缩放)、[双击缩放](#双击缩放)、
-  [鼠标滚轮缩放](#鼠标滚轮缩放)、[键盘缩放](#键盘缩放)、以及通过 [scale()](#scale) 方法缩放到指定的倍数
+  [鼠标滚轮缩放](#鼠标滚轮缩放)、[键盘缩放](#键盘缩放)、以及通过 [scale()](#scale)、[scaleBy()](#scaleBy)、[scaleByPlus()](#scaleByPlus) 方法缩放到指定的倍数
 * [支持橡皮筋效果](#橡皮筋效果).
   手势连续缩放时（单指/双指缩放）超过最大或最小范围时可以继续缩放，但有阻尼效果，松手后会回弹到最大或最小缩放倍数
 * [动态缩放范围](#minscale-mediumscale-maxscale). 默认根据
@@ -333,8 +333,99 @@ val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = zoomState.zoomable.transform.scaleX + 0.2f
-            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
+            zoomState.zoomable.scale(targetScale = 8f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale to 8f")
+}
+
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scale(targetScale = 4f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale to 4f")
+}
+```
+
+### scaleBy()
+
+ZoomImage 提供了 scaleBy() 方法用来以乘法的方式增量缩放图像到指定的倍数，它有三个参数：
+
+* `addScale: Float`: 增量缩放倍数
+* `centroidContentPoint: IntOffset = contentVisibleRect.center`: content 上的缩放中心点，原点是
+  content 的左上角， 默认是 content 当前可见区域的中心
+* `animated: Boolean = false`: 是否使用动画，默认为 false
+
+> [!TIP]
+> 注意：centroidContentPoint 一定要是 content 上的点
+
+示例：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+
+val coroutineScope = rememberCoroutineScope()
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scaleBy(addScale = 1.5f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale * 1.5")
+}
+
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scaleBy(addScale = 0.67f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale * 0.67")
+}
+```
+
+### scaleByPlus()
+
+ZoomImage 提供了 scaleByPlus() 方法用来以加法的方式缩放图像到指定的倍数，它有三个参数：
+
+* `addScale: Float`: 增量缩放倍数
+* `centroidContentPoint: IntOffset = contentVisibleRect.center`: content 上的缩放中心点，原点是
+  content 的左上角， 默认是 content 当前可见区域的中心
+* `animated: Boolean = false`: 是否使用动画，默认为 false
+
+> [!TIP]
+> 注意：centroidContentPoint 一定要是 content 上的点
+
+示例：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+
+val coroutineScope = rememberCoroutineScope()
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scaleByPlus(addScale = 0.2f, animated = true)
         }
     }
 ) {
@@ -344,8 +435,7 @@ Button(
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = zoomState.zoomable.transform.scaleX - 0.2f
-            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
+            zoomState.zoomable.scaleByPlus(addScale = -0.2f, animated = true)
         }
     }
 ) {

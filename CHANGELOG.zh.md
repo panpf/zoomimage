@@ -11,6 +11,7 @@ zoom:
   参数，开启后可以在切换宽高比一样的图片时保持
   变换状态。 [#58](https://github.com/panpf/zoomimage/issues/58)
 * improve: 改进根据大小判断是否是缩略图的逻辑，现在不论缩放多少倍都能正确判断，误差范围在 1 个像素以内
+* new: ZoomableState 和 ZoomableEngine 新增 scaleBy()、scaleByPlus()、offsetBy()、rotateBy() 等方法
 
 ## 1.1.2
 

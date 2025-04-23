@@ -35,6 +35,7 @@ import com.github.panpf.zoomimage.zoom.ScrollEdge
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -3063,6 +3064,706 @@ class ZoomableEngineTest {
     }
 
     @Test
+    fun testScaleBy() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleBy
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleBy(
+                    addScale = 20f,
+                    animated = false
+                )
+            }
+
+            Thread.sleep(100)
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(20f),
+                    offset = OffsetCompat(-4912.99f, -4902.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(6.78f),
+                    offset = OffsetCompat(-32.99f, -4902.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleBy minScaleState.value
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleBy(
+                    addScale = (zoomable.minScaleState.value * 0.9f) / zoomable.transformState.value.scaleX,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1f),
+                    offset = OffsetCompat(-1f, 0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(243f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleBy minScaleState.value
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleBy(
+                    addScale = (zoomable.maxScaleState.value * 1.1f) / zoomable.transformState.value.scaleX,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13470.12f, -13440.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-515.42f, -13440.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleBy centroidContentPoint top start
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleBy(
+                    addScale = 20f / zoomable.transformState.value.scaleX,
+                    centroidContentPoint = IntOffsetCompat.Zero,
+                    animated = false,
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-12955.0f, 0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-0.3f, 0.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleBy centroidContentPointF bottom end
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleBy(
+                    addScale = 20f / zoomable.transformState.value.scaleX,
+                    centroidContentPointF = OffsetCompat(
+                        x = zoomable.contentSizeState.value.width.toFloat(),
+                        y = zoomable.contentSizeState.value.height.toFloat()
+                    ),
+                    animated = false,
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13987.0f, -26880.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-1032.3f, -26880.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
+    }
+
+    @Test
+    fun testScaleByPlus() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleByPlus
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleByPlus(
+                    addScale = (zoomable.transformState.value.scaleX * 20f) - zoomable.transformState.value.scaleX,
+                    animated = false
+                )
+            }
+
+            Thread.sleep(100)
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(20f),
+                    offset = OffsetCompat(-4912.99f, -4902.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(6.78f),
+                    offset = OffsetCompat(-32.99f, -4902.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleByPlus minScaleState.value
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleByPlus(
+                    addScale = (zoomable.minScaleState.value * 0.9f) - zoomable.transformState.value.scaleX,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1f),
+                    offset = OffsetCompat(-1f, 0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(243f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleByPlus minScaleState.value
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleByPlus(
+                    addScale = (zoomable.maxScaleState.value * 1.1f) - zoomable.transformState.value.scaleX,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13470.12f, -13440.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-515.42f, -13440.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleByPlus centroidContentPoint top start
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleByPlus(
+                    addScale = 20f - zoomable.transformState.value.scaleX,
+                    centroidContentPoint = IntOffsetCompat.Zero,
+                    animated = false,
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-12955.0f, 0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-0.3f, 0.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scaleByPlus centroidContentPointF bottom end
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scaleByPlus(
+                    addScale = 20f - zoomable.transformState.value.scaleX,
+                    centroidContentPointF = OffsetCompat(
+                        x = zoomable.contentSizeState.value.width.toFloat(),
+                        y = zoomable.contentSizeState.value.height.toFloat()
+                    ),
+                    animated = false,
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13987.0f, -26880.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-1032.3f, -26880.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
+    }
+
+    @Test
     fun testSwitchScaleAndGetNexStepScale() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
@@ -3958,6 +4659,388 @@ class ZoomableEngineTest {
                     targetOffset = zoomable.transformState.value.offset + addOffset,
                     animated = false
                 )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13987.0f, -26880.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-1032.3f, -26880.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
+    }
+
+    @Test
+    fun testOffsetBy() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-1, 0, -1, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(targetScale = 20f, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13470.12f, -13440.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-515.42f, -13440.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale offsetBy top start in bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(targetScale = 20f, animated = false)
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right - 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom - 1f
+                val addOffset = OffsetCompat(
+                    x = targetOffsetX - zoomable.userTransformState.value.offsetX,
+                    y = targetOffsetY - zoomable.userTransformState.value.offsetY
+                )
+                zoomable.offsetBy(addOffset = addOffset, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-12956.0f, -1.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-1.3f, -1.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale offsetBy top start out bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(targetScale = 20f, animated = false)
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right + 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom + 1f
+                val addOffset = OffsetCompat(
+                    x = targetOffsetX - zoomable.userTransformState.value.offsetX,
+                    y = targetOffsetY - zoomable.userTransformState.value.offsetY
+                )
+                zoomable.offsetBy(addOffset = addOffset, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-12955.0f, 0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-0.3f, 0.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale offsetBy bottom end in bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(targetScale = 20f, animated = false)
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left + 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top + 1f
+                val addOffset = OffsetCompat(
+                    x = targetOffsetX - zoomable.userTransformState.value.offsetX,
+                    y = targetOffsetY - zoomable.userTransformState.value.offsetY
+                )
+                zoomable.offsetBy(addOffset = addOffset, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.34f),
+                    offset = OffsetCompat(244.0f, 0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(53.09f),
+                    offset = OffsetCompat(-13986.0f, -26879.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(18.0f),
+                    offset = OffsetCompat(-1031.3f, -26879.0f),
+                    rotationOrigin = TransformOriginCompat(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale offsetBy top bottom end bounds
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(targetScale = 20f, animated = false)
+                val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left - 1f
+                val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top - 1f
+                val addOffset = OffsetCompat(
+                    x = targetOffsetX - zoomable.userTransformState.value.offsetX,
+                    y = targetOffsetY - zoomable.userTransformState.value.offsetY
+                )
+                zoomable.offsetBy(addOffset = addOffset, animated = false)
             }
             Thread.sleep(100)
 
@@ -5347,6 +6430,491 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotate(270)
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(-0.08f, 86.08f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+    }
+
+    @Test
+    fun testRotateBy() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            Thread.sleep(100)
+
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // rotateBy 90
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(-0.08f, 86.08f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // rotateBy 180
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // rotateBy 270
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(-0.08f, 86.08f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(zoomable.mediumScaleState.value, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-516.0f, -515.84f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-516.0f, -257.84f),
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // rotateBy 90, scale
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
+                zoomable.scale(zoomable.mediumScaleState.value, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-774, -1032, -258, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(-0.08f, 86.08f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-515.84f, -516.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-516.08f, -257.77f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // rotateBy 180, scale
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
+                zoomable.scale(zoomable.mediumScaleState.value, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-516.0f, -515.84f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-516.0f, -257.84f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // rotateBy 270, scale
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
+                zoomable.scale(zoomable.mediumScaleState.value, animated = false)
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(-774, -1032, -258, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(-0.08f, 86.08f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(3.0f),
+                    offset = OffsetCompat(-515.84f, -516.0f),
+                ).toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(1.41f),
+                    offset = OffsetCompat(-516.08f, -257.77f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale, rotateBy 90
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(zoomable.mediumScaleState.value, animated = false)
+                zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(-0.08f, 86.08f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale, rotateBy 180
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(zoomable.mediumScaleState.value, animated = false)
+                zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
+            }
+            Thread.sleep(100)
+
+            assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = IntRectCompat(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBoundsRectState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat(
+                    scale = ScaleFactorCompat(0.47f),
+                    offset = OffsetCompat(0.0f, 86.0f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransformState.value.toString()
+            )
+            assertEquals(
+                expected = TransformCompat.Origin.toString(),
+                actual = zoomable.userTransformState.value.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransformState.value.toString(),
+                actual = zoomable.transformState.value.toString()
+            )
+        }
+
+        // scale, rotateBy 270
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(zoomable.mediumScaleState.value, animated = false)
+                zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
             }
             Thread.sleep(100)
 

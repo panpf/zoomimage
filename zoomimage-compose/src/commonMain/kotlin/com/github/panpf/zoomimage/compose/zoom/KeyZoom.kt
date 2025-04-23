@@ -206,10 +206,9 @@ open class ScaleKeyHandler(
         animationSpec: ZoomAnimationSpec?,
         add: Float
     ) {
-        val newScale = zoomableState.transform.scaleX + add
         val centroidContentPoint = zoomableState.contentVisibleRectF.center
-        zoomableState.scale(
-            targetScale = newScale,
+        zoomableState.scaleByPlus(
+            addScale = add,
             centroidContentPointF = centroidContentPoint,
             animated = animationSpec != null,
             animationSpec = animationSpec
@@ -304,9 +303,8 @@ open class MoveKeyHandler(
             MoveArrow.Up, MoveArrow.Down -> Offset(0f, add)
             MoveArrow.Left, MoveArrow.Right -> Offset(add, 0f)
         }
-        val newOffset = zoomableState.transform.offset + addOffset
-        zoomableState.offset(
-            targetOffset = newOffset,
+        zoomableState.offsetBy(
+            addOffset = addOffset,
             animated = animationSpec != null,
             animationSpec = animationSpec
         )

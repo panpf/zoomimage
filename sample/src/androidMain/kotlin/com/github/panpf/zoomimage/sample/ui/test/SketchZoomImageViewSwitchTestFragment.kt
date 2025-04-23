@@ -86,7 +86,7 @@ class SketchZoomImageViewSwitchTestFragment :
         binding.rotateButton.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 val zoomable = binding.zoomImageView.zoomable
-                zoomable.rotate((zoomable.transformState.value.rotation + 90f).toInt())
+                zoomable.rotateBy(90)
             }
         }
 

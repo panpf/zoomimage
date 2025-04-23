@@ -1,4 +1,4 @@
-## Scale
+## Scaling Image
 
 Translations: [简体中文](scale.zh.md)
 
@@ -14,7 +14,8 @@ double-click scale, mouse wheel scale, keyboard scale, scale(), etc.
 
 * Support [One-Finger Scale](#one-finger-scale), [Two-Finger Scale](#two-finger-scale),
   [Double-click Scale](#double-click-scale), [Mouse Wheel Scale](#mouse-wheel-scale), [Keyboard Scale](#keyboard-scale)
-  and scaling to a specified multiple by the [scale()](#scale) method
+  and scaling to a specified multiple by
+  the [scale()](#scale), [scaleBy()](#scaleBy), [scaleByPlus()](#scaleByPlus) method
 * [Supports rubber band effect](#rubber-band-scale).
   When the gesture is continuously zoomed (one-finger/two-finger scale) exceeds the maximum or
   minimum range, zooming can continue, but there is a damping effect, and it will spring back to the
@@ -366,8 +367,103 @@ val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = zoomState.zoomable.transform.scaleX + 0.2f
-            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
+            zoomState.zoomable.scale(targetScale = 8f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale to 8f")
+}
+
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scale(targetScale = 4f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale to 4f")
+}
+```
+
+### scaleBy()
+
+ZoomImage provides the scaleBy() method used to incrementally scale the image to a specified
+multiple by multiplication. It has three parameters:
+
+* `addScale: Float`: Incremental scaling multiple
+* `centroidContentPoint: IntOffset = contentVisibleRect.center`: The scale center point on the
+  content, the origin is the upper-left corner of the content, and
+  the default is the center of the currently visible area of the content
+* `animated: Boolean = false`: Whether to use animation, the default is false
+
+> [!TIP]
+> Note: centroidContentPoint must be a point on content
+
+example：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+
+val coroutineScope = rememberCoroutineScope()
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scaleBy(addScale = 1.5f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale * 1.5")
+}
+
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scaleBy(addScale = 0.67f, animated = true)
+        }
+    }
+) {
+    Text(text = "scale * 0.67")
+}
+```
+
+### scaleByPlus()
+
+ZoomImage provides the scaleByPlus() method used to scale the image to a specified multiple by
+addition, and it has three parameters:
+
+* `addScale: Float`: Incremental scaling multiple
+* `centroidContentPoint: IntOffset = contentVisibleRect.center`: The scale center point on the
+  content, the origin is the upper-left corner of the content, and
+  the default is the center of the currently visible area of the content
+* `animated: Boolean = false`: Whether to use animation, the default is false
+
+> [!TIP]
+> Note: centroidContentPoint must be a point on content
+
+example：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+
+val coroutineScope = rememberCoroutineScope()
+Button(
+    onClick = {
+        coroutineScope.launch {
+            zoomState.zoomable.scaleByPlus(addScale = 0.2f, animated = true)
         }
     }
 ) {
@@ -377,8 +473,7 @@ Button(
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = zoomState.zoomable.transform.scaleX - 0.2f
-            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
+            zoomState.zoomable.scaleByPlus(addScale = -0.2f, animated = true)
         }
     }
 ) {

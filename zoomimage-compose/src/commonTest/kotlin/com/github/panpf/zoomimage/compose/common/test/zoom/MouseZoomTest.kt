@@ -16,7 +16,7 @@ class MouseZoomTest {
 
     @Test
     @OptIn(ExperimentalTestApi::class)
-    fun testNewScale() {
+    fun testConvertAddScale() {
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
@@ -39,12 +39,12 @@ class MouseZoomTest {
                 actual = zoomable.reverseMouseWheelScale
             )
             assertEquals(
-                expected = 5.01f,
-                actual = mouseZoomNode.newScale(3f).format(2)
+                expected = -0.99f,
+                actual = mouseZoomNode.convertAddScale(3f).format(2)
             )
             assertEquals(
-                expected = 6.99f,
-                actual = mouseZoomNode.newScale(-3f).format(2)
+                expected = 0.99f,
+                actual = mouseZoomNode.convertAddScale(-3f).format(2)
             )
 
             zoomable.reverseMouseWheelScale = true
@@ -53,12 +53,12 @@ class MouseZoomTest {
                 actual = zoomable.reverseMouseWheelScale
             )
             assertEquals(
-                expected = 6.99f,
-                actual = mouseZoomNode.newScale(3f).format(2)
+                expected = 0.99f,
+                actual = mouseZoomNode.convertAddScale(3f).format(2)
             )
             assertEquals(
-                expected = 5.01f,
-                actual = mouseZoomNode.newScale(-3f).format(2)
+                expected = -0.99f,
+                actual = mouseZoomNode.convertAddScale(-3f).format(2)
             )
 
             zoomable.mouseWheelScaleScrollDeltaConverter = { it * 0.5f }
@@ -67,12 +67,12 @@ class MouseZoomTest {
                 actual = zoomable.reverseMouseWheelScale
             )
             assertEquals(
-                expected = 7.5f,
-                actual = mouseZoomNode.newScale(3f).format(2)
+                expected = 1.5f,
+                actual = mouseZoomNode.convertAddScale(3f).format(2)
             )
             assertEquals(
-                expected = 4.5f,
-                actual = mouseZoomNode.newScale(-3f).format(2)
+                expected = -1.5f,
+                actual = mouseZoomNode.convertAddScale(-3f).format(2)
             )
         }
     }

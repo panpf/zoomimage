@@ -13,6 +13,7 @@ zoom:
   transformation state when switching pictures with the same aspect
   ratio. [#58](https://github.com/panpf/zoomimage/issues/58)
 * improve: Improve the logic of judging whether it is a thumbnail based on size. Now it can be correctly judged no matter how many times it is zoomed, and the error range is within 1 pixel.
+* new: ZoomableState and ZoomableEngine add scaleBy(), scaleByPlus(), offsetBy(), rotateBy() and other methods.
 
 ## 1.1.2
 
