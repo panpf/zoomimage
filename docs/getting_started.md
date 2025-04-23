@@ -222,6 +222,7 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * [Offset: Move the image to see content outside the container](offset.md)
 * [Rotate: Rotate the image to view content from different angles](rotate.md)
 * [Locate: Locate anywhere in the image](locate.md)
+* [Keep Transform: Keep transform when switching images](keep_transform.md)
 * [Read Mode: Long images initially fill the screen for easy reading](readmode.md)
 * [Click: Receive click events](click.md)
 * [Subsampling: Display large images through subsampling to avoid OOM](subsampling.md)

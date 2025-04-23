@@ -70,6 +70,7 @@ nav:
   - 'Offset': offset.md
   - 'Rotate': rotate.md
   - 'Locate': locate.md
+  - 'Keep Transform': keep_transform.md
   - 'Read Mode': readmode.md
   - 'Click': click.md
   - 'Subsampling': subsampling.md

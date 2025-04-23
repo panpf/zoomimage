@@ -191,6 +191,7 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * [Offset: 移动图片以查看容器之外的内容](offset.zh.md)
 * [Rotate: 旋转图片以不同角度查看内容](rotate.zh.md)
 * [Locate: 定位到图片的任意](locate.zh.md)
+* [Keep Transform: 切换图像时保持变换状态](keep_transform.zh.md)
 * [Read Mode: 长图初始时充满屏幕方便阅读](readmode.zh.md)
 * [Click: 接收点击事件](click.zh.md)
 * [Subsampling: 通过子采样的方式显示大图避免 OOM](subsampling.zh.md)
