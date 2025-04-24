@@ -6,14 +6,16 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 zoom:
 
-* new: Add the default value to the caller parameter of the reset() method of ZoomableState and
-  ZoomableEngine
+* fix: The caller parameter of the reset() methods of ZoomableState and ZoomableEngine is removed
+  and the transform state is always reset. [#81](https://github.com/panpf/zoomimage/issues/81)
+* improve: Improve the logic of judging whether it is a thumbnail based on size. Now it can be
+  correctly judged no matter how many times it is zoomed, and the error range is within 1 pixel.
 * new: ZoomableState and ZoomableEngine have added the
   keepTransformWhenSameAspectRatioContentSizeChanged parameter. After turning on, you can keep the
   transformation state when switching pictures with the same aspect
   ratio. [#58](https://github.com/panpf/zoomimage/issues/58)
-* improve: Improve the logic of judging whether it is a thumbnail based on size. Now it can be correctly judged no matter how many times it is zoomed, and the error range is within 1 pixel.
-* new: ZoomableState and ZoomableEngine add scaleBy(), scaleByPlus(), offsetBy(), rotateBy() and other methods.
+* new: ZoomableState and ZoomableEngine add scaleBy(), scaleByPlus(), offsetBy(), rotateBy() and
+  other methods.
 
 ## 1.1.2
 

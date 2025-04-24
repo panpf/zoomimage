@@ -7611,4 +7611,5 @@ class ZoomableEngineTest {
     }
 
     // TODO test: rollbackScale, gestureTransform, fling, continuousTransformType
+    // TODO test: reset
 }

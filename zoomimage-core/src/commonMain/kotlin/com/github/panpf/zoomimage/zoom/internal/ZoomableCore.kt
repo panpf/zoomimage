@@ -132,7 +132,6 @@ class ZoomableCore constructor(
     var continuousTransformType: Int = 0
         private set
 
-    private var initialZoom: InitialZoom = InitialZoom.Origin
     private var resetParams: ResetParams? = null
     private var coroutineScope: CoroutineScope? = null
 
@@ -495,7 +494,7 @@ class ZoomableCore constructor(
         this.keepTransformWhenSameAspectRatioContentSizeChanged = keep
     }
 
-    suspend fun reset(caller: String) {
+    suspend fun reset(caller: String, force: Boolean = false) {
         requiredMainThread()
 
         val lastResetParams = resetParams
@@ -513,7 +512,7 @@ class ZoomableCore constructor(
             containerWhitespace = containerWhitespace,
         )
         val diffResult = newResetParams.diff(lastResetParams)
-        if (diffResult.isNotChanged) {
+        if (!force && diffResult.isNotChanged) {
             logger.d { "$module. reset:$caller. skipped. All parameters unchanged" }
             return
         }
@@ -540,7 +539,8 @@ class ZoomableCore constructor(
         )
         val mode: String
         val newUserTransform = if (
-            hasUserActions
+            !force
+            && hasUserActions
             && diffResult.isOnlyContainerSizeChanged
             && lastResetParams != null
             && lastResetParams.containerSize.isNotEmpty()
@@ -564,7 +564,8 @@ class ZoomableCore constructor(
             )
             restoreUserTransform.copy(offset = limitUserOffset)
         } else if (
-            hasUserActions
+            !force
+            && hasUserActions
             && keepTransformWhenSameAspectRatioContentSizeChanged
             && diffResult.isOnlyContentSizeOrContentOriginSizeChanged
             && lastResetParams != null
@@ -597,6 +598,7 @@ class ZoomableCore constructor(
         logger.d {
             val transform = newBaseTransform + newUserTransform
             "$module. reset:$caller. $mode. " +
+                    "force=force. " +
                     "containerSize=${newResetParams.containerSize.toShortString()}, " +
                     "contentSize=${newResetParams.contentSize.toShortString()}, " +
                     "contentOriginSize=${newResetParams.contentOriginSize.toShortString()}, " +
@@ -636,7 +638,6 @@ class ZoomableCore constructor(
         baseTransform = newBaseTransform
         updateUserTransform(newUserTransform)
         resetParams = newResetParams
-        initialZoom = newInitialZoom
     }
 
     private fun shouldRestoreVisibleRectWithContentSize(
