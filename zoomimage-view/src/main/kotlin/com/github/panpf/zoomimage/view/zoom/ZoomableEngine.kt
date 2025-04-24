@@ -539,13 +539,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         this.coroutineScope = newCoroutineScope
 
         bindProperties(newCoroutineScope)
-        zoomableCore.setCoroutineScope(newCoroutineScope)
     }
 
     fun onDetachFromWindow() {
         val coroutineScope = this.coroutineScope ?: return
 
-        zoomableCore.setCoroutineScope(null)
         coroutineScope.cancel("onDetachFromWindow")
         this.coroutineScope = null
     }

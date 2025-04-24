@@ -539,7 +539,6 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
         this.coroutineScope = coroutineScope
 
         bindProperties(coroutineScope)
-        zoomableCore.setCoroutineScope(coroutineScope)
     }
 
     override fun onAbandoned() = onForgotten()
@@ -552,7 +551,6 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
 
         val coroutineScope = this.coroutineScope ?: return
 
-        zoomableCore.setCoroutineScope(null)
         coroutineScope.cancel("onForgotten")
         this.coroutineScope = null
     }

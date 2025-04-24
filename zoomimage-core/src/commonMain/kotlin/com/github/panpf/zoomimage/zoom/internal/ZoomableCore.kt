@@ -51,7 +51,6 @@ import com.github.panpf.zoomimage.zoom.ScrollEdge
 import com.github.panpf.zoomimage.zoom.isEmpty
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.rtlFlipped
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -133,7 +132,6 @@ class ZoomableCore constructor(
         private set
 
     private var resetParams: ResetParams? = null
-    private var coroutineScope: CoroutineScope? = null
 
 
     suspend fun scale(
@@ -399,10 +397,6 @@ class ZoomableCore constructor(
         return canScrollByEdge(scrollEdge, horizontal, direction)
     }
 
-
-    fun setCoroutineScope(coroutineScope: CoroutineScope?) {
-        this.coroutineScope = coroutineScope
-    }
 
     suspend fun setContainerSize(containerSize: IntSizeCompat) {
         if (this.containerSize != containerSize) {
@@ -695,6 +689,7 @@ class ZoomableCore constructor(
             }
             val centroid = focus ?: containerSize.toSize().center
             setContinuousTransformType(ContinuousTransformType.SCALE)
+            val coroutineScope= this
             try {
                 animationAdapter.startAnimation(
                     animationSpec = animationSpec,
@@ -706,7 +701,7 @@ class ZoomableCore constructor(
                         )
                         val nowScale = this@ZoomableCore.transform.scaleX
                         val addScale = frameScale / nowScale
-                        coroutineScope?.launch {
+                        coroutineScope.launch {
                             gestureTransform(
                                 centroid = centroid,
                                 panChange = OffsetCompat.Zero,
