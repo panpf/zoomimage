@@ -28,11 +28,13 @@ import com.github.panpf.zoomimage.zoom.BaseZoomAnimationSpec
  */
 @Immutable
 data class ZoomAnimationSpec(
-    val durationMillis: Int = 300,
+    override val durationMillis: Int = DEFAULT_DURATION_MILLIS,
     val easing: Easing = FastOutSlowInEasing,
     val initialVelocity: Float = 0f,
 ) : BaseZoomAnimationSpec {
+
     companion object {
+        val DEFAULT_DURATION_MILLIS = BaseZoomAnimationSpec.DEFAULT_DURATION_MILLIS
         val Default = ZoomAnimationSpec()
         val None = ZoomAnimationSpec(durationMillis = 0)
     }

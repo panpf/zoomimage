@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.core.common.test.zoom.internal
+package com.github.panpf.zoomimage.test
 
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
@@ -36,16 +36,21 @@ class TestAnimationAdapter : AnimationAdapter {
     ) {
         if (animationRunning) return
         animationRunning = true
-        val durationMillis = 300
-        var progress = 0f
+        val finalAnimationSpec =
+            (animationSpec as? TestZoomAnimationSpec) ?: TestZoomAnimationSpec.Default
+        var progress: Float
         val startTime = TimeSource.Monotonic.markNow()
         try {
-            while (animationRunning && progress <= 1f) {
+            while (animationRunning) {
                 progress = startTime.elapsedNow().inWholeMilliseconds.toFloat()
-                    .div(durationMillis)
+                    .div(finalAnimationSpec.durationMillis)
                     .coerceIn(0f..1f)
                 onProgress(progress)
-                delay(16)
+                if (progress >= 1f) {
+                    break
+                } else {
+                    delay(16)
+                }
             }
         } finally {
             animationRunning = false
@@ -72,14 +77,14 @@ class TestAnimationAdapter : AnimationAdapter {
         if (flingRunning) return
         flingRunning = true
         val durationMillis = 300
-        var progress = 0f
+        var progress: Float
         val addOffset = OffsetCompat(
             x = if (velocity.x > 0) 100f else -100f,
             y = if (velocity.y > 0) 100f else -100f
         )
         val startTime = TimeSource.Monotonic.markNow()
         try {
-            while (flingRunning && progress <= 1f) {
+            while (flingRunning) {
                 progress = startTime.elapsedNow().inWholeMilliseconds.toFloat()
                     .div(durationMillis)
                     .coerceIn(0f..1f)
@@ -90,9 +95,12 @@ class TestAnimationAdapter : AnimationAdapter {
                     newUserOffset
                 }
                 if (!onUpdateValue(limitedNewUserOffset)) {
-                    flingRunning = false
+                    break
+                } else if (progress >= 1f) {
+                    break
+                } else {
+                    delay(16)
                 }
-                delay(16)
             }
         } finally {
             flingRunning = false

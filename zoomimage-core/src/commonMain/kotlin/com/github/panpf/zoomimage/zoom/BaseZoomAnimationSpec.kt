@@ -16,4 +16,10 @@
 
 package com.github.panpf.zoomimage.zoom
 
-interface BaseZoomAnimationSpec
+interface BaseZoomAnimationSpec {
+    val durationMillis: Int
+
+    companion object {
+        val DEFAULT_DURATION_MILLIS = 300
+    }
+}

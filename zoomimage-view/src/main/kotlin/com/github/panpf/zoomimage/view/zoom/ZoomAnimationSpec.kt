@@ -26,11 +26,11 @@ import com.github.panpf.zoomimage.zoom.BaseZoomAnimationSpec
  * @see com.github.panpf.zoomimage.view.test.zoom.ZoomAnimationSpecTest
  */
 data class ZoomAnimationSpec(
-    var durationMillis: Int = DEFAULT_DURATION_MILLIS,
-    var interpolator: Interpolator = DEFAULT_INTERPOLATOR
+    override val durationMillis: Int = DEFAULT_DURATION_MILLIS,
+    val interpolator: Interpolator = DEFAULT_INTERPOLATOR
 ) : BaseZoomAnimationSpec {
     companion object {
-        val DEFAULT_DURATION_MILLIS = 300
+        val DEFAULT_DURATION_MILLIS = BaseZoomAnimationSpec.DEFAULT_DURATION_MILLIS
 
         val DEFAULT_INTERPOLATOR = AccelerateDecelerateInterpolator()
 
