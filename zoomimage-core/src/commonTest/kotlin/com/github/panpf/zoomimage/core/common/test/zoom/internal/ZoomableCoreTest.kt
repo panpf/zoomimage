@@ -13,6 +13,7 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
+import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.internal.ZoomableCore
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.toShortString
@@ -1400,16 +1401,201 @@ class ZoomableCoreTest {
             assertEquals("6.4", this.mediumScale)
             assertEquals("19.2", this.maxScale)
         }
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+            zoomableCore.setContentSize(IntSizeCompat(5000, 300))
+            zoomableCore.setReadMode(null)
+            zoomableCore.locate(
+                contentPoint = OffsetCompat(
+                    x = zoomableCore.contentSize.width * 0.7f,
+                    y = zoomableCore.contentSize.height * 0.7f
+                ),
+                targetScale = zoomableCore.maxScale,
+                animated = false
+            )
+        }
+        zoomableCore.toProperties().apply {
+//            assertEquals("", this.toFormattedString())
+            assertEquals("null", this.readMode)
+            assertEquals("(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)", this.baseTransform)
+            assertEquals("(88.89x88.89,-66660.0x-85560.89,0.0,0.0x0.0,0.0x0.0)", this.userTransform)
+            assertEquals("[0.0x928.0,1080.0x992.8]", this.contentBaseDisplayRect)
+            assertEquals("[0.0x0.0,5000.0x300.0]", this.contentBaseVisibleRect)
+            assertEquals("[-66660.0x-3072.0,29340.01x2705.78]", this.contentDisplayRect)
+            assertEquals("[3471.87x160.0,3528.12x260.0]", this.contentVisibleRect)
+            assertEquals("0.22", this.minScale)
+            assertEquals("6.4", this.mediumScale)
+            assertEquals("19.2", this.maxScale)
+        }
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setReadMode(ReadMode.Default)
+        }
+        zoomableCore.toProperties().apply {
+//            assertEquals("", this.toFormattedString())
+            assertEquals(ReadMode.Default.toString(), this.readMode)
+            assertEquals("(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)", this.baseTransform)
+            assertEquals("(29.63x29.63,0.0x-27496.29,0.0,0.0x0.0,2.31x0.08)", this.userTransform)
+            assertEquals("[0.0x928.0,1080.0x992.8]", this.contentBaseDisplayRect)
+            assertEquals("[0.0x0.0,5000.0x300.0]", this.contentBaseVisibleRect)
+            assertEquals("[0.0x0.0,32000.0x1925.93]", this.contentDisplayRect)
+            assertEquals("[-0.0x0.0,168.75x300.0]", this.contentVisibleRect)
+            assertEquals("0.22", this.minScale)
+            assertEquals("6.4", this.mediumScale)
+            assertEquals("19.2", this.maxScale)
+        }
     }
 
     @Test
     fun testSetScalesCalculator() = runTest {
-        // TODO test setScalesCalculator
+        val zoomableCore = ZoomableCore(
+            logger = Logger(tag = "Test"),
+            module = "ZoomableCoreTest",
+            rtlLayoutDirection = false,
+            animationAdapter = TestAnimationAdapter(),
+            onTransformChanged = {}
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+            zoomableCore.setContentSize(IntSizeCompat(5000, 300))
+            zoomableCore.locate(
+                contentPoint = OffsetCompat(
+                    x = zoomableCore.contentSize.width * 0.7f,
+                    y = zoomableCore.contentSize.height * 0.7f
+                ),
+                targetScale = zoomableCore.maxScale,
+                animated = false
+            )
+        }
+        zoomableCore.toProperties().apply {
+//            assertEquals("", this.toFormattedString())
+            assertEquals(ScalesCalculator.Dynamic.toString(), this.scalesCalculator)
+            assertEquals("(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)", this.baseTransform)
+            assertEquals("(88.89x88.89,-66660.0x-85560.89,0.0,0.0x0.0,0.0x0.0)", this.userTransform)
+            assertEquals("[0.0x928.0,1080.0x992.8]", this.contentBaseDisplayRect)
+            assertEquals("[0.0x0.0,5000.0x300.0]", this.contentBaseVisibleRect)
+            assertEquals("[-66660.0x-3072.0,29340.01x2705.78]", this.contentDisplayRect)
+            assertEquals("[3471.87x160.0,3528.12x260.0]", this.contentVisibleRect)
+            assertEquals("0.22", this.minScale)
+            assertEquals("6.4", this.mediumScale)
+            assertEquals("19.2", this.maxScale)
+        }
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setScalesCalculator(ScalesCalculator.Fixed)
+        }
+        zoomableCore.toProperties().apply {
+//            assertEquals("", this.toFormattedString())
+            assertEquals(ScalesCalculator.Fixed.toString(), this.scalesCalculator)
+            assertEquals("(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)", this.baseTransform)
+            assertEquals("(1.0x1.0,0.0x0.0,0.0,0.0x0.0,0.0x0.0)", this.userTransform)
+            assertEquals("[0.0x928.0,1080.0x992.8]", this.contentBaseDisplayRect)
+            assertEquals("[0.0x0.0,5000.0x300.0]", this.contentBaseVisibleRect)
+            assertEquals("[0.0x928.0,1080.0x993.0]", this.contentDisplayRect)
+            assertEquals("[-0.0x0.0,5000.0x300.0]", this.contentVisibleRect)
+            assertEquals("0.22", this.minScale)
+            assertEquals("0.65", this.mediumScale)
+            assertEquals("1.94", this.maxScale)
+        }
     }
 
     @Test
     fun testSetThreeStepScale() = runTest {
-        // TODO test setThreeStepScale
+        val zoomableCore = ZoomableCore(
+            logger = Logger(tag = "Test"),
+            module = "ZoomableCoreTest",
+            rtlLayoutDirection = false,
+            animationAdapter = TestAnimationAdapter(),
+            onTransformChanged = {}
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+            zoomableCore.setContentSize(IntSizeCompat(5000, 300))
+            zoomableCore.setThreeStepScale(false)
+            zoomableCore.locate(
+                contentPoint = OffsetCompat(
+                    x = zoomableCore.contentSize.width * 0.7f,
+                    y = zoomableCore.contentSize.height * 0.7f
+                ),
+                targetScale = zoomableCore.maxScale,
+                animated = false
+            )
+        }
+        zoomableCore.toProperties().apply {
+//            assertEquals("", this.toFormattedString())
+            assertEquals(false, this.threeStepScale)
+            assertEquals("(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)", this.baseTransform)
+            assertEquals("(88.89x88.89,-66660.0x-85560.89,0.0,0.0x0.0,0.0x0.0)", this.userTransform)
+            assertEquals("[0.0x928.0,1080.0x992.8]", this.contentBaseDisplayRect)
+            assertEquals("[0.0x0.0,5000.0x300.0]", this.contentBaseVisibleRect)
+            assertEquals("[-66660.0x-3072.0,29340.01x2705.78]", this.contentDisplayRect)
+            assertEquals("[3471.87x160.0,3528.12x260.0]", this.contentVisibleRect)
+            assertEquals("0.22", this.minScale)
+            assertEquals("6.4", this.mediumScale)
+            assertEquals("19.2", this.maxScale)
+        }
+        assertEquals(
+            expected = "0.22, 6.4, 0.22, 6.4",
+            actual = listOf(
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+            ).joinToString()
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setThreeStepScale(true)
+        }
+        zoomableCore.toProperties().apply {
+//            assertEquals("", this.toFormattedString())
+            assertEquals(true, this.threeStepScale)
+            assertEquals("(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)", this.baseTransform)
+            assertEquals("(29.63x29.63,-15460.0x-27496.0,0.0,0.0x0.0,0.0x0.0)", this.userTransform)
+            assertEquals("[0.0x928.0,1080.0x992.8]", this.contentBaseDisplayRect)
+            assertEquals("[0.0x0.0,5000.0x300.0]", this.contentBaseVisibleRect)
+            assertEquals("[-15460.0x0.29,16540.0x1926.22]", this.contentDisplayRect)
+            assertEquals("[2415.62x0.0,2584.38x299.95]", this.contentVisibleRect)
+            assertEquals("0.22", this.minScale)
+            assertEquals("6.4", this.mediumScale)
+            assertEquals("19.2", this.maxScale)
+        }
+        assertEquals(
+            expected = "19.2, 0.22, 6.4, 19.2",
+            actual = listOf(
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+                withContext(Dispatchers.Main) {
+                    zoomableCore.switchScale()
+                    zoomableCore.transform.scaleX.format(2)
+                },
+            ).joinToString()
+        )
     }
 
     @Test
