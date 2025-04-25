@@ -565,7 +565,7 @@ class ZoomableCore constructor(
             && lastResetParams != null
             && lastResetParams.contentSize.isNotEmpty()
             && newResetParams.contentSize.isNotEmpty()
-            && shouldRestoreVisibleRectWithContentSize(
+            && shouldRestoreVisibleRect(
                 oldContentSize = lastResetParams.contentSize,
                 newContentSize = newResetParams.contentSize,
                 diffResult = diffResult
@@ -634,7 +634,7 @@ class ZoomableCore constructor(
         resetParams = newResetParams
     }
 
-    private fun shouldRestoreVisibleRectWithContentSize(
+    private fun shouldRestoreVisibleRect(
         oldContentSize: IntSizeCompat,
         newContentSize: IntSizeCompat,
         diffResult: ResetParamsDiffResult,
@@ -804,8 +804,8 @@ class ZoomableCore constructor(
         try {
             logger.d {
                 "$module. fling. start. " +
-                        "offset=${startUserOffset.toShortString()}, " +
-                        "bounds=${userOffsetBounds.toShortString()}, " +
+                        "startUserOffset=${startUserOffset.toShortString()}, " +
+                        "userOffsetBounds=${userOffsetBounds.toShortString()}, " +
                         "velocity=${velocity.toShortString()}"
             }
             animationAdapter.startFlingAnimation(
