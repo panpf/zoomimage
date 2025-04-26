@@ -10,6 +10,7 @@ import com.github.panpf.zoomimage.compose.util.limitTo
 import com.github.panpf.zoomimage.compose.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.compose.util.rotateInSpace
 import com.github.panpf.zoomimage.compose.util.times
+import com.github.panpf.zoomimage.compose.util.toOffset
 import com.github.panpf.zoomimage.compose.util.toShortString
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -220,5 +221,13 @@ class ComposePlatformUtilsOffsetTest {
         assertEquals(expected = true, actual = Offset(-0f, -0f).isEmpty())
         assertEquals(expected = true, actual = Offset(0.004f, 0.004f).isEmpty())
         assertEquals(expected = false, actual = Offset(0.006f, 0.006f).isEmpty())
+    }
+
+    @Test
+    fun testToOffset() {
+        assertEquals(
+            expected = Offset(600.4f, 200.7f),
+            actual = Size(600.4f, 200.7f).toOffset()
+        )
     }
 }

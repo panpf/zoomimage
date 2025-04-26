@@ -248,3 +248,10 @@ fun IntOffsetCompat.limitTo(rect: IntRectCompat): IntOffsetCompat {
  */
 fun IntOffsetCompat.limitTo(size: IntSizeCompat): IntOffsetCompat =
     limitTo(IntRectCompat(0, 0, size.width, size.height))
+
+/**
+ * Convert to [IntOffsetCompat]
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.IntOffsetCompatTest.testToIntOffset
+ */
+fun IntSizeCompat.toIntOffset(): IntOffsetCompat = IntOffsetCompat(x = width, y = height)

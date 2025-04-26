@@ -8,6 +8,8 @@ import com.github.panpf.zoomimage.compose.util.isEmpty
 import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.util.isSameAspectRatio
 import com.github.panpf.zoomimage.compose.util.lerp
+import com.github.panpf.zoomimage.compose.util.minus
+import com.github.panpf.zoomimage.compose.util.plus
 import com.github.panpf.zoomimage.compose.util.reverseRotate
 import com.github.panpf.zoomimage.compose.util.rotate
 import com.github.panpf.zoomimage.compose.util.times
@@ -268,5 +270,29 @@ class ComposePlatformUtilsIntSizeTest {
         assertEquals(IntSize(100, 200), size.copy(width = 100))
         assertEquals(IntSize(600, 100), size.copy(height = 100))
         assertEquals(IntSize(500, 700), size.copy(width = 500, height = 700))
+    }
+
+    @Test
+    fun testPlus() {
+        assertEquals(
+            expected = "15x37",
+            actual = (IntSize(11, 22) + IntSize(4, 15)).toShortString()
+        )
+        assertEquals(
+            expected = "7x7",
+            actual = (IntSize(11, 22) + IntSize(-4, -15)).toShortString()
+        )
+    }
+
+    @Test
+    fun testMinus() {
+        assertEquals(
+            expected = "7x7",
+            actual = (IntSize(11, 22) - IntSize(4, 15)).toShortString()
+        )
+        assertEquals(
+            expected = "15x37",
+            actual = (IntSize(11, 22) - IntSize(-4, -15)).toShortString()
+        )
     }
 }

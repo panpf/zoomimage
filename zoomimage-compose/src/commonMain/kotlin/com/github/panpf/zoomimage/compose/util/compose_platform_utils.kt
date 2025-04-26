@@ -33,8 +33,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import com.github.panpf.zoomimage.zoom.AlignmentCompat
-import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -139,6 +137,22 @@ internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
     }
     return false
 }
+
+/**
+ * Return the results of two Size addition operations
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsSizeTest.testPlus
+ */
+@Stable
+operator fun Size.plus(other: Size): Size = Size(width + other.width, height + other.height)
+
+/**
+ * Return the results of two Size subtraction operations
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsSizeTest.testMinus
+ */
+@Stable
+operator fun Size.minus(other: Size): Size = Size(width - other.width, height - other.height)
 
 
 /* **************************************** IntSize ********************************************* */
@@ -284,6 +298,24 @@ internal fun lerp(start: IntSize, stop: IntSize, fraction: Float): IntSize =
 internal fun IntSize.copy(width: Int = this.width, height: Int = this.height) =
     IntSize(width = width, height = height)
 
+/**
+ * Return the results of two IntSize addition operations
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsIntSizeTest.testPlus
+ */
+@Stable
+operator fun IntSize.plus(other: IntSize): IntSize =
+    IntSize(this.width + other.width, this.height + other.height)
+
+/**
+ * Return the results of two IntSize subtraction operations
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsIntSizeTest.testMinus
+ */
+@Stable
+operator fun IntSize.minus(other: IntSize): IntSize =
+    IntSize(this.width - other.width, this.height - other.height)
+
 
 /* ***************************************** Offset ********************************************* */
 
@@ -381,7 +413,16 @@ internal fun Offset.limitTo(size: Size): Offset =
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsOffsetTest.testIsEmpty
  */
+@Stable
 internal fun Offset.isEmpty(): Boolean = abs(x).format(2) == 0f && abs(y).format(2) == 0f
+
+/**
+ * Convert to [Offset]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsOffsetTest.testToOffset
+ */
+@Stable
+internal fun Size.toOffset(): Offset = Offset(x = width, y = height)
 
 
 /* ************************************** IntOffset ********************************************* */
@@ -479,6 +520,14 @@ internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
 @Stable
 internal fun IntOffset.limitTo(size: IntSize): IntOffset =
     limitTo(IntRect(0, 0, size.width, size.height))
+
+/**
+ * Convert to [IntOffset]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsIntOffsetTest.testToIntOffset
+ */
+@Stable
+internal fun IntSize.toIntOffset(): IntOffset = IntOffset(x = width, y = height)
 
 
 /* ******************************************* Rect ********************************************* */
@@ -1003,7 +1052,7 @@ internal fun lerp(
 /* ************************************** ContentScale ****************************************** */
 
 /**
- * Returns the name of [ContentScaleCompat], which can also be converted back via the [valueOf] method
+ * Returns the name of [ContentScale], which can also be converted back via the [valueOf] method
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsContentScaleTest.testName
  */
@@ -1021,7 +1070,7 @@ internal val ContentScale.name: String
     }
 
 /**
- * Returns the [ContentScaleCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ * Returns the [ContentScale] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsContentScaleTest.testValueOf
  */
@@ -1043,7 +1092,7 @@ internal fun ContentScale.Companion.valueOf(name: String): ContentScale {
 /* ************************************** Alignment ********************************************* */
 
 /**
- * Returns the name of [AlignmentCompat], which can also be converted back via the [valueOf] method
+ * Returns the name of [Alignment], which can also be converted back via the [valueOf] method
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testName
  */
@@ -1063,7 +1112,7 @@ internal val Alignment.name: String
     }
 
 /**
- * Returns the [AlignmentCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ * Returns the [Alignment] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testValueOf
  */
@@ -1084,7 +1133,7 @@ internal fun Alignment.Companion.valueOf(name: String): Alignment {
 }
 
 /**
- * If true is returned, this [AlignmentCompat] is the horizontal starting position
+ * If true is returned, this [Alignment] is the horizontal starting position
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testIsStart
  */
@@ -1095,7 +1144,7 @@ internal val Alignment.isStart: Boolean
             || this == Alignment.BottomStart
 
 /**
- * If true is returned, this [AlignmentCompat] is the horizontal center position
+ * If true is returned, this [Alignment] is the horizontal center position
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testIsHorizontalCenter
  */
@@ -1106,7 +1155,7 @@ internal val Alignment.isHorizontalCenter: Boolean
             || this == Alignment.BottomCenter
 
 /**
- * If true is returned, this [AlignmentCompat] is the horizontal ending position
+ * If true is returned, this [Alignment] is the horizontal ending position
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testIsEnd
  */
@@ -1117,7 +1166,7 @@ internal val Alignment.isEnd: Boolean
             || this == Alignment.BottomEnd
 
 /**
- * If true is returned, this [AlignmentCompat] is the horizontal and vertical center position
+ * If true is returned, this [Alignment] is the horizontal and vertical center position
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testIsCenter
  */
@@ -1126,7 +1175,7 @@ internal val Alignment.isCenter: Boolean
     get() = this == Alignment.Center
 
 /**
- * If true is returned, this [AlignmentCompat] is the vertical starting position
+ * If true is returned, this [Alignment] is the vertical starting position
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testIsTop
  */
@@ -1137,7 +1186,7 @@ internal val Alignment.isTop: Boolean
             || this == Alignment.TopEnd
 
 /**
- * If true is returned, this [AlignmentCompat] is the vertical center position
+ * If true is returned, this [Alignment] is the vertical center position
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testIsVerticalCenter
  */
@@ -1148,7 +1197,7 @@ internal val Alignment.isVerticalCenter: Boolean
             || this == Alignment.CenterEnd
 
 /**
- * If true is returned, this [AlignmentCompat] is the vertical ending position
+ * If true is returned, this [Alignment] is the vertical ending position
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testIsBottom
  */
@@ -1159,7 +1208,7 @@ internal val Alignment.isBottom: Boolean
             || this == Alignment.BottomEnd
 
 /**
- * If [layoutDirection] is [LayoutDirection.Rtl], returns the horizontally flipped [AlignmentCompat], otherwise returns itself
+ * If [layoutDirection] is [LayoutDirection.Rtl], returns the horizontally flipped [Alignment], otherwise returns itself
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsAlignmentTest.testRtlFlipped
  */

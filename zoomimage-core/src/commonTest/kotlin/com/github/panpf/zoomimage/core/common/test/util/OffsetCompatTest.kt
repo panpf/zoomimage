@@ -10,6 +10,7 @@ import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.util.times
+import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -224,6 +225,14 @@ class OffsetCompatTest {
         assertEquals(
             OffsetCompat(600.4f, 300.5f),
             OffsetCompat(600.4f, 400.9f).limitTo(SizeCompat(700.9f, 300.5f))
+        )
+    }
+
+    @Test
+    fun testToOffset() {
+        assertEquals(
+            expected = OffsetCompat(600.4f, 200.7f),
+            actual = SizeCompat(600.4f, 200.7f).toOffset()
         )
     }
 }

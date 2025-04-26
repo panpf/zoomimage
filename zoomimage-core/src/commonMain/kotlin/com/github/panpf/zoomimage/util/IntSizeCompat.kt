@@ -240,15 +240,13 @@ fun IntSizeCompat.copy(width: Int = this.width, height: Int = this.height) =
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testPlus
  */
-operator fun IntSizeCompat.plus(other: IntSizeCompat): IntSizeCompat {
-    return IntSizeCompat(this.width + other.width, this.height + other.height)
-}
+operator fun IntSizeCompat.plus(other: IntSizeCompat): IntSizeCompat =
+    IntSizeCompat(this.width + other.width, this.height + other.height)
 
 /**
  * Return the results of two IntSizeCompat subtraction operations
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testMinus
  */
-operator fun IntSizeCompat.minus(other: IntSizeCompat): IntSizeCompat {
-    return IntSizeCompat(this.width - other.width, this.height - other.height)
-}
+operator fun IntSizeCompat.minus(other: IntSizeCompat): IntSizeCompat =
+    IntSizeCompat(this.width - other.width, this.height - other.height)

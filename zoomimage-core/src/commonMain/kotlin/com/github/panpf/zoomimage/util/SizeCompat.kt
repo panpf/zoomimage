@@ -263,15 +263,13 @@ fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean 
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testPlus
  */
-operator fun SizeCompat.plus(other: SizeCompat): SizeCompat {
-    return SizeCompat(width + other.width, height + other.height)
-}
+operator fun SizeCompat.plus(other: SizeCompat): SizeCompat =
+    SizeCompat(width + other.width, height + other.height)
 
 /**
  * Return the results of two SizeCompat subtraction operations
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testMinus
  */
-operator fun SizeCompat.minus(other: SizeCompat): SizeCompat {
-    return SizeCompat(width - other.width, height - other.height)
-}
+operator fun SizeCompat.minus(other: SizeCompat): SizeCompat =
+    SizeCompat(width - other.width, height - other.height)

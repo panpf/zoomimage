@@ -336,3 +336,10 @@ fun OffsetCompat.limitTo(rect: RectCompat): OffsetCompat {
  */
 fun OffsetCompat.limitTo(size: SizeCompat): OffsetCompat =
     limitTo(RectCompat(0f, 0f, size.width, size.height))
+
+/**
+ * Convert to [OffsetCompat]
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testToOffset
+ */
+fun SizeCompat.toOffset(): OffsetCompat = OffsetCompat(x = width, y = height)

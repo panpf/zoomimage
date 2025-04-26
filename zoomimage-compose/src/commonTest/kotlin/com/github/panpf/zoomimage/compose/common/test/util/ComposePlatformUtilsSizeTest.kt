@@ -4,6 +4,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.util.isSameAspectRatio
+import com.github.panpf.zoomimage.compose.util.minus
+import com.github.panpf.zoomimage.compose.util.plus
 import com.github.panpf.zoomimage.compose.util.reverseRotate
 import com.github.panpf.zoomimage.compose.util.rotate
 import com.github.panpf.zoomimage.compose.util.round
@@ -205,6 +207,30 @@ class ComposePlatformUtilsSizeTest {
                 (size / 3f).copy(height = size.height / 3 + 1),
                 delta = 0.1f
             )
+        )
+    }
+
+    @Test
+    fun testPlus() {
+        assertEquals(
+            expected = "15.5x35.5",
+            actual = (Size(10.1f, 20.2f) + Size(5.4f, 15.3f)).toShortString()
+        )
+        assertEquals(
+            expected = "4.7x4.9",
+            actual = (Size(10.1f, 20.2f) + Size(-5.4f, -15.3f)).toShortString()
+        )
+    }
+
+    @Test
+    fun testMinus() {
+        assertEquals(
+            expected = "4.7x4.9",
+            actual = (Size(10.1f, 20.2f) - Size(5.4f, 15.3f)).toShortString()
+        )
+        assertEquals(
+            expected = "15.5x35.5",
+            actual = (Size(10.1f, 20.2f) - Size(-5.4f, -15.3f)).toShortString()
         )
     }
 }
