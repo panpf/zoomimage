@@ -31,13 +31,13 @@ data class ContainerWhitespace(
 ) {
 
     constructor(horizontal: Float, vertical: Float) : this(
-        horizontal,
-        vertical,
-        horizontal,
-        vertical
+        left = horizontal,
+        top = vertical,
+        right = horizontal,
+        bottom = vertical
     )
 
-    constructor(size: Float) : this(size, size, size, size)
+    constructor(size: Float) : this(left = size, top = size, right = size, bottom = size)
 
     companion object {
         val Zero = ContainerWhitespace(size = 0f)

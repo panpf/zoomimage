@@ -140,6 +140,7 @@ class ZoomableCore constructor(
         animated: Boolean = false,
         animationSpec: BaseZoomAnimationSpec? = null,
     ): Boolean = coroutineScope {
+        requiredMainThread()
         val containerSize =
             containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val contentSize =
@@ -229,6 +230,7 @@ class ZoomableCore constructor(
         animated: Boolean = false,
         animationSpec: BaseZoomAnimationSpec? = null,
     ): Boolean = coroutineScope {
+        requiredMainThread()
         containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val currentBaseTransform = baseTransform
@@ -277,6 +279,7 @@ class ZoomableCore constructor(
         animated: Boolean = false,
         animationSpec: BaseZoomAnimationSpec? = null,
     ): Boolean = coroutineScope {
+        requiredMainThread()
         val containerSize =
             containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val contentSize =
@@ -349,6 +352,7 @@ class ZoomableCore constructor(
     }
 
     suspend fun rotate(targetRotation: Int): Unit = coroutineScope {
+        requiredMainThread()
         require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
         val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 + it else it }
         val currentRotation = rotation
@@ -987,7 +991,7 @@ class ZoomableCore constructor(
         val containerWhitespaceMultiple = containerWhitespaceMultiple
         return if (!containerWhitespace.isEmpty()) {
             containerWhitespace
-        } else if (containerSize.isNotEmpty() && containerWhitespaceMultiple != 0f) {
+        } else if (containerSize.isNotEmpty() && containerWhitespaceMultiple > 0f) {
             ContainerWhitespace(
                 horizontal = containerSize.width * containerWhitespaceMultiple,
                 vertical = containerSize.height * containerWhitespaceMultiple
