@@ -130,6 +130,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                     }
                     if (longPressExecuted) return@launch
                     if (supportOneFingerScale && pointCount == 1 && doubleTapPressPoint != null) {
+                        // TODO View 版本单指缩放时，松手后缩放中心会偏移
                         oneFingerScaleExecuted = true
                         val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
                         val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)

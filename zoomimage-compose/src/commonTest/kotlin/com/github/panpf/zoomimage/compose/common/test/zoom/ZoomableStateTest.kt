@@ -117,7 +117,7 @@ class ZoomableStateTest {
         zoomable.alignment = Alignment.TopStart
         assertEquals(expected = Alignment.TopStart, actual = zoomable.alignment)
 
-        // TODO test LayoutDirection
+        // TODO test Alignment LayoutDirection
     }
 
     @Test
@@ -191,7 +191,7 @@ class ZoomableStateTest {
 
     @Test
     fun testContainerWhitespace() {
-        // TODO test, LayoutDirection
+        // TODO test ContainerWhitespace, LayoutDirection
     }
 
     @Test
@@ -5875,6 +5875,5 @@ class ZoomableStateTest {
         }
     }
 
-    // TODO test: rollbackScale, gestureTransform, fling, continuousTransformType
-    // TODO test: reset
+    // TODO test: rollbackScale, gestureTransform, fling, continuousTransformType, reset
 }

@@ -229,6 +229,7 @@ internal class ZoomableNode(
                     } else {
                         oneFingerScaleExecuted = false
                         if (supportTwoFingerScale || supportDrag) {
+                            // TODO Compose 版本双指缩放时不支持位移，并且松手后缩放中心会偏移
                             // Only allow one-finger dragging
                             val finalPan = if (supportDrag && pointCount == 1) pan else Offset.Zero
                             val finalZoom = if (supportTwoFingerScale) zoom else 1f
