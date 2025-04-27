@@ -9,6 +9,7 @@ zoom:
 * fix: ZoomableState 和 ZoomableEngine 的 reset() 方法的 caller
   参数被移除并且现在始终会重置变换状态。 [#81](https://github.com/panpf/zoomimage/issues/81)
 * improve: 改进根据大小判断是否是缩略图的逻辑，现在不论缩放多少倍都能正确判断，误差范围在 1 个像素以内
+* improve: ZoomImage 系列组件恢复双指移动手势
 * new: ZoomableState 和 ZoomableEngine 新增 keepTransformWhenSameAspectRatioContentSizeChanged
   参数，开启后可以在切换宽高比一样的图片时保持
   变换状态。 [#58](https://github.com/panpf/zoomimage/issues/58)
