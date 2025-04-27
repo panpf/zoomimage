@@ -51,6 +51,7 @@ import com.github.panpf.zoomimage.zoom.ScrollEdge
 import com.github.panpf.zoomimage.zoom.isEmpty
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.rtlFlipped
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -683,6 +684,7 @@ class ZoomableCore constructor(
             else -> null
         }
         if (targetScale != null) {
+            // TODO Use scale() instead
             val startScale = currentScale
             val endScale = targetScale
             logger.d {
@@ -705,7 +707,7 @@ class ZoomableCore constructor(
                         )
                         val nowScale = this@ZoomableCore.transform.scaleX
                         val addScale = frameScale / nowScale
-                        coroutineScope.launch {
+                        coroutineScope.launch(Dispatchers.Main.immediate) {
                             gestureTransform(
                                 centroid = centroid,
                                 panChange = OffsetCompat.Zero,
@@ -765,7 +767,7 @@ class ZoomableCore constructor(
             val limitedAddUserScale = limitedTargetUserScale - currentUserScale
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
-            "$module. transform. " +
+            "$module. gestureTransform. " +
                     "centroid=${centroid.toShortString()}, " +
                     "panChange=${panChange.toShortString()}, " +
                     "zoomChange=${zoomChange.format(4)}, " +
