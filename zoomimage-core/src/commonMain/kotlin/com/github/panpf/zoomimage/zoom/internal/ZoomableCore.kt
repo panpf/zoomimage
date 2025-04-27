@@ -51,9 +51,7 @@ import com.github.panpf.zoomimage.zoom.ScrollEdge
 import com.github.panpf.zoomimage.zoom.isEmpty
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.rtlFlipped
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 /**
  * Core that control scale, pan, rotation, ZoomableState and ZoomableEngine are its UI wrappers
@@ -673,56 +671,31 @@ class ZoomableCore constructor(
         val containerSize =
             containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
-        val minScale = minScale
-        val maxScale = maxScale
-        val animationSpec = animationSpec
 
         val currentScale = transform.scaleX
+        val minScale = minScale
+        val maxScale = maxScale
         val targetScale = when {
             currentScale.format(2) > maxScale.format(2) -> maxScale
             currentScale.format(2) < minScale.format(2) -> minScale
             else -> null
         }
         if (targetScale != null) {
-            // TODO Use scale() instead
             val startScale = currentScale
             val endScale = targetScale
+            val finalFocus = focus ?: containerSize.toSize().center
+            val centroidContentPoint = touchPointToContentPoint(finalFocus)
             logger.d {
                 "$module. rollbackScale. " +
                         "focus=${focus?.toShortString()}. " +
                         "startScale=${startScale.format(4)}, " +
                         "endScale=${endScale.format(4)}"
             }
-            val centroid = focus ?: containerSize.toSize().center
-            setContinuousTransformType(ContinuousTransformType.SCALE)
-            val coroutineScope= this
-            try {
-                animationAdapter.startAnimation(
-                    animationSpec = animationSpec,
-                    onProgress = { value ->
-                        val frameScale = lerp(
-                            start = startScale,
-                            stop = endScale,
-                            fraction = value
-                        )
-                        val nowScale = this@ZoomableCore.transform.scaleX
-                        val addScale = frameScale / nowScale
-                        coroutineScope.launch(Dispatchers.Main.immediate) {
-                            gestureTransform(
-                                centroid = centroid,
-                                panChange = OffsetCompat.Zero,
-                                zoomChange = addScale,
-                                rotationChange = 0f
-                            )
-                        }
-                    },
-                    onEnd = {
-
-                    }
-                )
-            } finally {
-                setContinuousTransformType(0)
-            }
+            scale(
+                targetScale = endScale,
+                centroidContentPoint = centroidContentPoint,
+                animated = true
+            )
         }
         targetScale != null
     }
