@@ -83,18 +83,19 @@ class TestAnimationAdapter : AnimationAdapter {
             y = if (velocity.y > 0) 100f else -100f
         )
         val startTime = TimeSource.Monotonic.markNow()
+        var userOffset = startUserOffset
         try {
             while (flingRunning) {
                 progress = startTime.elapsedNow().inWholeMilliseconds.toFloat()
                     .div(durationMillis)
                     .coerceIn(0f..1f)
-                val newUserOffset = startUserOffset + addOffset
-                val limitedNewUserOffset = if (userOffsetBounds != null) {
+                val newUserOffset = userOffset + addOffset
+                userOffset = if (userOffsetBounds != null) {
                     newUserOffset.limitTo(userOffsetBounds)
                 } else {
                     newUserOffset
                 }
-                if (!onUpdateValue(limitedNewUserOffset)) {
+                if (!onUpdateValue(userOffset)) {
                     break
                 } else if (progress >= 1f) {
                     break

@@ -6,7 +6,9 @@ import com.github.panpf.zoomimage.test.allFold
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.times
@@ -23,9 +25,12 @@ import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.internal.ZoomableCore
+import com.github.panpf.zoomimage.zoom.isEnd
+import com.github.panpf.zoomimage.zoom.isStart
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.toShortString
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlin.test.Test
@@ -1993,12 +1998,16 @@ class ZoomableCoreTest {
     @Test
     fun testScale() = runTest {
         var transformChangedCount = 0
+        val continuousTransformTypes = mutableListOf<Int>()
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
             rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
-            onTransformChanged = { transformChangedCount += 1 }
+            onTransformChanged = {
+                transformChangedCount += 1
+                continuousTransformTypes.add(it.continuousTransformType)
+            }
         )
 
         withContext(Dispatchers.Main) {
@@ -2071,12 +2080,13 @@ class ZoomableCoreTest {
             actual = zoomableCore.contentVisibleRect.center.toShortString()
         )
 
-        // animated
+        // animated. false
         withContext(Dispatchers.Main) {
             zoomableCore.reset(caller = "test", force = true)
         }
         assertEquals("0.22", zoomableCore.transform.scaleX.format(2).toString())
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration1 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.scale(
@@ -2088,6 +2098,14 @@ class ZoomableCoreTest {
         assertEquals("19.2", zoomableCore.transform.scaleX.format(2).toString())
         assertTrue(actual = duration1.inWholeMilliseconds <= 50, message = "duration=$duration1")
         assertEquals(expected = 1, actual = transformChangedCount)
+        assertTrue(
+            continuousTransformTypes.size == 1,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.first() == 0,
+            message = continuousTransformTypes.joinToString()
+        )
 
         // animated. true, global animationSpec
         withContext(Dispatchers.Main) {
@@ -2095,6 +2113,7 @@ class ZoomableCoreTest {
         }
         assertEquals("0.22", zoomableCore.transform.scaleX.format(2).toString())
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration2 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.scale(
@@ -2108,6 +2127,19 @@ class ZoomableCoreTest {
         assertTrue(
             transformChangedCount in 10..50,
             message = "transformChangedCount=$transformChangedCount"
+        )
+        assertTrue(
+            continuousTransformTypes.size >= 10,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertEquals(
+            expected = continuousTransformTypes.size - 1,
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.SCALE },
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.last() == 0,
+            message = continuousTransformTypes.joinToString()
         )
 
         // animated. true, change global animationSpec
@@ -2159,12 +2191,16 @@ class ZoomableCoreTest {
     @Test
     fun testSwitchScale() = runTest {
         var transformChangedCount = 0
+        val continuousTransformTypes = mutableListOf<Int>()
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
             rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
-            onTransformChanged = { transformChangedCount += 1 }
+            onTransformChanged = {
+                transformChangedCount += 1
+                continuousTransformTypes.add(it.continuousTransformType)
+            }
         )
 
         withContext(Dispatchers.Main) {
@@ -2245,12 +2281,13 @@ class ZoomableCoreTest {
             actual = zoomableCore.contentVisibleRect.center.toShortString()
         )
 
-        // animated
+        // animated. false
         withContext(Dispatchers.Main) {
             zoomableCore.reset(caller = "test", force = true)
         }
         assertEquals("0.22", zoomableCore.transform.scaleX.format(2).toString())
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration1 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.switchScale(
@@ -2261,6 +2298,14 @@ class ZoomableCoreTest {
         assertEquals("6.4", zoomableCore.transform.scaleX.format(2).toString())
         assertTrue(actual = duration1.inWholeMilliseconds <= 50, message = "duration=$duration1")
         assertEquals(expected = 1, actual = transformChangedCount)
+        assertTrue(
+            continuousTransformTypes.size == 1,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.first() == 0,
+            message = continuousTransformTypes.joinToString()
+        )
 
         // animated. true, global animationSpec
         withContext(Dispatchers.Main) {
@@ -2268,6 +2313,7 @@ class ZoomableCoreTest {
         }
         assertEquals("0.22", zoomableCore.transform.scaleX.format(2).toString())
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration2 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.switchScale(animated = true)
@@ -2278,6 +2324,19 @@ class ZoomableCoreTest {
         assertTrue(
             transformChangedCount in 10..50,
             message = "transformChangedCount=$transformChangedCount"
+        )
+        assertTrue(
+            continuousTransformTypes.size >= 10,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertEquals(
+            expected = continuousTransformTypes.size - 1,
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.SCALE },
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.last() == 0,
+            message = continuousTransformTypes.joinToString()
         )
 
         // animated. true, change global animationSpec
@@ -2325,12 +2384,16 @@ class ZoomableCoreTest {
     @Test
     fun testOffset() = runTest {
         var transformChangedCount = 0
+        val continuousTransformTypes = mutableListOf<Int>()
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
             rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
-            onTransformChanged = { transformChangedCount += 1 }
+            onTransformChanged = {
+                transformChangedCount += 1
+                continuousTransformTypes.add(it.continuousTransformType)
+            }
         )
 
         withContext(Dispatchers.Main) {
@@ -2368,8 +2431,9 @@ class ZoomableCoreTest {
         }
         assertEquals("0.0x-0.11", zoomableCore.transform.offset.toShortString())
 
-        // animated
+        // animated. false
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration1 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.offset(
@@ -2381,9 +2445,18 @@ class ZoomableCoreTest {
         assertEquals("-30000.0x-3840.11", zoomableCore.transform.offset.toShortString())
         assertTrue(actual = duration1.inWholeMilliseconds <= 50, message = "duration=$duration1")
         assertEquals(expected = 1, actual = transformChangedCount)
+        assertTrue(
+            continuousTransformTypes.size == 1,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.first() == 0,
+            message = continuousTransformTypes.joinToString()
+        )
 
         // animated. true, global animationSpec
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration2 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.offset(
@@ -2397,6 +2470,19 @@ class ZoomableCoreTest {
         assertTrue(
             transformChangedCount in 10..50,
             message = "transformChangedCount=$transformChangedCount"
+        )
+        assertTrue(
+            continuousTransformTypes.size >= 10,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertEquals(
+            expected = continuousTransformTypes.size - 1,
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.OFFSET },
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.last() == 0,
+            message = continuousTransformTypes.joinToString()
         )
 
         // animated. true, change global animationSpec
@@ -2440,12 +2526,16 @@ class ZoomableCoreTest {
     @Test
     fun testLocate() = runTest {
         var transformChangedCount = 0
+        val continuousTransformTypes = mutableListOf<Int>()
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
             rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
-            onTransformChanged = { transformChangedCount += 1 }
+            onTransformChanged = {
+                transformChangedCount += 1
+                continuousTransformTypes.add(it.continuousTransformType)
+            }
         )
 
         withContext(Dispatchers.Main) {
@@ -2506,13 +2596,14 @@ class ZoomableCoreTest {
         assertEquals("19.2", zoomableCore.transform.scaleX.format(2).toString())
         assertEquals("0.0x-0.11", zoomableCore.transform.offset.toShortString())
 
-        // animated
+        // animated. false
         withContext(Dispatchers.Main) {
             zoomableCore.reset(caller = "test", force = true)
         }
         assertEquals("0.22", zoomableCore.transform.scaleX.format(2).toString())
         assertEquals("0.0x928.0", zoomableCore.transform.offset.toShortString())
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration1 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.locate(
@@ -2526,6 +2617,14 @@ class ZoomableCoreTest {
         assertEquals("-47460.0x-1920.01", zoomableCore.transform.offset.toShortString())
         assertTrue(actual = duration1.inWholeMilliseconds <= 50, message = "duration=$duration1")
         assertEquals(expected = 1, actual = transformChangedCount)
+        assertTrue(
+            continuousTransformTypes.size == 1,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.first() == 0,
+            message = continuousTransformTypes.joinToString()
+        )
 
         // animated. true, global animationSpec
         withContext(Dispatchers.Main) {
@@ -2534,6 +2633,7 @@ class ZoomableCoreTest {
         assertEquals("0.22", zoomableCore.transform.scaleX.format(2).toString())
         assertEquals("0.0x928.0", zoomableCore.transform.offset.toShortString())
         transformChangedCount = 0
+        continuousTransformTypes.clear()
         val duration2 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.locate(
@@ -2549,6 +2649,19 @@ class ZoomableCoreTest {
         assertTrue(
             transformChangedCount in 10..50,
             message = "transformChangedCount=$transformChangedCount"
+        )
+        assertTrue(
+            continuousTransformTypes.size >= 10,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertEquals(
+            expected = continuousTransformTypes.size - 1,
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.LOCATE },
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.last() == 0,
+            message = continuousTransformTypes.joinToString()
         )
 
         // animated. true, change global animationSpec
@@ -3236,26 +3349,600 @@ class ZoomableCoreTest {
 
     @Test
     fun testStopAllAnimation() = runTest {
-        // TODO test stopAllAnimation
+        var stopHalfway = false
+        var onTransformChangedCount = 0
+        val scope = this
+        val zoomableCore = ZoomableCore(
+            logger = Logger(tag = "Test"),
+            module = "ZoomableCoreTest",
+            rtlLayoutDirection = false,
+            animationAdapter = TestAnimationAdapter(),
+            onTransformChanged = { zoomable ->
+                onTransformChangedCount++
+                if (onTransformChangedCount >= 5 && stopHalfway) {
+                    stopHalfway = false
+                    scope.launch {
+                        zoomable.stopAllAnimation("Test")
+                    }
+                }
+            }
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+            zoomableCore.setContentSize(IntSizeCompat(5000, 300))
+        }
+
+        /*
+         * stopAnimation
+         */
+
+        stopHalfway = false
+        onTransformChangedCount = 0
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset()
+                    .toOffset() * ScaleFactorCompat(0.5f, 0.5f),
+                targetScale = zoomableCore.maxScale,
+                animated = true
+            )
+        }
+        assertEquals("2500.0x150.0", zoomableCore.contentVisibleRect.center.toShortString())
+        assertTrue(
+            onTransformChangedCount >= 10,
+            message = "onTransformChangedCount=$onTransformChangedCount"
+        )
+
+        stopHalfway = true
+        onTransformChangedCount = 0
+        withContext(Dispatchers.Main) {
+            zoomableCore.reset("Test", force = true)
+        }
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset()
+                    .toOffset() * ScaleFactorCompat(0.5f, 0.5f),
+                targetScale = zoomableCore.maxScale,
+                animated = true
+            )
+        }
+        assertEquals("2500.0x150.0", zoomableCore.contentVisibleRect.center.toShortString())
+        assertTrue(
+            onTransformChangedCount <= 10,
+            message = "onTransformChangedCount=$onTransformChangedCount"
+        )
+
+        /*
+         * stopFlingAnimation
+         */
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset()
+                    .toOffset() * ScaleFactorCompat(0.5f, 0.5f),
+                targetScale = zoomableCore.maxScale,
+                animated = false
+            )
+        }
+        stopHalfway = false
+        onTransformChangedCount = 0
+        withContext(Dispatchers.Main) {
+            zoomableCore.fling(
+                velocity = OffsetCompat(10000f, 10000f),
+                extras = emptyMap(),
+            )
+        }
+        assertTrue(
+            onTransformChangedCount >= 10,
+            message = "onTransformChangedCount=$onTransformChangedCount"
+        )
+
+        stopHalfway = true
+        onTransformChangedCount = 0
+        withContext(Dispatchers.Main) {
+            zoomableCore.fling(
+                velocity = OffsetCompat(-10000f, -10000f),
+                extras = emptyMap(),
+            )
+        }
+        assertTrue(
+            onTransformChangedCount < 10,
+            message = "onTransformChangedCount=$onTransformChangedCount"
+        )
     }
 
     @Test
     fun testRollbackScale() = runTest {
-        // TODO test rollbackScale
+        val continuousTransformTypes = mutableListOf<Int>()
+        val zoomableCore = ZoomableCore(
+            logger = Logger(tag = "Test"),
+            module = "ZoomableCoreTest",
+            rtlLayoutDirection = false,
+            animationAdapter = TestAnimationAdapter(),
+            onTransformChanged = {
+                continuousTransformTypes.add(it.continuousTransformType)
+            }
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+            zoomableCore.setContentSize(IntSizeCompat(5000, 300))
+        }
+        zoomableCore.toProperties().apply {
+            assertEquals("0.22", this.minScale)
+            assertEquals("6.4", this.mediumScale)
+            assertEquals("19.2", this.maxScale)
+        }
+
+        assertEquals(0.22f, zoomableCore.transform.scaleX.format(2))
+        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollbackScale() })
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.scale(zoomableCore.mediumScale)
+        }
+        assertEquals(6.4f, zoomableCore.transform.scaleX.format(2))
+        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollbackScale() })
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.scale(zoomableCore.maxScale)
+        }
+        assertEquals(19.2f, zoomableCore.transform.scaleX.format(2))
+        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollbackScale() })
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.gestureTransform(
+                centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+                panChange = OffsetCompat.Zero,
+                zoomChange = 2f,
+                rotationChange = 0f
+            )
+        }
+        assertEquals(38.4f, zoomableCore.transform.scaleX.format(2))
+
+        continuousTransformTypes.clear()
+        var result: Boolean
+        val duration = measureTime {
+            withContext(Dispatchers.Main) {
+                result = zoomableCore.rollbackScale()
+            }
+        }
+        assertTrue(result)
+        assertEquals(19.2f, zoomableCore.transform.scaleX.format(2))
+        assertTrue(duration.inWholeMilliseconds in 300..350, message = "duration=$duration")
+        assertTrue(
+            continuousTransformTypes.size >= 10,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertEquals(
+            expected = continuousTransformTypes.size - 1,
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.SCALE },
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.last() == 0,
+            message = continuousTransformTypes.joinToString()
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.scale(zoomableCore.minScale)
+        }
+        assertEquals(0.22f, zoomableCore.transform.scaleX.format(2))
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.gestureTransform(
+                centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+                panChange = OffsetCompat.Zero,
+                zoomChange = 0.4f,
+                rotationChange = 0f
+            )
+        }
+        assertEquals(0.11f, zoomableCore.transform.scaleX.format(2))
+
+        var result2: Boolean
+        val duration2 = measureTime {
+            withContext(Dispatchers.Main) {
+                zoomableCore.setAnimationSpec(TestZoomAnimationSpec(500))
+                result2 = zoomableCore.rollbackScale()
+            }
+        }
+        assertTrue(result2)
+        assertTrue(
+            actual = zoomableCore.transform.scaleX.format(2) in 0.21f..0.22f,
+            message = zoomableCore.transform.scaleX.toString()
+        )
+        assertTrue(duration2.inWholeMilliseconds in 500..550, message = "duration=$duration2")
     }
 
     @Test
     fun testGestureTransform() = runTest {
-        // TODO test gestureTransform
+        val zoomableCore = ZoomableCore(
+            logger = Logger(tag = "Test"),
+            module = "ZoomableCoreTest",
+            rtlLayoutDirection = false,
+            animationAdapter = TestAnimationAdapter(),
+            onTransformChanged = {}
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+            zoomableCore.setContentSize(IntSizeCompat(5000, 300))
+        }
+
+        // panChange. +
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.maxScale
+            )
+        }
+        assertEquals(
+            "(19.2x19.2,-47460.0x-1920.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat(10f, 10f),
+            zoomChange = 1f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(19.2x19.2,-47450.01x-1910.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // panChange. -
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.maxScale
+            )
+        }
+        assertEquals(
+            "(19.2x19.2,-47460.0x-1920.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat(-10f, -10f),
+            zoomChange = 1f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(19.2x19.2,-47470.0x-1930.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // panChange. -. bounds
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset(),
+                targetScale = zoomableCore.maxScale
+            )
+        }
+        assertEquals(
+            "(19.2x19.2,-94920.0x-3840.11,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat(-10f, -10f),
+            zoomChange = 1f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(19.2x19.2,-94920.0x-3840.11,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // panChange. +. bounds
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = OffsetCompat.Zero,
+                targetScale = zoomableCore.maxScale
+            )
+        }
+        assertEquals(
+            "(19.2x19.2,0.0x-0.11,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat(10f, 10f),
+            zoomChange = 1f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(19.2x19.2,0.0x-0.11,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // zoomChange. +
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.mediumScale,
+            )
+        }
+        assertEquals(
+            "(6.4x6.4,-15460.0x0.29,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 1.2f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(7.68x7.68,-18660.0x-191.64,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // zoomChange. -
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.mediumScale,
+            )
+        }
+        assertEquals(
+            "(6.4x6.4,-15460.0x0.29,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 0.8f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(5.12x5.12,-12260.0x192.04,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // zoomChange. +. bounds. rubberBandScale true
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.maxScale,
+            )
+        }
+        zoomableCore.setRubberBandScale(true)
+        assertEquals(
+            "(19.2x19.2,-47460.0x-1920.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        assertEquals(true, zoomableCore.rubberBandScale)
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 1.2f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(20.74x20.74,-51300.01x-2150.4,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // zoomChange. -. bounds. rubberBandScale true
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.minScale,
+            )
+        }
+        zoomableCore.setRubberBandScale(true)
+        assertEquals(
+            "(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        assertEquals(true, zoomableCore.rubberBandScale)
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 0.4f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(0.11x0.11,270.0x944.0,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // zoomChange. +. bounds. rubberBandScale false
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.maxScale,
+            )
+        }
+        zoomableCore.setRubberBandScale(false)
+        assertEquals(
+            "(19.2x19.2,-47460.0x-1920.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        assertEquals(false, zoomableCore.rubberBandScale)
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 1.2f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(19.2x19.2,-47460.01x-1920.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // zoomChange. -. bounds. rubberBandScale false
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.minScale,
+            )
+        }
+        zoomableCore.setRubberBandScale(false)
+        assertEquals(
+            "(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        assertEquals(false, zoomableCore.rubberBandScale)
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 0.4f,
+            rotationChange = 0f
+        )
+        assertEquals(
+            "(0.22x0.22,0.0x928.0,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        // rotationChange
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.mediumScale,
+            )
+        }
+        assertEquals(
+            "(6.4x6.4,-15460.0x0.29,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 1f,
+            rotationChange = 90f
+        )
+        assertEquals(
+            "(6.4x6.4,-15460.0x0.29,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 1f,
+            rotationChange = 180f
+        )
+        assertEquals(
+            "(6.4x6.4,-15460.0x0.29,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 1f,
+            rotationChange = 270f
+        )
+        assertEquals(
+            "(6.4x6.4,-15460.0x0.29,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        zoomableCore.gestureTransform(
+            centroid = zoomableCore.containerSize.toIntOffset().toOffset() * 0.5f,
+            panChange = OffsetCompat.Zero,
+            zoomChange = 1f,
+            rotationChange = 360f
+        )
+        assertEquals(
+            "(6.4x6.4,-15460.0x0.29,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
     }
 
     @Test
     fun testFling() = runTest {
-        // TODO test fling
+        var transformChangedCount = 0
+        val continuousTransformTypes = mutableListOf<Int>()
+        val zoomableCore = ZoomableCore(
+            logger = Logger(tag = "Test"),
+            module = "ZoomableCoreTest",
+            rtlLayoutDirection = false,
+            animationAdapter = TestAnimationAdapter(),
+            onTransformChanged = {
+                transformChangedCount += 1
+                continuousTransformTypes.add(it.continuousTransformType)
+            }
+        )
+
+        withContext(Dispatchers.Main) {
+            zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+            zoomableCore.setContentSize(IntSizeCompat(5000, 300))
+        }
+        withContext(Dispatchers.Main) {
+            zoomableCore.locate(
+                contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                targetScale = zoomableCore.maxScale
+            )
+        }
+        assertEquals(
+            "(19.2x19.2,-47460.0x-1920.01,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+
+        transformChangedCount = 0
+        continuousTransformTypes.clear()
+        zoomableCore.fling(
+            velocity = OffsetCompat(10000f, 10000f),
+            extras = emptyMap(),
+        )
+        assertEquals(
+            "(19.2x19.2,0.0x-0.11,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        assertTrue(
+            transformChangedCount >= 10,
+            message = "transformChangedCount=$transformChangedCount"
+        )
+        assertTrue(
+            continuousTransformTypes.size >= 10,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertEquals(
+            expected = continuousTransformTypes.size - 1,
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.FLING },
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.last() == 0,
+            message = continuousTransformTypes.joinToString()
+        )
+
+        transformChangedCount = 0
+        continuousTransformTypes.clear()
+        zoomableCore.fling(
+            velocity = OffsetCompat(-10000f, -10000f),
+            extras = emptyMap(),
+        )
+        assertEquals(
+            "(19.2x19.2,-94920.0x-3840.0,0.0,0.0x0.0,2.31x0.08)",
+            zoomableCore.transform.toShortString()
+        )
+        assertTrue(
+            transformChangedCount >= 10,
+            message = "transformChangedCount=$transformChangedCount"
+        )
+        assertTrue(
+            continuousTransformTypes.size >= 10,
+            message = continuousTransformTypes.joinToString()
+        )
+        assertEquals(
+            expected = continuousTransformTypes.size - 1,
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.FLING },
+            message = continuousTransformTypes.joinToString()
+        )
+        assertTrue(
+            continuousTransformTypes.last() == 0,
+            message = continuousTransformTypes.joinToString()
+        )
     }
 
     @Test
     fun testSetContinuousTransformType() = runTest {
+        // See testScale(), testSwitchScale(), testOffset(), testLocate(), testFling()
+
         var count = 0
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
@@ -3348,12 +4035,88 @@ class ZoomableCoreTest {
 
     @Test
     fun testRtlLayoutDirection() = runTest {
-        // TODO test rtlLayoutDirection
-    }
+        // alignment
+        val getBaseTransform: suspend (AlignmentCompat, Boolean, IntSizeCompat) -> TransformCompat =
+            { alignment, rtlLayoutDirection, contentSize ->
+                val zoomableCore = ZoomableCore(
+                    logger = Logger(tag = "Test"),
+                    module = "ZoomableCoreTest",
+                    rtlLayoutDirection = rtlLayoutDirection,
+                    animationAdapter = TestAnimationAdapter(),
+                    onTransformChanged = {}
+                )
 
-    @Test
-    fun testOnTransformChanged() = runTest {
-        // TODO test onTransformChanged
+                withContext(Dispatchers.Main) {
+                    zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+                    zoomableCore.setContentSize(contentSize)
+                    zoomableCore.setAlignment(alignment)
+                }
+                zoomableCore.baseTransform
+            }
+
+        val horContent = IntSizeCompat(5000, 300)
+        val verContent = IntSizeCompat(300, 5000)
+        listOf(
+            AlignmentCompat.TopStart, AlignmentCompat.TopCenter, AlignmentCompat.TopEnd,
+            AlignmentCompat.CenterStart, AlignmentCompat.Center, AlignmentCompat.CenterEnd,
+            AlignmentCompat.BottomStart, AlignmentCompat.BottomCenter, AlignmentCompat.BottomEnd,
+        ).forEach { alignment ->
+            if (alignment.isStart || alignment.isEnd) {
+                assertEquals(
+                    expected = getBaseTransform(alignment, false, horContent).toShortString(),
+                    actual = getBaseTransform(alignment, true, horContent).toShortString(),
+                    message = "alignment=${alignment.name}"
+                )
+                assertNotEquals(
+                    illegal = getBaseTransform(alignment, false, verContent).toShortString(),
+                    actual = getBaseTransform(alignment, true, verContent).toShortString(),
+                    message = "alignment=${alignment.name}"
+                )
+            } else {
+                assertEquals(
+                    expected = getBaseTransform(alignment, false, horContent).toShortString(),
+                    actual = getBaseTransform(alignment, true, horContent).toShortString(),
+                    message = "alignment=$alignment"
+                )
+                assertEquals(
+                    expected = getBaseTransform(alignment, false, verContent).toShortString(),
+                    actual = getBaseTransform(alignment, true, verContent).toShortString(),
+                    message = "alignment=$alignment"
+                )
+            }
+        }
+
+        // containerWhitespace
+        val getUserOffsetBounds: suspend (ContainerWhitespace, Boolean) -> RectCompat =
+            { containerWhitespace, rtlLayoutDirection ->
+                val zoomableCore = ZoomableCore(
+                    logger = Logger(tag = "Test"),
+                    module = "ZoomableCoreTest",
+                    rtlLayoutDirection = rtlLayoutDirection,
+                    animationAdapter = TestAnimationAdapter(),
+                    onTransformChanged = {}
+                )
+
+                withContext(Dispatchers.Main) {
+                    zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
+                    zoomableCore.setContentSize(IntSizeCompat(500, 300))
+                    zoomableCore.setContainerWhitespace(containerWhitespace)
+                    zoomableCore.locate(
+                        contentPoint = zoomableCore.contentSize.toIntOffset().toOffset() * 0.5f,
+                        targetScale = zoomableCore.maxScale
+                    )
+                }
+                zoomableCore.userOffsetBoundsRect
+            }
+
+        assertNotEquals(
+            illegal = getUserOffsetBounds(ContainerWhitespace(100f, 200f, 300f, 400f), false),
+            actual = getUserOffsetBounds(ContainerWhitespace(100f, 200f, 300f, 400f), true),
+        )
+        assertEquals(
+            expected = getUserOffsetBounds(ContainerWhitespace(100f, 200f, 300f, 400f), false),
+            actual = getUserOffsetBounds(ContainerWhitespace(300f, 200f, 100f, 400f), true),
+        )
     }
 
     data class ZoomableCoreProperties(
