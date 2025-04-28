@@ -49,7 +49,7 @@ internal class ScaleDragGestureDetector(
 
     private var isDragging = false
     private var canDragged = true
-    private var singlePointLastFocus: OffsetCompat? = null
+    private var lastGestureFocus: OffsetCompat? = null
     private var multiPointLastFocus: OffsetCompat? = null
     private var multiPointCount = 0
     private var pointCount = 0
@@ -62,39 +62,40 @@ internal class ScaleDragGestureDetector(
             view.context,
             object : FasterScaleGestureDetector.OnScaleGestureListener {
                 override fun onScale(detector: FasterScaleGestureDetector): Boolean {
-                val scaleFactor = detector.scaleFactor
-                    .takeIf { !isNaN(it) && !isInfinite(it) }
-                    ?: return false
-                if (pointCount > 1 && scaleFactor >= 0) {
-                    val multiPointLastFocus = this@ScaleDragGestureDetector.multiPointLastFocus
-                        ?.takeIf { multiPointCount == pointCount }
-                        ?: OffsetCompat(detector.focusX, detector.focusY)
-                    val panChange = OffsetCompat(
-                        detector.focusX - multiPointLastFocus.x,
-                        detector.focusY - multiPointLastFocus.y
-                    )
-                    onGestureListener.onGesture(
-                        scaleFactor = scaleFactor,
-                        focus = OffsetCompat(detector.focusX, detector.focusY),
-                        panChange = panChange,
-                        pointCount
-                    )
-                    this@ScaleDragGestureDetector.multiPointLastFocus =
-                        OffsetCompat(detector.focusX, detector.focusY)
-                    this@ScaleDragGestureDetector.multiPointCount = pointCount
+                    val scaleFactor = detector.scaleFactor
+                        .takeIf { !isNaN(it) && !isInfinite(it) }
+                        ?: return false
+                    if (pointCount > 1 && scaleFactor >= 0) {
+                        val focus = OffsetCompat(detector.focusX, detector.focusY)
+                        val multiPointLastFocus = this@ScaleDragGestureDetector.multiPointLastFocus
+                            ?.takeIf { multiPointCount == pointCount }
+                            ?: focus
+                        val panChange = OffsetCompat(
+                            detector.focusX - multiPointLastFocus.x,
+                            detector.focusY - multiPointLastFocus.y
+                        )
+                        onGestureListener.onGesture(
+                            scaleFactor = scaleFactor,
+                            focus = focus,
+                            panChange = panChange,
+                            pointCount = pointCount
+                        )
+                        this@ScaleDragGestureDetector.lastGestureFocus = focus
+                        this@ScaleDragGestureDetector.multiPointLastFocus = focus
+                        this@ScaleDragGestureDetector.multiPointCount = pointCount
+                    }
+                    return true
                 }
-                return true
-            }
 
                 override fun onScaleBegin(detector: FasterScaleGestureDetector): Boolean {
-                view.parent.requestDisallowInterceptTouchEvent(true)
-                return true
-            }
+                    view.parent.requestDisallowInterceptTouchEvent(true)
+                    return true
+                }
 
                 override fun onScaleEnd(detector: FasterScaleGestureDetector) {
 
-            }
-        })
+                }
+            })
     }
 
     private fun getActiveX(ev: MotionEvent): Float = try {
@@ -131,7 +132,7 @@ internal class ScaleDragGestureDetector(
                 velocityTracker?.addMovement(ev)
                 // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
                 firstTouch = null
-                singlePointLastFocus = null
+                lastGestureFocus = null
                 multiPointLastFocus = null
                 multiPointCount = 0
             }
@@ -164,13 +165,13 @@ internal class ScaleDragGestureDetector(
                         }
                         if (isDragging && canDragged) {
                             val panChange = touch - lastTouch
-                            singlePointLastFocus = touch
                             onGestureListener.onGesture(
                                 scaleFactor = 1f,
                                 focus = touch,
                                 panChange = panChange,
                                 pointCount
                             )
+                            lastGestureFocus = touch
                             velocityTracker?.addMovement(ev)
                         }
                     } else {
@@ -186,7 +187,8 @@ internal class ScaleDragGestureDetector(
                 // Ignore deprecation, ACTION_POINTER_ID_MASK and
                 // ACTION_POINTER_ID_SHIFT has same value and are deprecated
                 // You can have either deprecation or lint target api warning
-                val pointerIndex = ev.action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
+                val pointerIndex =
+                    ev.action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
                 val pointerId = ev.getPointerId(pointerIndex)
                 if (pointerId == activePointerId) {
                     // This was our active pointer going up. Choose a new
@@ -201,10 +203,9 @@ internal class ScaleDragGestureDetector(
                 // Recycle Velocity Tracker
                 velocityTracker?.recycle()
                 velocityTracker = null
-
-                val focus = singlePointLastFocus ?: multiPointLastFocus
-                if (focus != null) {
-                    onGestureListener.onEnd(focus, OffsetCompat.Zero)
+                val gestureFocus = lastGestureFocus
+                if (gestureFocus != null) {
+                    onGestureListener.onEnd(OffsetCompat.Zero)
                 }
             }
 
@@ -227,9 +228,9 @@ internal class ScaleDragGestureDetector(
                 velocityTracker?.recycle()
                 velocityTracker = null
 
-                val focus = singlePointLastFocus ?: multiPointLastFocus
-                if (focus != null) {
-                    onGestureListener.onEnd(focus, velocity)
+                val gestureFocus = lastGestureFocus
+                if (gestureFocus != null) {
+                    onGestureListener.onEnd(velocity)
                 }
             }
         }
@@ -244,6 +245,6 @@ internal class ScaleDragGestureDetector(
             scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int
         )
 
-        fun onEnd(focus: OffsetCompat, velocity: OffsetCompat)
+        fun onEnd(velocity: OffsetCompat)
     }
 }

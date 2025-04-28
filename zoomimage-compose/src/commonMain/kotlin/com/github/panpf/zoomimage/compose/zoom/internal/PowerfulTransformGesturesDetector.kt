@@ -55,7 +55,7 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
     panZoomLock: Boolean = false,
     canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
     onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float, pointCount: Int) -> Unit,
-    onEnd: (centroid: Offset, velocity: Velocity) -> Unit = { _, _ -> },
+    onEnd: (velocity: Velocity) -> Unit = { _ -> },
 ) {
     awaitEachGesture {
         var rotation = 0f
@@ -64,7 +64,7 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
         var pastTouchSlop = false
         val touchSlop = viewConfiguration.touchSlop
         var lockedToPanZoom = false
-        var lastCentroid: Offset? = null
+        var lastGestureCentroid: Offset? = null
         val velocityTracker = VelocityTracker()
         var notInterceptEventsUntilUp: Boolean
         awaitFirstDown(requireUnconsumed = false)
@@ -118,7 +118,7 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
                         velocityTracker.addPointerInputChange(event.changes.first())
                         val pointCount = event.changes.size
                         maxPointCount = maxOf(maxPointCount, pointCount)
-                        lastCentroid = centroid
+                        lastGestureCentroid = centroid
                         onGesture(centroid, panChange, zoomChange, effectiveRotation, pointCount)
                     }
                     event.changes.fastForEach {
@@ -130,14 +130,14 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
             }
         } while (!canceled && event.changes.fastAny { it.pressed })
 
-        if (lastCentroid != null) {
+        if (lastGestureCentroid != null) {
             // Only allows one-finger dragging and flinging
             val velocity = if (maxPointCount == 1) {
                 velocityTracker.calculateVelocity()
             } else {
                 Velocity.Zero
             }
-            onEnd(lastCentroid, velocity)
+            onEnd(velocity)
         }
     }
 }

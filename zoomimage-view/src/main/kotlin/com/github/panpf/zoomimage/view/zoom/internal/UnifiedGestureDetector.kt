@@ -34,7 +34,7 @@ internal class UnifiedGestureDetector(
     onDoubleTapUpCallback: (e: MotionEvent) -> Boolean,
     canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
     onGestureCallback: (scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int) -> Unit,
-    onEndCallback: (focus: OffsetCompat, velocity: OffsetCompat) -> Unit,
+    onEndCallback: (velocity: OffsetCompat) -> Unit,
 ) {
 
     private var doubleTapPressed = false
@@ -92,8 +92,8 @@ internal class UnifiedGestureDetector(
                 onGestureCallback(scaleFactor, focus, panChange, pointCount)
             }
 
-            override fun onEnd(focus: OffsetCompat, velocity: OffsetCompat) {
-                onEndCallback(focus, velocity)
+            override fun onEnd(velocity: OffsetCompat) {
+                onEndCallback(velocity)
             }
         })
 

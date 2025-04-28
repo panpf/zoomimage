@@ -35,8 +35,10 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
 
     private val gestureDetector: UnifiedGestureDetector
     private var longPressExecuted = false
+    private var doubleTapExecuted = false
     private var doubleTapPressPoint: OffsetCompat? = null
     private var oneFingerScaleExecuted = false
+    private var twoFingerScaleCentroid: OffsetCompat? = null
     private var panDistance = OffsetCompat.Zero
     private var coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -48,8 +50,10 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
             view = view,
             onActionDownCallback = {
                 longPressExecuted = false
+                doubleTapExecuted = false
                 doubleTapPressPoint = null
                 oneFingerScaleExecuted = false
+                twoFingerScaleCentroid = null
                 panDistance = OffsetCompat.Zero
                 coroutineScope.launch(Dispatchers.Main) {
                     zoomable.stopAllAnimation("onActionDown")
@@ -89,6 +93,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 val supportDoubleTapScale =
                     zoomable.checkSupportGestureType(GestureType.DOUBLE_TAP_SCALE)
                 if (supportDoubleTapScale && !oneFingerScaleExecuted && !longPressExecuted) {
+                    doubleTapExecuted = true
                     val touchPoint = OffsetCompat(x = e.x, y = e.y)
                     val centroidContentPoint = zoomable.touchPointToContentPointF(touchPoint)
                     coroutineScope.launch {
@@ -153,13 +158,18 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                             )
                         }
                     }
+                    if (pointCount == 2 && scaleFactor != 1.0f) {
+                        twoFingerScaleCentroid = focus
+                    }
                 }
             },
-            onEndCallback = { focus, velocity ->
+            onEndCallback = { velocity ->
                 coroutineScope.launch {
                     val longPressExecuted = longPressExecuted
+                    val doubleTapExecuted = doubleTapExecuted
                     val doubleTapPressPoint = doubleTapPressPoint
                     val oneFingerScaleExecuted = oneFingerScaleExecuted
+                    val twoFingerScaleCentroid = twoFingerScaleCentroid
                     val supportOneFingerScale =
                         zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
                     val supportTwoFingerScale =
@@ -168,23 +178,25 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                         zoomable.checkSupportGestureType(GestureType.ONE_FINGER_DRAG)
                     zoomable.logger.v {
                         "ZoomableEngine. onEnd. " +
-                                "focus=${focus.toShortString()}, " +
                                 "velocity=${velocity.toShortString()}, " +
                                 "longPressExecuted=$longPressExecuted, " +
+                                "doubleTapExecuted=$doubleTapExecuted, " +
                                 "doubleTapPressPoint=$doubleTapPressPoint, " +
                                 "oneFingerScaleExecuted=$oneFingerScaleExecuted, " +
+                                "twoFingerScaleCentroid=$twoFingerScaleCentroid, " +
                                 "supportOneFingerScale=$supportOneFingerScale, " +
                                 "supportTwoFingerScale=$supportTwoFingerScale, " +
                                 "supportDrag=$supportDrag"
                     }
-                    if (longPressExecuted) return@launch
+                    if (longPressExecuted || doubleTapExecuted) return@launch
                     if (supportOneFingerScale && oneFingerScaleExecuted) {
                         if (!zoomable.rollbackScale(doubleTapPressPoint!!)) {
                             zoomable.setContinuousTransformType(0)
                         }
                     } else {
-                        val rollbackScaleExecuted =
-                            supportTwoFingerScale && zoomable.rollbackScale(focus)
+                        val rollbackScaleExecuted = supportTwoFingerScale
+                                && twoFingerScaleCentroid != null
+                                && zoomable.rollbackScale(twoFingerScaleCentroid)
                         var flingExecuted = false
                         if (!rollbackScaleExecuted) {
                             flingExecuted = supportDrag && zoomable.fling(velocity)

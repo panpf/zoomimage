@@ -30,7 +30,6 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.util.format
-import com.github.panpf.zoomimage.compose.util.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -141,15 +140,19 @@ internal class ZoomableNode(
 ) : DelegatingNode(), CompositionLocalConsumerModifierNode {
 
     private var longPressExecuted = false
+    private var doubleTapExecuted = false
     private var doubleTapPressPoint: Offset? = null
     private var oneFingerScaleExecuted = false
+    private var twoFingerScaleCentroid: Offset? = null
 
     private val tapPointerDelegate = delegate(SuspendingPointerInputModifierNode {
         detectPowerfulTapGestures(
             onPress = {
                 longPressExecuted = false
+                doubleTapExecuted = false
                 doubleTapPressPoint = null
                 oneFingerScaleExecuted = false
+                twoFingerScaleCentroid = null
                 coroutineScope.launch {
                     zoomable.stopAllAnimation("onPress")
                 }
@@ -171,6 +174,7 @@ internal class ZoomableNode(
                 val supportDoubleTapScale =
                     zoomable.checkSupportGestureType(GestureType.DOUBLE_TAP_SCALE)
                 if (supportDoubleTapScale && !oneFingerScaleExecuted && !longPressExecuted) {
+                    doubleTapExecuted = true
                     coroutineScope.launch {
                         val centroidContentPoint =
                             zoomable.touchPointToContentPointF(touchPoint)
@@ -228,7 +232,6 @@ internal class ZoomableNode(
                     } else {
                         oneFingerScaleExecuted = false
                         if (supportTwoFingerScale || supportDrag) {
-                            // TODO Compose 版本双指缩放时，松手后缩放中心会偏移
                             val finalPan = if (supportDrag) pan else Offset.Zero
                             val finalZoom = if (supportTwoFingerScale) zoom else 1f
                             zoomable.setContinuousTransformType(ContinuousTransformType.GESTURE)
@@ -240,13 +243,18 @@ internal class ZoomableNode(
                             )
                         }
                     }
+                    if (pointCount == 2 && zoom != 1.0f) {
+                        twoFingerScaleCentroid = centroid
+                    }
                 }
             },
-            onEnd = { centroid, velocity ->
+            onEnd = { velocity ->
                 coroutineScope.launch {
                     val longPressExecuted = longPressExecuted
+                    val doubleTapExecuted = doubleTapExecuted
                     val doubleTapPressPoint = doubleTapPressPoint
                     val oneFingerScaleExecuted = oneFingerScaleExecuted
+                    val twoFingerScaleCentroid = twoFingerScaleCentroid
                     val supportOneFingerScale =
                         zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
                     val supportTwoFingerScale =
@@ -255,23 +263,25 @@ internal class ZoomableNode(
                         zoomable.checkSupportGestureType(GestureType.ONE_FINGER_DRAG)
                     zoomable.logger.v {
                         "ZoomableState. zoomable. onEnd. " +
-                                "centroid=${centroid.toShortString()}, " +
                                 "velocity=${velocity.x.format(2)}x${velocity.y.format(2)}, " +
                                 "longPressExecuted=$longPressExecuted, " +
+                                "doubleTapExecuted=$doubleTapExecuted, " +
                                 "doubleTapPressPoint=$doubleTapPressPoint, " +
                                 "oneFingerScaleExecuted=$oneFingerScaleExecuted, " +
+                                "twoFingerScaleCentroid=$twoFingerScaleCentroid, " +
                                 "supportOneFingerScale=$supportOneFingerScale, " +
                                 "supportTwoFingerScale=$supportTwoFingerScale, " +
                                 "supportDrag=$supportDrag"
                     }
-                    if (longPressExecuted) return@launch
+                    if (longPressExecuted || doubleTapExecuted) return@launch
                     if (supportOneFingerScale && oneFingerScaleExecuted) {
                         if (!zoomable.rollbackScale(doubleTapPressPoint!!)) {
                             zoomable.setContinuousTransformType(0)
                         }
                     } else {
-                        val rollbackScaleExecuted =
-                            supportTwoFingerScale && zoomable.rollbackScale(centroid)
+                        val rollbackScaleExecuted = supportTwoFingerScale
+                                && twoFingerScaleCentroid != null
+                                && zoomable.rollbackScale(twoFingerScaleCentroid)
                         var flingExecuted = false
                         if (!rollbackScaleExecuted) {
                             val density = currentValueOf(LocalDensity)
