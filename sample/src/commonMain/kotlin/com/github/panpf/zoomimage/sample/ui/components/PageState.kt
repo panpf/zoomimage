@@ -53,16 +53,7 @@ fun PageState(pageState: PageState?, modifier: Modifier = Modifier.fillMaxSize()
                     interactionSource = remember { MutableInteractionSource() }
                 )
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(240.dp)
-                        .background(colorScheme.primaryContainer, RoundedCornerShape(16.dp))
-                        .align(Alignment.Center)
-                        .padding(20.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(Modifier.size(30.dp))
-                }
+                CircularProgressIndicator(Modifier.size(30.dp).align(Alignment.Center))
             }
         }
 
@@ -77,7 +68,10 @@ fun PageState(pageState: PageState?, modifier: Modifier = Modifier.fillMaxSize()
                 Column(
                     modifier = Modifier
                         .size(240.dp)
-                        .background(colorScheme.primaryContainer, RoundedCornerShape(16.dp))
+                        .background(
+                            colorScheme.primaryContainer.copy(alpha = 0.5f),
+                            RoundedCornerShape(16.dp)
+                        )
                         .align(Alignment.Center)
                         .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -117,7 +111,10 @@ fun PageState(pageState: PageState?, modifier: Modifier = Modifier.fillMaxSize()
                 Column(
                     modifier = Modifier
                         .size(240.dp)
-                        .background(colorScheme.errorContainer, RoundedCornerShape(16.dp))
+                        .background(
+                            colorScheme.errorContainer.copy(alpha = 0.5f),
+                            RoundedCornerShape(16.dp)
+                        )
                         .align(Alignment.Center)
                         .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
