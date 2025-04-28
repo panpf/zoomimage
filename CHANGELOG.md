@@ -8,6 +8,7 @@ zoom:
 
 * fix: The caller parameter of the reset() methods of ZoomableState and ZoomableEngine is removed
   and the transform state is always reset. [#81](https://github.com/panpf/zoomimage/issues/81)
+* fix: Fixed a bug where the View version component did not have a finger-centric finger when the single finger zoom exceeded the maximum boundary. [#82](https://github.com/panpf/zoomimage/issues/82)
 * improve: Improve the logic of judging whether it is a thumbnail based on size. Now it can be
   correctly judged no matter how many times it is zoomed, and the error range is within 1 pixel.
 * improve: ZoomImage series components recover two-finger moving gestures

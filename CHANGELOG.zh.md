@@ -8,6 +8,7 @@ zoom:
 
 * fix: ZoomableState 和 ZoomableEngine 的 reset() 方法的 caller
   参数被移除并且现在始终会重置变换状态。 [#81](https://github.com/panpf/zoomimage/issues/81)
+* fix: 修复 View 版本组件在单指缩放超出最大边界后回滚时缩放中心没有以手指为中心的 bug。 [#82](https://github.com/panpf/zoomimage/issues/82)
 * improve: 改进根据大小判断是否是缩略图的逻辑，现在不论缩放多少倍都能正确判断，误差范围在 1 个像素以内
 * improve: ZoomImage 系列组件恢复双指移动手势
 * new: ZoomableState 和 ZoomableEngine 新增 keepTransformWhenSameAspectRatioContentSizeChanged

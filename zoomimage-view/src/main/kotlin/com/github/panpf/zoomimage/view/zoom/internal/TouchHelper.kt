@@ -86,7 +86,6 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 true
             },
             onDoubleTapUpCallback = { e: MotionEvent ->
-                doubleTapPressPoint = null
                 val supportDoubleTapScale =
                     zoomable.checkSupportGestureType(GestureType.DOUBLE_TAP_SCALE)
                 if (supportDoubleTapScale && !oneFingerScaleExecuted && !longPressExecuted) {
@@ -130,7 +129,6 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                     }
                     if (longPressExecuted) return@launch
                     if (supportOneFingerScale && pointCount == 1 && doubleTapPressPoint != null) {
-                        // TODO View 版本单指缩放时，松手后缩放中心会偏移
                         oneFingerScaleExecuted = true
                         val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
                         val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)
@@ -180,8 +178,8 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                                 "supportDrag=$supportDrag"
                     }
                     if (longPressExecuted) return@launch
-                    if (supportOneFingerScale && oneFingerScaleExecuted && doubleTapPressPoint != null) {
-                        if (!zoomable.rollbackScale(doubleTapPressPoint)) {
+                    if (supportOneFingerScale && oneFingerScaleExecuted) {
+                        if (!zoomable.rollbackScale(doubleTapPressPoint!!)) {
                             zoomable.setContinuousTransformType(0)
                         }
                     } else {

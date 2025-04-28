@@ -168,7 +168,6 @@ internal class ZoomableNode(
                 doubleTapPressPoint = touchPoint
             },
             onDoubleTapUp = { touchPoint ->
-                doubleTapPressPoint = null
                 val supportDoubleTapScale =
                     zoomable.checkSupportGestureType(GestureType.DOUBLE_TAP_SCALE)
                 if (supportDoubleTapScale && !oneFingerScaleExecuted && !longPressExecuted) {
@@ -266,8 +265,8 @@ internal class ZoomableNode(
                                 "supportDrag=$supportDrag"
                     }
                     if (longPressExecuted) return@launch
-                    if (supportOneFingerScale && oneFingerScaleExecuted && doubleTapPressPoint != null) {
-                        if (!zoomable.rollbackScale(doubleTapPressPoint)) {
+                    if (supportOneFingerScale && oneFingerScaleExecuted) {
+                        if (!zoomable.rollbackScale(doubleTapPressPoint!!)) {
                             zoomable.setContinuousTransformType(0)
                         }
                     } else {

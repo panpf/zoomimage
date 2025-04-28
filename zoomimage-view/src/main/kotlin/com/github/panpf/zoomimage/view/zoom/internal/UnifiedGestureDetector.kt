@@ -38,19 +38,20 @@ internal class UnifiedGestureDetector(
 ) {
 
     private var doubleTapPressed = false
+    private var gestureExecuted = false
 
     private val actionGestureDetector =
         ActionGestureDetector(object : ActionGestureDetector.OnActionListener {
             override fun onActionDown(ev: MotionEvent) {
                 if (ev.pointerCount == 1) {
                     doubleTapPressed = false
+                    gestureExecuted = false
                 }
                 onActionDownCallback?.invoke(ev)
             }
 
             override fun onActionUp(ev: MotionEvent) {
-                if (ev.pointerCount == 1 && doubleTapPressed) {
-                    doubleTapPressed = false
+                if (ev.pointerCount == 1 && doubleTapPressed && !gestureExecuted) {
                     onDoubleTapUpCallback(ev)
                 }
                 onActionUpCallback?.invoke(ev)
@@ -87,6 +88,7 @@ internal class UnifiedGestureDetector(
             override fun onGesture(
                 scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int
             ) {
+                gestureExecuted = true
                 onGestureCallback(scaleFactor, focus, panChange, pointCount)
             }
 
