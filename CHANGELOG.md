@@ -24,6 +24,10 @@ zoom:
 * new: ZoomableState and ZoomableEngine add scaleBy(), scaleByPlus(), offsetBy(), rotateBy() and
   other methods.
 
+other:
+
+* depend: Upgrade sketch 4.0.5
+
 ## 1.1.2
 
 subsampling:

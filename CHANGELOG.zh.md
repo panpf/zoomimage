@@ -19,6 +19,10 @@ zoom:
   变换状态。 [#58](https://github.com/panpf/zoomimage/issues/58)
 * new: ZoomableState 和 ZoomableEngine 新增 scaleBy()、scaleByPlus()、offsetBy()、rotateBy() 等方法
 
+other:
+
+* depend: 升级 sketch 4.0.5
+
 ## 1.1.2
 
 subsampling:
