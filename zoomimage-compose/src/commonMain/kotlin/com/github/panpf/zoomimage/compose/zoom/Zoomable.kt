@@ -230,11 +230,12 @@ internal class ZoomableNode(
                         oneFingerScaleExecuted = false
                         if (supportTwoFingerScale || supportDrag) {
                             // TODO Compose 版本双指缩放时，松手后缩放中心会偏移
+                            val finalPan = if (supportDrag) pan else Offset.Zero
                             val finalZoom = if (supportTwoFingerScale) zoom else 1f
                             zoomable.setContinuousTransformType(ContinuousTransformType.GESTURE)
                             zoomable.gestureTransform(
                                 centroid = centroid,
-                                panChange = pan,
+                                panChange = finalPan,
                                 zoomChange = finalZoom,
                                 rotationChange = rotation
                             )
