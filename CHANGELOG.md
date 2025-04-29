@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-## new
+## 1.2.0
 
 zoom:
 
@@ -15,7 +15,7 @@ zoom:
   double-finger zoom exceeds the maximum
   boundary. [#83](https://github.com/panpf/zoomimage/issues/83)
 * improve: Improve the logic of judging whether it is a thumbnail based on size. Now it can be
-  correctly judged no matter how many times it is zoomed, and the error range is within 1 pixel.
+  correctly judged no matter how many times it is zoomed, and the error range is within 2 pixel.
 * improve: ZoomImage series components recover two-finger moving gestures
 * improve: Reconstruct the mouse wheel scaling calculation logic to make the scaling speeds of
   desktop and web platforms consistent, and add the mouseWheelScaleCalculator attribute to customize

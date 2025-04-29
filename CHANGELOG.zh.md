@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.2.0
 
 zoom:
 
@@ -12,7 +12,7 @@ zoom:
   bug。 [#82](https://github.com/panpf/zoomimage/issues/82)
 * fix: 修复双指缩放超出最大边界后回滚时缩放中心没有以双指中心为缩放中心的
   bug。 [#83](https://github.com/panpf/zoomimage/issues/83)
-* improve: 改进根据大小判断是否是缩略图的逻辑，现在不论缩放多少倍都能正确判断，误差范围在 1 个像素以内
+* improve: 改进根据大小判断是否是缩略图的逻辑，现在不论缩放多少倍都能正确判断，误差范围在 2 个像素以内
 * improve: ZoomImage 系列组件恢复双指移动手势
 * improve: 重构鼠标滚轮缩放计算逻辑，使得桌面和 web 平台的缩放速度一致，并新增
   mouseWheelScaleCalculator 属性用于自定义计算逻辑
