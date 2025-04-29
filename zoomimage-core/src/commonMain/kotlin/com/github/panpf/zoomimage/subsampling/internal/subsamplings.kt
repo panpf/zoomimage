@@ -114,8 +114,8 @@ fun checkImageInfo(
         )
     }
 
-    // Check aspect ratio
-    if (!isThumbnailWithSize(imageSize, contentSize)) {
+    // Check aspect ratio. Relax epsilonPixels to 2f to avoid errors caused by image scaling
+    if (!isThumbnailWithSize(imageSize, contentSize, epsilonPixels = 2f)) {
         throw Exception(
             "The aspect ratio of thumbnail and original image is different. " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -156,7 +156,8 @@ fun canUseSubsamplingByAspectRatio(
 //            "heightScale=${heightScale.format(2)}, " +
 //            "diff=${diff.format(2)}" +
 //            "")
-    return isThumbnailWithSize(imageSize, thumbnailSize)
+    // Relax epsilonPixels to 2f to avoid errors caused by image scaling
+    return isThumbnailWithSize(imageSize, thumbnailSize, epsilonPixels = 2f)
 }
 
 /**

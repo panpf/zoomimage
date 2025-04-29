@@ -101,7 +101,7 @@ class SubsamplingsCommonTest {
                 }
             }
 
-            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 3)
             assertFailsWith(Exception::class) {
                 checkImageInfo(
                     imageInfo = ImageInfo(imageSize, "image/jpeg"),
@@ -182,7 +182,7 @@ class SubsamplingsCommonTest {
                         "multiple=${multiple.format(2)}"
             )
 
-            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 3)
             assertFalse(
                 actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize2),
                 message = "imageSize=${imageSize.toShortString()}, " +
@@ -202,7 +202,7 @@ class SubsamplingsCommonTest {
                         "multiple=${multiple.format(2)}"
             )
 
-            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 3)
             assertFalse(
                 actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize2),
                 message = "imageSize=${imageSize.toShortString()}, " +
@@ -222,7 +222,7 @@ class SubsamplingsCommonTest {
                         "multiple=${multiple.format(2)}"
             )
 
-            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 2)
+            val thumbnailSize2 = thumbnailSize + IntSizeCompat(0, 3)
             assertFalse(
                 actual = canUseSubsamplingByAspectRatio(imageSize, thumbnailSize2),
                 message = "imageSize=${imageSize.toShortString()}, " +

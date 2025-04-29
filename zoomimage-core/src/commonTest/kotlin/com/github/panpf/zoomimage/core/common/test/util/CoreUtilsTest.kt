@@ -18,6 +18,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class CoreUtilsTest {
 
@@ -172,6 +173,21 @@ class CoreUtilsTest {
         assertFalse(isThumbnailWithSize(IntSizeCompat(1000, 2000), IntSizeCompat(1001, 200)))
         assertFalse(isThumbnailWithSize(IntSizeCompat(1000, 2000), IntSizeCompat(100, 2001)))
         assertFalse(isThumbnailWithSize(IntSizeCompat(100, 200), IntSizeCompat(1000, 100)))
+
+        assertFalse(
+            isThumbnailWithSize(
+                size = IntSizeCompat(6799, 4882),
+                otherSize = IntSizeCompat(696, 501),
+                epsilonPixels = 1f
+            )
+        )
+        assertTrue(
+            isThumbnailWithSize(
+                size = IntSizeCompat(6799, 4882),
+                otherSize = IntSizeCompat(696, 501),
+                epsilonPixels = 2f
+            )
+        )
 
         var imageSize = IntSizeCompat(29999, 325)
         val maxMultiple = 257

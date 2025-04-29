@@ -707,27 +707,27 @@ class ZoomableCoreTest {
         )
 
         // Set contentSize. big. Inconsistent aspect ratio
-        val bigScale9 = ScaleFactorCompat(3.3f, 3.32f)
+        val bigScale9 = ScaleFactorCompat(3.3f, 3.33f)
         withContext(Dispatchers.Main) {
             zoomableCore.setKeepTransformWhenSameAspectRatioContentSizeChanged(true)
             zoomableCore.setContentSize(contentSize.toSize().times(bigScale9).round())
         }
         val properties9 = zoomableCore.toProperties()
         assertNotEquals(properties4, properties9)
-        assertEquals(expected = "1650x996", actual = properties9.contentSize)
+        assertEquals(expected = "1650x999", actual = properties9.contentSize)
         assertEquals(true, properties9.keepTransformWhenSameAspectRatioContentSizeChanged)
-        assertEquals("(0.65x0.65,0.0x634.0,0.0,0.0x0.0,0.76x0.26)", properties9.baseTransform)
+        assertEquals("(0.65x0.65,0.0x633.0,0.0,0.0x0.0,0.76x0.26)", properties9.baseTransform)
         assertEquals("(1.0x1.0,0.0x0.0,0.0,0.0x0.0,0.0x0.0)", properties9.userTransform)
-        assertEquals("(0.65x0.65,0.0x634.0,0.0,0.0x0.0,0.76x0.26)", properties9.transform)
+        assertEquals("(0.65x0.65,0.0x633.0,0.0,0.0x0.0,0.76x0.26)", properties9.transform)
         assertEquals(expected = "0.65", actual = properties9.minScale)
         assertEquals(expected = "1.96", actual = properties9.mediumScale)
         assertEquals(expected = "5.89", actual = properties9.maxScale)
-        assertEquals("[0.0x634.0,1080.0x1285.93]", properties9.contentBaseDisplayRect)
-        assertEquals("[0.0x0.0,1650.0x996.0]", properties9.contentBaseVisibleRect)
-        assertEquals("[0.0x634.0,1080.0x1286.0]", properties9.contentDisplayRect)
-        assertEquals("[-0.0x0.0,1650.0x996.0]", properties9.contentVisibleRect)
+        assertEquals("[0.0x633.0,1080.0x1286.89]", properties9.contentBaseDisplayRect)
+        assertEquals("[0.0x0.0,1650.0x999.0]", properties9.contentBaseVisibleRect)
+        assertEquals("[0.0x633.0,1080.0x1287.0]", properties9.contentDisplayRect)
+        assertEquals("[-0.0x0.0,1650.0x999.0]", properties9.contentVisibleRect)
         assertEquals("(BOTH,BOTH)", properties9.scrollEdge)
-        assertEquals("[0.0x0.04,0.0x0.04]", properties9.userOffsetBoundsRect)
+        assertEquals("[0.0x0.05,0.0x0.05]", properties9.userOffsetBoundsRect)
         assertNotEquals(properties4.contentSize, properties9.contentSize)
         assertNotEquals(
             properties4.keepTransformWhenSameAspectRatioContentSizeChanged,
@@ -770,7 +770,7 @@ class ZoomableCoreTest {
             contentVisibleRect9.toShortString()
         )
         val contentVisibleCenter9 = zoomableCore.contentVisibleRect.center
-        assertEquals("825.0x498.0", contentVisibleCenter9.toShortString())
+        assertEquals("825.0x499.5", contentVisibleCenter9.toShortString())
         assertNotEquals(
             contentVisibleCenter8.times(bigScale9).toShortString(),
             contentVisibleCenter9.toShortString()

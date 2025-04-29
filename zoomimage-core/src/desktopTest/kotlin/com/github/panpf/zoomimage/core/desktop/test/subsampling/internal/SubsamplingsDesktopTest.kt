@@ -82,7 +82,7 @@ class SubsamplingDesktopTest {
             ),
             contentSize = IntSizeCompat(
                 hugeLongQmshtImageFile.size.width / 32,
-                hugeLongQmshtImageFile.size.height / 34
+                hugeLongQmshtImageFile.size.height / 35
             ),
             regionDecoders = emptyList(),
             onImageInfoPassed = {}

@@ -236,7 +236,8 @@ internal expect fun requiredWorkThread()
  * If one of the size is a thumbnail of the other size, it returns true.
  * The rule is that their scaling ratio is the same and the error after scaling does not exceed [epsilonPixels] pixels
  *
- * @param epsilonPixels The maximum allowable error pixels, default is 1.0f
+ * @param epsilonPixels The maximum allowable error pixels
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testIsThumbnailWithSize
  */
 internal fun isThumbnailWithSize(
     size: IntSizeCompat,
@@ -259,13 +260,13 @@ internal fun isThumbnailWithSize(
     val widthScale = originSize.width.toFloat() / thumbnailSize.width
     val targetHeight = originSize.height.toFloat() / widthScale
     val heightDiff = abs(targetHeight - thumbnailSize.height)
-    val validByWidth = widthScale >= 1 - epsilonPixels && heightDiff <= epsilonPixels
+    val validByWidth = heightDiff <= epsilonPixels
 
     // Verify width with height scaling
     val heightScale = originSize.height.toFloat() / thumbnailSize.height
     val targetWidth = originSize.width.toFloat() / heightScale
     val widthDiff = abs(targetWidth - thumbnailSize.width)
-    val validByHeight = heightScale >= 1 - epsilonPixels && widthDiff <= epsilonPixels
+    val validByHeight = widthDiff <= epsilonPixels
 
     val pass = validByWidth || validByHeight
 //    println(

@@ -642,9 +642,11 @@ class ZoomableCore constructor(
         newContentSize: IntSizeCompat,
         diffResult: ResetParamsDiffResult,
     ): Boolean {
+        // Relax epsilonPixels to 2f to avoid errors caused by image scaling
         val isThumbnail = isThumbnailWithSize(
             size = oldContentSize,
-            otherSize = newContentSize
+            otherSize = newContentSize,
+            epsilonPixels = 2f,
         )
         if (diffResult.isContentSizeChanged && isThumbnail) {
             return true
