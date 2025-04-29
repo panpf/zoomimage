@@ -217,7 +217,7 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
     /**
      * Zoom increment converter when zooming with mouse wheel
      */
-    @Deprecated("Use mouseWheelScaleCalculator instead", ReplaceWith("mouseWheelScaleCalculator"))
+    @Deprecated("Use mouseWheelScaleCalculator instead")
     var mouseWheelScaleScrollDeltaConverter: ((Float) -> Float)? = null
 
     /**

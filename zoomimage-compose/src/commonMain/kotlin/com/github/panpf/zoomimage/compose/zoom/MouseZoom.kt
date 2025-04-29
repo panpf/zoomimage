@@ -106,7 +106,7 @@ internal class MouseZoomNode(
         val reverseMultiple = if (zoomable.reverseMouseWheelScale) -1f else 1f
         val reversedScrollDelta = scrollDelta * reverseMultiple
         val currentScale = zoomable.transform.scaleX
-        val oldConverter = zoomable.mouseWheelScaleCalculator
+        val oldConverter = zoomable.mouseWheelScaleScrollDeltaConverter
         val mouseWheelScaleCalculator = zoomable.mouseWheelScaleCalculator
         val newScale = if (
             oldConverter != null

@@ -219,7 +219,7 @@ class ZoomableStateTest {
     @Test
     fun testMouseWheelScaleScrollDeltaConverter() {
         val zoomable = ZoomableState(Logger("Test"), LayoutDirection.Ltr)
-        assertEquals(expected = null, actual = zoomable.mouseWheelScaleCalculator)
+        assertEquals(expected = null, actual = zoomable.mouseWheelScaleScrollDeltaConverter)
     }
 
     @Test
