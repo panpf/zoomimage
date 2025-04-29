@@ -16,6 +16,7 @@ com.github.panpf.zoomimage.compose.subsampling
 com.github.panpf.zoomimage.compose.util
 com.github.panpf.zoomimage.compose.zoom
 com.github.panpf.zoomimage.compose.zoom.internal
+com.github.panpf.zoomimage.zoom
 module:zoomimage-compose-coil2
 com.github.panpf.zoomimage
 module:zoomimage-compose-coil2-core
