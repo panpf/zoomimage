@@ -12,7 +12,8 @@ ZoomImage 支持多种方式缩放图片，例如双指缩放、单指缩放、�
 ### 特点
 
 * 支持[单指缩放](#单指缩放)、[双指缩放](#双指缩放)、[双击缩放](#双击缩放)、
-  [鼠标滚轮缩放](#鼠标滚轮缩放)、[键盘缩放](#键盘缩放)、以及通过 [scale()](#scale)、[scaleBy()](#scaleBy)、[scaleByPlus()](#scaleByPlus) 方法缩放到指定的倍数
+  [鼠标滚轮缩放](#鼠标滚轮缩放)、[键盘缩放](#键盘缩放)
+  、以及通过 [scale()](#scale)、[scaleBy()](#scaleBy)、[scaleByPlus()](#scaleByPlus) 方法缩放到指定的倍数
 * [支持橡皮筋效果](#橡皮筋效果).
   手势连续缩放时（单指/双指缩放）超过最大或最小范围时可以继续缩放，但有阻尼效果，松手后会回弹到最大或最小缩放倍数
 * [动态缩放范围](#minscale-mediumscale-maxscale). 默认根据
@@ -251,6 +252,25 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+你还可以通过 `mouseWheelScaleCalculator` 属性来自定义鼠标滚轮缩放的计算方式，默认是
+`MouseWheelScaleCalculator.Default`，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.mouseWheelScaleCalculator =
+        MouseWheelScaleCalculator { currentScale, scrollDelta ->
+            // return new scale
+        }
 }
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",

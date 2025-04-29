@@ -284,6 +284,26 @@ LaunchEffect(zoomState.zoomable) {
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
+  modifier = Modifier.fillMaxSize(),
+  zoomState = zoomState,
+)
+```
+
+You can also customize the calculation method of mouse wheel scaling through the
+`mouseWheelScaleCalculator` property. The default is `MouseWheelScaleCalculator.Default`, as
+follows:
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+  zoomState.zoomable.mouseWheelScaleCalculator =
+    MouseWheelScaleCalculator { currentScale, scrollDelta ->
+      // return new scale
+    }
+}
+SketchZoomAsyncImage(
+  imageUri = "https://sample.com/sample.jpeg",
+  contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
 )

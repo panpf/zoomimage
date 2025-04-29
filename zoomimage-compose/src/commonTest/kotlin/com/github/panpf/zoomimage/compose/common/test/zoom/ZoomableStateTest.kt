@@ -30,6 +30,7 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.DefaultPanToScaleTransformer
 import com.github.panpf.zoomimage.zoom.Edge
 import com.github.panpf.zoomimage.zoom.GestureType
+import com.github.panpf.zoomimage.zoom.MouseWheelScaleCalculator
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -218,23 +219,15 @@ class ZoomableStateTest {
     @Test
     fun testMouseWheelScaleScrollDeltaConverter() {
         val zoomable = ZoomableState(Logger("Test"), LayoutDirection.Ltr)
-        assertEquals(
-            expected = 2.31f,
-            actual = zoomable.mouseWheelScaleScrollDeltaConverter(7f).format(2)
-        )
-        assertEquals(
-            expected = 1.65f,
-            actual = zoomable.mouseWheelScaleScrollDeltaConverter(5f).format(2)
-        )
+        assertEquals(expected = null, actual = zoomable.mouseWheelScaleCalculator)
+    }
 
-        zoomable.mouseWheelScaleScrollDeltaConverter = { it * 0.5f }
+    @Test
+    fun testMouseWheelScaleCalculator() {
+        val zoomable = ZoomableState(Logger("Test"), LayoutDirection.Ltr)
         assertEquals(
-            expected = 3.5f,
-            actual = zoomable.mouseWheelScaleScrollDeltaConverter(7f).format(2)
-        )
-        assertEquals(
-            expected = 2.5f,
-            actual = zoomable.mouseWheelScaleScrollDeltaConverter(5f).format(2)
+            expected = MouseWheelScaleCalculator.Default,
+            actual = zoomable.mouseWheelScaleCalculator
         )
     }
 

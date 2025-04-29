@@ -14,6 +14,8 @@ zoom:
   bug。 [#83](https://github.com/panpf/zoomimage/issues/83)
 * improve: 改进根据大小判断是否是缩略图的逻辑，现在不论缩放多少倍都能正确判断，误差范围在 1 个像素以内
 * improve: ZoomImage 系列组件恢复双指移动手势
+* improve: 重构鼠标滚轮缩放计算逻辑，使得桌面和 web 平台的缩放速度一致，并新增
+  mouseWheelScaleCalculator 属性用于自定义计算逻辑
 * new: ZoomableState 和 ZoomableEngine 新增 keepTransformWhenSameAspectRatioContentSizeChanged
   参数，开启后可以在切换宽高比一样的图片时保持
   变换状态。 [#58](https://github.com/panpf/zoomimage/issues/58)

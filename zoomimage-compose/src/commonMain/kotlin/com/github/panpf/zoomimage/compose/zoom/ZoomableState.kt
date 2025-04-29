@@ -55,6 +55,7 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
+import com.github.panpf.zoomimage.zoom.MouseWheelScaleCalculator
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -216,7 +217,13 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
     /**
      * Zoom increment converter when zooming with mouse wheel
      */
-    var mouseWheelScaleScrollDeltaConverter: (Float) -> Float = { it * 0.33f }
+    @Deprecated("Use mouseWheelScaleCalculator instead", ReplaceWith("mouseWheelScaleCalculator"))
+    var mouseWheelScaleScrollDeltaConverter: ((Float) -> Float)? = null
+
+    /**
+     * Calculate the scaling factor based on the increment of the mouse wheel scroll
+     */
+    var mouseWheelScaleCalculator: MouseWheelScaleCalculator = MouseWheelScaleCalculator.Default
 
 
     /* *********************************** Properties readable by the user ******************************* */

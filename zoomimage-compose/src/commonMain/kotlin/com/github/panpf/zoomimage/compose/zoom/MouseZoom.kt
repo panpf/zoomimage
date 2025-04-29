@@ -24,7 +24,9 @@ import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.util.fastFold
 import com.github.panpf.zoomimage.zoom.GestureType
+import com.github.panpf.zoomimage.zoom.MouseWheelScaleCalculator
 import kotlinx.coroutines.launch
 
 /**
@@ -74,12 +76,14 @@ internal class MouseZoomNode(
             while (true) {
                 val event = awaitPointerEvent(PointerEventPass.Main)
                 if (event.type == PointerEventType.Scroll) {
-                    val scrollDelta = event.changes.first().scrollDelta.y
+                    val scrollDeltaY = event.changes.fastFold(0f) { acc, c ->
+                        acc + c.scrollDelta.y
+                    }
+                    val newScale = calculateScale(scrollDeltaY)
+                    val contentPosition = contentPoint(pointerPosition)
                     coroutineScope.launch {
-                        val addScale = convertAddScale(scrollDelta)
-                        val contentPosition = contentPoint(pointerPosition)
-                        zoomable.scaleByPlus(
-                            addScale = addScale,
+                        zoomable.scale(
+                            targetScale = newScale,
                             animated = true,
                             centroidContentPointF = contentPosition
                         )
@@ -96,15 +100,27 @@ internal class MouseZoomNode(
     }
 
     /**
-     * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testConvertAddScale
+     * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testCalculateScale
      */
-    internal fun convertAddScale(scrollDelta: Float): Float {
-        val finalScrollDelta = zoomable.mouseWheelScaleScrollDeltaConverter(scrollDelta)
-        return if (zoomable.reverseMouseWheelScale) {
-            finalScrollDelta
+    internal fun calculateScale(scrollDelta: Float): Float {
+        val reverseMultiple = if (zoomable.reverseMouseWheelScale) -1f else 1f
+        val reversedScrollDelta = scrollDelta * reverseMultiple
+        val currentScale = zoomable.transform.scaleX
+        val oldConverter = zoomable.mouseWheelScaleCalculator
+        val mouseWheelScaleCalculator = zoomable.mouseWheelScaleCalculator
+        val newScale = if (
+            oldConverter != null
+            && mouseWheelScaleCalculator == MouseWheelScaleCalculator.Default
+        ) {
+            val addScale = oldConverter(reversedScrollDelta)
+            currentScale - addScale
         } else {
-            -finalScrollDelta
+            mouseWheelScaleCalculator.calculateScale(
+                currentScale = currentScale,
+                scrollDelta = reversedScrollDelta
+            )
         }
+        return newScale
     }
 
     /**

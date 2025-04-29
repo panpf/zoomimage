@@ -9,14 +9,18 @@ import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.MouseZoomNode
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.zoom.DefaultMouseWheelScaleCalculator
+import com.github.panpf.zoomimage.zoom.MouseWheelScaleCalculator
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 
 class MouseZoomTest {
 
     @Test
     @OptIn(ExperimentalTestApi::class)
-    fun testConvertAddScale() {
+    fun testCalculateScale() {
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
@@ -28,52 +32,118 @@ class MouseZoomTest {
                 }
             }
             val zoomable = zoomableHolder!!
-            assertEquals(
-                expected = 6.0f,
-                actual = zoomable.transform.scaleX.format(2)
-            )
+            assertEquals(expected = 6.0f, actual = zoomable.transform.scaleX.format(2))
 
             val mouseZoomNode = MouseZoomNode(zoomable)
+
+            assertEquals(expected = false, actual = zoomable.reverseMouseWheelScale)
+            assertNull(zoomable.mouseWheelScaleCalculator)
+            assertEquals(MouseWheelScaleCalculator.Default, zoomable.mouseWheelScaleCalculator)
+            val newScale1 = mouseZoomNode.calculateScale(3f).format(2)
             assertEquals(
-                expected = false,
-                actual = zoomable.reverseMouseWheelScale
-            )
-            assertEquals(
-                expected = -0.99f,
-                actual = mouseZoomNode.convertAddScale(3f).format(2)
-            )
-            assertEquals(
-                expected = 0.99f,
-                actual = mouseZoomNode.convertAddScale(-3f).format(2)
+                expected = MouseWheelScaleCalculator.Default.calculateScale(
+                    currentScale = zoomable.transform.scaleX,
+                    scrollDelta = 3f
+                ).format(2),
+                actual = newScale1
             )
 
             zoomable.reverseMouseWheelScale = true
+            assertEquals(expected = true, actual = zoomable.reverseMouseWheelScale)
+            assertNull(zoomable.mouseWheelScaleCalculator)
+            assertEquals(MouseWheelScaleCalculator.Default, zoomable.mouseWheelScaleCalculator)
+            val newScale11 = mouseZoomNode.calculateScale(3f).format(2)
             assertEquals(
-                expected = true,
-                actual = zoomable.reverseMouseWheelScale
-            )
-            assertEquals(
-                expected = 0.99f,
-                actual = mouseZoomNode.convertAddScale(3f).format(2)
-            )
-            assertEquals(
-                expected = -0.99f,
-                actual = mouseZoomNode.convertAddScale(-3f).format(2)
+                expected = MouseWheelScaleCalculator.Default.calculateScale(
+                    currentScale = zoomable.transform.scaleX,
+                    scrollDelta = -3f
+                ).format(2),
+                actual = newScale11
             )
 
-            zoomable.mouseWheelScaleScrollDeltaConverter = { it * 0.5f }
+            val myMouseWheelScaleScrollDeltaConverter: (Float) -> Float = { it * 0.33f }
+            zoomable.mouseWheelScaleCalculator = myMouseWheelScaleScrollDeltaConverter
+
+            zoomable.reverseMouseWheelScale = false
+            assertEquals(expected = false, actual = zoomable.reverseMouseWheelScale)
             assertEquals(
-                expected = true,
-                actual = zoomable.reverseMouseWheelScale
+                myMouseWheelScaleScrollDeltaConverter,
+                zoomable.mouseWheelScaleCalculator
             )
+            assertEquals(MouseWheelScaleCalculator.Default, zoomable.mouseWheelScaleCalculator)
+            val newScale2 = mouseZoomNode.calculateScale(3f).format(2)
             assertEquals(
-                expected = 1.5f,
-                actual = mouseZoomNode.convertAddScale(3f).format(2)
+                expected = (zoomable.transform.scaleX - myMouseWheelScaleScrollDeltaConverter(3f)).format(
+                    2
+                ),
+                actual = newScale2
             )
+
+            zoomable.reverseMouseWheelScale = true
+            assertEquals(expected = true, actual = zoomable.reverseMouseWheelScale)
             assertEquals(
-                expected = -1.5f,
-                actual = mouseZoomNode.convertAddScale(-3f).format(2)
+                myMouseWheelScaleScrollDeltaConverter,
+                zoomable.mouseWheelScaleCalculator
             )
+            assertEquals(MouseWheelScaleCalculator.Default, zoomable.mouseWheelScaleCalculator)
+            val newScale21 = mouseZoomNode.calculateScale(3f).format(2)
+            assertEquals(
+                expected = (zoomable.transform.scaleX - myMouseWheelScaleScrollDeltaConverter(-3f)).format(
+                    2
+                ),
+                actual = newScale21
+            )
+
+            val myMouseWheelScaleCalculator = DefaultMouseWheelScaleCalculator(
+                stepScrollDelta = 0.5f,
+                stepScaleFactor = 0.5f
+            )
+            zoomable.mouseWheelScaleCalculator = myMouseWheelScaleCalculator
+
+            zoomable.reverseMouseWheelScale = false
+            assertEquals(expected = false, actual = zoomable.reverseMouseWheelScale)
+            assertEquals(
+                myMouseWheelScaleScrollDeltaConverter,
+                zoomable.mouseWheelScaleCalculator
+            )
+            assertEquals(myMouseWheelScaleCalculator, zoomable.mouseWheelScaleCalculator)
+            val newScale3 = mouseZoomNode.calculateScale(3f).format(2)
+            assertEquals(
+                expected = myMouseWheelScaleCalculator.calculateScale(
+                    currentScale = zoomable.transform.scaleX,
+                    scrollDelta = 3f
+                ).format(2).format(2),
+                actual = newScale3
+            )
+
+            zoomable.reverseMouseWheelScale = true
+            assertEquals(expected = true, actual = zoomable.reverseMouseWheelScale)
+            assertEquals(
+                myMouseWheelScaleScrollDeltaConverter,
+                zoomable.mouseWheelScaleCalculator
+            )
+            assertEquals(myMouseWheelScaleCalculator, zoomable.mouseWheelScaleCalculator)
+            val newScale31 = mouseZoomNode.calculateScale(3f).format(2)
+            assertEquals(
+                expected = myMouseWheelScaleCalculator.calculateScale(
+                    currentScale = zoomable.transform.scaleX,
+                    scrollDelta = -3f
+                ).format(2).format(2),
+                actual = newScale31
+            )
+
+            assertNotEquals(newScale1, newScale2)
+            assertNotEquals(newScale1, newScale3)
+            assertNotEquals(newScale1, newScale11)
+            assertNotEquals(newScale1, newScale21)
+            assertNotEquals(newScale1, newScale31)
+            assertNotEquals(newScale2, newScale3)
+            assertNotEquals(newScale2, newScale11)
+            assertNotEquals(newScale2, newScale21)
+            assertNotEquals(newScale2, newScale31)
+            assertNotEquals(newScale3, newScale11)
+            assertNotEquals(newScale3, newScale21)
+            assertNotEquals(newScale3, newScale31)
         }
     }
 
