@@ -88,7 +88,7 @@ class SketchImageSourceTest {
         val context = PlatformContext.INSTANCE
         val sketch = Builder(context).build()
         val imageUri =
-            "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=640&auto=jpeg&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         val diskCache = sketch.downloadCache
 
         diskCache.clear()
@@ -100,7 +100,7 @@ class SketchImageSourceTest {
         }
         val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
         val imageSize = Image.makeFromEncoded(bytes).use { IntSizeCompat(it.width, it.height) }
-        assertEquals(expected = IntSizeCompat(2832, 4240), actual = imageSize)
+        assertEquals(expected = IntSizeCompat(640, 958), actual = imageSize)
         assertNotEquals(
             illegal = null,
             actual = diskCache.openSnapshot(imageUri)?.apply { close() }

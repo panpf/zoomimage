@@ -93,7 +93,7 @@ class CoilHttpImageSourceTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageLoader = ImageLoader.Builder(context).build()
         val imageUri =
-            "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=640&auto=jpeg&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         val diskCache = imageLoader.diskCache!!
 
         diskCache.clear()
@@ -104,12 +104,9 @@ class CoilHttpImageSourceTest {
             imageSourceFactory.create()
         }
         val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
-        val bitmap =
-            BitmapFactory.decodeStream(bytes.inputStream(), null, BitmapFactory.Options().apply {
-                inSampleSize = 8
-            })!!
+        val bitmap = BitmapFactory.decodeStream(bytes.inputStream(), null, null)!!
         val imageSize = bitmap.let { IntSizeCompat(it.width, it.height) }
-        assertEquals(expected = IntSizeCompat(354, 530), actual = imageSize)
+        assertEquals(expected = IntSizeCompat(640, 958), actual = imageSize)
         assertNotEquals(
             illegal = null,
             actual = diskCache.openSnapshot(imageUri)?.apply { close() }

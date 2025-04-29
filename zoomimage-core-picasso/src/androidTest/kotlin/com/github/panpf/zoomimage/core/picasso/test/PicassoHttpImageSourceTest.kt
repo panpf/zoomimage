@@ -78,12 +78,12 @@ class PicassoHttpImageSourceTest {
     fun testOpenSource() {
         val picasso = Picasso.get()
         val imageUri =
-            "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D".toUri()
+            "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=640&auto=jpeg&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D".toUri()
 
         val imageSource = PicassoHttpImageSource(picasso, imageUri)
         val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
         val bitmap = BitmapFactory.decodeStream(bytes.inputStream())
         val imageSize = bitmap.let { IntSizeCompat(it.width, it.height) }
-        assertEquals(expected = IntSizeCompat(2832, 4240), actual = imageSize)
+        assertEquals(expected = IntSizeCompat(640, 958), actual = imageSize)
     }
 }
