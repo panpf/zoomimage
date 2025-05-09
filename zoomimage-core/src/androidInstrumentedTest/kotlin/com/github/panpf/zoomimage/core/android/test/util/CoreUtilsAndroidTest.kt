@@ -92,7 +92,7 @@ class CoreUtilsAndroidTest {
     fun testIsAndSupportHardware() {
         Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888).apply {
             assertEquals(Bitmap.Config.ARGB_8888, this.config)
-            assertFalse(this.config.isAndSupportHardware())
+            assertFalse(this.config!!.isAndSupportHardware())
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -102,7 +102,7 @@ class CoreUtilsAndroidTest {
                 })
             }!!.apply {
                 assertEquals(Bitmap.Config.HARDWARE, this.config)
-                assertTrue(this.config.isAndSupportHardware())
+                assertTrue(this.config!!.isAndSupportHardware())
             }
         }
     }

@@ -69,6 +69,7 @@ kotlin {
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
             implementation(libs.coil3.network.ktor)
+            implementation(libs.jetbrains.compose.material.icons.core)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.kotlinx.collections.immutable)

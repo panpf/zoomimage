@@ -2,6 +2,14 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+> [!CAUTION]
+> compose multiplatform 1.8.0 版本必须 jvm 11 才能编译，请修改
+> sourceCompatibility、targetCompatibility、jvmTarget 等配置为 11+
+
+* depend: 升级 kotlin 2.1.10, compose multiplatform 1.8.0
+
 ## 1.2.0
 
 zoom:

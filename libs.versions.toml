@@ -1,8 +1,8 @@
 [versions]
-android-plugin = "8.7.1"
+android-plugin = "8.10.0"
 androidx-activity = "1.9.0"
 androidx-appcompat = "1.7.0"
-androidx-compose = "1.7.1" # sync with jetbrains-compose
+androidx-compose = "1.8.0" # sync with jetbrains-compose
 androidx-constraintlayout = "2.1.4"
 androidx-constraintlayout-compose = "1.0.1"
 androidx-exifinterface = "1.3.7"
@@ -31,11 +31,12 @@ glide-ktx = "1.0.0-beta01"
 google-accompanist = "0.36.0"
 google-material = "1.12.0"
 
-jetbrains-compose = "1.7.0"
+jetbrains-compose = "1.8.0"
 jetbrains-lifecycle = "2.8.3"
+jetbrains-compose-material-icons-core = "1.7.3"
 
-kotlin = "2.0.21"
-kotlinx-atomicfu = "0.26.0" # sync with kotlin
+kotlin = "2.1.10" # 2.1.20 version will report an error when sync 'kotlin-project-structure-metadata.json (No such file or directory)', but it does not affect the compilation
+kotlinx-atomicfu = "0.27.0" # sync with kotlin
 kotlinx-collections-immutable = "0.3.8"
 kotlinx-coroutines = "1.9.0"
 kotlinx-cover = "0.8.3"
@@ -60,7 +61,7 @@ panpf-tools4k = "1.0.0"
 picasso = "2.8"
 photoview = "2.3.0"
 
-skiko = "0.8.15"    # sync with jetbrains-compose
+skiko = "0.9.4"    # sync with jetbrains-compose. 'SkiaRegionDecoder.Factory#checkSupport()' must be modified
 subsamplingscaleimageview = "3.10.0"
 
 telephoto = "0.15.1"
@@ -78,7 +79,7 @@ gradlePlugin-kotlinSerialization = { module = "org.jetbrains.kotlin:kotlin-seria
 gradlePlugin-kotlinxAtomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "kotlinx-atomicfu" }
 gradlePlugin-kotlinxCover = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kotlinx-cover" }
 gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenpublish" }
-gradlePlugin-dokka = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "dokka" }
+#gradlePlugin-dokka = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "dokka" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
@@ -123,6 +124,7 @@ glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx
 
 jetbrains-lifecycle-common = { module = "org.jetbrains.androidx.lifecycle:lifecycle-common", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrains-lifecycle" }
+jetbrains-compose-material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "jetbrains-compose-material-icons-core" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

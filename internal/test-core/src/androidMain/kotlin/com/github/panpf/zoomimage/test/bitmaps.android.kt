@@ -38,7 +38,7 @@ fun createBitmap(
 ): Bitmap = Bitmap.createBitmap(width, height, config)
 
 fun Bitmap.copyWith(
-    config: Bitmap.Config = this.config,
+    config: Bitmap.Config = this.config ?: Bitmap.Config.ARGB_8888,
     isMutable: Boolean = isMutable()
 ): Bitmap {
     return this.copy(/* config = */ config, /* isMutable = */ isMutable)

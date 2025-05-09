@@ -2,6 +2,14 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+> [!CAUTION]
+> The compose multiplatform version 1.8.0 must be jvm 11 to compile. Please modify the configuration
+> of sourceCompatibility, targetCompatibility, jvmTarget, etc. to 11+
+
+* depend: Upgrade kotlin 2.1.10, compose multiplatform 1.8.0
+
 ## 1.2.0
 
 zoom:

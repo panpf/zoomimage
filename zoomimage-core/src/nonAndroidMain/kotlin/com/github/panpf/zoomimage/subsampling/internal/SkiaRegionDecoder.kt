@@ -143,12 +143,10 @@ class SkiaRegionDecoder(
             return when (mimeType) {
                 "image/jpeg", "image/png", "image/webp", "image/bmp", "image/gif" -> true
                 "image/svg+xml" -> false
-                "image/heic", "image/heif", "image/avif" ->
-                    if (compareVersions(
-                            BuildKonfig.SKIKO_VERSION_NAME,
-                            "0.8.15"
-                        ) <= 0
-                    ) false else null
+                "image/heic", "image/heif", "image/avif" -> {
+                    val skikoVersionName = BuildKonfig.SKIKO_VERSION_NAME
+                    if (compareVersions(skikoVersionName, "0.9.4") <= 0) false else null
+                }
 
                 else -> null
             }
