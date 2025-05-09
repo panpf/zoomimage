@@ -5,12 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,8 +35,8 @@ fun BottomToolbar(modifier: Modifier) {
     val appSettings = context.appSettings
     Row(
         modifier
-            .background(colorScheme.tertiaryContainer, RoundedCornerShape(50))
-            .padding(horizontal = 10.dp)
+            .clip(RoundedCornerShape(50))
+            .background(colorScheme.tertiaryContainer)
     ) {
         val staggeredGridMode by appSettings.staggeredGridMode.collectAsState()
         val staggeredGridModeIcon = if (!staggeredGridMode) {
@@ -46,14 +44,17 @@ fun BottomToolbar(modifier: Modifier) {
         } else {
             painterResource(Res.drawable.ic_layout_grid)
         }
-        IconButton(
-            onClick = { appSettings.staggeredGridMode.value = !staggeredGridMode },
-            modifier = Modifier.size(40.dp),
+
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clickable { appSettings.staggeredGridMode.value = !staggeredGridMode },
         ) {
             Icon(
                 painter = staggeredGridModeIcon,
                 contentDescription = null,
-                tint = colorScheme.onTertiaryContainer
+                tint = colorScheme.onTertiaryContainer,
+                modifier = Modifier.size(20.dp).align(Alignment.Center)
             )
         }
 
@@ -61,7 +62,6 @@ fun BottomToolbar(modifier: Modifier) {
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .clip(CircleShape)
                 .clickable { switchImageLoaderDialogState.show() },
         ) {
             val imageLoaderName by appSettings.composeImageLoader.collectAsState()
@@ -70,7 +70,7 @@ fun BottomToolbar(modifier: Modifier) {
                 painter = imageLoaderIcon,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
+                modifier = Modifier.size(20.dp).clip(CircleShape).align(Alignment.Center),
             )
         }
         MyDialog(switchImageLoaderDialogState) {

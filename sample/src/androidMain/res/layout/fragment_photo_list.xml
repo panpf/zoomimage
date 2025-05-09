@@ -22,9 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
-        android:background="@drawable/bg_container_oval_tertiary"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp">
+        android:background="@drawable/bg_container_oval_tertiary">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/layoutImage"

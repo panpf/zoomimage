@@ -74,6 +74,9 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         return newCoil(context)
     }
 
+    /**
+     * for api.pexels.com on Android 5.0
+     */
     private fun handleSSLHandshake() {
         try {
             val trustAllCerts = arrayOf<TrustManager>(@SuppressLint("CustomX509TrustManager")
