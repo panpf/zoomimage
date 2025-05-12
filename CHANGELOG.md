@@ -15,6 +15,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * depend: Update to jetbrains-lifecycle 2.8.4
 * depend: Update to kotlinx-coroutines 1.10.2
 * depend: Update to okio 3.11.0
+* depend: Update to glide 4.16.0
 
 ## 1.2.0
 

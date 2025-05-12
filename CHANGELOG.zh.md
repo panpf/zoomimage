@@ -15,6 +15,7 @@
 * depend: 更新 jetbrains-lifecycle 2.8.4
 * depend: 更新 kotlinx-coroutines 1.10.2
 * depend: 更新 okio 3.11.0
+* depend: 更新 glide 4.16.0
 
 ## 1.2.0
 

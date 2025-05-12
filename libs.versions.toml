@@ -24,7 +24,7 @@ dokka = "1.9.20"    # 2.0.0 There is a problem with the version configuration, s
 coil2 = "2.7.0"
 coil3 = "3.0.4" # TODO Update
 
-glide = "4.15.1" # TODO Update
+glide = "4.16.0"
 glide-ktx = "1.0.0-beta01"
 google-accompanist = "0.37.3"
 google-material = "1.12.0"
