@@ -4,11 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.glide") {
-    buildFeatures {
-        compose = true
-    }
-}
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.glide")
 
 dependencies {
     api(projects.zoomimageCompose)

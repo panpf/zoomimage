@@ -41,7 +41,7 @@ allprojects {
 //        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }    // central、google、jcenter
         mavenCentral()
         google()
-        maven { setUrl("https://www.jitpack.io") }
+        maven { setUrl("https://www.jitpack.io") }  // for PhotoView
 //        maven { setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots") }
 //        mavenLocal()
     }

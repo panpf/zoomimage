@@ -8,7 +8,13 @@
 > compose multiplatform 1.8.0 版本必须 jvm 11 才能编译，请修改
 > sourceCompatibility、targetCompatibility、jvmTarget 等配置为 11+
 
-* depend: 升级 kotlin 2.1.10, compose multiplatform 1.8.0
+* depend: 更新 kotlin 2.1.10
+* depend: 更新 compose multiplatform 1.8.0
+* depend: 更新 exifinterface 1.4.1
+* depend: 更新 accompanist-drawablepainter 0.37.3
+* depend: 更新 jetbrains-lifecycle 2.8.4
+* depend: 更新 kotlinx-coroutines 1.10.2
+* depend: 更新 okio 3.11.0
 
 ## 1.2.0
 

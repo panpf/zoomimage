@@ -4,11 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.coil2") {
-    buildFeatures {
-        compose = true
-    }
-}
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.coil2")
 
 dependencies {
     api(projects.zoomimageComposeCoil2Core)

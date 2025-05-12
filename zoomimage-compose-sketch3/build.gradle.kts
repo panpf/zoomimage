@@ -4,11 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.sketch3") {
-    buildFeatures {
-        compose = true
-    }
-}
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.sketch3")
 
 dependencies {
     api(projects.zoomimageComposeSketch3Core)

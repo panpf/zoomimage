@@ -73,7 +73,7 @@ kotlin {
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.kotlinx.collections.immutable)
-            implementation(libs.multiplatformsettings)
+            implementation(libs.multiplatform.settings)
             implementation(libs.panpf.sketch4.animated.gif)
             implementation(libs.panpf.sketch4.compose.resources)
             implementation(libs.panpf.sketch4.extensions.compose)
@@ -107,6 +107,7 @@ kotlin {
             implementation(libs.coil3.gif)
             implementation(libs.google.material)
             implementation(libs.moko.permissions)
+            implementation(libs.moko.permissions.storage)
             implementation(libs.panpf.assemblyadapter4.pager2)
             implementation(libs.panpf.assemblyadapter4.recycler)
             implementation(libs.panpf.assemblyadapter4.recycler.paging)
@@ -134,10 +135,11 @@ kotlin {
             resources.srcDirs("../internal/images/files")
             dependencies {
                 implementation(libs.moko.permissions)
+                implementation(libs.moko.permissions.storage)
             }
         }
         nonJsCommonMain.dependencies {
-            implementation(libs.cashapp.paging.compose.common)
+            implementation(libs.multiplatform.paging)
         }
     }
 }
