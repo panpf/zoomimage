@@ -157,7 +157,7 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.containerSize.toString()
             )
             assertEquals(
-                expected = "696 x 500",
+                expected = "5704 x 4096",
                 actual = zoomState.zoomable.contentSize.toString()
             )
             assertEquals(
@@ -173,15 +173,15 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.alignment
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(-196, 0, 500, 500)",
+                expected = "IntRect.fromLTRB(-5204, -3596, 500, 500)",
                 actual = zoomState.zoomable.contentDisplayRect.toString()
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(196, 0, 696, 500)",
+                expected = "IntRect.fromLTRB(5204, 3596, 5704, 4096)",
                 actual = zoomState.zoomable.contentVisibleRect.toString()
             )
             assertEquals(
-                expected = "{8=(4, 3), 4=(7, 5), 2=(14, 10), 1=(28, 20)}",
+                expected = "{1=(28, 20)}",
                 actual = zoomState.subsampling.tileGridSizeMap.toString()
             )
         }
@@ -303,7 +303,7 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.containerSize.toString()
             )
             assertEquals(
-                expected = "696 x 500",
+                expected = "5704 x 4096",
                 actual = zoomState.zoomable.contentSize.toString()
             )
             assertEquals(
@@ -319,15 +319,15 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.alignment
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(-196, 0, 500, 500)",
+                expected = "IntRect.fromLTRB(-5204, -3596, 500, 500)",
                 actual = zoomState.zoomable.contentDisplayRect.toString()
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(196, 0, 696, 500)",
+                expected = "IntRect.fromLTRB(5204, 3596, 5704, 4096)",
                 actual = zoomState.zoomable.contentVisibleRect.toString()
             )
             assertEquals(
-                expected = "{8=(4, 3), 4=(7, 5), 2=(14, 10), 1=(28, 20)}",
+                expected = "{1=(28, 20)}",
                 actual = zoomState.subsampling.tileGridSizeMap.toString()
             )
         }
