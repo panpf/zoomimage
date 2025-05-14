@@ -208,7 +208,6 @@ internal fun validateRequest(request: ImageRequest) {
             name = "ImageRequest.Builder",
             description = "Did you forget to call ImageRequest.Builder.build()?",
         )
-
         is ImageBitmap -> unsupportedData("ImageBitmap")
         is ImageVector -> unsupportedData("ImageVector")
         is Painter -> unsupportedData("Painter")

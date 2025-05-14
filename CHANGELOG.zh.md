@@ -16,7 +16,7 @@
 * depend: 更新 kotlinx-coroutines 1.10.2
 * depend: 更新 okio 3.11.0
 * depend: 更新 glide 4.16.0
-* depend: 更新 coil 3.1.0
+* depend: 更新 coil 3.2.0
 * depend: 不再替换 `kotlin-stdlib-jdk7` 和 `kotlin-stdlib-jdk8` 为 `kotlin-stdlib`
 
 ## 1.2.0

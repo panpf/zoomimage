@@ -22,7 +22,7 @@ buildkonfig = "0.17.0"  # Version 0.17.1 will cause an error when the zoomimimag
 dokka = "1.9.20"    # 2.0.0 There is a problem with the version configuration, so I won't upgrade it yet
 
 coil2 = "2.7.0"
-coil3 = "3.1.0"
+coil3 = "3.2.0"
 
 glide = "4.16.0"
 glide-ktx = "1.0.0-beta01"
