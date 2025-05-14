@@ -176,7 +176,6 @@ private fun MyImage(
     // Explicitly use a simple Layout implementation here as Spacer squashes any non fixed
     // constraint with zero
     Layout(
-        {},
         modifier
             .then(semantics)
             .let { if (clipToBounds) it.clipToBounds() else it }
