@@ -41,6 +41,7 @@ import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PainterState
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.internal.AsyncImageContent
+import com.github.panpf.sketch.internal.requestOf
 import com.github.panpf.sketch.name
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
@@ -111,7 +112,7 @@ fun SketchZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = SketchZoomAsyncImage(
-    request = ImageRequest(LocalPlatformContext.current, uri),
+    request = requestOf(LocalPlatformContext.current, uri),
     contentDescription = contentDescription,
     sketch = sketch,
     modifier = modifier,
