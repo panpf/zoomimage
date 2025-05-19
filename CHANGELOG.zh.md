@@ -8,6 +8,7 @@
 > compose multiplatform 1.8.0 版本必须 jvm 11 才能编译，请修改
 > sourceCompatibility、targetCompatibility、jvmTarget 等配置为 11+
 
+* fix: 修复 read 模式下内容尺寸大于容器尺寸时初始偏移不正确的 bug
 * depend: 更新 kotlin 2.1.10
 * depend: 更新 compose multiplatform 1.8.0
 * depend: 更新 exifinterface 1.4.1

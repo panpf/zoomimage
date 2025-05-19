@@ -8,6 +8,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 > The compose multiplatform version 1.8.0 must be jvm 11 to compile. Please modify the configuration
 > of sourceCompatibility, targetCompatibility, jvmTarget, etc. to 11+
 
+* fix: Fixed the bug where the initial offset is incorrect when the content size is larger than the
+  container size in read mode
 * depend: Update kotlin to 2.1.10
 * depend: Update compose multiplatform to 1.8.0
 * depend: Update exifinterface to 1.4.1

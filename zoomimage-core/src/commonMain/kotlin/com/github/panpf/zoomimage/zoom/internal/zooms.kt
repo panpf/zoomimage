@@ -230,22 +230,15 @@ fun calculateReadModeTransform(
     val widthScale = containerSize.width / rotatedContentSize.width.toFloat()
     val heightScale = containerSize.height / rotatedContentSize.height.toFloat()
     val fillScale = max(widthScale, heightScale)
-    val readModeScale = ScaleFactorCompat(fillScale)
 
-    val baseTransform = baseTransformHelper.transform
-    val addScale = fillScale / baseTransform.scaleX
-    val alignmentMoveToStartOffset = baseTransformHelper.alignmentOffset.let {
-        OffsetCompat(it.x.coerceAtMost(0f), it.y.coerceAtMost(0f))
-    }
     val readModeOffset =
-        (alignmentMoveToStartOffset + baseTransformHelper.rotateRectifyOffset) * addScale
-
+        baseTransformHelper.rotateRectifyOffset / baseTransformHelper.scaleFactor.scaleX * fillScale
     val rotationOrigin = calculateContentRotateOrigin(
         containerSize = containerSize,
         contentSize = contentSize
     )
     val readModeTransform = TransformCompat(
-        scale = readModeScale,
+        scale = ScaleFactorCompat(fillScale),
         offset = readModeOffset,
         rotation = rotation.toFloat(),
         rotationOrigin = rotationOrigin,
