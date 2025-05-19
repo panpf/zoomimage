@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.zoom.internal.InitialZoom
 import com.github.panpf.zoomimage.zoom.internal.calculateBaseTransform
 import com.github.panpf.zoomimage.zoom.internal.calculateContentRotateOrigin
 import com.github.panpf.zoomimage.zoom.internal.calculateInitialZoom
+import com.github.panpf.zoomimage.zoom.internal.calculateMinScale
 import com.github.panpf.zoomimage.zoom.internal.calculateReadModeTransform
 import com.github.panpf.zoomimage.zoom.internal.calculateRotatedContentMoveToTopLeftOffset
 import com.github.panpf.zoomimage.zoom.internal.calculateRotatedContentRect
@@ -1088,37 +1089,37 @@ class ZoomsTest {
 
         // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
         listOf(
-            Item2(IntSize(500, 300), Crop, 0, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(500, 300), Crop, 0, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), Crop, 0, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), Crop, 90, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(500, 300), Crop, 90, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), Crop, 90, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), Crop, 180, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(500, 300), Crop, 180, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), Crop, 180, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), Crop, 270, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(500, 300), Crop, 270, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), Crop, 270, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), Fit, 0, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(500, 300), Fit, 0, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), Fit, 0, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), Fit, 90, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(500, 300), Fit, 90, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), Fit, 90, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), Fit, 180, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(500, 300), Fit, 180, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), Fit, 180, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), Fit, 270, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(500, 300), Fit, 270, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), Fit, 270, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillHeight, 0, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(500, 300), FillHeight, 0, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), FillHeight, 0, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillHeight, 90, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(500, 300), FillHeight, 90, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), FillHeight, 90, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillHeight, 180, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(500, 300), FillHeight, 180, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), FillHeight, 180, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillHeight, 270, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(500, 300), FillHeight, 270, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), FillHeight, 270, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillWidth, 0, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(500, 300), FillWidth, 0, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), FillWidth, 0, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillWidth, 90, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(500, 300), FillWidth, 90, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), FillWidth, 90, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillWidth, 180, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(500, 300), FillWidth, 180, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), FillWidth, 180, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillWidth, 270, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(500, 300), FillWidth, 270, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), FillWidth, 270, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
             Item2(IntSize(500, 300), Inside, 0, 1.0f, floatArrayOf(1.0f, 6.4f, 19.2f)),
             Item2(IntSize(500, 300), Inside, 0, 8.0f, floatArrayOf(1.0f, 8.0f, 24.0f)),
@@ -1136,45 +1137,45 @@ class ZoomsTest {
             Item2(IntSize(500, 300), None, 180, 8.0f, floatArrayOf(1.0f, 8.0f, 24.0f)),
             Item2(IntSize(500, 300), None, 270, 1.0f, floatArrayOf(1.0f, 3.84f, 11.5199995f)),
             Item2(IntSize(500, 300), None, 270, 8.0f, floatArrayOf(1.0f, 8.0f, 24.0f)),
-            Item2(IntSize(500, 300), FillBounds, 0, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(500, 300), FillBounds, 0, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(500, 300), FillBounds, 0, 8.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
-            Item2(IntSize(500, 300), FillBounds, 90, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(500, 300), FillBounds, 90, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(500, 300), FillBounds, 90, 8.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
-            Item2(IntSize(500, 300), FillBounds, 180, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(500, 300), FillBounds, 180, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(500, 300), FillBounds, 180, 8.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
-            Item2(IntSize(500, 300), FillBounds, 270, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(500, 300), FillBounds, 270, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(500, 300), FillBounds, 270, 8.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
-            Item2(IntSize(5000, 300), Crop, 0, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(5000, 300), Crop, 0, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Crop, 0, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), Crop, 90, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(5000, 300), Crop, 90, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Crop, 90, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), Crop, 180, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(5000, 300), Crop, 180, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Crop, 180, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), Crop, 270, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(5000, 300), Crop, 270, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Crop, 270, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), Fit, 0, 1.0f, floatArrayOf(2.16f, 10.0f, 30.0f)),
+            Item2(IntSize(5000, 300), Fit, 0, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Fit, 0, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), Fit, 90, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(5000, 300), Fit, 90, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Fit, 90, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), Fit, 180, 1.0f, floatArrayOf(2.16f, 10.0f, 30.0f)),
+            Item2(IntSize(5000, 300), Fit, 180, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Fit, 180, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), Fit, 270, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(5000, 300), Fit, 270, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Fit, 270, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillHeight, 0, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(5000, 300), FillHeight, 0, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillHeight, 0, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillHeight, 90, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(5000, 300), FillHeight, 90, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillHeight, 90, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillHeight, 180, 1.0f, floatArrayOf(6.4f, 19.2f, 57.600002f)),
+            Item2(IntSize(5000, 300), FillHeight, 180, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillHeight, 180, 8.0f, floatArrayOf(6.4f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillHeight, 270, 1.0f, floatArrayOf(3.84f, 11.5199995f, 34.559998f)),
+            Item2(IntSize(5000, 300), FillHeight, 270, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillHeight, 270, 8.0f, floatArrayOf(3.84f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillWidth, 0, 1.0f, floatArrayOf(2.16f, 10.0f, 30.0f)),
+            Item2(IntSize(5000, 300), FillWidth, 0, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillWidth, 0, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillWidth, 90, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(5000, 300), FillWidth, 90, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillWidth, 90, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillWidth, 180, 1.0f, floatArrayOf(2.16f, 10.0f, 30.0f)),
+            Item2(IntSize(5000, 300), FillWidth, 180, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillWidth, 180, 8.0f, floatArrayOf(2.16f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillWidth, 270, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(5000, 300), FillWidth, 270, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), FillWidth, 270, 8.0f, floatArrayOf(3.6f, 8.0f, 24.0f)),
             Item2(IntSize(5000, 300), Inside, 0, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), Inside, 0, 8.0f, floatArrayOf(1.0f, 8.0f, 24.0f)),
@@ -1192,13 +1193,13 @@ class ZoomsTest {
             Item2(IntSize(5000, 300), None, 180, 8.0f, floatArrayOf(1.0f, 8.0f, 24.0f)),
             Item2(IntSize(5000, 300), None, 270, 1.0f, floatArrayOf(1.0f, 10.0f, 30.0f)),
             Item2(IntSize(5000, 300), None, 270, 8.0f, floatArrayOf(1.0f, 8.0f, 24.0f)),
-            Item2(IntSize(5000, 300), FillBounds, 0, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(5000, 300), FillBounds, 0, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(5000, 300), FillBounds, 0, 8.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
-            Item2(IntSize(5000, 300), FillBounds, 90, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(5000, 300), FillBounds, 90, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(5000, 300), FillBounds, 90, 8.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
-            Item2(IntSize(5000, 300), FillBounds, 180, 1.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
+            Item2(IntSize(5000, 300), FillBounds, 180, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(5000, 300), FillBounds, 180, 8.0f, floatArrayOf(2.16f, 6.4800005f, 19.440002f)),
-            Item2(IntSize(5000, 300), FillBounds, 270, 1.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
+            Item2(IntSize(5000, 300), FillBounds, 270, 1.0f, floatArrayOf(1.0f, 3.0f, 9.0f)),
             Item2(IntSize(5000, 300), FillBounds, 270, 8.0f, floatArrayOf(3.6f, 10.799999f, 32.399998f)),
         ).forEachIndexed { index, item ->
             val result = calculateScales(
@@ -1252,6 +1253,60 @@ class ZoomsTest {
                 )
             }
         }
+    }
+
+    @Test
+    fun testCalculateMinScale() {
+        assertEquals(
+            expected = 0.333f,
+            actual = calculateMinScale(baseScale = 0.333f, initialScale = -0.4f),
+            absoluteTolerance = 0f
+        )
+        assertEquals(
+            expected = 0.333f,
+            actual = calculateMinScale(baseScale = 0.333f, initialScale = 0f),
+            absoluteTolerance = 0f
+        )
+
+        assertEquals(
+            expected = 0.333f,
+            actual = calculateMinScale(baseScale = 0.333f, initialScale = 0.333f),
+            absoluteTolerance = 0f
+        )
+
+        assertEquals(
+            expected = 0.333f - 0.001f,
+            actual = calculateMinScale(baseScale = 0.333f, initialScale = 0.333f - 0.001f),
+            absoluteTolerance = 0f
+        )
+
+        assertEquals(
+            expected = 0.333f * 1.4f,
+            actual = calculateMinScale(baseScale = 0.333f, initialScale = 0.333f * 1.4f),
+            absoluteTolerance = 0f
+        )
+        assertEquals(
+            expected = 0.333f,
+            actual = calculateMinScale(baseScale = 0.333f, initialScale = 0.333f * 1.5f),
+            absoluteTolerance = 0f
+        )
+
+        assertEquals(
+            expected = 3f + 1.4f,
+            actual = calculateMinScale(baseScale = 3f, initialScale = 3f + 1.4f),
+            absoluteTolerance = 0f
+        )
+        assertEquals(
+            expected = 3f,
+            actual = calculateMinScale(baseScale = 3f, initialScale = 3f + 1.5f),
+            absoluteTolerance = 0f
+        )
+
+        assertEquals(
+            expected = 1.3f,
+            actual = calculateMinScale(baseScale = 1f, initialScale = 1.3f),
+            absoluteTolerance = 0f
+        )
     }
 
     @Test

@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.MULTIPLE
+import com.github.panpf.zoomimage.zoom.internal.calculateMinScale
 
 /**
  * Used to calculate mediumScale and maxScale
@@ -28,6 +29,27 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.MULTIPLE
  */
 interface ScalesCalculator {
 
+    fun calculateWithBase(
+        containerSize: IntSizeCompat,
+        contentSize: IntSizeCompat,
+        contentOriginSize: IntSizeCompat,
+        contentScale: ContentScaleCompat,
+        baseScale: Float,
+        initialScale: Float,
+    ): Result {
+        val minScale = calculateMinScale(baseScale = baseScale, initialScale = initialScale)
+        val result = calculate(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            minScale = minScale,
+            initialScale = initialScale,
+        )
+        return Result(minScale, result.mediumScale, result.maxScale)
+    }
+
+    @Deprecated("use calculateWithBase instead")
     fun calculate(
         containerSize: IntSizeCompat,
         contentSize: IntSizeCompat,
@@ -167,7 +189,9 @@ data class FixedScalesCalculator(
         } else {
             minScale * multiple
         }
+
         val maxScale = mediumScale * multiple
+
         return ScalesCalculator.Result(
             minScale = minScale,
             mediumScale = mediumScale,

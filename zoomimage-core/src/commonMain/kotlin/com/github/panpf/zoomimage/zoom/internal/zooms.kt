@@ -54,6 +54,7 @@ import com.github.panpf.zoomimage.zoom.isBottom
 import com.github.panpf.zoomimage.zoom.isEnd
 import com.github.panpf.zoomimage.zoom.isStart
 import com.github.panpf.zoomimage.zoom.isTop
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -278,17 +279,36 @@ fun calculateScales(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val minScale = baseScaleFactor.scaleX
-    val result = calculator.calculate(
+    val baseScale = baseScaleFactor.scaleX
+    val result = calculator.calculateWithBase(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentOriginSize = rotatedContentOriginSize,
         contentScale = contentScale,
-        minScale = minScale,
+        baseScale = baseScale,
         initialScale = initialScale,
     )
-    return floatArrayOf(minScale, result.mediumScale, result.maxScale)
+    return floatArrayOf(result.minScale, result.mediumScale, result.maxScale)
 }
+
+/**
+ * Calculate the minimum scale factor
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateMinScale
+ */
+fun calculateMinScale(baseScale: Float, initialScale: Float): Float =
+    if (initialScale > 0f && initialScale < baseScale) {
+        initialScale
+    } else if (initialScale > 0f && initialScale > baseScale && initialScale / baseScale < 1.5f && abs(
+            initialScale - baseScale
+        ) < 1.5f
+    ) {
+        // If the difference is too small, use the initial proportion as the minimum proportion directly
+        initialScale
+    } else {
+        baseScale
+    }
+
 
 /**
  * Calculate initial zoom information, including minimum, medium, maximum scale factor, base transformation and user transformation
@@ -1286,67 +1306,3 @@ fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
             && one.offsetX.aboutEquals(two.offsetX, delta = 1f, scale = 2)
             && one.offsetY.aboutEquals(two.offsetY, delta = 1f, scale = 2)
 }
-//
-//
-///* ******************************************* Other ***************************************** */
-//
-///**
-// * 在范围之外移动时不会立即回到范围内，只能朝着范围内移动，朝着范围外移动时将原地不动
-// */
-//fun OffsetCompat.softLimitTo(bounds: RectCompat, currentOffset: OffsetCompat): OffsetCompat {
-//    val offset = this
-//    val addOffset = this - currentOffset
-//    if (offset.x < bounds.left || offset.x > bounds.right || offset.y < bounds.top || offset.y > bounds.bottom) {
-//        val x = if (offset.x < bounds.left) {
-//            if (currentOffset.x < bounds.left) {
-//                if (addOffset.x > 0) {
-//                    offset.x
-//                } else {
-//                    currentOffset.x
-//                }
-//            } else {
-//                bounds.left
-//            }
-//        } else if (offset.x > bounds.right) {
-//            if (currentOffset.x > bounds.right) {
-//                if (addOffset.x < 0) {
-//                    offset.x
-//                } else {
-//                    currentOffset.x
-//                }
-//            } else {
-//                bounds.right
-//            }
-//        } else {
-//            offset.x
-//        }
-//
-//        val y = if (offset.y < bounds.top) {
-//            if (currentOffset.y < bounds.top) {
-//                if (addOffset.y > 0) {
-//                    offset.y
-//                } else {
-//                    currentOffset.y
-//                }
-//            } else {
-//                bounds.top
-//            }
-//        } else if (offset.y > bounds.bottom) {
-//            if (currentOffset.y > bounds.bottom) {
-//                if (addOffset.y < 0) {
-//                    offset.y
-//                } else {
-//                    currentOffset.y
-//                }
-//            } else {
-//                bounds.bottom
-//            }
-//        } else {
-//            offset.y
-//        }
-//
-//        return OffsetCompat(x, y)
-//    } else {
-//        return this
-//    }
-//}
