@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -52,7 +51,6 @@ import com.github.panpf.zoomimage.compose.coil.internal.requestOfWithSizeResolve
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
 import com.github.panpf.zoomimage.compose.coil.internal.validateRequest
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
-import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -269,9 +267,12 @@ private fun CoilZoomAsyncImage(
                 onState?.invoke(loadState)
             },
             contentScale = contentScale,
+            alignment = alignment,
             alpha = alpha,
             colorFilter = colorFilter,
             filterQuality = filterQuality,
+            clipToBounds = false,
+            keepContentNoneStartOnDraw = true,
             modifier = Modifier
                 .matchParentSize()
                 .zoom(
@@ -296,8 +297,7 @@ private fun CoilZoomAsyncImage(
 /**
  * Copy from coil3.compose.AsyncImage()
  *
- * 1. clipToBounds = false
- * 2. alignment = Alignment.TopStart
+ * Add keepContentNoneStartOnDraw param
  */
 @Composable
 private fun BaseCoilZoomAsyncImage(
@@ -306,12 +306,13 @@ private fun BaseCoilZoomAsyncImage(
     modifier: Modifier,
     transform: (State) -> State,
     onState: ((State) -> Unit)?,
-//    alignment: Alignment,
+    alignment: Alignment,
     contentScale: ContentScale,
     alpha: Float,
     colorFilter: ColorFilter?,
     filterQuality: FilterQuality,
-//    clipToBounds: Boolean,
+    clipToBounds: Boolean = true,
+    keepContentNoneStartOnDraw: Boolean = false,
 ) {
     val request = requestOfWithSizeResolver(
         model = state.model,
@@ -319,7 +320,6 @@ private fun BaseCoilZoomAsyncImage(
     )
     validateRequest(request)
 
-    val layoutDirection = LocalLayoutDirection.current
     Layout(
         modifier = modifier.then(
             ContentPainterElement(
@@ -330,10 +330,11 @@ private fun BaseCoilZoomAsyncImage(
                 onState = onState,
                 contentScale = contentScale,
                 filterQuality = filterQuality,
-                alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
+                alignment = alignment,
                 alpha = alpha,
                 colorFilter = colorFilter,
-                clipToBounds = false,
+                clipToBounds = clipToBounds,
+                keepContentNoneStartOnDraw = keepContentNoneStartOnDraw,
                 previewHandler = previewHandler(),
                 contentDescription = contentDescription,
             ),
