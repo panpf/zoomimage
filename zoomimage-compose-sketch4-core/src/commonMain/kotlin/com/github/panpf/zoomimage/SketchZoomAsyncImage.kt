@@ -25,29 +25,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.AsyncImagePainter
 import com.github.panpf.sketch.AsyncImageState
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PainterState
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.internal.AsyncImageContent
 import com.github.panpf.sketch.internal.requestOf
 import com.github.panpf.sketch.name
-import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
-import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -204,7 +199,7 @@ fun SketchZoomAsyncImage(
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
-        BaseZoomAsyncImage(
+        AsyncImage(
             request = request,
             contentDescription = contentDescription,
             sketch = sketch,
@@ -213,6 +208,8 @@ fun SketchZoomAsyncImage(
             alpha = alpha,
             colorFilter = colorFilter,
             filterQuality = filterQuality,
+            clipToBounds = false,
+            keepContentNoneStartOnDraw = true,
             modifier = Modifier
                 .matchParentSize()
                 .zoom(
@@ -247,8 +244,8 @@ private fun onPainterState(
     val painterSize = painterState?.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
-        ?.roundToIntSize()
-        ?.takeIf { it.isNotEmpty() }
+        ?.let { IntSize(it.width.roundToInt(), it.height.roundToInt()) }
+        ?.takeIf { it.width > 0 && it.height > 0 }
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     if (painterState is PainterState.Success) {
@@ -271,154 +268,3 @@ private fun onPainterState(
         zoomState.setSubsamplingImage(null as SubsamplingImage?)
     }
 }
-
-private fun Size.roundToIntSize(): IntSize {
-    return IntSize(width.roundToInt(), height.roundToInt())
-}
-
-private fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0
-
-/**
- * 1. Disabled clipToBounds
- * 2. alignment = Alignment.TopStart
- * 3. contentScale = ContentScale.None
- */
-@Composable
-private fun BaseZoomAsyncImage(
-    request: ImageRequest,
-    contentDescription: String?,
-    sketch: Sketch,
-    modifier: Modifier = Modifier,
-    state: AsyncImageState = rememberAsyncImageState(),
-    contentScale: ContentScale = ContentScale.Fit,
-    alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-) {
-    val painter = rememberAsyncImagePainter(
-        request = request,
-        sketch = sketch,
-        state = state,
-        contentScale = contentScale,
-        filterQuality = filterQuality
-    )
-    val layoutDirection = LocalLayoutDirection.current
-    AsyncImageContent(
-        modifier = modifier.onSizeChanged { size ->
-            // Ensure images are prepared before content is drawn when in-memory cache exists
-            state.setSize(size)
-        },
-        painter = painter,
-        contentDescription = contentDescription,
-        alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
-        contentScale = ContentScale.None,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        clipToBounds = false,
-    )
-}
-
-//@Composable
-//fun SketchZoomAsyncImage(
-//    request: ImageRequest,
-//    contentDescription: String?,
-//    sketch: Sketch,
-//    modifier: Modifier = Modifier,
-//    state: AsyncImageState = rememberAsyncImageState(),
-//    alignment: Alignment = Alignment.Center,
-//    contentScale: ContentScale = ContentScale.Fit,
-//    alpha: Float = DefaultAlpha,
-//    colorFilter: ColorFilter? = null,
-//    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-//    zoomState: SketchZoomState = rememberSketchZoomState(),
-//    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
-//    onLongPress: ((Offset) -> Unit)? = null,
-//    onTap: ((Offset) -> Unit)? = null,
-//) {
-//    zoomState.zoomable.contentScale = contentScale
-//    zoomState.zoomable.alignment = alignment
-//
-//    LaunchedEffect(zoomState.subsampling) {
-//        zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
-//    }
-//
-//    val coroutineScope = rememberCoroutineScope()
-//    // Why not use 'snapshotFlow { state.painterState }' but onPainterState ?
-//    // Because onPainterState is more timely than 'snapshotFlow { state.painterState }'.
-//    // onPainterState is executed together with setting the painter, while 'snapshotFlow { state.painterState }' will be delayed for a short while.
-//    // onPainterState can avoid the problem that the user first sees the image displayed in the upper left corner due to delayed setting of contentSize,
-//    // and then quickly changes to the middle of the screen.
-//    state.onPainterState = remember {
-//        {
-//            onPainterState(coroutineScope, sketch, zoomState, request, it)
-//        }
-//    }
-//
-//    // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
-//    Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
-//
-// TODO
-//  1. 直接用原生的 AsyncImage 和用户指定的 contentScale 和 alignment 加载图片，渲染的时候使用 userTransform 来渲染
-//  2. 这样做的好处是可以不用复制 AsyncImage 的源码再去定制，可以自动随着 sketch 或 coil 的升级而升级
-//  3. 但渲染的时候的旋转的中心就要重新计算了，还要测试 rtl layoutDirection
-//
-//        AsyncImage(
-//            request = request,
-//            contentDescription = contentDescription,
-//            sketch = sketch,
-//            state = state,
-//            contentScale = contentScale,
-//            alignment = alignment,
-//            alpha = alpha,
-//            colorFilter = colorFilter,
-//            filterQuality = filterQuality,
-//            modifier = Modifier
-//                .matchParentSize()
-//                .zoomable(
-//                    zoomable = zoomState.zoomable,
-//                    userSetupContentSize = true,
-//                    onLongPress = onLongPress,
-//                    onTap = onTap
-//                )
-//                .zoomingWithUser(zoomState.zoomable)
-//        )
-//
-////        Box(
-////            Modifier
-////                .matchParentSize()
-////                .zooming2(zoomState.zoomable)
-////                .subsampling(zoomState.zoomable, zoomState.subsampling)
-////        )
-//
-//        if (scrollBar != null) {
-//            Box(
-//                Modifier
-//                    .matchParentSize()
-//                    .zoomScrollBar(zoomState.zoomable, scrollBar)
-//            )
-//        }
-//    }
-//}
-//
-///**
-// * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
-// */
-//fun Modifier.zoomingWithUser(
-//    zoomable: ZoomableState
-//): Modifier = this
-//    .clipToBounds()
-//    .graphicsLayer {
-//        val transform = zoomable.userTransform
-//        zoomable.logger.v { "ZoomableState. graphicsLayer. transform=$transform. scale=${transform.scale}" }
-//        scaleX = transform.scaleX
-//        scaleY = transform.scaleY
-//        translationX = transform.offsetX
-//        translationY = transform.offsetY
-//        transformOrigin = transform.scaleOrigin
-//    }
-//    // Because rotationOrigin and rotationOrigin are different, they must be set separately.
-//    .graphicsLayer {
-//        val transform = zoomable.transform
-//        rotationZ = transform.rotation
-//        transformOrigin = transform.rotationOrigin
-//    }

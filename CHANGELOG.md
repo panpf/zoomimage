@@ -17,6 +17,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * depend: Update okio to 3.11.0
 * depend: Update glide to 4.16.0
 * depend: Update coil to 3.2.0
+* depend: Update sketch to 4.1.0
 * depend: Don't replace `kotlin-stdlib-jdk7` and `kotlin-stdlib-jdk8` with `kotlin-stdlib`
 
 ## 1.2.0
