@@ -595,7 +595,6 @@ class ZoomableCore constructor(
         logger.d {
             val transform = newBaseTransform + newUserTransform
             "$module. reset:$caller. $mode. " +
-                    "force=force. " +
                     "containerSize=${newResetParams.containerSize.toShortString()}, " +
                     "contentSize=${newResetParams.contentSize.toShortString()}, " +
                     "contentOriginSize=${newResetParams.contentOriginSize.toShortString()}, " +
