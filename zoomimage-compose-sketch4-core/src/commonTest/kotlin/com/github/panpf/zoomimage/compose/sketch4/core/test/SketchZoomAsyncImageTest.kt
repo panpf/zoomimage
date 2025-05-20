@@ -6,9 +6,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.AsyncImageState
@@ -45,19 +47,21 @@ class SketchZoomAsyncImageTest {
             var stateHolder: AsyncImageState? = null
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                    TestLifecycle {
-                        val zoomState = rememberSketchZoomState()
-                            .apply { zoomStateHolder = this }
-                        val state = rememberAsyncImageState()
-                            .apply { stateHolder = this }
-                        SketchZoomAsyncImage(
-                            uri = ResourceImages.hugeChina.uri,
-                            contentDescription = "",
-                            sketch = sketch,
-                            modifier = Modifier.size(500.dp),
-                            zoomState = zoomState,
-                            state = state,
-                        )
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        TestLifecycle {
+                            val zoomState = rememberSketchZoomState()
+                                .apply { zoomStateHolder = this }
+                            val state = rememberAsyncImageState()
+                                .apply { stateHolder = this }
+                            SketchZoomAsyncImage(
+                                uri = ResourceImages.hugeChina.uri,
+                                contentDescription = "",
+                                sketch = sketch,
+                                modifier = Modifier.size(500.dp),
+                                zoomState = zoomState,
+                                state = state,
+                            )
+                        }
                     }
                 }
             }
@@ -112,18 +116,20 @@ class SketchZoomAsyncImageTest {
             var zoomStateHolder: SketchZoomState? = null
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                    TestLifecycle {
-                        val zoomState = rememberSketchZoomState()
-                            .apply { zoomStateHolder = this }
-                        SketchZoomAsyncImage(
-                            uri = ResourceImages.hugeChina.uri,
-                            contentDescription = "",
-                            sketch = sketch,
-                            modifier = Modifier.size(500.dp),
-                            zoomState = zoomState,
-                            contentScale = ContentScale.None,
-                            alignment = Alignment.BottomEnd,
-                        )
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        TestLifecycle {
+                            val zoomState = rememberSketchZoomState()
+                                .apply { zoomStateHolder = this }
+                            SketchZoomAsyncImage(
+                                uri = ResourceImages.hugeChina.uri,
+                                contentDescription = "",
+                                sketch = sketch,
+                                modifier = Modifier.size(500.dp),
+                                zoomState = zoomState,
+                                contentScale = ContentScale.None,
+                                alignment = Alignment.BottomEnd,
+                            )
+                        }
                     }
                 }
             }
@@ -179,16 +185,18 @@ class SketchZoomAsyncImageTest {
             var zoomStateHolder: SketchZoomState? = null
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                    TestLifecycle {
-                        val zoomState = rememberSketchZoomState()
-                            .apply { zoomStateHolder = this }
-                        SketchZoomAsyncImage(
-                            request = ComposableImageRequest(ResourceImages.hugeChina.uri),
-                            contentDescription = "",
-                            sketch = sketch,
-                            modifier = Modifier.size(500.dp),
-                            zoomState = zoomState,
-                        )
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        TestLifecycle {
+                            val zoomState = rememberSketchZoomState()
+                                .apply { zoomStateHolder = this }
+                            SketchZoomAsyncImage(
+                                request = ComposableImageRequest(ResourceImages.hugeChina.uri),
+                                contentDescription = "",
+                                sketch = sketch,
+                                modifier = Modifier.size(500.dp),
+                                zoomState = zoomState,
+                            )
+                        }
                     }
                 }
             }
@@ -236,18 +244,20 @@ class SketchZoomAsyncImageTest {
             var zoomStateHolder: SketchZoomState? = null
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                    TestLifecycle {
-                        val zoomState = rememberSketchZoomState()
-                            .apply { zoomStateHolder = this }
-                        SketchZoomAsyncImage(
-                            request = ComposableImageRequest(ResourceImages.hugeChina.uri),
-                            contentDescription = "",
-                            sketch = sketch,
-                            modifier = Modifier.size(500.dp),
-                            zoomState = zoomState,
-                            contentScale = ContentScale.None,
-                            alignment = Alignment.BottomEnd,
-                        )
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        TestLifecycle {
+                            val zoomState = rememberSketchZoomState()
+                                .apply { zoomStateHolder = this }
+                            SketchZoomAsyncImage(
+                                request = ComposableImageRequest(ResourceImages.hugeChina.uri),
+                                contentDescription = "",
+                                sketch = sketch,
+                                modifier = Modifier.size(500.dp),
+                                zoomState = zoomState,
+                                contentScale = ContentScale.None,
+                                alignment = Alignment.BottomEnd,
+                            )
+                        }
                     }
                 }
             }
