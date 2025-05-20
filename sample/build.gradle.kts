@@ -62,6 +62,10 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
+            implementation(
+                libs.coil3.network.ktor.get().let { "${it.group}:${it.name}:${it.version}" }) {
+                exclude(group = "io.ktor")  // See libs.versions.toml#ktor
+            }
             implementation(libs.jetbrains.compose.material.icons.core)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
