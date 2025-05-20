@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.3.0
 
 > [!CAUTION]
 > The compose multiplatform version 1.8.0 must be jvm 11 to compile. Please modify the configuration

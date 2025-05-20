@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.3.0
 
 > [!CAUTION]
 > compose multiplatform 1.8.0 版本必须 jvm 11 才能编译，请修改
