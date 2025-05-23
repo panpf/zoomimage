@@ -24,12 +24,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatingNode
+import androidx.compose.ui.node.LayoutAwareModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.util.toCompat
@@ -83,14 +84,7 @@ fun Modifier.zoomable(
     userSetupContentSize: Boolean = false,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-): Modifier = this
-    .onSizeChanged {
-        zoomable.containerSize = it
-        if (!userSetupContentSize) {
-            zoomable.contentSize = it
-        }
-    }
-    .then(ZoomableElement(zoomable, onLongPress, onTap))
+): Modifier = this then ZoomableElement(zoomable, userSetupContentSize, onLongPress, onTap)
 
 /**
  * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
@@ -139,6 +133,7 @@ fun Modifier.zooming(
 
 internal data class ZoomableElement(
     val zoomable: ZoomableState,
+    val userSetupContentSize: Boolean,
     val onLongPress: ((Offset) -> Unit)? = null,
     val onTap: ((Offset) -> Unit)? = null,
 ) : ModifierNodeElement<ZoomableNode>() {
@@ -146,6 +141,7 @@ internal data class ZoomableElement(
     override fun create(): ZoomableNode {
         return ZoomableNode(
             zoomable = zoomable,
+            userSetupContentSize = userSetupContentSize,
             onLongPress = onLongPress,
             onTap = onTap,
         )
@@ -154,6 +150,7 @@ internal data class ZoomableElement(
     override fun update(node: ZoomableNode) {
         node.update(
             zoomable = zoomable,
+            userSetupContentSize = userSetupContentSize,
             onLongPress = onLongPress,
             onTap = onTap,
         )
@@ -162,15 +159,17 @@ internal data class ZoomableElement(
 
 internal class ZoomableNode(
     var zoomable: ZoomableState,
+    var userSetupContentSize: Boolean,
     var onLongPress: ((Offset) -> Unit)? = null,
     var onTap: ((Offset) -> Unit)? = null,
-) : DelegatingNode(), CompositionLocalConsumerModifierNode {
+) : DelegatingNode(), CompositionLocalConsumerModifierNode, LayoutAwareModifierNode {
 
     private var longPressExecuted = false
     private var doubleTapExecuted = false
     private var doubleTapPressPoint: Offset? = null
     private var oneFingerScaleExecuted = false
     private var twoFingerScaleCentroid: Offset? = null
+    private var previousSize = IntSize(Int.MIN_VALUE, Int.MIN_VALUE)
 
     private val tapPointerDelegate = delegate(SuspendingPointerInputModifierNode {
         detectPowerfulTapGestures(
@@ -325,6 +324,7 @@ internal class ZoomableNode(
 
     fun update(
         zoomable: ZoomableState,
+        userSetupContentSize: Boolean,
         onLongPress: ((Offset) -> Unit)? = null,
         onTap: ((Offset) -> Unit)? = null,
     ) {
@@ -333,6 +333,7 @@ internal class ZoomableNode(
                 (this.onLongPress == null) != (onLongPress == null)
 
         this.zoomable = zoomable
+        this.userSetupContentSize = userSetupContentSize
         this.onLongPress = onLongPress
         this.onTap = onTap
 
@@ -341,6 +342,20 @@ internal class ZoomableNode(
         }
         if (zoomableChanged) {
             gesturePointerDelegate.resetPointerInputHandler()
+        }
+
+        // Reset the previous size, so when userSetupContentSize changes the new lambda gets invoked,
+        // matching previous behavior
+        previousSize = IntSize(Int.MIN_VALUE, Int.MIN_VALUE)
+    }
+
+    override fun onRemeasured(size: IntSize) {
+        if (previousSize != size) {
+            zoomable.containerSize = size
+            if (!userSetupContentSize) {
+                zoomable.contentSize = size
+            }
+            previousSize = size
         }
     }
 }

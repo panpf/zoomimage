@@ -6,6 +6,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 * improve: SketchZoomAsyncImage and CoilZoomAsyncImage are now directly based on the original
   AsyncImage component
+* improve: Modifier.zoomable() now reduces one ModifierNodeElement
 
 # 1.3.0
 
