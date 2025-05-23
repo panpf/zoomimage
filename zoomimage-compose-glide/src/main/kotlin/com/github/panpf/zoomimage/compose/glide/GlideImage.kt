@@ -31,6 +31,8 @@ typealias RequestBuilderTransform<T> = (RequestBuilder<T>) -> RequestBuilder<T>
 /**
  * Copy from glide-compose 1.0.0-beta01
  *
+ * Add clipToBounds parameter
+ *
  * Start a request by passing [model] to [RequestBuilder.load] and then applying the
  * [requestBuilderTransform] function to add options or apply mutations if the caller desires.
  *

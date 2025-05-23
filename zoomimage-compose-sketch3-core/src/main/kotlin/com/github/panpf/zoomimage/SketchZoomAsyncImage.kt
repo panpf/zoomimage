@@ -24,7 +24,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
@@ -32,26 +31,23 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
+import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.compose.AsyncImageState
 import com.github.panpf.sketch.compose.PainterState
-import com.github.panpf.sketch.compose.internal.AsyncImageContent
 import com.github.panpf.sketch.compose.internal.onPainterStateOf
 import com.github.panpf.sketch.compose.internal.transformOf
-import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
-import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -374,29 +370,38 @@ fun SketchZoomAsyncImage(
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val coroutineScope = rememberCoroutineScope()
-        BaseZoomAsyncImage(
+        AsyncImage(
             request = request,
             contentDescription = contentDescription,
             sketch = sketch,
             state = state,
             transform = transform,
-            onPainterState = { loadState ->
-                onPainterState(coroutineScope, sketch, zoomState, request, loadState)
-                onPainterState?.invoke(loadState)
-            },
             contentScale = contentScale,
+            alignment = alignment,
             alpha = alpha,
             colorFilter = colorFilter,
             filterQuality = filterQuality,
+            clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
+                    restoreContentToNoneLeftTopFirst = true,
                     onLongPress = onLongPress,
                     onTap = onTap
-                )
-                .subsampling(zoomState.zoomable, zoomState.subsampling),
+                ),
+            onPainterState = { loadState ->
+                onPainterState(coroutineScope, sketch, zoomState, request, loadState)
+                onPainterState?.invoke(loadState)
+            },
+        )
+
+        Box(
+            Modifier
+                .matchParentSize()
+                .zooming(zoomable = zoomState.zoomable, restoreContentToNoneLeftTopFirst = false)
+                .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
         if (scrollBar != null) {
@@ -417,13 +422,19 @@ private fun onPainterState(
     painterState: PainterState,
 ) {
     zoomState.zoomable.logger.d {
-        "SketchZoomAsyncImage. onPainterState. state=${painterState.name}. uri='${request.uriString}'"
+        val stateName = when (painterState) {
+            is PainterState.Loading -> "Loading"
+            is PainterState.Success -> "Success"
+            is PainterState.Error -> "Error"
+            is PainterState.Empty -> "Empty"
+        }
+        "SketchZoomAsyncImage. onPainterState. state=$stateName. uri='${request.uriString}'"
     }
     val painterSize = painterState.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
-        ?.roundToIntSize()
-        ?.takeIf { it.isNotEmpty() }
+        ?.let { IntSize(it.width.roundToInt(), it.height.roundToInt()) }
+        ?.takeIf { it.width > 0 && it.height > 0 }
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     if (painterState is PainterState.Success) {
@@ -445,56 +456,4 @@ private fun onPainterState(
     } else {
         zoomState.setSubsamplingImage(null as SubsamplingImage?)
     }
-}
-
-private val PainterState.name: String
-    get() = when (this) {
-        is PainterState.Loading -> "Loading"
-        is PainterState.Success -> "Success"
-        is PainterState.Error -> "Error"
-        is PainterState.Empty -> "Empty"
-    }
-
-private fun Size.roundToIntSize(): IntSize {
-    return IntSize(width.roundToInt(), height.roundToInt())
-}
-
-private fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0
-
-/**
- * 1. Disabled clipToBounds
- * 2. alignment = Alignment.TopStart
- * 3. contentScale = ContentScale.None
- */
-@Composable
-private fun BaseZoomAsyncImage(
-    request: DisplayRequest,
-    contentDescription: String?,
-    sketch: Sketch,
-    modifier: Modifier = Modifier,
-    state: AsyncImageState = rememberAsyncImageState(),
-    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
-    onPainterState: ((PainterState) -> Unit)? = null,
-    contentScale: ContentScale = ContentScale.Fit,
-    alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-) {
-    val painter = rememberAsyncImagePainter(
-        request, sketch, state, transform, onPainterState, contentScale, filterQuality
-    )
-    val layoutDirection = LocalLayoutDirection.current
-    AsyncImageContent(
-        modifier = modifier.onSizeChanged { size ->
-            // Ensure images are prepared before content is drawn when in-memory cache exists
-            state.setSize(size)
-        },
-        painter = painter,
-        contentDescription = contentDescription,
-        alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
-        contentScale = ContentScale.None,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        clipToBounds = false,
-    )
 }

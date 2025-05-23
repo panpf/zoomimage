@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -41,11 +40,11 @@ import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.util.round
-import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zooming
 import kotlin.math.roundToInt
 
 /**
@@ -123,12 +122,11 @@ fun ZoomImage(
         }
         zoomState.zoomable.containerSize = newContainerSize
 
-        val layoutDirection = LocalLayoutDirection.current
-        MyImage(
+        ClippableImage(
             painter = painter,
             contentDescription = contentDescription,
-            alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
-            contentScale = ContentScale.None,
+            alignment = alignment,
+            contentScale = contentScale,
             alpha = alpha,
             colorFilter = colorFilter,
             clipToBounds = false,
@@ -137,10 +135,17 @@ fun ZoomImage(
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
+                    restoreContentToNoneLeftTopFirst = true,
                     onLongPress = onLongPress,
                     onTap = onTap
-                )
-                .subsampling(zoomState.zoomable, zoomState.subsampling),
+                ),
+        )
+
+        Box(
+            Modifier
+                .matchParentSize()
+                .zooming(zoomable = zoomState.zoomable, restoreContentToNoneLeftTopFirst = false)
+                .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
         if (scrollBar != null) {
@@ -154,7 +159,7 @@ fun ZoomImage(
 }
 
 @Composable
-private fun MyImage(
+private fun ClippableImage(
     painter: Painter,
     contentDescription: String?,
     modifier: Modifier = Modifier,
@@ -180,7 +185,7 @@ private fun MyImage(
             .then(semantics)
             .let { if (clipToBounds) it.clipToBounds() else it }
             .paint(
-                painter,
+                painter = painter,
                 alignment = alignment,
                 contentScale = contentScale,
                 alpha = alpha,

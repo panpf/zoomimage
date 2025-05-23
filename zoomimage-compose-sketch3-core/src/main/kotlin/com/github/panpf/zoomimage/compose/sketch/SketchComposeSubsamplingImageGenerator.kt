@@ -21,6 +21,9 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
+/**
+ * Convert Sketch DisplayResult to [SubsamplingImageGenerateResult]
+ */
 interface SketchComposeSubsamplingImageGenerator {
 
     suspend fun generateImage(

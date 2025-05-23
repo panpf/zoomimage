@@ -47,6 +47,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -205,20 +206,27 @@ fun SketchZoomAsyncImage(
             sketch = sketch,
             state = state,
             contentScale = contentScale,
+            alignment = alignment,
             alpha = alpha,
             colorFilter = colorFilter,
             filterQuality = filterQuality,
             clipToBounds = false,
-            keepContentNoneStartOnDraw = true,
             modifier = Modifier
                 .matchParentSize()
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
+                    restoreContentToNoneLeftTopFirst = true,
                     onLongPress = onLongPress,
                     onTap = onTap
-                )
-                .subsampling(zoomState.zoomable, zoomState.subsampling),
+                ),
+        )
+
+        Box(
+            Modifier
+                .matchParentSize()
+                .zooming(zoomable = zoomState.zoomable, restoreContentToNoneLeftTopFirst = false)
+                .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
         if (scrollBar != null) {

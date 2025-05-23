@@ -22,12 +22,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
@@ -38,21 +36,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
+import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State
 import coil.request.ImageRequest
 import com.github.panpf.zoomimage.coil.CoilTileImageCache
-import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
-import com.github.panpf.zoomimage.compose.coil.internal.ConstraintsSizeResolver
 import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
-import com.github.panpf.zoomimage.compose.coil.internal.requestOf
-import com.github.panpf.zoomimage.compose.coil.internal.toScale
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import kotlinx.coroutines.CoroutineScope
@@ -129,6 +125,7 @@ fun CoilZoomAsyncImage(
 ) = CoilZoomAsyncImage(
     model = model,
     contentDescription = contentDescription,
+    imageLoader = imageLoader,
     modifier = modifier,
     transform = transformOf(placeholder, error, fallback),
     onState = onStateOf(onLoading, onSuccess, onError),
@@ -137,13 +134,11 @@ fun CoilZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
-    imageLoader = imageLoader,
     zoomState = zoomState,
     scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
-
 
 /**
  * An image component that integrates the Coil image loading framework that zoom and subsampling huge images
@@ -216,29 +211,44 @@ fun CoilZoomAsyncImage(
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
-        val request = updateRequest(requestOf(model), contentScale)
-        BaseZoomAsyncImage(
-            model = request,
+        AsyncImage(
+            model = model,
             contentDescription = contentDescription,
             imageLoader = imageLoader,
             transform = transform,
-            onState = { loadState ->
-                onState(context, coroutineScope, imageLoader, zoomState, request, loadState)
-                onState?.invoke(loadState)
-            },
             contentScale = contentScale,
+            alignment = alignment,
             alpha = alpha,
             colorFilter = colorFilter,
             filterQuality = filterQuality,
+            clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
+                    restoreContentToNoneLeftTopFirst = true,
                     onLongPress = onLongPress,
                     onTap = onTap
+                ),
+            onState = { loadState ->
+                onState(
+                    context = context,
+                    coroutineScope = coroutineScope,
+                    imageLoader = imageLoader,
+                    zoomState = zoomState,
+                    model = model,
+                    loadState = loadState
                 )
-                .subsampling(zoomState.zoomable, zoomState.subsampling),
+                onState?.invoke(loadState)
+            },
+        )
+
+        Box(
+            Modifier
+                .matchParentSize()
+                .zooming(zoomable = zoomState.zoomable, restoreContentToNoneLeftTopFirst = false)
+                .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
         if (scrollBar != null) {
@@ -251,40 +261,29 @@ fun CoilZoomAsyncImage(
     }
 }
 
-@Composable
-internal fun updateRequest(request: ImageRequest, contentScale: ContentScale): ImageRequest {
-    return request.let {
-        if (it.defined.sizeResolver == null) {
-            val sizeResolver = remember { ConstraintsSizeResolver() }
-            it.newBuilder().size(sizeResolver).build()
-        } else {
-            it
-        }
-    }.let {
-        if (it.defined.scale == null) {
-            it.newBuilder().scale(contentScale.toScale()).build()
-        } else {
-            it
-        }
-    }
-}
-
 private fun onState(
     context: Context,
     coroutineScope: CoroutineScope,
     imageLoader: ImageLoader,
     zoomState: CoilZoomState,
-    request: ImageRequest,
+    model: Any?,
     loadState: State,
 ) {
+    val finaData = if (model is ImageRequest) model.data else model
     zoomState.zoomable.logger.d {
-        "CoilZoomAsyncImage. onState. state=${loadState.name}. data='${request.data}'"
+        val stateName = when (loadState) {
+            is State.Loading -> "Loading"
+            is State.Success -> "Success"
+            is State.Error -> "Error"
+            is State.Empty -> "Empty"
+        }
+        "CoilZoomAsyncImage. onState. state=$stateName. data='${finaData}'"
     }
     val painterSize = loadState.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
-        ?.roundToIntSize()
-        ?.takeIf { it.isNotEmpty() }
+        ?.let { IntSize(it.width.roundToInt(), it.height.roundToInt()) }
+        ?.takeIf { it.width > 0 && it.height > 0 }
     zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     if (loadState is State.Success) {
@@ -294,7 +293,7 @@ private fun onState(
             }
             if (generateResult is SubsamplingImageGenerateResult.Error) {
                 zoomState.subsampling.logger.d {
-                    "CoilZoomAsyncImage. ${generateResult.message}. data='${request.data}'"
+                    "CoilZoomAsyncImage. ${generateResult.message}. data='${finaData}'"
                 }
             }
             if (generateResult is SubsamplingImageGenerateResult.Success) {
@@ -307,17 +306,3 @@ private fun onState(
         zoomState.setSubsamplingImage(null as SubsamplingImage?)
     }
 }
-
-private val State.name: String
-    get() = when (this) {
-        is State.Loading -> "Loading"
-        is State.Success -> "Success"
-        is State.Error -> "Error"
-        is State.Empty -> "Empty"
-    }
-
-private fun Size.roundToIntSize(): IntSize {
-    return IntSize(width.roundToInt(), height.roundToInt())
-}
-
-private fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0

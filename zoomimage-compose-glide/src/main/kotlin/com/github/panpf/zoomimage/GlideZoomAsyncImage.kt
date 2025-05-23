@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -46,11 +45,11 @@ import com.github.panpf.zoomimage.compose.glide.Placeholder
 import com.github.panpf.zoomimage.compose.glide.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.glide.Transition
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
-import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.glide.GlideTileImageCache
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -72,7 +71,7 @@ import kotlinx.coroutines.launch
  * }
  * ```
  *
- * Start a request by passing [model] to [RequestBuilder.load] using the given [requestManager] and
+ * Start a request by passing [model] to [RequestBuilder.load] using the given requestManager and
  * then applying the [requestBuilderTransform] function to add options or apply mutations if the
  * caller desires.
  *
@@ -88,7 +87,7 @@ import kotlinx.coroutines.launch
  * explicitly if you can. You may end up loading a substantially larger image than you need, which
  * will increase memory usage and may also increase latency.
  *
- * If you provide your own [requestManager] rather than using this method's default, consider using
+ * If you provide your own requestManager rather than using this method's default, consider using
  * [remember] at a higher level to avoid some amount of overhead of retrieving it each
  * re-composition.
  *
@@ -159,12 +158,11 @@ fun GlideZoomAsyncImage(
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val coroutineScope = rememberCoroutineScope()
-        val layoutDirection = LocalLayoutDirection.current
         GlideImage(
             model = model,
             contentDescription = contentDescription,
-            alignment = Alignment.TopStart.rtlFlipped(layoutDirection),
-            contentScale = ContentScale.None,
+            alignment = alignment,
+            contentScale = contentScale,
             alpha = alpha,
             colorFilter = colorFilter,
             clipToBounds = false,
@@ -189,10 +187,17 @@ fun GlideZoomAsyncImage(
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
+                    restoreContentToNoneLeftTopFirst = true,
                     onLongPress = onLongPress,
                     onTap = onTap
-                )
-                .subsampling(zoomState.zoomable, zoomState.subsampling),
+                ),
+        )
+
+        Box(
+            Modifier
+                .matchParentSize()
+                .zooming(zoomable = zoomState.zoomable, restoreContentToNoneLeftTopFirst = false)
+                .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
         if (scrollBar != null) {

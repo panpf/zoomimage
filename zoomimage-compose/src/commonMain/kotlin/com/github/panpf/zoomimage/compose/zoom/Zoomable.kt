@@ -21,6 +21,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.layout.onSizeChanged
@@ -30,10 +31,13 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.util.format
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
+import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
+import com.github.panpf.zoomimage.zoom.internal.calculateBaseTransform
 import kotlinx.coroutines.launch
 
 /**
@@ -49,6 +53,7 @@ import kotlinx.coroutines.launch
 fun Modifier.zoom(
     zoomable: ZoomableState,
     userSetupContentSize: Boolean = false,
+    restoreContentToNoneLeftTopFirst: Boolean = false,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = this
@@ -58,7 +63,7 @@ fun Modifier.zoom(
         onLongPress = onLongPress,
         onTap = onTap
     )
-    .zooming(zoomable)
+    .zooming(zoomable, restoreContentToNoneLeftTopFirst)
 
 /**
  * A Modifier that can recognize gestures such as click, long press, double-click, one-finger zoom, two-finger zoom, drag, fling, etc.
@@ -91,7 +96,8 @@ fun Modifier.zoomable(
  * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
  */
 fun Modifier.zooming(
-    zoomable: ZoomableState
+    zoomable: ZoomableState,
+    restoreContentToNoneLeftTopFirst: Boolean = false,
 ): Modifier = this
     .clipToBounds()
     .graphicsLayer {
@@ -108,6 +114,27 @@ fun Modifier.zooming(
         val transform = zoomable.transform
         rotationZ = transform.rotation
         transformOrigin = transform.rotationOrigin
+    }
+    .let {
+        // ZoomImage's zoom is located in the upper left corner based on the image in its original size, so you must first restore the zoom and offset of the image.
+        if (restoreContentToNoneLeftTopFirst) {
+            it.graphicsLayer {
+                val baseTransform = calculateBaseTransform(
+                    containerSize = zoomable.containerSize.toCompat(),
+                    contentSize = zoomable.contentSize.toCompat(),
+                    contentScale = zoomable.contentScale.toCompat(),
+                    alignment = zoomable.alignment.rtlFlipped(zoomable.layoutDirection).toCompat(),
+                    rotation = 0
+                )
+                scaleX = 1f / baseTransform.scaleX
+                scaleY = 1f / baseTransform.scaleY
+                translationX = 0f - (baseTransform.offsetX * (1f / baseTransform.scaleX))
+                translationY = 0f - (baseTransform.offsetY * (1f / baseTransform.scaleY))
+                transformOrigin = TransformOrigin(0f, 0f)
+            }
+        } else {
+            it
+        }
     }
 
 internal data class ZoomableElement(

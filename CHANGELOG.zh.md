@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+* improve: SketchZoomAsyncImage 和 CoilZoomAsyncImage 现在直接基于原本的 AsyncImage 组件
+
 # 1.3.0
 
 > [!CAUTION]

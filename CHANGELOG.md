@@ -2,6 +2,11 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+* improve: SketchZoomAsyncImage and CoilZoomAsyncImage are now directly based on the original
+  AsyncImage component
+
 # 1.3.0
 
 > [!CAUTION]
