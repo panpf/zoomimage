@@ -45,6 +45,8 @@ expect class AppSettings(context: PlatformContext) {
     val alignmentName: SettingsStateFlow<String>
     val alignment: StateFlow<AlignmentCompat>
 
+    val rtlLayoutDirectionEnabled: SettingsStateFlow<Boolean>
+
     val animateScale: SettingsStateFlow<Boolean>
 
     val rubberBandScale: SettingsStateFlow<Boolean>

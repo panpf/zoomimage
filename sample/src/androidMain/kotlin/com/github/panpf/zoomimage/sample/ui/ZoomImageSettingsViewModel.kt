@@ -51,6 +51,8 @@ class ZoomImageSettingsViewModel(
     }
 
     private fun buildData(): List<Any> = buildList {
+        add(MenuDivider("Arrange"))
+
         val contentScales = listOf(
             ContentScaleCompat.Fit,
             ContentScaleCompat.Crop,
@@ -95,7 +97,7 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(MenuDivider())
+        add(MenuDivider("Gesture"))
 
         add(
             SwitchMenuFlow(
@@ -178,7 +180,7 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(MenuDivider())
+        add(MenuDivider("Offset Bounds"))
 
         add(
             SwitchMenuFlow(
@@ -208,7 +210,7 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(MenuDivider())
+        add(MenuDivider("Read Mode"))
 
         add(
             SwitchMenuFlow(
@@ -225,7 +227,7 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(MenuDivider())
+        add(MenuDivider("Subsampling"))
 
         add(
             SwitchMenuFlow(
@@ -277,7 +279,7 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(MenuDivider())
+        add(MenuDivider("Other"))
 
         add(
             SwitchMenuFlow(
@@ -302,8 +304,6 @@ class ZoomImageSettingsViewModel(
                 data = appSettings.delayImageLoadEnabled,
             )
         )
-
-        add(MenuDivider())
 
         add(
             DropdownMenu(

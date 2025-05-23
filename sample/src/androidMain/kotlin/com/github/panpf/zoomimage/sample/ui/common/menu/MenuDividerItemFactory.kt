@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.sample.ui.common.menu
 
 import android.content.Context
+import androidx.core.view.isVisible
 import com.github.panpf.zoomimage.sample.databinding.ListItemMenuDividerBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory
 
@@ -39,6 +40,7 @@ class MenuDividerItemFactory :
         absoluteAdapterPosition: Int,
         data: MenuDivider
     ) {
-
+        binding.titleText.text = data.title
+        binding.titleText.isVisible = data.title != null
     }
 }

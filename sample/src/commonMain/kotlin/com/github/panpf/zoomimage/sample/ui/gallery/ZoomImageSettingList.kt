@@ -60,6 +60,8 @@ fun ZoomImageSettingList() {
     ) {
         val appSettings = LocalPlatformContext.current.appSettings
 
+        DividerSettingItem("Arrange")
+
         val contentScaleValues = remember {
             listOf(
                 ContentScale.Fit,
@@ -97,7 +99,13 @@ fun ZoomImageSettingList() {
             state = appSettings.alignmentName,
         )
 
-        DividerSettingItem()
+        SwitchSettingItem(
+            title = "RTL Layout Direction",
+            desc = null,
+            state = appSettings.rtlLayoutDirectionEnabled,
+        )
+
+        DividerSettingItem("Gesture")
 
         SwitchSettingItem(
             title = "Animate Scale",
@@ -171,7 +179,7 @@ fun ZoomImageSettingList() {
             }
         )
 
-        DividerSettingItem()
+        DividerSettingItem("Offset Bounds")
 
         SwitchSettingItem(
             title = "Limit Offset Within Base Visible Rect",
@@ -194,7 +202,7 @@ fun ZoomImageSettingList() {
             state = appSettings.containerWhitespace,
         )
 
-        DividerSettingItem()
+        DividerSettingItem("Read Mode")
 
         SwitchSettingItem(
             title = "Read Mode",
@@ -207,7 +215,7 @@ fun ZoomImageSettingList() {
             state = appSettings.readModeAcceptedBoth,
         )
 
-        DividerSettingItem()
+        DividerSettingItem("Subsampling")
 
         SwitchSettingItem(
             title = "Tile Memory Cache",
@@ -259,7 +267,7 @@ fun ZoomImageSettingList() {
             state = appSettings.tileAnimation,
         )
 
-        DividerSettingItem()
+        DividerSettingItem("Other")
 
         SwitchSettingItem(
             title = "Scroll Bar",
@@ -278,8 +286,6 @@ fun ZoomImageSettingList() {
             desc = "Only for Sketch ImageLoader",
             state = appSettings.delayImageLoadEnabled,
         )
-
-        DividerSettingItem()
 
         val logLevelValues = remember {
             listOf(

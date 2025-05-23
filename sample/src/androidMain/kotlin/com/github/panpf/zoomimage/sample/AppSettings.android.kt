@@ -100,6 +100,10 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
     actual val alignment: StateFlow<AlignmentCompat> =
         alignmentName.stateMap { AlignmentCompat.valueOf(it) }
 
+    actual val rtlLayoutDirectionEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "rtlLayoutDirectionEnabled", false)
+    }
+
     actual val animateScale: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "animateScale", true)
     }

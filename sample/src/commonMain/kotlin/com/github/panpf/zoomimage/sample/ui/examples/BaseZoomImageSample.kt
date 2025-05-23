@@ -7,7 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,8 +33,10 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -52,7 +53,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
@@ -64,6 +67,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
@@ -102,135 +106,36 @@ fun <T : ZoomState> BaseZoomImageSample(
     photoPaletteState: MutableState<PhotoPalette>,
     pageSelected: Boolean,
     createZoomState: @Composable () -> T,
-    content: @Composable BoxScope.(
-        contentScale: ContentScale,
-        alignment: Alignment,
-        zoomState: T,
-        capturableState: CapturableState,
-        scrollBar: ScrollBarSpec?,
-        onLongClick: () -> Unit,
-    ) -> Unit
+    content: @Composable ContentScope<T>.() -> Unit
 ) {
-    val settingsService = LocalPlatformContext.current.appSettings
-    val contentScale by settingsService.contentScale.collectAsState()
-    val alignment by settingsService.alignment.collectAsState()
-    val threeStepScale by settingsService.threeStepScale.collectAsState()
-    val rubberBandScale by settingsService.rubberBandScale.collectAsState()
-    val readModeEnabled by settingsService.readModeEnabled.collectAsState()
-    val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.collectAsState()
-    val scrollBarEnabled by settingsService.scrollBarEnabled.collectAsState()
-    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by settingsService.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectAsState()
-    val logLevel by settingsService.logLevel.collectAsState()
-    val animateScale by settingsService.animateScale.collectAsState()
-    val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
-    val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
-    val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
-    val containerWhitespaceMultiple by settingsService.containerWhitespaceMultiple.collectAsState()
-    val containerWhitespace by settingsService.containerWhitespace.collectAsState()
-    val scalesCalculatorName by settingsService.scalesCalculatorName.collectAsState()
-    val scalesMultiple by settingsService.scalesMultiple.collectAsState()
-    val scalesCalculator = remember(scalesCalculatorName, scalesMultiple) {
-        buildScalesCalculator(scalesCalculatorName, scalesMultiple.toFloat())
-    }
-    val pausedContinuousTransformTypes by settingsService.pausedContinuousTransformTypes.collectAsState()
-    val disabledGestureTypes by settingsService.disabledGestureTypes.collectAsState()
-    val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()
-    val showTileBounds by settingsService.showTileBounds.collectAsState()
-    val tileAnimation by settingsService.tileAnimation.collectAsState()
-    val tileMemoryCache by settingsService.tileMemoryCache.collectAsState()
-    val horizontalLayout by settingsService.horizontalPagerLayout.collectAsState()
-
-    val zoomAnimationSpec by remember {
-        derivedStateOf {
-            val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
-            ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
-        }
-    }
-    val readMode by remember {
-        derivedStateOf {
-            val sizeType = when {
-                readModeAcceptedBoth -> ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
-                horizontalLayout -> ReadMode.SIZE_TYPE_VERTICAL
-                else -> ReadMode.SIZE_TYPE_HORIZONTAL
-            }
-            if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
-        }
-    }
-    val zoomState = createZoomState().apply {
-        LaunchedEffect(logLevel) {
-            logger.level = logLevel
-        }
-        LaunchedEffect(threeStepScale) {
-            zoomable.threeStepScale = threeStepScale
-        }
-        LaunchedEffect(rubberBandScale) {
-            zoomable.rubberBandScale = rubberBandScale
-        }
-        LaunchedEffect(zoomAnimationSpec) {
-            zoomable.animationSpec = zoomAnimationSpec
-        }
-        LaunchedEffect(reverseMouseWheelScale) {
-            zoomable.reverseMouseWheelScale = reverseMouseWheelScale
-        }
-        LaunchedEffect(scalesCalculator) {
-            zoomable.scalesCalculator = scalesCalculator
-        }
-        LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
-            zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
-        }
-        LaunchedEffect(containerWhitespaceMultiple) {
-            zoomable.containerWhitespaceMultiple = containerWhitespaceMultiple
-        }
-        LaunchedEffect(containerWhitespace) {
-            zoomable.containerWhitespace = if (containerWhitespace) {
-                ContainerWhitespace(
-                    left = 100f,
-                    top = 200f,
-                    right = 300f,
-                    bottom = 400f
-                )
-            } else {
-                ContainerWhitespace.Zero
-            }
-        }
-        LaunchedEffect(readMode) {
-            zoomable.readMode = readMode
-        }
-        LaunchedEffect(disabledGestureTypes) {
-            zoomable.disabledGestureTypes = disabledGestureTypes
-        }
-        LaunchedEffect(keepTransformWhenSameAspectRatioContentSizeChangedEnabled) {
-            zoomable.keepTransformWhenSameAspectRatioContentSizeChanged = keepTransformWhenSameAspectRatioContentSizeChangedEnabled
-        }
-        LaunchedEffect(pausedContinuousTransformTypes) {
-            subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
-        }
-        LaunchedEffect(disabledBackgroundTiles) {
-            subsampling.disabledBackgroundTiles = disabledBackgroundTiles
-        }
-        LaunchedEffect(showTileBounds) {
-            subsampling.showTileBounds = showTileBounds
-        }
-        LaunchedEffect(tileAnimation) {
-            subsampling.tileAnimationSpec =
-                if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
-        }
-        LaunchedEffect(tileMemoryCache) {
-            subsampling.disabledTileImageCache = !tileMemoryCache
-        }
-    }
-    val infoDialogState = rememberMyDialogState()
-
-    val capturableState = rememberCapturableState()
     Box(modifier = Modifier.fillMaxSize()) {
-        content(
-            contentScale.toPlatform(),
-            alignment.toPlatform(),
-            zoomState,
-            capturableState,
-            if (scrollBarEnabled) ScrollBarSpec.Default.copy(color = photoPaletteState.value.containerColor) else null,
-            { infoDialogState.show() },
-        )
+        val settingsService = LocalPlatformContext.current.appSettings
+        val infoDialogState = rememberMyDialogState()
+        val capturableState = rememberCapturableState()
+        val zoomState = createZoomState().apply { bindSettings(settingsService) }
+
+        val rtlLayoutDirectionEnabled by settingsService.rtlLayoutDirectionEnabled.collectAsState()
+        val layoutDirection =
+            if (rtlLayoutDirectionEnabled) LayoutDirection.Rtl else LocalLayoutDirection.current
+        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            val contentScale by settingsService.contentScale.collectAsState()
+            val alignment by settingsService.alignment.collectAsState()
+            val scrollBarEnabled by settingsService.scrollBarEnabled.collectAsState()
+            val contentScope =
+                remember(zoomState, contentScale, alignment, capturableState, scrollBarEnabled) {
+                    ContentScope(
+                        zoomState = zoomState,
+                        contentScale = contentScale.toPlatform(),
+                        alignment = alignment.toPlatform(),
+                        capturableState = capturableState,
+                        scrollBar = if (scrollBarEnabled) ScrollBarSpec.Default.copy(color = photoPaletteState.value.containerColor) else null,
+                        onLongClick = { infoDialogState.show() },
+                    )
+                }
+            with(contentScope) {
+                content()
+            }
+        }
 
         Row(
             Modifier
@@ -296,6 +201,123 @@ fun <T : ZoomState> BaseZoomImageSample(
         }
     }
 }
+
+@Composable
+private fun ZoomState.bindSettings(settingsService: AppSettings) {
+    val threeStepScale by settingsService.threeStepScale.collectAsState()
+    val rubberBandScale by settingsService.rubberBandScale.collectAsState()
+    val readModeEnabled by settingsService.readModeEnabled.collectAsState()
+    val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.collectAsState()
+    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by settingsService.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectAsState()
+    val logLevel by settingsService.logLevel.collectAsState()
+    val animateScale by settingsService.animateScale.collectAsState()
+    val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
+    val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
+    val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
+    val containerWhitespaceMultiple by settingsService.containerWhitespaceMultiple.collectAsState()
+    val containerWhitespace by settingsService.containerWhitespace.collectAsState()
+    val scalesCalculatorName by settingsService.scalesCalculatorName.collectAsState()
+    val scalesMultiple by settingsService.scalesMultiple.collectAsState()
+    val scalesCalculator = remember(scalesCalculatorName, scalesMultiple) {
+        buildScalesCalculator(scalesCalculatorName, scalesMultiple.toFloat())
+    }
+    val pausedContinuousTransformTypes by settingsService.pausedContinuousTransformTypes.collectAsState()
+    val disabledGestureTypes by settingsService.disabledGestureTypes.collectAsState()
+    val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()
+    val showTileBounds by settingsService.showTileBounds.collectAsState()
+    val tileAnimation by settingsService.tileAnimation.collectAsState()
+    val tileMemoryCache by settingsService.tileMemoryCache.collectAsState()
+    val horizontalLayout by settingsService.horizontalPagerLayout.collectAsState()
+
+    val zoomAnimationSpec by remember {
+        derivedStateOf {
+            val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
+            ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
+        }
+    }
+    val readMode by remember {
+        derivedStateOf {
+            val sizeType = when {
+                readModeAcceptedBoth -> ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
+                horizontalLayout -> ReadMode.SIZE_TYPE_VERTICAL
+                else -> ReadMode.SIZE_TYPE_HORIZONTAL
+            }
+            if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
+        }
+    }
+    LaunchedEffect(logLevel) {
+        logger.level = logLevel
+    }
+    LaunchedEffect(threeStepScale) {
+        zoomable.threeStepScale = threeStepScale
+    }
+    LaunchedEffect(rubberBandScale) {
+        zoomable.rubberBandScale = rubberBandScale
+    }
+    LaunchedEffect(zoomAnimationSpec) {
+        zoomable.animationSpec = zoomAnimationSpec
+    }
+    LaunchedEffect(reverseMouseWheelScale) {
+        zoomable.reverseMouseWheelScale = reverseMouseWheelScale
+    }
+    LaunchedEffect(scalesCalculator) {
+        zoomable.scalesCalculator = scalesCalculator
+    }
+    LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
+        zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+    }
+    LaunchedEffect(containerWhitespaceMultiple) {
+        zoomable.containerWhitespaceMultiple = containerWhitespaceMultiple
+    }
+    LaunchedEffect(containerWhitespace) {
+        zoomable.containerWhitespace = if (containerWhitespace) {
+            ContainerWhitespace(
+                left = 100f,
+                top = 200f,
+                right = 300f,
+                bottom = 400f
+            )
+        } else {
+            ContainerWhitespace.Zero
+        }
+    }
+    LaunchedEffect(readMode) {
+        zoomable.readMode = readMode
+    }
+    LaunchedEffect(disabledGestureTypes) {
+        zoomable.disabledGestureTypes = disabledGestureTypes
+    }
+    LaunchedEffect(keepTransformWhenSameAspectRatioContentSizeChangedEnabled) {
+        zoomable.keepTransformWhenSameAspectRatioContentSizeChanged =
+            keepTransformWhenSameAspectRatioContentSizeChangedEnabled
+    }
+    LaunchedEffect(pausedContinuousTransformTypes) {
+        subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
+    }
+    LaunchedEffect(disabledBackgroundTiles) {
+        subsampling.disabledBackgroundTiles = disabledBackgroundTiles
+    }
+    LaunchedEffect(showTileBounds) {
+        subsampling.showTileBounds = showTileBounds
+    }
+    LaunchedEffect(tileAnimation) {
+        subsampling.tileAnimationSpec =
+            if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
+    }
+    LaunchedEffect(tileMemoryCache) {
+        subsampling.disabledTileImageCache = !tileMemoryCache
+    }
+}
+
+@Stable
+data class ContentScope<T : ZoomState>(
+    val zoomState: T,
+    val contentScale: ContentScale,
+    val alignment: Alignment,
+    val capturableState: CapturableState,
+    val scrollBar: ScrollBarSpec?,
+    val onLongClick: () -> Unit
+)
 
 @Composable
 fun ZoomImageTool(

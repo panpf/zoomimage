@@ -16,4 +16,4 @@
 
 package com.github.panpf.zoomimage.sample.ui.common.menu
 
-class MenuDivider
+data class MenuDivider(val title: String? = null)
