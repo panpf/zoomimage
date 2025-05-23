@@ -62,7 +62,7 @@ class SingletonCoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.hugeChina.uri)
+                                data(ResourceImages.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),
@@ -93,11 +93,11 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.containerSize.toString()
             )
             assertEquals(
-                expected = "500 x 359",
+                expected = "500 x 154",
                 actual = zoomState.zoomable.contentSize.toString()
             )
             assertEquals(
-                expected = "6799 x 4882",
+                expected = "2000 x 618",
                 actual = zoomState.zoomable.contentOriginSize.toString()
             )
             assertEquals(
@@ -109,15 +109,15 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.alignment
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(0, 71, 500, 430)",
+                expected = "IntRect.fromLTRB(0, 173, 500, 327)",
                 actual = zoomState.zoomable.contentDisplayRect.toString()
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(0, 0, 500, 359)",
+                expected = "IntRect.fromLTRB(0, 0, 500, 154)",
                 actual = zoomState.zoomable.contentVisibleRect.toString()
             )
             assertEquals(
-                expected = "{16=(2, 2), 8=(4, 3), 4=(7, 5), 2=(14, 10), 1=(28, 20)}",
+                expected = "{4=(2, 1), 2=(4, 2), 1=(8, 3)}",
                 actual = zoomState.subsampling.tileGridSizeMap.toString()
             )
         }
@@ -134,7 +134,7 @@ class SingletonCoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.hugeChina.uri)
+                                data(ResourceImages.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),
@@ -157,11 +157,11 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.containerSize.toString()
             )
             assertEquals(
-                expected = "5704 x 4096",
+                expected = "2000 x 618",
                 actual = zoomState.zoomable.contentSize.toString()
             )
             assertEquals(
-                expected = "6799 x 4882",
+                expected = "0 x 0",
                 actual = zoomState.zoomable.contentOriginSize.toString()
             )
             assertEquals(
@@ -173,15 +173,15 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.alignment
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(-5204, -3596, 500, 500)",
+                expected = "IntRect.fromLTRB(-1500, -118, 500, 500)",
                 actual = zoomState.zoomable.contentDisplayRect.toString()
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(5204, 3596, 5704, 4096)",
+                expected = "IntRect.fromLTRB(1500, 118, 2000, 618)",
                 actual = zoomState.zoomable.contentVisibleRect.toString()
             )
             assertEquals(
-                expected = "{1=(28, 20)}",
+                expected = "{}",
                 actual = zoomState.subsampling.tileGridSizeMap.toString()
             )
         }
@@ -208,7 +208,7 @@ class SingletonCoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.hugeChina.uri)
+                                data(ResourceImages.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),
@@ -239,11 +239,11 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.containerSize.toString()
             )
             assertEquals(
-                expected = "500 x 359",
+                expected = "500 x 154",
                 actual = zoomState.zoomable.contentSize.toString()
             )
             assertEquals(
-                expected = "6799 x 4882",
+                expected = "2000 x 618",
                 actual = zoomState.zoomable.contentOriginSize.toString()
             )
             assertEquals(
@@ -255,15 +255,15 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.alignment
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(0, 71, 500, 430)",
+                expected = "IntRect.fromLTRB(0, 173, 500, 327)",
                 actual = zoomState.zoomable.contentDisplayRect.toString()
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(0, 0, 500, 359)",
+                expected = "IntRect.fromLTRB(0, 0, 500, 154)",
                 actual = zoomState.zoomable.contentVisibleRect.toString()
             )
             assertEquals(
-                expected = "{16=(2, 2), 8=(4, 3), 4=(7, 5), 2=(14, 10), 1=(28, 20)}",
+                expected = "{4=(2, 1), 2=(4, 2), 1=(8, 3)}",
                 actual = zoomState.subsampling.tileGridSizeMap.toString()
             )
         }
@@ -280,7 +280,7 @@ class SingletonCoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.hugeChina.uri)
+                                data(ResourceImages.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),
@@ -303,11 +303,11 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.containerSize.toString()
             )
             assertEquals(
-                expected = "5704 x 4096",
+                expected = "2000 x 618",
                 actual = zoomState.zoomable.contentSize.toString()
             )
             assertEquals(
-                expected = "6799 x 4882",
+                expected = "0 x 0",
                 actual = zoomState.zoomable.contentOriginSize.toString()
             )
             assertEquals(
@@ -319,15 +319,15 @@ class SingletonCoilZoomAsyncImageTest {
                 actual = zoomState.zoomable.alignment
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(-5204, -3596, 500, 500)",
+                expected = "IntRect.fromLTRB(-1500, -118, 500, 500)",
                 actual = zoomState.zoomable.contentDisplayRect.toString()
             )
             assertEquals(
-                expected = "IntRect.fromLTRB(5204, 3596, 5704, 4096)",
+                expected = "IntRect.fromLTRB(1500, 118, 2000, 618)",
                 actual = zoomState.zoomable.contentVisibleRect.toString()
             )
             assertEquals(
-                expected = "{1=(28, 20)}",
+                expected = "{}",
                 actual = zoomState.subsampling.tileGridSizeMap.toString()
             )
         }
