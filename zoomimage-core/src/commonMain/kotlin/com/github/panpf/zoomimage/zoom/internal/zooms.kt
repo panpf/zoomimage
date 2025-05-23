@@ -215,7 +215,7 @@ fun calculateReadModeTransform(
         return null
     }
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
-
+    // TODO Tail should be positioned in RTL mode
     val baseTransformHelper = BaseTransformHelper(
         containerSize = containerSize,
         contentSize = contentSize,
