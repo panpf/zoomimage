@@ -48,7 +48,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -96,7 +95,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -344,7 +342,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -782,7 +779,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -1031,7 +1027,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -1225,7 +1220,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -1332,12 +1326,13 @@ class ZoomableCoreTest {
         }
     }
 
+    // TODO test rtlLayoutDirection
+
     @Test
     fun testSetReadMode() = runTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -1468,7 +1463,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -1527,7 +1521,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -1617,7 +1610,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -1678,7 +1670,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = { }
         )
@@ -1761,7 +1752,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = { }
         )
@@ -1851,7 +1841,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = { }
         )
@@ -1950,7 +1939,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = { }
         )
@@ -2002,7 +1990,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {
                 transformChangedCount += 1
@@ -2195,7 +2182,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {
                 transformChangedCount += 1
@@ -2388,7 +2374,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {
                 transformChangedCount += 1
@@ -2530,7 +2515,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {
                 transformChangedCount += 1
@@ -2721,7 +2705,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -2905,7 +2888,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -3002,7 +2984,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -3121,7 +3102,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -3304,7 +3284,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -3355,7 +3334,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = { zoomable ->
                 onTransformChangedCount++
@@ -3456,7 +3434,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {
                 continuousTransformTypes.add(it.continuousTransformType)
@@ -3557,7 +3534,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -3859,7 +3835,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {
                 transformChangedCount += 1
@@ -3947,7 +3922,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = { count++ }
         )
@@ -3985,7 +3959,6 @@ class ZoomableCoreTest {
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
             module = "ZoomableCoreTest",
-            rtlLayoutDirection = false,
             animationAdapter = TestAnimationAdapter(),
             onTransformChanged = {}
         )
@@ -4041,7 +4014,6 @@ class ZoomableCoreTest {
                 val zoomableCore = ZoomableCore(
                     logger = Logger(tag = "Test"),
                     module = "ZoomableCoreTest",
-                    rtlLayoutDirection = rtlLayoutDirection,
                     animationAdapter = TestAnimationAdapter(),
                     onTransformChanged = {}
                 )
@@ -4050,6 +4022,7 @@ class ZoomableCoreTest {
                     zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
                     zoomableCore.setContentSize(contentSize)
                     zoomableCore.setAlignment(alignment)
+                    zoomableCore.setRtlLayoutDirection(rtlLayoutDirection)
                 }
                 zoomableCore.baseTransform
             }
@@ -4092,12 +4065,12 @@ class ZoomableCoreTest {
                 val zoomableCore = ZoomableCore(
                     logger = Logger(tag = "Test"),
                     module = "ZoomableCoreTest",
-                    rtlLayoutDirection = rtlLayoutDirection,
                     animationAdapter = TestAnimationAdapter(),
                     onTransformChanged = {}
                 )
 
                 withContext(Dispatchers.Main) {
+                    zoomableCore.setRtlLayoutDirection(rtlLayoutDirection)
                     zoomableCore.setContainerSize(IntSizeCompat(1080, 1920))
                     zoomableCore.setContentSize(IntSizeCompat(500, 300))
                     zoomableCore.setContainerWhitespace(containerWhitespace)

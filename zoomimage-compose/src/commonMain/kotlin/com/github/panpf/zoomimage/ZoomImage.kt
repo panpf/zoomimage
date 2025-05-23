@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -103,6 +104,7 @@ fun ZoomImage(
 ) {
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
+    zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
     zoomState.zoomable.contentSize = remember(painter.intrinsicSize) {
         painter.intrinsicSize.round()
     }

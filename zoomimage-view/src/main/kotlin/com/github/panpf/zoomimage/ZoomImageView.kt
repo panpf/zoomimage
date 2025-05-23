@@ -24,6 +24,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -135,9 +136,10 @@ open class ZoomImageView @JvmOverloads constructor(
         super.setScaleType(ScaleType.MATRIX)
         wrappedScaleType = initScaleType
 
-        val zoomableEngine = ZoomableEngine(logger, this).apply {
+        val zoomableEngine = ZoomableEngine(logger, view = this).apply {
             contentScaleState.value = initScaleType.toContentScale()
             alignmentState.value = initScaleType.toAlignment()
+            rtlLayoutDirectionState.value = view.layoutDirection == View.LAYOUT_DIRECTION_RTL
         }
         val subsamplingEngine = SubsamplingEngine(zoomableEngine)
 

@@ -23,6 +23,7 @@ class ResetParamsTest {
             rotation = 0,
             contentScale = ContentScaleCompat.Fit,
             alignment = AlignmentCompat.Center,
+            rtlLayoutDirection = false,
             readMode = null,
             scalesCalculator = ScalesCalculator.Fixed,
             limitOffsetWithinBaseVisibleRect = true,
@@ -41,6 +42,7 @@ class ResetParamsTest {
         val params10 = params.copy(limitOffsetWithinBaseVisibleRect = false)
         val params11 = params.copy(containerWhitespaceMultiple = 2f)
         val params12 = params.copy(containerWhitespace = ContainerWhitespace(5f))
+        val params13 = params.copy(rtlLayoutDirection = true)
 
         assertEquals(expected = params, actual = params1)
         assertNotEquals(illegal = params, actual = params2)
@@ -54,6 +56,7 @@ class ResetParamsTest {
         assertNotEquals(illegal = params, actual = params10)
         assertNotEquals(illegal = params, actual = params11)
         assertNotEquals(illegal = params, actual = params12)
+        assertNotEquals(illegal = params, actual = params13)
 
         assertEquals(expected = params.hashCode(), actual = params1.hashCode())
         assertNotEquals(illegal = params.hashCode(), actual = params2.hashCode())
@@ -67,6 +70,7 @@ class ResetParamsTest {
         assertNotEquals(illegal = params.hashCode(), actual = params10.hashCode())
         assertNotEquals(illegal = params.hashCode(), actual = params11.hashCode())
         assertNotEquals(illegal = params.hashCode(), actual = params12.hashCode())
+        assertNotEquals(illegal = params.hashCode(), actual = params13.hashCode())
     }
 
     @Test
@@ -78,6 +82,7 @@ class ResetParamsTest {
             rotation = 0,
             contentScale = ContentScaleCompat.Fit,
             alignment = AlignmentCompat.Center,
+            rtlLayoutDirection = false,
             readMode = null,
             scalesCalculator = ScalesCalculator.Fixed,
             limitOffsetWithinBaseVisibleRect = true,
@@ -85,7 +90,7 @@ class ResetParamsTest {
             containerWhitespace = ContainerWhitespace.Zero
         )
         assertEquals(
-            expected = "ResetParams(containerSize=1000 x 2000, contentSize=200 x 100, contentOriginSize=800 x 400, rotation=0, contentScale=${ContentScaleCompat.Fit}, alignment=BiasAlignmentCompat(horizontalBias=0.0, verticalBias=0.0), readMode=null, scalesCalculator=FixedScalesCalculator(multiple=3.0), limitOffsetWithinBaseVisibleRect=true, containerWhitespaceMultiple=1.0, containerWhitespace=ContainerWhitespace(left=0.0, top=0.0, right=0.0, bottom=0.0))",
+            expected = "ResetParams(containerSize=1000 x 2000, contentSize=200 x 100, contentOriginSize=800 x 400, rotation=0, contentScale=${ContentScaleCompat.Fit}, alignment=BiasAlignmentCompat(horizontalBias=0.0, verticalBias=0.0), rtlLayoutDirection=false, readMode=null, scalesCalculator=FixedScalesCalculator(multiple=3.0), limitOffsetWithinBaseVisibleRect=true, containerWhitespaceMultiple=1.0, containerWhitespace=ContainerWhitespace(left=0.0, top=0.0, right=0.0, bottom=0.0))",
             actual = params.toString()
         )
     }
@@ -99,6 +104,7 @@ class ResetParamsTest {
             rotation = 0,
             contentScale = ContentScaleCompat.Fit,
             alignment = AlignmentCompat.Center,
+            rtlLayoutDirection = false,
             readMode = null,
             scalesCalculator = ScalesCalculator.Fixed,
             limitOffsetWithinBaseVisibleRect = true,
@@ -117,6 +123,7 @@ class ResetParamsTest {
         val params10 = params.copy(limitOffsetWithinBaseVisibleRect = false)
         val params11 = params.copy(containerWhitespaceMultiple = 2f)
         val params12 = params.copy(containerWhitespace = ContainerWhitespace(5f))
+        val params13 = params.copy(rtlLayoutDirection = true)
 
         params.diff(params1).apply {
             assertEquals(expected = true, actual = isNotChanged)
@@ -136,6 +143,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params2).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -155,6 +163,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params3).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -174,6 +183,7 @@ class ResetParamsTest {
             assertEquals(expected = true, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = true, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params4).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -193,6 +203,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = true, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = true, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params5).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -212,6 +223,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params6).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -231,6 +243,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params7).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -250,6 +263,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params8).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -269,6 +283,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params9).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -288,6 +303,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params10).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -310,6 +326,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params11).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -332,6 +349,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params12).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -354,6 +372,30 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
+        }
+        params.diff(params13).apply {
+            assertEquals(expected = false, actual = isNotChanged)
+            assertEquals(expected = false, actual = isContainerSizeChanged)
+            assertEquals(expected = false, actual = isContentSizeChanged)
+            assertEquals(expected = false, actual = isContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRotationChanged)
+            assertEquals(expected = false, actual = isContentScaleChanged)
+            assertEquals(expected = false, actual = isAlignmentChanged)
+            assertEquals(expected = false, actual = isReadModeChanged)
+            assertEquals(expected = false, actual = isScalesCalculatorChanged)
+            assertEquals(expected = false, actual = isLimitOffsetWithinBaseVisibleRectChanged)
+            assertEquals(expected = false, actual = isContainerWhitespaceMultipleChanged)
+            assertEquals(expected = false, actual = isContainerWhitespaceChanged)
+            assertEquals(
+                expected = "ResetParamsDiffResult(rtlLayoutDirection)",
+                actual = toString()
+            )
+            assertEquals(expected = false, actual = isOnlyContainerSizeChanged)
+            assertEquals(expected = false, actual = isOnlyContentSizeChanged)
+            assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = true, actual = isRtlLayoutDirectionChanged)
         }
     }
 
@@ -366,6 +408,7 @@ class ResetParamsTest {
             rotation = 0,
             contentScale = ContentScaleCompat.Fit,
             alignment = AlignmentCompat.Center,
+            rtlLayoutDirection = false,
             readMode = null,
             scalesCalculator = ScalesCalculator.Fixed,
             limitOffsetWithinBaseVisibleRect = true,
@@ -384,6 +427,7 @@ class ResetParamsTest {
         val params10 = params9.copy(limitOffsetWithinBaseVisibleRect = false)
         val params11 = params10.copy(containerWhitespaceMultiple = 2f)
         val params12 = params11.copy(containerWhitespace = ContainerWhitespace(5f))
+        val params13 = params12.copy(rtlLayoutDirection = true)
         params.diff(params1).apply {
             assertEquals(expected = true, actual = isNotChanged)
             assertEquals(expected = false, actual = isContainerSizeChanged)
@@ -402,6 +446,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params2).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -421,6 +466,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params3).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -440,6 +486,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params4).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -459,6 +506,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params5).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -478,6 +526,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params6).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -497,6 +546,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params7).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -516,6 +566,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params8).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -535,6 +586,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params9).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -554,6 +606,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params10).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -573,6 +626,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params11).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -592,6 +646,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
         params.diff(params12).apply {
             assertEquals(expected = false, actual = isNotChanged)
@@ -611,6 +666,30 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
+        }
+        params.diff(params13).apply {
+            assertEquals(expected = false, actual = isNotChanged)
+            assertEquals(expected = true, actual = isContainerSizeChanged)
+            assertEquals(expected = true, actual = isContentSizeChanged)
+            assertEquals(expected = true, actual = isContentOriginSizeChanged)
+            assertEquals(expected = true, actual = isRotationChanged)
+            assertEquals(expected = true, actual = isContentScaleChanged)
+            assertEquals(expected = true, actual = isAlignmentChanged)
+            assertEquals(expected = true, actual = isReadModeChanged)
+            assertEquals(expected = true, actual = isScalesCalculatorChanged)
+            assertEquals(expected = true, actual = isLimitOffsetWithinBaseVisibleRectChanged)
+            assertEquals(expected = true, actual = isContainerWhitespaceMultipleChanged)
+            assertEquals(expected = true, actual = isContainerWhitespaceChanged)
+            assertEquals(
+                expected = "ResetParamsDiffResult(containerSize, contentSize, contentOriginSize, rotation, contentScale, alignment, rtlLayoutDirection, readMode, scalesCalculator, limitOffsetWithinBaseVisibleRect, containerWhitespaceMultiple, containerWhitespace)",
+                actual = toString()
+            )
+            assertEquals(expected = false, actual = isOnlyContainerSizeChanged)
+            assertEquals(expected = false, actual = isOnlyContentSizeChanged)
+            assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = true, actual = isRtlLayoutDirectionChanged)
         }
     }
 
@@ -623,6 +702,7 @@ class ResetParamsTest {
             rotation = 0,
             contentScale = ContentScaleCompat.Fit,
             alignment = AlignmentCompat.Center,
+            rtlLayoutDirection = false,
             readMode = null,
             scalesCalculator = ScalesCalculator.Fixed,
             limitOffsetWithinBaseVisibleRect = true,
@@ -648,6 +728,7 @@ class ResetParamsTest {
             assertEquals(expected = false, actual = isOnlyContentSizeChanged)
             assertEquals(expected = false, actual = isOnlyContentOriginSizeChanged)
             assertEquals(expected = true, actual = isOnlyContentSizeOrContentOriginSizeChanged)
+            assertEquals(expected = false, actual = isRtlLayoutDirectionChanged)
         }
     }
 }

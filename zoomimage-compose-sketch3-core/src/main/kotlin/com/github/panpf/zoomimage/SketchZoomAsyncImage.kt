@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.compose.AsyncImage
@@ -362,6 +363,7 @@ fun SketchZoomAsyncImage(
 ) {
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
+    zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
 
     LaunchedEffect(zoomState.subsampling) {
         zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)

@@ -6,6 +6,7 @@
 
 * improve: SketchZoomAsyncImage 和 CoilZoomAsyncImage 现在直接基于原本的 AsyncImage 组件
 * improve: Modifier.zoomable() 现在减少了一个 ModifierNodeElement
+* new: ZoomableState 新增 layoutDirection 属性，ZoomableEngine 新增 rtlLayoutDirectionState 属性
 
 # 1.3.0
 

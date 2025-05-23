@@ -6,7 +6,6 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveDownKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveLeftKeyMatchers
@@ -200,7 +199,7 @@ class MoveKeyHandlerTest {
     @Test
     fun testHandle() {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
-        val zoomableState = ZoomableState(Logger("Test"), LayoutDirection.Ltr)
+        val zoomableState = ZoomableState(Logger("Test"))
         val scaleKeyHandler2 =
             MoveKeyHandler(keyMatchers = DefaultMoveUpKeyMatchers, moveArrow = MoveArrow.Up)
         assertEquals(

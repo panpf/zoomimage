@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -202,6 +203,7 @@ fun CoilZoomAsyncImage(
 ) {
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
+    zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
 
     LaunchedEffect(zoomState.subsampling) {
         zoomState.subsampling.tileImageCache = CoilTileImageCache(imageLoader)

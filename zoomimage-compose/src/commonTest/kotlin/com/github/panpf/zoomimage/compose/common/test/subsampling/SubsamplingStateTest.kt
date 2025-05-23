@@ -6,7 +6,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
@@ -54,7 +53,7 @@ class SubsamplingStateTest {
     @Test
     fun testConstructor() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertSame(expected = zoomable, actual = subsampling.zoomableState)
@@ -66,7 +65,7 @@ class SubsamplingStateTest {
     @Test
     fun testLogger() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertSame(expected = logger, actual = subsampling.logger)
@@ -75,7 +74,7 @@ class SubsamplingStateTest {
     @Test
     fun testTileImageCache() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(expected = null, actual = subsampling.tileImageCache)
@@ -88,7 +87,7 @@ class SubsamplingStateTest {
     @Test
     fun testDisabledTileImageCache() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(expected = false, actual = subsampling.disabledTileImageCache)
@@ -100,7 +99,7 @@ class SubsamplingStateTest {
     @Test
     fun testTileAnimationSpec() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(expected = TileAnimationSpec.Default, actual = subsampling.tileAnimationSpec)
@@ -112,7 +111,7 @@ class SubsamplingStateTest {
     @Test
     fun testPausedContinuousTransformTypes() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(
@@ -131,7 +130,7 @@ class SubsamplingStateTest {
     @Test
     fun testDisabledBackgroundTiles() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(expected = false, actual = subsampling.disabledBackgroundTiles)
@@ -143,7 +142,7 @@ class SubsamplingStateTest {
     @Test
     fun testStopped() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(expected = false, actual = subsampling.stopped)
@@ -155,7 +154,7 @@ class SubsamplingStateTest {
     @Test
     fun testShowTileBounds() {
         val logger = Logger("Test")
-        val zoomable = ZoomableState(logger, LayoutDirection.Ltr)
+        val zoomable = ZoomableState(logger)
         val testLifecycle = TestLifecycle()
         val subsampling = SubsamplingState(zoomable, testLifecycle)
         assertEquals(expected = false, actual = subsampling.showTileBounds)

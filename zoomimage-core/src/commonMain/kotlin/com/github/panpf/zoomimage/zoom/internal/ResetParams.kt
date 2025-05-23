@@ -35,6 +35,7 @@ data class ResetParams(
     val rotation: Int,
     val contentScale: ContentScaleCompat,
     val alignment: AlignmentCompat,
+    val rtlLayoutDirection: Boolean,
     val readMode: ReadMode?,
     val scalesCalculator: ScalesCalculator,
     val limitOffsetWithinBaseVisibleRect: Boolean,
@@ -67,6 +68,9 @@ fun ResetParams.diff(other: ResetParams?): ResetParamsDiffResult {
     if (other == null || alignment != other.alignment) {
         result = result or ResetParamsDiffResult.FLAG_ALIGNMENT
     }
+    if (other == null || rtlLayoutDirection != other.rtlLayoutDirection) {
+        result = result or ResetParamsDiffResult.FLAG_RTL_LAYOUT_DIRECTION
+    }
     if (other == null || readMode != other.readMode) {
         result = result or ResetParamsDiffResult.FLAG_READ_MODE
     }
@@ -93,6 +97,7 @@ class ResetParamsDiffResult(val result: Int) {
     val isRotationChanged: Boolean = result and FLAG_ROTATION != 0
     val isContentScaleChanged: Boolean = result and FLAG_CONTENT_SCALE != 0
     val isAlignmentChanged: Boolean = result and FLAG_ALIGNMENT != 0
+    val isRtlLayoutDirectionChanged: Boolean = result and FLAG_RTL_LAYOUT_DIRECTION != 0
     val isReadModeChanged: Boolean = result and FLAG_READ_MODE != 0
     val isScalesCalculatorChanged: Boolean = result and FLAG_SCALES_CALCULATOR != 0
     val isLimitOffsetWithinBaseVisibleRectChanged: Boolean =
@@ -109,6 +114,7 @@ class ResetParamsDiffResult(val result: Int) {
         if (isRotationChanged) count++
         if (isContentScaleChanged) count++
         if (isAlignmentChanged) count++
+        if (isRtlLayoutDirectionChanged) count++
         if (isReadModeChanged) count++
         if (isScalesCalculatorChanged) count++
         if (isLimitOffsetWithinBaseVisibleRectChanged) count++
@@ -133,6 +139,7 @@ class ResetParamsDiffResult(val result: Int) {
         if (isRotationChanged) properties.add("rotation")
         if (isContentScaleChanged) properties.add("contentScale")
         if (isAlignmentChanged) properties.add("alignment")
+        if (isRtlLayoutDirectionChanged) properties.add("rtlLayoutDirection")
         if (isReadModeChanged) properties.add("readMode")
         if (isScalesCalculatorChanged) properties.add("scalesCalculator")
         if (isLimitOffsetWithinBaseVisibleRectChanged) properties.add("limitOffsetWithinBaseVisibleRect")
@@ -153,6 +160,7 @@ class ResetParamsDiffResult(val result: Int) {
         const val FLAG_LIMIT_OFFSET_WITHIN_BASE_VISIBLE_RECT = 0x100
         const val FLAG_CONTAINER_WHITESPACE_MULTIPLE = 0x200
         const val FLAG_CONTAINER_WHITESPACE = 0x400
+        const val FLAG_RTL_LAYOUT_DIRECTION = 0x800
     }
 
     override fun equals(other: Any?): Boolean {

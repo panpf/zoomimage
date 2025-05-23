@@ -61,7 +61,6 @@ import kotlinx.coroutines.coroutineScope
 class ZoomableCore constructor(
     val logger: Logger,
     val module: String,
-    val rtlLayoutDirection: Boolean,
     val animationAdapter: AnimationAdapter,
     val onTransformChanged: (zoomableCore: ZoomableCore) -> Unit,
 ) {
@@ -79,6 +78,8 @@ class ZoomableCore constructor(
     var contentScale: ContentScaleCompat = ContentScaleCompat.Fit
         private set
     var alignment: AlignmentCompat = AlignmentCompat.Center
+        private set
+    var rtlLayoutDirection: Boolean = false
         private set
     var readMode: ReadMode? = null
         private set
@@ -436,6 +437,13 @@ class ZoomableCore constructor(
         }
     }
 
+    suspend fun setRtlLayoutDirection(rtlLayoutDirection: Boolean) {
+        if (this.rtlLayoutDirection != rtlLayoutDirection) {
+            this.rtlLayoutDirection = rtlLayoutDirection
+            reset("rtlLayoutDirectionChanged")
+        }
+    }
+
     suspend fun setReadMode(readMode: ReadMode?) {
         if (this.readMode != readMode) {
             this.readMode = readMode
@@ -502,6 +510,7 @@ class ZoomableCore constructor(
             rotation = rotation,
             contentScale = contentScale,
             alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
             limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect,

@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -73,9 +72,8 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
-    val layoutDirection = LocalLayoutDirection.current
-    val zoomableState = remember(logger, layoutDirection) {
-        ZoomableState(logger, layoutDirection)
+    val zoomableState = remember(logger) {
+        ZoomableState(logger)
     }
     return zoomableState
 }
@@ -86,14 +84,14 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
  * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomableStateTest
  */
 @Stable
-class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : RememberObserver {
+@Suppress("RedundantConstructorKeyword")
+class ZoomableState constructor(val logger: Logger) : RememberObserver {
 
     private var rememberedCount = 0
     private var coroutineScope: CoroutineScope? = null
     private val zoomableCore = ZoomableCore(
         logger = logger,
         module = "ZoomableState",
-        rtlLayoutDirection = layoutDirection == LayoutDirection.Rtl,
         animationAdapter = ComposeAnimationAdapter(),
         onTransformChanged = {
             baseTransform = it.baseTransform.toPlatform()
@@ -148,6 +146,11 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
      * The alignment of the content, usually set by ZoomImage component
      */
     var alignment: Alignment by mutableStateOf(zoomableCore.alignment.toPlatform())
+
+    /**
+     * The layout direction of the content, usually set by ZoomImage component
+     */
+    var layoutDirection: LayoutDirection by mutableStateOf(if (zoomableCore.rtlLayoutDirection) LayoutDirection.Rtl else LayoutDirection.Ltr)
 
     /**
      * Setup whether to enable read mode and configure read mode
@@ -592,6 +595,11 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { layoutDirection }.collect {
+                zoomableCore.setRtlLayoutDirection(layoutDirection == LayoutDirection.Rtl)
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { readMode }.collect {
                 zoomableCore.setReadMode(it)
             }
@@ -684,6 +692,7 @@ class ZoomableState(val logger: Logger, val layoutDirection: LayoutDirection) : 
                 "contentOriginSize=${contentOriginSize.toShortString()}, " +
                 "contentScale=${contentScale.name}, " +
                 "alignment=${alignment.name}, " +
+                "layoutDirection=${layoutDirection.name}, " +
                 "minScale=${minScale.format(4)}, " +
                 "mediumScale=${mediumScale.format(4)}, " +
                 "maxScale=${maxScale.format(4)}, " +

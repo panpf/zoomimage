@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.compose.common.test.zoom.internal
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.unit.LayoutDirection
 import com.github.panpf.zoomimage.compose.util.AssistKey.Shift
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -24,7 +23,7 @@ class ZoomKeyHandlerTest {
     @Test
     fun testMatcherZoomKeyHandler() = runTest {
         val coroutineScope = CoroutineScope(coroutineContext)
-        val zoomableState = ZoomableState(Logger("Test"), LayoutDirection.Ltr)
+        val zoomableState = ZoomableState(Logger("Test"))
         val callbacks = mutableListOf<String>()
         val keyHandler = object : MatcherZoomKeyHandler(
             keyMatchers = listOf(

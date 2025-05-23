@@ -129,9 +129,9 @@ class ZoomableEngineTest {
 
         zoomable.alignmentState.value = AlignmentCompat.TopStart
         assertEquals(expected = AlignmentCompat.TopStart, actual = zoomable.alignmentState.value)
-
-        // TODO test Alignment LayoutDirection
     }
+
+    // TODO test rtlLayoutDirection
 
     @Test
     fun testReadMode() {

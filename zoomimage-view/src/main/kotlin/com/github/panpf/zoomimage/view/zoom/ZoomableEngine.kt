@@ -56,13 +56,13 @@ import kotlinx.coroutines.launch
  *
  * @see com.github.panpf.zoomimage.view.test.zoom.ZoomableEngineTest
  */
-class ZoomableEngine(val logger: Logger, val view: View) {
+@Suppress("RedundantConstructorKeyword")
+class ZoomableEngine constructor(val logger: Logger, val view: View) {
 
     private var coroutineScope: CoroutineScope? = null
     private val zoomableCore = ZoomableCore(
         logger = logger,
         module = "ZoomableEngine",
-        rtlLayoutDirection = view.layoutDirection == View.LAYOUT_DIRECTION_RTL,
         animationAdapter = ViewAnimationAdapter(view),
         onTransformChanged = {
             _baseTransformState.value = it.baseTransform
@@ -120,6 +120,12 @@ class ZoomableEngine(val logger: Logger, val view: View) {
      * The alignment of the content, usually set by [ZoomImageView] component
      */
     val alignmentState: MutableStateFlow<AlignmentCompat> = MutableStateFlow(zoomableCore.alignment)
+
+    /**
+     * The layout direction of the content, usually set by [ZoomImageView] component
+     */
+    val rtlLayoutDirectionState: MutableStateFlow<Boolean> =
+        MutableStateFlow(zoomableCore.rtlLayoutDirection)
 
     /**
      * Setup whether to enable read mode and configure read mode
@@ -575,6 +581,11 @@ class ZoomableEngine(val logger: Logger, val view: View) {
         coroutineScope.launch(Dispatchers.Main.immediate) {
             alignmentState.collect {
                 zoomableCore.setAlignment(it)
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            rtlLayoutDirectionState.collect {
+                zoomableCore.setRtlLayoutDirection(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
