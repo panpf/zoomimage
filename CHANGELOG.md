@@ -4,6 +4,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 # new
 
+* fix: Reading mode in RTL mode should position the initial offset to the
+  end. [#84](https://github.com/panpf/zoomimage/issues/84)
 * improve: SketchZoomAsyncImage and CoilZoomAsyncImage are now directly based on the original
   AsyncImage component
 * improve: Modifier.zoomable() now reduces one ModifierNodeElement

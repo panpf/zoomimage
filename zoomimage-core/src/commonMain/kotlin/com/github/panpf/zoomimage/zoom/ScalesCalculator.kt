@@ -112,6 +112,7 @@ data class DynamicScalesCalculator(
     val multiple: Float = MULTIPLE,
 ) : ScalesCalculator {
 
+    @Deprecated("use calculateWithBase instead")
     override fun calculate(
         containerSize: IntSizeCompat,
         contentSize: IntSizeCompat,
@@ -173,6 +174,7 @@ data class FixedScalesCalculator(
     val multiple: Float = MULTIPLE
 ) : ScalesCalculator {
 
+    @Deprecated("use calculateWithBase instead")
     override fun calculate(
         containerSize: IntSizeCompat,
         contentSize: IntSizeCompat,

@@ -32,7 +32,6 @@ import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.util.format
-import com.github.panpf.zoomimage.compose.util.rtlFlipped
 import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
@@ -117,7 +116,8 @@ fun Modifier.zooming(
                     containerSize = zoomable.containerSize.toCompat(),
                     contentSize = zoomable.contentSize.toCompat(),
                     contentScale = zoomable.contentScale.toCompat(),
-                    alignment = zoomable.alignment.rtlFlipped(zoomable.layoutDirection).toCompat(),
+                    alignment = zoomable.alignment.toCompat(),
+                    rtlLayoutDirection = zoomable.layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl,
                     rotation = 0
                 )
                 scaleX = 1f / baseTransform.scaleX

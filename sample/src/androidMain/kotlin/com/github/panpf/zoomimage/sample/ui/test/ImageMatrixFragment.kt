@@ -44,6 +44,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
     private val cacheUserMatrix = Matrix()
     private val cacheDisplayMatrix = Matrix()
     private var scaleType = ScaleType.FIT_CENTER
+    private var rtlLayoutDirection = false
     private var viewSize = IntSizeCompat.Zero
     private var rotation = 0
     private var horImage = true
@@ -89,6 +90,18 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
                         updateMatrix(binding)
                     }
                 }.show()
+            }
+            setName()
+        }
+
+        binding.rtlButton.apply {
+            val setName = {
+                text = if (rtlLayoutDirection) "LTR" else "RTL"
+            }
+            setOnClickListener {
+                rtlLayoutDirection = !rtlLayoutDirection
+                setName()
+                updateMatrix(binding)
             }
             setName()
         }
@@ -181,6 +194,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
                 contentSize = drawableSize,
                 contentScale = scaleType.toContentScale(),
                 alignment = scaleType.toAlignment(),
+                rtlLayoutDirection = rtlLayoutDirection,
                 rotation = rotation,
             )
             require(transform.scale.scaleX > 0f && transform.scale.scaleY > 0f) {

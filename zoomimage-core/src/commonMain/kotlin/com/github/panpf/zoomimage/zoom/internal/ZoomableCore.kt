@@ -149,6 +149,7 @@ class ZoomableCore constructor(
         val currentUserTransform = userTransform
         val contentScale = contentScale
         val alignment = alignment
+        val rtlLayoutDirection = rtlLayoutDirection
         val rotation = rotation
 
         stopAllAnimation("scale")
@@ -161,7 +162,8 @@ class ZoomableCore constructor(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             userScale = currentUserScale,
             userOffset = currentUserOffset,
@@ -286,6 +288,7 @@ class ZoomableCore constructor(
             contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val contentScale = contentScale
         val alignment = alignment
+        val rtlLayoutDirection = rtlLayoutDirection
         val rotation = rotation
         val currentBaseTransform = baseTransform
         val currentUserTransform = userTransform
@@ -296,7 +299,8 @@ class ZoomableCore constructor(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             contentPoint = contentPoint,
         )
@@ -383,12 +387,14 @@ class ZoomableCore constructor(
         val currentUserTransform = userTransform
         val contentScale = contentScale
         val alignment = alignment
+        val rtlLayoutDirection = rtlLayoutDirection
         val rotation = rotation
         val contentPoint = touchPointToContentPoint(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
             userOffset = currentUserTransform.offset,
@@ -530,7 +536,8 @@ class ZoomableCore constructor(
             contentSize = newResetParams.contentSize,
             contentOriginSize = newResetParams.contentOriginSize,
             contentScale = newResetParams.contentScale,
-            alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = newResetParams.alignment,
+            rtlLayoutDirection = newResetParams.rtlLayoutDirection,
             rotation = newResetParams.rotation,
             readMode = newResetParams.readMode,
             scalesCalculator = newResetParams.scalesCalculator,
@@ -559,7 +566,8 @@ class ZoomableCore constructor(
                     newContainerSize = newResetParams.containerSize,
                     contentSize = newResetParams.contentSize,
                     contentScale = newResetParams.contentScale,
-                    alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+                    alignment = newResetParams.alignment,
+                    rtlLayoutDirection = newResetParams.rtlLayoutDirection,
                     rotation = newResetParams.rotation,
                     transform = transform,
                 )
@@ -630,14 +638,16 @@ class ZoomableCore constructor(
             containerSize = newResetParams.containerSize,
             contentSize = newResetParams.contentSize,
             contentScale = newResetParams.contentScale,
-            alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = newResetParams.alignment,
+            rtlLayoutDirection = newResetParams.rtlLayoutDirection,
             rotation = newResetParams.rotation,
         )
         contentBaseVisibleRect = calculateContentBaseVisibleRect(
             containerSize = newResetParams.containerSize,
             contentSize = newResetParams.contentSize,
             contentScale = newResetParams.contentScale,
-            alignment = newResetParams.alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = newResetParams.alignment,
+            rtlLayoutDirection = newResetParams.rtlLayoutDirection,
             rotation = newResetParams.rotation,
         )
         baseTransform = newBaseTransform
@@ -772,8 +782,10 @@ class ZoomableCore constructor(
             ?: return@coroutineScope false
         val contentScale = contentScale
         val alignment = alignment
+        val rtlLayoutDirection = rtlLayoutDirection
         val rotation = rotation
         val currentUserTransform = userTransform
+        val limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
 
         stopAllAnimation("fling")
 
@@ -782,7 +794,8 @@ class ZoomableCore constructor(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
@@ -872,7 +885,8 @@ class ZoomableCore constructor(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             userScale = userScale,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
@@ -935,7 +949,8 @@ class ZoomableCore constructor(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
@@ -944,7 +959,8 @@ class ZoomableCore constructor(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
@@ -954,7 +970,8 @@ class ZoomableCore constructor(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = alignment.rtlFlipped(rtlLayoutDirection),
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
             rotation = rotation,
             userScale = userTransform.scaleX,
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,

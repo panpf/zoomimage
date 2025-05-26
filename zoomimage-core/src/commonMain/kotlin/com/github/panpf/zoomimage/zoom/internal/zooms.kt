@@ -54,6 +54,7 @@ import com.github.panpf.zoomimage.zoom.isBottom
 import com.github.panpf.zoomimage.zoom.isEnd
 import com.github.panpf.zoomimage.zoom.isStart
 import com.github.panpf.zoomimage.zoom.isTop
+import com.github.panpf.zoomimage.zoom.rtlFlipped
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
@@ -157,12 +158,14 @@ fun calculateContentRotateOrigin(
  * Calculate the basic transformation of content. The basic transformation is affected by contentScale, alignment, and rotation.
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateBaseTransform
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateBaseTransformWithRTL
  */
 fun calculateBaseTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
 ): TransformCompat {
     /*
@@ -182,6 +185,7 @@ fun calculateBaseTransform(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        ltrLayout = !rtlLayoutDirection,
         rotation = rotation,
     )
     return baseTransformHelper.transform
@@ -193,12 +197,14 @@ fun calculateBaseTransform(
  * allowing the user to read the picture content immediately
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateReadModeTransform
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateReadModeTransformWithRTL
  */
 fun calculateReadModeTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     readMode: ReadMode?,
 ): TransformCompat? {
@@ -215,12 +221,12 @@ fun calculateReadModeTransform(
         return null
     }
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
-    // TODO Tail should be positioned in RTL mode
     val baseTransformHelper = BaseTransformHelper(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        ltrLayout = !rtlLayoutDirection,
         rotation = rotation,
     )
     val rotatedContentSize = baseTransformHelper.rotatedContentSize
@@ -232,8 +238,20 @@ fun calculateReadModeTransform(
     val heightScale = containerSize.height / rotatedContentSize.height.toFloat()
     val fillScale = max(widthScale, heightScale)
 
-    val readModeOffset =
+    val moveToLeftOffset =
         baseTransformHelper.rotateRectifyOffset / baseTransformHelper.scaleFactor.scaleX * fillScale
+    val readModeOffset = if (rtlLayoutDirection) {
+        val scaledRotatedContentSize = rotatedContentSize * fillScale
+        if (scaledRotatedContentSize.width > containerSize.width) {
+            // If the content is wider than the container, align it to the end
+            val x = containerSize.width.toFloat() - scaledRotatedContentSize.width
+            moveToLeftOffset + OffsetCompat(x, 0f)
+        } else {
+            moveToLeftOffset
+        }
+    } else {
+        moveToLeftOffset
+    }
     val rotationOrigin = calculateContentRotateOrigin(
         containerSize = containerSize,
         contentSize = contentSize
@@ -299,9 +317,9 @@ fun calculateScales(
 fun calculateMinScale(baseScale: Float, initialScale: Float): Float =
     if (initialScale > 0f && initialScale < baseScale) {
         initialScale
-    } else if (initialScale > 0f && initialScale > baseScale && initialScale / baseScale < 1.5f && abs(
-            initialScale - baseScale
-        ) < 1.5f
+    } else if (
+        initialScale > 0f && initialScale > baseScale
+        && initialScale / baseScale < 1.5f && abs(initialScale - baseScale) < 1.5f
     ) {
         // If the difference is too small, use the initial proportion as the minimum proportion directly
         initialScale
@@ -314,6 +332,8 @@ fun calculateMinScale(baseScale: Float, initialScale: Float): Float =
  * Calculate initial zoom information, including minimum, medium, maximum scale factor, base transformation and user transformation
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateInitialZoom
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateInitialZoomWithLong
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest.testCalculateInitialZoomWithRTL
  */
 fun calculateInitialZoom(
     containerSize: IntSizeCompat,
@@ -321,6 +341,7 @@ fun calculateInitialZoom(
     contentOriginSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     readMode: ReadMode?,
     scalesCalculator: ScalesCalculator,
@@ -342,6 +363,7 @@ fun calculateInitialZoom(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
     )
     val readModeTransform = calculateReadModeTransform(
@@ -349,6 +371,7 @@ fun calculateInitialZoom(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
         readMode = readMode,
     )
@@ -396,6 +419,7 @@ fun calculateRestoreContentVisibleCenterUserTransform(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = false,
         rotation = rotation,
     )
     val rotatedContentSize = contentSize.rotate(rotation)
@@ -423,6 +447,7 @@ fun calculateRestoreContentVisibleCenterUserTransform(
  * Calculates the user transform required to restore the last content-visible hub
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChangedWithRTL
  */
 fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
     oldContainerSize: IntSizeCompat,
@@ -430,6 +455,7 @@ fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     transform: TransformCompat,
 ): TransformCompat {
@@ -438,6 +464,7 @@ fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
     )
     val oldUserTransform = transform - oldBaseTransform
@@ -446,6 +473,7 @@ fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
         userScale = oldUserTransform.scaleX,
         userOffset = oldUserTransform.offset,
@@ -464,6 +492,7 @@ fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
     )
     val newContentBaseDisplayRect = calculateContentBaseDisplayRect(
@@ -471,6 +500,7 @@ fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
     )
     val newBaseScaledRotatedContentSize = rotatedContentSize.toSize() * newBaseTransform.scale
@@ -514,12 +544,14 @@ fun calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged(
  * controlled by basic parameters such as [contentScale], [alignment], [rotation]
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentBaseDisplayRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentBaseDisplayRectWithRTL
  */
 fun calculateContentBaseDisplayRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
 ): RectCompat {
     /*
@@ -539,6 +571,7 @@ fun calculateContentBaseDisplayRect(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        ltrLayout = !rtlLayoutDirection,
         rotation = rotation,
     )
     return baseTransformHelper.displayRect
@@ -549,12 +582,15 @@ fun calculateContentBaseDisplayRect(
  * controlled by basic parameters such as [contentScale], [alignment], [rotation]
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentBaseVisibleRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentBaseVisibleRectWithVER
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentBaseVisibleRectWithRTL
  */
 fun calculateContentBaseVisibleRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
 ): RectCompat {
     /*
@@ -569,11 +605,13 @@ fun calculateContentBaseVisibleRect(
     }
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
 
+    val flippedAlignment = alignment.rtlFlipped(rtlLayoutDirection)
     val baseTransformHelper = BaseTransformHelper(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
-        alignment = alignment,
+        alignment = flippedAlignment,
+        ltrLayout = true,
         rotation = rotation
     )
     val scaledRotatedContentSize = baseTransformHelper.scaledRotatedContentSize
@@ -583,10 +621,10 @@ fun calculateContentBaseVisibleRect(
     if (scaledRotatedContentSize.width.roundToInt() <= containerSize.width) {
         left = 0f
         right = scaledRotatedContentSize.width
-    } else if (alignment.isStart) {
+    } else if (flippedAlignment.isStart) {
         left = 0f
         right = containerSize.width.toFloat()
-    } else if (alignment.isEnd) {
+    } else if (flippedAlignment.isEnd) {
         left = scaledRotatedContentSize.width - containerSize.width
         right = scaledRotatedContentSize.width
     } else {   // horizontal center
@@ -600,10 +638,10 @@ fun calculateContentBaseVisibleRect(
     if (scaledRotatedContentSize.height.roundToInt() <= containerSize.height) {
         top = 0f
         bottom = scaledRotatedContentSize.height
-    } else if (alignment.isTop) {
+    } else if (flippedAlignment.isTop) {
         top = 0f
         bottom = containerSize.height.toFloat()
-    } else if (alignment.isBottom) {
+    } else if (flippedAlignment.isBottom) {
         top = scaledRotatedContentSize.height - containerSize.height
         bottom = scaledRotatedContentSize.height
     } else {   // vertical center
@@ -630,12 +668,14 @@ fun calculateContentBaseVisibleRect(
  * and user behavior parameters such as [userScale], [userOffset].
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentDisplayRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentDisplayRectWithRTL
  */
 fun calculateContentDisplayRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     userScale: Float,
     userOffset: OffsetCompat
@@ -662,7 +702,7 @@ fun calculateContentDisplayRect(
     val scaledRotatedContentAlignmentOffset = alignment.align(
         size = scaledRotatedContentSize,
         space = containerSize,
-        ltrLayout = true,
+        ltrLayout = !rtlLayoutDirection,
     )
 
     val baseRect = IntRectCompat(scaledRotatedContentAlignmentOffset, scaledRotatedContentSize)
@@ -677,12 +717,14 @@ fun calculateContentDisplayRect(
  * and user behavior parameters such as [userScale], [userOffset].
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentVisibleRect
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest2.testCalculateContentVisibleRectWithRTL
  */
 fun calculateContentVisibleRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     userScale: Float,
     userOffset: OffsetCompat,
@@ -709,6 +751,7 @@ fun calculateContentVisibleRect(
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = 0,
     )
     if (!containerDisplayRect.overlaps(rotatedContentBaseDisplayRect)) {
@@ -742,12 +785,15 @@ fun calculateContentVisibleRect(
  * and can only be offset within the underlying visible area when the [limitBaseVisibleRect] parameter is true
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateUserOffsetBounds
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateUserOffsetBoundsWithHOR
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest3.testCalculateUserOffsetBoundsWithRTL
  */
 fun calculateUserOffsetBounds(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     userScale: Float,
     limitBaseVisibleRect: Boolean,
@@ -768,12 +814,14 @@ fun calculateUserOffsetBounds(
         "containerWhitespace must be greater than or equal to 0f, containerWhitespace=$containerWhitespace"
     }
 
+    val flippedAlignment = alignment.rtlFlipped(rtlLayoutDirection)
     val rotatedContentSize = contentSize.rotate(rotation)
     val rotatedContentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
-        alignment = alignment,
+        alignment = flippedAlignment,
+        rtlLayoutDirection = false,
         rotation = 0,
     ).let {
         if (limitBaseVisibleRect) it.limitTo(containerSize.toSize()) else it
@@ -792,9 +840,9 @@ fun calculateUserOffsetBounds(
         val rightBounds = scaledRotatedContentBaseDisplayRect.left * -1
         val correctLeftBounds = leftBounds.coerceAtMost(rightBounds)
         correctLeftBounds..rightBounds
-    } else if (alignment.isStart) {
+    } else if (flippedAlignment.isStart) {
         0f..0f
-    } else if (alignment.isEnd) {
+    } else if (flippedAlignment.isEnd) {
         val leftBounds = (scaledRotatedContentBaseDisplayRect.right - containerWidth) * -1
         leftBounds..leftBounds
     } else {   // horizontal center
@@ -808,9 +856,9 @@ fun calculateUserOffsetBounds(
         val bottomBounds = scaledRotatedContentBaseDisplayRect.top * -1
         val correctTopBounds = topBounds.coerceAtMost(bottomBounds)
         correctTopBounds..bottomBounds
-    } else if (alignment.isTop) {
+    } else if (flippedAlignment.isTop) {
         0f..0f
-    } else if (alignment.isBottom) {
+    } else if (flippedAlignment.isBottom) {
         val topBounds = (scaledRotatedContentBaseDisplayRect.bottom - containerHeight) * -1
         topBounds..topBounds
     } else {
@@ -1124,12 +1172,14 @@ fun containerPointToTouchPoint(
  * Convert points on containers to points on content
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContainerPointToContentPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContainerPointToContentPointWithRTL
  */
 fun containerPointToContentPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     containerPoint: OffsetCompat
 ): OffsetCompat {
@@ -1151,6 +1201,7 @@ fun containerPointToContentPoint(
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = 0,
     )
     val scaledRotatedContentPointOffset = containerPoint - rotatedContentBaseDisplayRect.topLeft
@@ -1169,12 +1220,14 @@ fun containerPointToContentPoint(
  * Converts points on content to points on containers
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContentPointToContainerPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContentPointToContainerPointWithRTL
  */
 fun contentPointToContainerPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     contentPoint: OffsetCompat
 ): OffsetCompat {
@@ -1202,6 +1255,7 @@ fun contentPointToContainerPoint(
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = 0,
     )
     val containerPoint = scaledRotatedContentPoint + rotatedContentBaseDisplayRect.topLeft
@@ -1212,12 +1266,14 @@ fun contentPointToContainerPoint(
  * Converts touch points on the screen into points on content, and supports scaling, panning, and rotating containers
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testTouchPointToContentPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testTouchPointToContentPointWithRTL
  */
 fun touchPointToContentPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     userScale: Float,
     userOffset: OffsetCompat,
@@ -1246,6 +1302,7 @@ fun touchPointToContentPoint(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
         containerPoint = containerPoint
     )
@@ -1255,12 +1312,14 @@ fun touchPointToContentPoint(
  * Converts points on content into touch points on the screen, and supports scaling, panning, and rotating containers
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContentPointToTouchPoint
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest4.testContentPointToTouchPointWithRTL
  */
 fun contentPointToTouchPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
     rotation: Int,
     userScale: Float,
     userOffset: OffsetCompat,
@@ -1283,6 +1342,7 @@ fun contentPointToTouchPoint(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
         rotation = rotation,
         contentPoint = contentPoint
     )

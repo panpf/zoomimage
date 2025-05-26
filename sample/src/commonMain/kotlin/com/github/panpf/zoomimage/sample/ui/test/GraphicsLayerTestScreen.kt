@@ -124,6 +124,7 @@ class GraphicsLayerTestScreen : BaseScreen() {
 
             var contentScale by remember { mutableStateOf(ContentScale.Fit) }
             var alignment by remember { mutableStateOf(Alignment.Center) }
+            var rtlLayoutDirection by remember { mutableStateOf(false) }
             var rotation by remember { mutableIntStateOf(0) }
 
             val baseTransform by remember {
@@ -133,6 +134,7 @@ class GraphicsLayerTestScreen : BaseScreen() {
                         contentSize = contentSize.toCompat(),
                         contentScale = contentScale.toCompat(),
                         alignment = alignment.toCompat(),
+                        rtlLayoutDirection = rtlLayoutDirection,
                         rotation = rotation,
                     ).toPlatform()
                 }
@@ -184,6 +186,7 @@ class GraphicsLayerTestScreen : BaseScreen() {
                         containerSize = containerSize.toCompat(),
                         contentScale = contentScale.toCompat(),
                         alignment = alignment.toCompat(),
+                        rtlLayoutDirection = rtlLayoutDirection,
                         rotation = rotation,
                         userScale = userTransform.scaleX,
                         userOffset = userTransform.offset.toCompat(),
@@ -540,6 +543,23 @@ class GraphicsLayerTestScreen : BaseScreen() {
                                     .weight(1f)
                             ) {
                                 AutoSizeText(text = "Reset", maxLines = 1)
+                            }
+
+                            Spacer(modifier = Modifier.size(12.dp))
+
+                            Button(
+                                onClick = {
+                                    rtlLayoutDirection = !rtlLayoutDirection
+                                },
+                                contentPadding = PaddingValues(8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            ) {
+                                AutoSizeText(
+                                    text = if (rtlLayoutDirection) "LTR" else "RTL",
+                                    maxLines = 1
+                                )
                             }
 
                             Spacer(modifier = Modifier.size(12.dp))

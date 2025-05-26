@@ -245,6 +245,16 @@
                 android:layout_height="12dp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/rtlButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RTL" />
+
+            <View
+                android:layout_width="12dp"
+                android:layout_height="12dp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/resetButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

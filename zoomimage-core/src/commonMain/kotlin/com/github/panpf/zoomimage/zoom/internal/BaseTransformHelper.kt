@@ -38,7 +38,7 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
  *
  * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.BaseTransformHelperTest
  */
-internal class BaseTransformHelper(
+internal class BaseTransformHelper constructor(
     val containerSize: IntSizeCompat,
     val contentSize: IntSizeCompat,
     val contentScale: ContentScaleCompat,

@@ -4,6 +4,8 @@
 
 # new
 
+* fix: RTL
+  模式下阅读模式应该将初始偏移定位到末尾。 [#84](https://github.com/panpf/zoomimage/issues/84)
 * improve: SketchZoomAsyncImage 和 CoilZoomAsyncImage 现在直接基于原本的 AsyncImage 组件
 * improve: Modifier.zoomable() 现在减少了一个 ModifierNodeElement
 * new: ZoomableState 新增 layoutDirection 属性，ZoomableEngine 新增 rtlLayoutDirectionState 属性
