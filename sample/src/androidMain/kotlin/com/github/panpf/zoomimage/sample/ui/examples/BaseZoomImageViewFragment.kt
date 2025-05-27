@@ -106,6 +106,9 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             )
         )
         zoomImageView.apply {
+            appSettings.rtlLayoutDirectionEnabled.collectWithLifecycle(viewLifecycleOwner) {
+                zoomable.rtlLayoutDirectionState.value = it
+            }
             onViewLongPressListener = OnViewLongPressListener { _, _ ->
                 InfoItemsDialogFragment().apply {
                     val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)

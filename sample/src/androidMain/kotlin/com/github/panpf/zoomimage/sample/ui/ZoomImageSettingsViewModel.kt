@@ -96,6 +96,13 @@ class ZoomImageSettingsViewModel(
                 }
             )
         )
+        add(
+            SwitchMenuFlow(
+                title = "RTL Layout Direction",
+                desc = null,
+                data = appSettings.rtlLayoutDirectionEnabled,
+            )
+        )
 
         add(MenuDivider("Gesture"))
 
