@@ -617,6 +617,7 @@ class ZoomableCore constructor(
                     "contentOriginSize=${newResetParams.contentOriginSize.toShortString()}, " +
                     "contentScale=${newResetParams.contentScale.name}, " +
                     "alignment=${newResetParams.alignment.name}, " +
+                    "rtlLayoutDirection=${newResetParams.rtlLayoutDirection}, " +
                     "rotation=${newResetParams.rotation}, " +
                     "scalesCalculator=${newResetParams.scalesCalculator}, " +
                     "readMode=${newResetParams.readMode}. " +
