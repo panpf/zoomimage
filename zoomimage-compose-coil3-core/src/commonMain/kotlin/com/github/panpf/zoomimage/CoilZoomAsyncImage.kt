@@ -229,7 +229,7 @@ fun CoilZoomAsyncImage(
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
-                    restoreContentToNoneLeftTopFirst = true,
+                    firstRestoreContentBaseTransform = true,
                     onLongPress = onLongPress,
                     onTap = onTap
                 ),
@@ -249,7 +249,7 @@ fun CoilZoomAsyncImage(
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(zoomable = zoomState.zoomable, restoreContentToNoneLeftTopFirst = false)
+                .zooming(zoomable = zoomState.zoomable, firstRestoreContentBaseTransform = false)
                 .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 

@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 fun Modifier.zoom(
     zoomable: ZoomableState,
     userSetupContentSize: Boolean = false,
-    restoreContentToNoneLeftTopFirst: Boolean = false,
+    firstRestoreContentBaseTransform: Boolean = false,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = this
@@ -63,7 +63,7 @@ fun Modifier.zoom(
         onLongPress = onLongPress,
         onTap = onTap
     )
-    .zooming(zoomable, restoreContentToNoneLeftTopFirst)
+    .zooming(zoomable, firstRestoreContentBaseTransform)
 
 /**
  * A Modifier that can recognize gestures such as click, long press, double-click, one-finger zoom, two-finger zoom, drag, fling, etc.
@@ -90,7 +90,7 @@ fun Modifier.zoomable(
  */
 fun Modifier.zooming(
     zoomable: ZoomableState,
-    restoreContentToNoneLeftTopFirst: Boolean = false,
+    firstRestoreContentBaseTransform: Boolean = false,
 ): Modifier = this
     .clipToBounds()
     .graphicsLayer {
@@ -110,7 +110,7 @@ fun Modifier.zooming(
     }
     .let {
         // ZoomImage's zoom is located in the upper left corner based on the image in its original size, so you must first restore the zoom and offset of the image.
-        if (restoreContentToNoneLeftTopFirst) {
+        if (firstRestoreContentBaseTransform) {
             it.graphicsLayer {
                 val baseTransform = calculateBaseTransform(
                     containerSize = zoomable.containerSize.toCompat(),
