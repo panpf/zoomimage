@@ -47,6 +47,7 @@ fun testItems(): List<TestItem> = listOf(
     TestItem("Mouse", MouseTestScreen()),
     TestItem("KeyZoom", KeyTestScreen()),
     TestItem("ZoomImage (Switch)", ZoomImageSwitchTestScreen()),
+    TestItem("Temp", TempTestScreen()),
 ).plus(platformTestItems())
 
 expect fun platformTestItems(): List<TestItem>
