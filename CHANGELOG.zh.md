@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.4.0-beta01
 
 * fix: RTL
   模式下阅读模式应该将初始偏移定位到末尾。 [#84](https://github.com/panpf/zoomimage/issues/84)

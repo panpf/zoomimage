@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.4.0-beta01
 
 * fix: Reading mode in RTL mode should position the initial offset to the
   end. [#84](https://github.com/panpf/zoomimage/issues/84)
