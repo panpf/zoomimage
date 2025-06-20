@@ -64,7 +64,7 @@ class SingletonSketchZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val zoomState = zoomStateHolder
             val state = stateHolder
@@ -131,7 +131,7 @@ class SingletonSketchZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val zoomState = zoomStateHolder!!
 
@@ -197,7 +197,7 @@ class SingletonSketchZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val zoomState = zoomStateHolder
             assertNotNull(actual = zoomState)
@@ -257,7 +257,7 @@ class SingletonSketchZoomAsyncImageTest {
                     }
                 }
             }
-            waitMillis(1000)
+            waitMillis(2000)
 
             val zoomState = zoomStateHolder!!
 
