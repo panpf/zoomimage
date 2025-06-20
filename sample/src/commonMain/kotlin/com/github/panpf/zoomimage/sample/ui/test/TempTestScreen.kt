@@ -42,7 +42,7 @@ class TempTestScreen : BaseScreen() {
                     com.github.panpf.sketch.painter.CrossfadePainter(
                         null,
                         painter1,
-                        fitScale = false
+                        contentScale = ContentScale.FillBounds
                     )
                 }
                 val coilPainter = remember(painter1) {

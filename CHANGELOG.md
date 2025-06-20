@@ -11,6 +11,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * improve: Modifier.zoomable() now reduces one ModifierNodeElement
 * new: ZoomableState adds layoutDirection property, ZoomableEngine adds rtlLayoutDirectionState
   property
+* depend: Update sketch to 4.2.0-beta01
 
 # 1.3.0
 
