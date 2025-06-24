@@ -16,6 +16,9 @@
 
 package com.github.panpf.zoomimage.compose.util
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind.EXACTLY_ONCE
+import kotlin.contracts.contract
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -39,3 +42,11 @@ internal fun Float.format(newScale: Int): Float {
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposeOtherUtilsTest.testToHexString
  */
 internal fun Any.toHexString(): String = this.hashCode().toString(16)
+
+@OptIn(ExperimentalContracts::class)
+internal inline fun <T> T.ifLet(predicate: Boolean, block: (T) -> T): T {
+    contract {
+        callsInPlace(block, EXACTLY_ONCE)
+    }
+    return if (predicate) block(this) else this
+}

@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+* fix: 修复 1.4.0-beta01 版本内容位置漂移的 bug
+
 # 1.4.0-beta01
 
 * fix: RTL

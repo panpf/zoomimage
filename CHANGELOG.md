@@ -2,6 +2,10 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+* fix: Fixed bug in content position drift in version 1.4.0-beta01
+
 # 1.4.0-beta01
 
 * fix: Reading mode in RTL mode should position the initial offset to the

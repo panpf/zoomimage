@@ -32,6 +32,7 @@ import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.util.format
+import com.github.panpf.zoomimage.compose.util.ifLet
 import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
@@ -108,10 +109,12 @@ fun Modifier.zooming(
         rotationZ = transform.rotation
         transformOrigin = transform.rotationOrigin
     }
-    .let {
+    .ifLet(firstRestoreContentBaseTransform) {
         // ZoomImage's zoom is located in the upper left corner based on the image in its original size, so you must first restore the zoom and offset of the image.
-        if (firstRestoreContentBaseTransform) {
-            it.graphicsLayer {
+        it.graphicsLayer {
+            // transform.isNotEmpty() can avoid content position drift
+            val transform = zoomable.transform
+            if (transform.isNotEmpty()) {
                 val baseTransform = calculateBaseTransform(
                     containerSize = zoomable.containerSize.toCompat(),
                     contentSize = zoomable.contentSize.toCompat(),
@@ -126,8 +129,6 @@ fun Modifier.zooming(
                 translationY = 0f - (baseTransform.offsetY * (1f / baseTransform.scaleY))
                 transformOrigin = TransformOrigin(0f, 0f)
             }
-        } else {
-            it
         }
     }
 
