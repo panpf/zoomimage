@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.4.0-beta02
 
 * fix: Fixed bug in content position drift in version 1.4.0-beta01
 

@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.4.0-beta02
 
 * fix: 修复 1.4.0-beta01 版本内容位置漂移的 bug
 
