@@ -26,7 +26,7 @@ class ExifOrientationTestFragment : BaseToolbarBindingFragment<FragmentTabPagerB
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@ExifOrientationTestFragment,
-                itemFactoryList = listOf(newPhotoDetailItemFactory(requireContext())),
+                itemFactoryList = listOf(newPhotoDetailItemFactory(appSettings)),
                 initDataList = exifImages.map { it.uri }
             )
         }

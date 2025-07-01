@@ -27,8 +27,6 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.flow.StateFlow
 
-expect val PlatformContext.appSettings: AppSettings
-
 expect val composeImageLoaders: List<ImageLoaderSettingItem>
 
 @Composable

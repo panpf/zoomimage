@@ -50,10 +50,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.EventBus
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
@@ -70,6 +68,7 @@ import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 
 val photoPagerTopBarHeight = 80.dp
 
@@ -100,7 +99,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
             val photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
             PhotoPagerBackground(photo.listThumbnailUrl, photoPaletteState)
 
-            val appSettings = LocalPlatformContext.current.appSettings
+            val appSettings: AppSettings = koinInject()
             val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
             if (horizontalLayout) {
                 HorizontalPager(
@@ -166,8 +165,7 @@ fun PhotoPagerHeaders(
     horizontalLayout: Boolean,
     photoPaletteState: MutableState<PhotoPalette>
 ) {
-    val context = LocalPlatformContext.current
-    val appSettings = context.appSettings
+    val appSettings: AppSettings = koinInject()
     val photoPalette by photoPaletteState
     Box(modifier = Modifier.fillMaxSize().windowInsetsPadding(TopAppBarDefaults.windowInsets)) {
         Row(

@@ -29,14 +29,14 @@ import androidx.paging.LoadState.Loading
 import app.cash.paging.PagingData
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
-import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.ability.bindPauseLoadWhenScrolling
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.ui.common.PagingListAppendState
 import com.github.panpf.zoomimage.sample.ui.common.PagingListRefreshState
 import com.github.panpf.zoomimage.sample.ui.components.VerticalScrollbarCompat
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.Flow
+import org.koin.compose.koinInject
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
@@ -47,8 +47,7 @@ fun PagingPhotoList(
     onClick: (items: List<Photo>, photo: Photo, index: Int) -> Unit,
 ) {
     val pagingItems = photoPagingFlow.collectAsLazyPagingItems()
-    val context = LocalPlatformContext.current
-    val appSettings = context.appSettings
+    val appSettings: AppSettings = koinInject()
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = pagingItems.loadState.refresh is Loading,

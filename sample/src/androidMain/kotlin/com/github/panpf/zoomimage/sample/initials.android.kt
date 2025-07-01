@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import org.koin.mp.KoinPlatform
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.HttpsURLConnection
@@ -42,7 +43,7 @@ actual fun initialApp(context: PlatformContext) {
 
     Glide.init(context, GlideBuilder().setLogLevel(Log.DEBUG))
 
-    val appSettings = context.appSettings
+    val appSettings: AppSettings = KoinPlatform.getKoin().get()
     @Suppress("OPT_IN_USAGE")
     GlobalScope.launch(Dispatchers.Main) {
         appSettings.viewImageLoader.ignoreFirst().collect {

@@ -32,13 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.ability.bindPauseLoadWhenScrolling
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.ui.components.AppendState
 import com.github.panpf.zoomimage.sample.ui.components.VerticalScrollbarCompat
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.compose.koinInject
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
@@ -52,8 +52,7 @@ fun PhotoList(
     onClick: (items: List<Photo>, photo: Photo, index: Int) -> Unit,
 ) {
     var photos: List<Photo> by remember { mutableStateOf(emptyList()) }
-    val context = LocalPlatformContext.current
-    val appSettings = context.appSettings
+    val appSettings: AppSettings = koinInject()
     var pageStart by remember { mutableStateOf(initialPageStart) }
     var nextPageStart: Int? by remember { mutableStateOf(null) }
     var refreshing: Boolean by remember { mutableStateOf(false) }

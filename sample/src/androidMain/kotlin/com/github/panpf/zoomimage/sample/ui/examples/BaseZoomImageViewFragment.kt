@@ -32,7 +32,6 @@ import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.R as CommonR
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment

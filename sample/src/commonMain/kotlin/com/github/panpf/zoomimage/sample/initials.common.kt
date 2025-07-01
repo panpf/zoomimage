@@ -10,17 +10,18 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import org.koin.mp.KoinPlatform
 
 expect fun initialApp(context: PlatformContext)
 
 fun commonModule(context: PlatformContext): Module = module {
-
+    single { AppSettings(context) }
 }
 
 expect fun platformModule(context: PlatformContext): Module
 
 fun newSketch(context: PlatformContext): Sketch {
-    val appSettings = context.appSettings
+    val appSettings: AppSettings = KoinPlatform.getKoin().get()
     return Sketch(context) {
         // For print the Sketch initialization log
         val loggerLevel = if (appSettings.debugLog.value) Logger.Level.Debug else Logger.Level.Info

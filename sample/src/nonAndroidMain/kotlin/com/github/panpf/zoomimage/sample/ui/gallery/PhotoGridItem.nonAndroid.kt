@@ -6,12 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.github.panpf.sketch.LocalPlatformContext
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.ui.examples.BasicPhotoGridItem
 import com.github.panpf.zoomimage.sample.ui.examples.CoilPhotoGridItem
 import com.github.panpf.zoomimage.sample.ui.examples.SketchPhotoGridItem
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import org.koin.compose.koinInject
 
 @Composable
 actual fun PhotoGridItem(
@@ -31,7 +31,7 @@ actual fun PhotoGridItem(
                 it.aspectRatio(1f)
             }
         }
-    val appSettings = LocalPlatformContext.current.appSettings
+    val appSettings: AppSettings = koinInject()
     val composeImageLoader by appSettings.composeImageLoader.collectAsState()
     when (composeImageLoader) {
         "Sketch" -> SketchPhotoGridItem(index, photo, modifier, onClick)

@@ -23,7 +23,6 @@ import com.github.panpf.tools4a.dimen.ktx.dp2px
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoListBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
@@ -42,7 +41,6 @@ import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 abstract class BasePhotoListFragment : BaseBindingPermissionFragment<FragmentPhotoListBinding>() {
@@ -59,7 +57,6 @@ abstract class BasePhotoListFragment : BaseBindingPermissionFragment<FragmentPho
         savedInstanceState: Bundle?
     ) {
         binding.layoutImage.apply {
-            val appSettings = context.appSettings
             appSettings.staggeredGridMode
                 .repeatCollectWithLifecycle(viewLifecycleOwner, State.CREATED) {
                     val iconResId =

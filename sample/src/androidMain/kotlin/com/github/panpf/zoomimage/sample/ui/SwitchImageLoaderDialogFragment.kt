@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage.sample.ui
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.common.menu.ImageLoaderItemFactory
@@ -30,7 +29,7 @@ class SwitchImageLoaderDialogFragment : BaseBindingDialogFragment<FragmentRecycl
     override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {
         val recyclerAdapter = AssemblyRecyclerAdapter(
             itemFactoryList = listOf(ImageLoaderItemFactory().setOnItemClickListener { context, _, _, _, data ->
-                context.appSettings.viewImageLoader.value = data.name
+                appSettings.viewImageLoader.value = data.name
                 dismiss()
             }),
             initDataList = viewImageLoaders

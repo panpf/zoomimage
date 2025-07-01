@@ -20,14 +20,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.panpf.sketch.LocalPlatformContext
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.composeImageLoaders
 import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
+import org.koin.compose.koinInject
 
 @Composable
 fun SwitchImageLoader(onDismissRequest: () -> Unit) {
-    val appSettings = LocalPlatformContext.current.appSettings
+    val appSettings: AppSettings = koinInject()
     LazyColumn(Modifier.fillMaxWidth()) {
         items(composeImageLoaders) { item ->
             Row(

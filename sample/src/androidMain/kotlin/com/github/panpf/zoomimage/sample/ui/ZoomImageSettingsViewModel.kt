@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.sample.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.ui.common.menu.DropdownMenu
 import com.github.panpf.zoomimage.sample.ui.common.menu.MenuDivider
 import com.github.panpf.zoomimage.sample.ui.common.menu.MultiChooseMenu
@@ -33,6 +33,7 @@ import com.github.panpf.zoomimage.zoom.name
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform
 
 class ZoomImageSettingsViewModel(
     application: Application,
@@ -40,7 +41,7 @@ class ZoomImageSettingsViewModel(
 
     private val _data = MutableStateFlow<List<Any>>(emptyList())
     val data: StateFlow<List<Any>> = _data
-    private val appSettings = application.appSettings
+    val appSettings: AppSettings = KoinPlatform.getKoin().get()
 
     init {
         viewModelScope.launch {

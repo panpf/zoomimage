@@ -2,13 +2,11 @@ package com.github.panpf.zoomimage.sample
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.logo_basic
@@ -17,7 +15,6 @@ import com.github.panpf.zoomimage.sample.resources.logo_glide
 import com.github.panpf.zoomimage.sample.resources.logo_sketch
 import com.github.panpf.zoomimage.sample.ui.model.ImageLoaderSettingItem
 import com.github.panpf.zoomimage.sample.ui.util.name
-import com.github.panpf.zoomimage.sample.util.ParamLazy
 import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.floatSettingsStateFlow
@@ -33,17 +30,6 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.painterResource
-
-private val appSettingsLazy = ParamLazy<PlatformContext, AppSettings> { AppSettings(it) }
-
-actual val PlatformContext.appSettings: AppSettings
-    get() = appSettingsLazy.get(this.applicationContext)
-
-val Fragment.appSettings: AppSettings
-    get() = this.requireContext().appSettings
-
-val View.appSettings: AppSettings
-    get() = this.context.appSettings
 
 actual val composeImageLoaders: List<ImageLoaderSettingItem> = listOf(
     ImageLoaderSettingItem("Sketch", "List: AsyncImage (Sketch)\nDetail: SketchZoomAsyncImage"),
@@ -188,7 +174,11 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
     }
 
     actual val keepTransformWhenSameAspectRatioContentSizeChangedEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "keepTransformWhenSameAspectRatioContentSizeChangedEnabled", true)
+        booleanSettingsStateFlow(
+            context,
+            "keepTransformWhenSameAspectRatioContentSizeChangedEnabled",
+            true
+        )
     }
 
     actual val delayImageLoadEnabled: SettingsStateFlow<Boolean> by lazy {

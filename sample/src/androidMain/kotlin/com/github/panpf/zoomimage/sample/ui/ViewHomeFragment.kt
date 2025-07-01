@@ -21,7 +21,6 @@ import android.view.View
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.ArrayFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListFragment

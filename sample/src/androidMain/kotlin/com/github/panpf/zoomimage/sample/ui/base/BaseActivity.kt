@@ -17,8 +17,12 @@
 package com.github.panpf.zoomimage.sample.ui.base
 
 import androidx.appcompat.app.AppCompatActivity
+import com.github.panpf.zoomimage.sample.AppSettings
+import org.koin.android.ext.android.inject
 
 abstract class BaseActivity : AppCompatActivity() {
+
+    protected val appSettings: AppSettings by inject()
 
     private var resumeCount = 0
 

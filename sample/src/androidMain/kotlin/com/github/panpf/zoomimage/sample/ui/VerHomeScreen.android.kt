@@ -15,12 +15,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
+import org.koin.compose.koinInject
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +35,7 @@ actual fun VerHomeHeader() {
             },
         )
 
-        val appSettings = LocalContext.current.appSettings
+        val appSettings: AppSettings = koinInject()
         val top = with(LocalDensity.current) { TopAppBarDefaults.windowInsets.getTop(this).toDp() }
         Box(
             modifier = Modifier

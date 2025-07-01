@@ -38,8 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.panpf.sketch.LocalPlatformContext
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_expand_more
 import com.github.panpf.zoomimage.sample.ui.util.name
@@ -50,6 +49,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 
 @Composable
 fun ZoomImageSettingList() {
@@ -58,7 +58,7 @@ fun ZoomImageSettingList() {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        val appSettings = LocalPlatformContext.current.appSettings
+        val appSettings: AppSettings = koinInject()
 
         DividerSettingItem("Arrange")
 

@@ -59,7 +59,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.util.toPlatform
@@ -69,7 +68,6 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.EventBus
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
@@ -97,6 +95,7 @@ import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,18 +108,18 @@ fun <T : ZoomState> BaseZoomImageSample(
     content: @Composable ContentScope<T>.() -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        val settingsService = LocalPlatformContext.current.appSettings
+        val appSettings: AppSettings = koinInject()
         val infoDialogState = rememberMyDialogState()
         val capturableState = rememberCapturableState()
-        val zoomState = createZoomState().apply { bindSettings(settingsService) }
+        val zoomState = createZoomState().apply { bindSettings(appSettings) }
 
-        val rtlLayoutDirectionEnabled by settingsService.rtlLayoutDirectionEnabled.collectAsState()
+        val rtlLayoutDirectionEnabled by appSettings.rtlLayoutDirectionEnabled.collectAsState()
         val layoutDirection =
             if (rtlLayoutDirectionEnabled) LayoutDirection.Rtl else LocalLayoutDirection.current
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-            val contentScale by settingsService.contentScale.collectAsState()
-            val alignment by settingsService.alignment.collectAsState()
-            val scrollBarEnabled by settingsService.scrollBarEnabled.collectAsState()
+            val contentScale by appSettings.contentScale.collectAsState()
+            val alignment by appSettings.alignment.collectAsState()
+            val scrollBarEnabled by appSettings.scrollBarEnabled.collectAsState()
             val contentScope =
                 remember(zoomState, contentScale, alignment, capturableState, scrollBarEnabled) {
                     ContentScope(

@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -40,8 +39,8 @@ import com.github.panpf.sketch.resize.Precision.LESS_PIXELS
 import com.github.panpf.sketch.transform.BlurTransformation
 import com.github.panpf.tools4a.display.ktx.getScreenSize
 import com.github.panpf.tools4k.lang.asOrThrow
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
@@ -144,7 +143,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
                 appSettings.viewImageLoader.collect {
                     adapter = AssemblyFragmentStateAdapter(
                         fragment = this@PhotoPagerFragment,
-                        itemFactoryList = listOf(newPhotoDetailItemFactory(requireContext())),
+                        itemFactoryList = listOf(newPhotoDetailItemFactory(appSettings)),
                         initDataList = photoList
                     )
                 }
@@ -234,8 +233,8 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
     }
 }
 
-fun newPhotoDetailItemFactory(context: Context): FragmentItemFactory<Photo> {
-    return when (val imageLoaderName = context.appSettings.viewImageLoader.value) {
+fun newPhotoDetailItemFactory(appSettings: AppSettings): FragmentItemFactory<Photo> {
+    return when (val imageLoaderName = appSettings.viewImageLoader.value) {
         "Sketch" -> SketchZoomImageViewFragment.ItemFactory()
         "Coil" -> CoilZoomImageViewFragment.ItemFactory()
         "Glide" -> GlideZoomImageViewFragment.ItemFactory()

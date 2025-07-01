@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.ui.base.BaseActivity
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerScreen
 import com.github.panpf.zoomimage.sample.ui.util.isDarkTheme

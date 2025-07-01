@@ -11,7 +11,6 @@ import com.github.panpf.zoomimage.sample.resources.logo_coil
 import com.github.panpf.zoomimage.sample.resources.logo_sketch
 import com.github.panpf.zoomimage.sample.ui.model.ImageLoaderSettingItem
 import com.github.panpf.zoomimage.sample.ui.util.name
-import com.github.panpf.zoomimage.sample.util.ParamLazy
 import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.floatSettingsStateFlow
@@ -27,11 +26,6 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.painterResource
-
-private val appSettingsLazy = ParamLazy<PlatformContext, AppSettings> { AppSettings(it) }
-
-actual val PlatformContext.appSettings: AppSettings
-    get() = appSettingsLazy.get(this)
 
 actual val composeImageLoaders: List<ImageLoaderSettingItem> = listOf(
     ImageLoaderSettingItem("Sketch", "List: AsyncImage (Sketch)\nDetail: SketchZoomAsyncImage"),
@@ -154,7 +148,11 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
     }
 
     actual val keepTransformWhenSameAspectRatioContentSizeChangedEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "keepTransformWhenSameAspectRatioContentSizeChangedEnabled", true)
+        booleanSettingsStateFlow(
+            context,
+            "keepTransformWhenSameAspectRatioContentSizeChangedEnabled",
+            true
+        )
     }
 
     actual val delayImageLoadEnabled: SettingsStateFlow<Boolean> by lazy {

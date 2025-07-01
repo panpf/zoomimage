@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.ActivityNavHostBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingActivity
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle

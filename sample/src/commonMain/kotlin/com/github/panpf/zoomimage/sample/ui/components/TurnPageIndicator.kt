@@ -24,13 +24,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.unit.dp
-import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.compose.util.AssistKey
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
 import com.github.panpf.zoomimage.compose.util.matcherKeyHandler
 import com.github.panpf.zoomimage.compose.util.platformAssistKey
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.EventBus
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_down
@@ -42,6 +41,7 @@ import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 
 
 @Composable
@@ -88,7 +88,7 @@ fun TurnPageIndicator(
             .padding(50.dp)
             .size(50.dp)
             .clip(CircleShape)
-        val appSettings = LocalPlatformContext.current.appSettings
+        val appSettings: AppSettings = koinInject()
         val colorScheme = MaterialTheme.colorScheme
         val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
         val photoPalette by photoPaletteState

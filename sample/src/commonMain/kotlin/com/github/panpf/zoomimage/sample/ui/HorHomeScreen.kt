@@ -25,13 +25,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.panpf.sketch.LocalPlatformContext
-import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.logo_zoomimage
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 
 object HorHomeScreen : BaseScreen() {
 
@@ -39,8 +39,7 @@ object HorHomeScreen : BaseScreen() {
     override fun DrawContent() {
         Row(Modifier.fillMaxSize()) {
             val coroutineScope = rememberCoroutineScope()
-            val context = LocalPlatformContext.current
-            val appSettings = context.appSettings
+            val appSettings: AppSettings = koinInject()
             val homeTabs = remember { HomeTab.values() }
 
             val pagerState = rememberPagerState(
