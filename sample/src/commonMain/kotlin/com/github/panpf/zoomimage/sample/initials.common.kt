@@ -5,25 +5,26 @@ import coil3.util.DebugLogger
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.util.Logger
-import com.github.panpf.zoomimage.sample.image.DelayedLoadRequestInterceptor
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 fun newSketch(context: PlatformContext): Sketch {
     val appSettings = context.appSettings
-    return Sketch.Builder(context).apply {
+    return Sketch(context) {
         // For print the Sketch initialization log
-        logger(level = if (appSettings.debugLog.value) Logger.Level.Debug else Logger.Level.Info)
-
-        platformSketchInitial(context)
-    }.build().apply {
-        @Suppress("OPT_IN_USAGE")
-        GlobalScope.launch {
-            appSettings.debugLog.ignoreFirst().collect { debugLog ->
-                logger.level = if (debugLog) Logger.Level.Debug else Logger.Level.Info
+        val loggerLevel = if (appSettings.debugLog.value) Logger.Level.Debug else Logger.Level.Info
+        val logger = Logger(level = loggerLevel).apply {
+            @Suppress("OPT_IN_USAGE")
+            GlobalScope.launch {
+                appSettings.debugLog.ignoreFirst().collect { debugLog ->
+                    level = if (debugLog) Logger.Level.Debug else Logger.Level.Info
+                }
             }
         }
+        logger(logger)
+
+        platformSketchInitial(context)
     }
 }
 
