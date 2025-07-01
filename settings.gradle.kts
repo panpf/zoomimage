@@ -26,6 +26,7 @@ include(":zoomimage-compose-sketch3")
 include(":zoomimage-compose-sketch3-core")
 include(":zoomimage-compose-sketch4")
 include(":zoomimage-compose-sketch4-core")
+include(":zoomimage-compose-sketch4-koin")
 include(":zoomimage-core")
 include(":zoomimage-core-coil2")
 include(":zoomimage-core-coil3")
@@ -44,6 +45,7 @@ include(":zoomimage-view-sketch3")
 include(":zoomimage-view-sketch3-core")
 include(":zoomimage-view-sketch4")
 include(":zoomimage-view-sketch4-core")
+include(":zoomimage-view-sketch4-koin")
 
 
 /*

@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+* depend: Update sketch to 4.2.0-beta02
+* new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
+  sketch4's koin mode
+
 # 1.4.0-beta02
 
 * fix: Fixed bug in content position drift in version 1.4.0-beta01

@@ -133,6 +133,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -173,6 +174,7 @@ panpf-sketch3-viewability = { module = "io.github.panpf.sketch3:sketch-viewabili
 panpf-sketch4-animated-gif = { module = "io.github.panpf.sketch4:sketch-animated-gif", version.ref = "panpf-sketch4" }
 panpf-sketch4-core = { module = "io.github.panpf.sketch4:sketch-core", version.ref = "panpf-sketch4" }
 panpf-sketch4-compose = { module = "io.github.panpf.sketch4:sketch-compose", version.ref = "panpf-sketch4" }
+panpf-sketch4-compose-koin = { module = "io.github.panpf.sketch4:sketch-compose-koin", version.ref = "panpf-sketch4" }
 panpf-sketch4-compose-core = { module = "io.github.panpf.sketch4:sketch-compose-core", version.ref = "panpf-sketch4" }
 panpf-sketch4-compose-resources = { module = "io.github.panpf.sketch4:sketch-compose-resources", version.ref = "panpf-sketch4" }
 panpf-sketch4-extensions-compose = { module = "io.github.panpf.sketch4:sketch-extensions-compose", version.ref = "panpf-sketch4" }
@@ -182,6 +184,7 @@ panpf-sketch4-http-ktor3 = { module = "io.github.panpf.sketch4:sketch-http-ktor3
 panpf-sketch4-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref = "panpf-sketch4" }
 panpf-sketch4-singleton = { module = "io.github.panpf.sketch4:sketch-singleton", version.ref = "panpf-sketch4" }
 panpf-sketch4-view = { module = "io.github.panpf.sketch4:sketch-view", version.ref = "panpf-sketch4" }
+panpf-sketch4-view-koin = { module = "io.github.panpf.sketch4:sketch-view-koin", version.ref = "panpf-sketch4" }
 panpf-sketch4-view-core = { module = "io.github.panpf.sketch4:sketch-view-core", version.ref = "panpf-sketch4" }
 
 panpf-tools4a-activity = { module = "io.github.panpf.tools4a:tools4a-activity-ktx", version.ref = "panpf-tools4a" }

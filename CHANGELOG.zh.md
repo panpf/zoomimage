@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+* depend: 更新 sketch 4.2.0-beta02
+* new: 新增 `zoomimage-compose-sketch4-koin` 和 `zoomimage-view-sketch4-koin` 模块，适配 sketch4 的
+  koin 模式
+
 # 1.4.0-beta02
 
 * fix: 修复 1.4.0-beta01 版本内容位置漂移的 bug
