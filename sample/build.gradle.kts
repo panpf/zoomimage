@@ -64,13 +64,15 @@ kotlin {
             implementation(compose.material3)
             implementation(
                 libs.coil3.network.ktor.get().let { "${it.group}:${it.name}:${it.version}" }) {
-                exclude(
-                    group = "io.ktor",
-                    module = "ktor-client-core"
-                )  // See libs.versions.toml#ktor
+                // See libs.versions.toml#ktor
+                exclude(group = "io.ktor", module = "ktor-client-core")
             }
             implementation(libs.ktor.http.cio)  // See libs.versions.toml#ktor
             implementation(libs.jetbrains.compose.material.icons.core)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.kotlinx.collections.immutable)
@@ -107,6 +109,7 @@ kotlin {
             implementation(libs.androidx.swiperefreshlayout)
             implementation(libs.coil3.gif)
             implementation(libs.google.material)
+            implementation(libs.koin.android)
             implementation(libs.moko.permissions)
             implementation(libs.moko.permissions.storage)
             implementation(libs.panpf.assemblyadapter4.pager2)
@@ -141,6 +144,10 @@ kotlin {
         }
         nonJsCommonMain.dependencies {
             implementation(libs.multiplatform.paging)
+        }
+        wasmJsMain.dependencies {
+            // https://youtrack.jetbrains.com/issue/KTOR-7934/JS-WASM-fails-with-IllegalStateException-Content-Length-mismatch-on-requesting-gzipped-content
+            implementation(libs.ktor31.client.wasmJs)
         }
     }
 }

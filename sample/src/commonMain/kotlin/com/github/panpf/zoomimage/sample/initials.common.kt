@@ -8,6 +8,16 @@ import com.github.panpf.sketch.util.Logger
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.koin.core.module.Module
+import org.koin.dsl.module
+
+expect fun initialApp(context: PlatformContext)
+
+fun commonModule(context: PlatformContext): Module = module {
+
+}
+
+expect fun platformModule(context: PlatformContext): Module
 
 fun newSketch(context: PlatformContext): Sketch {
     val appSettings = context.appSettings

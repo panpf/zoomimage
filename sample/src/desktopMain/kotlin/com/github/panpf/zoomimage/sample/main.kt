@@ -5,12 +5,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import coil3.SingletonImageLoader
-import com.github.panpf.sketch.SingletonSketch
+import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.ui.App
 
 fun main() {
-    initials()
+    initialApp(PlatformContext.INSTANCE)
     application {
         Window(
             title = "ZoomImage",
@@ -20,10 +19,4 @@ fun main() {
             App()
         }
     }
-}
-
-private fun initials() {
-    SingletonSketch.setSafe { newSketch(it) }
-    SingletonImageLoader.setSafe { newCoil(it) }
-    cleanImageLoaderMemoryCache()
 }
