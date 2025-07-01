@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.asPainter
 import com.github.panpf.sketch.cache.CachePolicy.DISABLED
@@ -42,6 +41,7 @@ import com.github.panpf.zoomimage.sample.ui.util.capturable
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import org.koin.compose.koinInject
 
 expect suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>>
 
@@ -110,7 +110,7 @@ class ImageSourceTestScreen : BaseScreen() {
             pageSelected = pageSelected,
         ) {
             val context = LocalPlatformContext.current
-            val sketch = SingletonSketch.get(context)
+            val sketch: Sketch = koinInject()
             LaunchedEffect(Unit) {
                 zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
             }

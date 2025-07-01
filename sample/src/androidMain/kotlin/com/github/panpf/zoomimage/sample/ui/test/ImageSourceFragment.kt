@@ -21,12 +21,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.asDrawable
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.resize.Precision
-import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
@@ -34,10 +34,12 @@ import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageViewFragment
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class ImageSourceFragment : BaseZoomImageViewFragment<ZoomImageView>() {
 
     private val args by navArgs<ImageSourceFragmentArgs>()
+    private val sketch: Sketch by inject()
 
     override val sketchImageUri: String
         get() = args.imageUri
@@ -51,7 +53,6 @@ class ImageSourceFragment : BaseZoomImageViewFragment<ZoomImageView>() {
         zoomView.apply {
             viewLifecycleOwner.lifecycleScope.launch {
                 val request = ImageRequest(requireContext(), sketchImageUri)
-                val sketch = requireContext().sketch
                 val result = sketch.execute(request)
                 if (result is ImageResult.Success) {
                     setImageDrawable(result.image.asDrawable())

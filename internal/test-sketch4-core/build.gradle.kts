@@ -5,14 +5,13 @@ plugins {
 
 addAllMultiplatformTargets()
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.sketch4")
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.sketch4.core")
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.internal.testCore)
-            api(projects.internal.testSketch4Core)
-            api(libs.panpf.sketch4.singleton)
+            api(libs.panpf.sketch4.core)
         }
     }
 }

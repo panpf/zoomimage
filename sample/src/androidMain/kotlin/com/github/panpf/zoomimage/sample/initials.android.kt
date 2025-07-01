@@ -7,7 +7,6 @@ import coil3.SingletonImageLoader
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriFetcher
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriKeyer
@@ -44,16 +43,17 @@ actual fun initialApp(context: PlatformContext) {
     Glide.init(context, GlideBuilder().setLogLevel(Log.DEBUG))
 
     val appSettings: AppSettings = KoinPlatform.getKoin().get()
+    val sketch: Sketch = KoinPlatform.getKoin().get()
     @Suppress("OPT_IN_USAGE")
     GlobalScope.launch(Dispatchers.Main) {
         appSettings.viewImageLoader.ignoreFirst().collect {
-            onToggleImageLoader(context, it)
+            onToggleImageLoader(context, sketch, it)
         }
     }
     @Suppress("OPT_IN_USAGE")
     GlobalScope.launch(Dispatchers.Main) {
         appSettings.composeImageLoader.ignoreFirst().collect {
-            onToggleImageLoader(context, it)
+            onToggleImageLoader(context, sketch, it)
         }
     }
     @Suppress("OPT_IN_USAGE")
@@ -64,7 +64,7 @@ actual fun initialApp(context: PlatformContext) {
             } else {
                 appSettings.viewImageLoader.value
             }
-            onToggleImageLoader(context, newImageLoader)
+            onToggleImageLoader(context, sketch, newImageLoader)
         }
     }
 }
@@ -120,12 +120,12 @@ private fun handleSSLHandshake() {
     }
 }
 
-private fun onToggleImageLoader(context: PlatformContext, newImageLoader: String) {
+private fun onToggleImageLoader(context: PlatformContext, sketch: Sketch, newImageLoader: String) {
     Log.d("ZoomImage", "Switch image loader to $newImageLoader")
 
     if (newImageLoader != "Sketch" && newImageLoader != "Basic") {
         Log.d("ZoomImage", "Clean Sketch memory cache")
-        SingletonSketch.get(context).memoryCache.clear()
+        sketch.memoryCache.clear()
     }
     if (newImageLoader != "Coil") {
         Log.d("ZoomImage", "Clean Coil memory cache")

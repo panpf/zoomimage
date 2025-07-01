@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.sample
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceUriFetcher
 import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceUriKeyer
@@ -20,7 +19,6 @@ actual fun initialApp(context: PlatformContext) {
         modules(platformModule(context))
     }
 
-    SingletonSketch.setSafe { newSketch(it) }
     SingletonImageLoader.setSafe { newCoil(it) }
     cleanImageLoaderMemoryCache()
 }

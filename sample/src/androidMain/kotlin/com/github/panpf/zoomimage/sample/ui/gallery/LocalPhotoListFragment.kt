@@ -8,9 +8,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.github.panpf.sketch.sketch
+import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.Flow
+import org.koin.mp.KoinPlatform
 
 class LocalPhotoListFragment : BasePhotoListFragment() {
 
@@ -32,7 +33,8 @@ class LocalPhotoListFragment : BasePhotoListFragment() {
             ),
             initialKey = 0,
             pagingSourceFactory = {
-                LocalPhotoListPagingSource(application, application.sketch)
+                val sketch: Sketch = KoinPlatform.getKoin().get()
+                LocalPhotoListPagingSource(application, sketch)
             }
         ).flow.cachedIn(viewModelScope)
     }

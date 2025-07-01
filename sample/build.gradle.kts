@@ -58,7 +58,7 @@ kotlin {
             implementation(projects.zoomimageCompose)
             implementation(projects.zoomimageComposeCoil3)
             implementation(projects.zoomimageComposeResources)
-            implementation(projects.zoomimageComposeSketch4)
+            implementation(projects.zoomimageComposeSketch4Koin)
             implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
@@ -92,7 +92,7 @@ kotlin {
             implementation(projects.zoomimageViewCoil3)
             implementation(projects.zoomimageViewGlide)
             implementation(projects.zoomimageViewPicasso)
-            implementation(projects.zoomimageViewSketch4)
+            implementation(projects.zoomimageViewSketch4Koin)
             implementation(compose.preview) // Only available on Android and desktop platforms
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.androidx.activity.compose)

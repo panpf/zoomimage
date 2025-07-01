@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.LocalPlatformContext
-import com.github.panpf.sketch.SingletonSketch
+import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.asPainter
 import com.github.panpf.sketch.painter.AnimatablePainter
 import com.github.panpf.sketch.painter.startWithLifecycle
@@ -27,6 +27,7 @@ import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageS
 import com.github.panpf.zoomimage.sample.ui.util.capturable
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import org.koin.compose.koinInject
 
 @Composable
 fun BasicZoomImageSample(
@@ -41,7 +42,7 @@ fun BasicZoomImageSample(
         pageSelected = pageSelected,
     ) {
         val context = LocalPlatformContext.current
-        val sketch = SingletonSketch.get(context)
+        val sketch: Sketch = koinInject()
         LaunchedEffect(Unit) {
             zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
         }
