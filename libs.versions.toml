@@ -28,7 +28,7 @@ glide = "4.16.0"
 glide-ktx = "1.0.0-beta01"
 google-accompanist = "0.37.3"
 google-material = "1.12.0"
-gradle-maven-publish-plugin = "0.31.0"
+gradle-maven-publish-plugin = "0.33.0"
 
 jetbrains-compose = "1.8.0"
 jetbrains-lifecycle = "2.8.4"
