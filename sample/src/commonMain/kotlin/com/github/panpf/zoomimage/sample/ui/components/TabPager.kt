@@ -22,8 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
-import com.github.panpf.zoomimage.sample.EventBus
+import com.github.panpf.zoomimage.sample.AppEvents
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 data class PagerItem<T>(
     val data: T,
@@ -33,6 +34,7 @@ data class PagerItem<T>(
 
 @Composable
 fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
+    val appEvents: AppEvents = koinInject()
     val pagerState = rememberPagerState { pagerItems.size }
     val coroutineScope = rememberCoroutineScope()
     val focusRequest = remember { androidx.compose.ui.focus.FocusRequester() }
@@ -42,7 +44,7 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
             .focusRequester(focusRequest)
             .onKeyEvent {
                 coroutineScope.launch {
-                    EventBus.keyEvent.emit(it)
+                    appEvents.keyEvent.emit(it)
                 }
                 true
             }

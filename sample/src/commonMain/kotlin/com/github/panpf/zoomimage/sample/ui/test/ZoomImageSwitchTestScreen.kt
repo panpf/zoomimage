@@ -38,7 +38,7 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.rememberSketchZoomState
-import com.github.panpf.zoomimage.sample.EventBus
+import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_rotate_right
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
@@ -48,6 +48,7 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 val imageSwitchTestResources = arrayOf(
@@ -134,6 +135,7 @@ class ZoomImageSwitchTestScreen : BaseScreen() {
                             ),
                             color = Color.White
                         )
+                        val appEvents: AppEvents = koinInject()
                         Switch(
                             checked = zoomState.zoomable.keepTransformWhenSameAspectRatioContentSizeChanged,
                             onCheckedChange = { isChecked ->
@@ -141,7 +143,7 @@ class ZoomImageSwitchTestScreen : BaseScreen() {
                                     isChecked
                                 if (isChecked) {
                                     coroutineScope.launch {
-                                        EventBus.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
+                                        appEvents.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
                                     }
                                 }
                             }

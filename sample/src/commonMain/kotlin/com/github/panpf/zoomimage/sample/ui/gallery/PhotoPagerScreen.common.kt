@@ -50,8 +50,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
-import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
@@ -76,6 +76,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
 
     @Composable
     override fun DrawContent() {
+        val appEvents: AppEvents = koinInject()
         val coroutineScope = rememberCoroutineScope()
         val focusRequest = remember { androidx.compose.ui.focus.FocusRequester() }
         Box(
@@ -84,7 +85,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                 .focusRequester(focusRequest)
                 .onKeyEvent {
                     coroutineScope.launch {
-                        EventBus.keyEvent.emit(it)
+                        appEvents.keyEvent.emit(it)
                     }
                     true
                 }

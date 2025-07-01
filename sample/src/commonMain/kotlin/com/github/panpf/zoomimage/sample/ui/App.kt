@@ -13,11 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
-import com.github.panpf.zoomimage.sample.EventBus
+import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.ui.theme.AppTheme
 import com.github.panpf.zoomimage.sample.util.Platform
 import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
+import org.koin.compose.koinInject
 
 @Composable
 fun App(onContentChanged: ((Navigator) -> Unit)? = null) {
@@ -34,8 +35,9 @@ fun App(onContentChanged: ((Navigator) -> Unit)? = null) {
                 snackbarHostState,
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 100.dp)
             )
+            val appEvents: AppEvents = koinInject()
             LaunchedEffect(Unit) {
-                EventBus.toastFlow.collect {
+                appEvents.toastFlow.collect {
                     snackbarHostState.showSnackbar(it)
                 }
             }

@@ -16,6 +16,7 @@ expect fun initialApp(context: PlatformContext)
 
 fun commonModule(context: PlatformContext): Module = module {
     single { AppSettings(context) }
+    single { AppEvents() }
 }
 
 expect fun platformModule(context: PlatformContext): Module

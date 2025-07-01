@@ -66,8 +66,8 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
+import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
-import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
@@ -180,7 +180,8 @@ fun <T : ZoomState> BaseZoomImageSample(
         }
 
         if (pageSelected) {
-            bindKeyZoomWithKeyEventFlow(EventBus.keyEvent, zoomState.zoomable)
+            val appEvents: AppEvents = koinInject()
+            bindKeyZoomWithKeyEventFlow(appEvents.keyEvent, zoomState.zoomable)
         }
 
         ZoomImageTool(

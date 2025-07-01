@@ -28,8 +28,8 @@ import com.github.panpf.zoomimage.compose.util.AssistKey
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
 import com.github.panpf.zoomimage.compose.util.matcherKeyHandler
 import com.github.panpf.zoomimage.compose.util.platformAssistKey
+import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
-import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_down
@@ -49,6 +49,7 @@ fun TurnPageIndicator(
     pagerState: PagerState,
     photoPaletteState: MutableState<PhotoPalette>? = null
 ) {
+    val appEvents: AppEvents = koinInject()
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         val keyHandlers = listOf(
@@ -77,7 +78,7 @@ fun TurnPageIndicator(
                 }
             }
         )
-        EventBus.keyEvent.collect { keyEvent ->
+        appEvents.keyEvent.collect { keyEvent ->
             keyHandlers.any {
                 it.handle(keyEvent)
             }

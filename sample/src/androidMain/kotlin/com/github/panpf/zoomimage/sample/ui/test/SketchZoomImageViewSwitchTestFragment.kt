@@ -26,19 +26,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.sketch.loadImage
-import com.github.panpf.zoomimage.sample.EventBus
+import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewSwitchBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.list.ImageThumbnailItemFactory
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import kotlin.math.roundToInt
 
 class SketchZoomImageViewSwitchTestFragment :
     BaseToolbarBindingFragment<FragmentZoomViewSwitchBinding>() {
 
     private val viewModel by viewModels<ImageSwitchViewModel>()
+    private val appEvents: AppEvents by inject()
 
     override fun getNavigationBarInsetsView(binding: FragmentZoomViewSwitchBinding): View {
         return binding.root
@@ -77,7 +79,7 @@ class SketchZoomImageViewSwitchTestFragment :
                 zoomable.keepTransformWhenSameAspectRatioContentSizeChangedState.value = isChecked
                 if (isChecked) {
                     viewLifecycleOwner.lifecycleScope.launch {
-                        EventBus.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
+                        appEvents.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
                     }
                 }
             }
