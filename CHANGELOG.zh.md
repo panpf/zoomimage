@@ -5,6 +5,7 @@
 # new
 
 * depend: 更新 sketch 4.2.0-beta02
+* fix: 修复 CoilZoomAsyncImage 开启 crossfade 并且占位图像比加载图像大时内容大小不正确的问题
 * new: 新增 `zoomimage-compose-sketch4-koin` 和 `zoomimage-view-sketch4-koin` 模块，适配 sketch4 的
   koin 模式
 
@@ -41,7 +42,7 @@
 * depend: 更新 sketch 4.1.0
 * depend: 不再替换 `kotlin-stdlib-jdk7` 和 `kotlin-stdlib-jdk8` 为 `kotlin-stdlib`
 
-## 1.2.0
+# 1.2.0
 
 zoom:
 
@@ -64,13 +65,13 @@ other:
 
 * depend: 升级 sketch 4.0.5
 
-## 1.1.2
+# 1.1.2
 
 subsampling:
 
 * fix: 捕获 close 异常。 [#75](https://github.com/panpf/zoomimage/issues/75)
 
-## 1.1.1
+# 1.1.1
 
 zoom:
 
@@ -90,7 +91,7 @@ other:
 * improve: 改进日志，现在更详细的日志信息例如动画过程、Tile 加载等日志级别调整为 Verbose
 * depend: 升级 sketch 4.0.2
 
-## 1.1.0 Stable
+# 1.1.0 Stable
 
 > [!CAUTION]
 > 为实现支持 js 和 iOS 平台，所有 `remove` 和 `change` 标签的变更都是破坏性的
@@ -173,7 +174,7 @@ other:
 * depend: 升级 jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 * depend: 升级 coil 2.7.0
 
-## 1.1.0-rc03
+# 1.1.0-rc03
 
 zoom:
 
@@ -187,7 +188,7 @@ depend:
 
 * depend: 升级 coil v3.0.4 版本
 
-## 1.1.0-rc02
+# 1.1.0-rc02
 
 zoom:
 
@@ -207,7 +208,7 @@ depend:
 
 * depend: 升级 sketch4 v4.0.0-rc01 版本
 
-## 1.1.0-rc01
+# 1.1.0-rc01
 
 zoom:
 
@@ -242,7 +243,7 @@ other:
 * change: sketch-view-sketch-core 模块重命名为 sketch-view-sketch4-core
 * depend: 升级 jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 
-## 1.1.0-beta01
+# 1.1.0-beta01
 
 zoom:
 
@@ -257,7 +258,7 @@ subsampling:
   ImageSource 时只要失败就会清空 ImageSource
 * new: ZoomState 和 ZoomImageView 增加 `setImageSource()` 方法，用于设置 ImageSource
 
-## 1.1.0-alpha06
+# 1.1.0-alpha06
 
 zoom:
 
@@ -271,7 +272,7 @@ subsampling:
   \*ToImageSource 方法添加 suspend 修饰符
 * broken: 移除 SubsamplingEngine 的构造函数的 view 参数
 
-## 1.1.0-alpha05
+# 1.1.0-alpha05
 
 subsampling:
 
@@ -290,7 +291,7 @@ other:
 
 * upgrade: 升级 sketch 到 4.0.0-alpha05 版本
 
-## 1.1.0-alpha04
+# 1.1.0-alpha04
 
 subsampling:
 
@@ -303,7 +304,7 @@ subsampling:
 * improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
 * improve: 现在只要缩略图的任意一边超过原图就无法使用子采样
 
-## 1.1.0-alpha03
+# 1.1.0-alpha03
 
 subsampling:
 
@@ -323,7 +324,7 @@ zoom:
 * change: ZoomableState 的 disabledGestureType 属性名称改为 disabledGestureTypes，ZoomableEngine 的
   disabledGestureTypeState 属性名称改为 disabledGestureTypesState
 
-## 1.1.0-alpha02
+# 1.1.0-alpha02
 
 subsampling:
 
@@ -335,7 +336,7 @@ subsampling:
 * improve: SketchImageSource、CoilImageSource、GlideHttpImageSource、PicassoHttpImageSource 现在支持从网络下载图片
 * new: 新增 ImageSource.Factory 接口，用于创建 ImageSource
 
-## 1.1.0-alpha01
+# 1.1.0-alpha01
 
 > [!CAUTION]
 > 为实现支持 js 和 iOS 平台，所有 `remove` 和 `change` 标签的变更都是破坏性的
@@ -367,7 +368,7 @@ other:
 * change: ZoomImage、SketchZoomAsyncImage、CoilZoomAsyncImage、GlideZoomAsyncImage
   等函数的 `state: ZoomState` 参数的名字改为 `zoomState: ZoomState`
 
-## v1.0.2
+# v1.0.2
 
 * fix: 修复 ZoomImageView 在 API 30 及以下版本因 TypedArray.close() 方法崩溃的
   bug. [#15](https://github.com/panpf/zoomimage/issues/15)
@@ -376,16 +377,16 @@ other:
 * improve: 改进对 Picasso 的支持
 * improve: 改进 ScalesCalculator.dynamic()，现在阅读模式可用时 mediumScale 始终是阅读模式的初始缩放倍数
 
-## v1.0.1
+# v1.0.1
 
 * fix: 修复 ZoomImageView 在单指拖动后不松手再按下一根手指执行双指缩放手势时图像会跳动的
   bug [#12](https://github.com/panpf/zoomimage/issues/12)
 
-## 1.0.0
+# 1.0.0
 
 初始稳定版发行
 
-## v1.0.0-rc01
+# v1.0.0-rc01
 
 zoom:
 
@@ -396,7 +397,7 @@ other:
 
 * depend: 升级 sketch 3.3.0 stable
 
-## v1.0.0-beta11
+# v1.0.0-beta11
 
 zoom:
 
@@ -408,7 +409,7 @@ other:
 * change: 重命名 `zoomimage-compose-coil-base` 模块为 `zoomimage-compose-coil-core`
 * improve: GlideZoomAsyncImage 和 GlideZoomImageView 现在支持 GlideUrl
 
-## 1.0.0-beta10
+# 1.0.0-beta10
 
 * fix: 修复 ZoomImage 无法显示滚动条的 bug
 * fix: 修复 SketchZoomAsyncImage 和 CoilZoomAsyncImage 在遇到没有大小的 Drawable 时会崩溃的 bug
@@ -417,12 +418,12 @@ other:
 * improve: composed 迁移到 Modifier.Node
 * depend: 升级 Sketch 3.3.0-beta04
 
-## 1.0.0-beta09
+# 1.0.0-beta09
 
 * fix: 修复在 Android 解码不支持的图片格式时因为 BitmapFactory.Options.outMimeType 为 null 导致的崩溃问题
 * change: `zoomimage-core` 模块 minSdk 从 21 改为 16
 
-## 1.0.0-beta08
+# 1.0.0-beta08
 
 * fix: 修复 `zoomimage-compose-glide` 模块没有配置混淆导致崩溃的 bug
 * change: 现在只有 `zoomimage-core` 模块生成 BuildConfig
@@ -431,7 +432,7 @@ other:
   Sketch 的非单例模块
 * depend: 升级 Sketch 3.3.0-beta02
 
-## 1.0.0-beta07
+# 1.0.0-beta07
 
 zoom:
 
@@ -448,7 +449,7 @@ subsampling:
 
 * fix: 修复桌面平台上图块之间存在间隙的 bug
 
-## 1.0.0-beta06
+# 1.0.0-beta06
 
 zoom:
 
@@ -468,7 +469,7 @@ other:
 
 * change: rememberZoomImageLogger() 函数增加 level 和 pipeline 参数
 
-## 1.0.0-beta05
+# 1.0.0-beta05
 
 zoom:
 
@@ -483,7 +484,7 @@ subsampling:
 * new: 桌面平台支持二次采样
 * new: 桌面平台支持 Exif Orientation
 
-## 1.0.0-beta04
+# 1.0.0-beta04
 
 zoom:
 
@@ -502,7 +503,7 @@ other:
 * new: 支持 Compose 多平台
 * change: 移除 rememberZoomImageLogger 函数的 level 参数
 
-## 1.0.0-beta03
+# 1.0.0-beta03
 
 zoom:
 
@@ -511,14 +512,14 @@ zoom:
 * improve: 升级 GlideImage 1.0.0-beta01
 * improve: NoClipImage 组件重命名为 NoClipContentImage
 
-## 1.0.0-beta02
+# 1.0.0-beta02
 
 zoom:
 
 fix: 修复了切换 Pager 后 ZoomImage 无法缩放的 bug
 new: 支持单指缩放功能
 
-## 1.0.0-beta01
+# 1.0.0-beta01
 
 zoom:
 
@@ -544,7 +545,7 @@ other:
 * fix: 修复 level 判断错误导致日志不打印的 bug
 * build: 升级 compileSdk 到 34，kotlinx-coroutines 到 1.7.3，compose 到 1.5.0
 
-## 1.0.0-alpha03
+# 1.0.0-alpha03
 
 zoom:
 
@@ -564,7 +565,7 @@ other:
 
 * change: ZoomableState、SubsamplingState、ZoomableEngine 和 SubsamplingEngine 的 logger 参数改为私有
 
-## 1.0.0-alpha02
+# 1.0.0-alpha02
 
 zoom:
 
@@ -579,6 +580,6 @@ subsampling:
 * new: 二次采样的图块支持动画
 * new: 二次采样添加了 pauseWhenTransforming 属性
 
-## 1.0.0-alpha01
+# 1.0.0-alpha01
 
 初始发行

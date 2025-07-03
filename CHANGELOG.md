@@ -5,6 +5,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 # new
 
 * depend: Update sketch to 4.2.0-beta02
+* fix: Fixed the problem that the content size is incorrect when CoilZoomAsyncImage is turned on
+  crossfade and the placeholder image is larger than the loaded image.
 * new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
   sketch4's koin mode
 
@@ -45,7 +47,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * depend: Update sketch to 4.1.0
 * depend: Don't replace `kotlin-stdlib-jdk7` and `kotlin-stdlib-jdk8` with `kotlin-stdlib`
 
-## 1.2.0
+# 1.2.0
 
 zoom:
 
@@ -74,13 +76,13 @@ other:
 
 * depend: Upgrade sketch 4.0.5
 
-## 1.1.2
+# 1.1.2
 
 subsampling:
 
 * fix: Catch the close exception. [#75](https://github.com/panpf/zoomimage/issues/75)
 
-## 1.1.1
+# 1.1.1
 
 zoom:
 
@@ -101,7 +103,7 @@ other:
   etc. The log level is adjusted to Verbose
 * depend: Upgrade sketch 4.0.2
 
-## 1.1.0 Stable
+# 1.1.0 Stable
 
 > [!CAUTION]
 > To support js and iOS platforms, all `remove` and `change` tag changes are destructive
@@ -204,7 +206,7 @@ other:
 * depend: Upgrade jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 * depend: Upgrade coil 2.7.0
 
-## 1.1.0-rc03
+# 1.1.0-rc03
 
 zoom:
 
@@ -218,7 +220,7 @@ depend:
 
 * depend: Upgrade coil v3.0.4 version
 
-## 1.1.0-rc02
+# 1.1.0-rc02
 
 zoom:
 
@@ -240,7 +242,7 @@ depend:
 
 * depend: Upgrade sketch to version 4.0.0-rc01
 
-## 1.1.0-rc01
+# 1.1.0-rc01
 
 zoom:
 
@@ -277,7 +279,7 @@ other:
 * change: sketch-view-sketch-core module renamed to sketch-view-sketch4-core
 * depend: Upgrade jetbrains compose 1.7.0, jetbrains lifecycle 2.8.3
 
-## 1.1.0-beta01
+# 1.1.0-beta01
 
 zoom:
 
@@ -294,7 +296,7 @@ subsampling:
   Now when setting ImageSource, the ImageSource will be cleared whenever it fails.
 * new: ZoomState and ZoomImageView add `setImageSource()` method for setting ImageSource
 
-## 1.1.0-alpha06
+# 1.1.0-alpha06
 
 zoom:
 
@@ -310,7 +312,7 @@ subsampling:
   GlideModelToImageSource, and PicassoDataToImageSource interfaces
 * broken: Remove the view parameter of SubsamplingEngine's constructor
 
-## 1.1.0-alpha05
+# 1.1.0-alpha05
 
 subsampling:
 
@@ -332,7 +334,7 @@ other:
 
 * upgrade: Upgrade sketch to version 4.0.0-alpha05
 
-## 1.1.0-alpha04
+# 1.1.0-alpha04
 
 images of extreme sizes (one side is extremely large and the other is extremely
 small). [#32](https://github.com/panpf/zoomimage/issues/32)
@@ -347,7 +349,7 @@ small). [#32](https://github.com/panpf/zoomimage/issues/32)
 * improve: Now subsampling cannot be used as long as either side of the thumbnail exceeds the
   original image
 
-## 1.1.0-alpha03
+# 1.1.0-alpha03
 
 subsampling:
 
@@ -369,7 +371,7 @@ zoom:
   and the disabledGestureTypeState property name of ZoomableEngine is changed to
   disabledGestureTypesState
 
-## 1.1.0-alpha02
+# 1.1.0-alpha02
 
 subsampling:
 
@@ -383,7 +385,7 @@ subsampling:
   support downloading images from the internet
 * new: Added ImageSource.Factory interface for creating ImageSource
 
-## 1.1.0-alpha01
+# 1.1.0-alpha01
 
 > [!CAUTION]
 > To support js and iOS platforms, all `remove` and `change` tag changes are destructive
@@ -416,7 +418,7 @@ other:
 * change: The name of the `state: ZoomState` parameter of ZoomImage, SketchZoomAsyncImage,
   CoilZoomAsyncImage, GlideZoomAsyncImage and other functions is changed to `zoomState: ZoomState`
 
-## v1.0.2
+# v1.0.2
 
 * fix: Fix the bug that ZoomImageView crashes due to the TypedArray.close() method in API 30 and
   below versions. [#15](https://github.com/panpf/zoomimage/issues/15)
@@ -427,17 +429,17 @@ other:
 * improve: Improved ScalesCalculator.dynamic(), now when reading mode is available mediumScale is
   always the initial scaling multiplier of reading mode
 
-## v1.0.1
+# v1.0.1
 
 * fix: Fixed the bug that the image of ZoomImageView would jump when you do not release your hand
   after dragging with one finger and then press another finger to perform a two-finger zoom
   gesture. [#12](https://github.com/panpf/zoomimage/issues/12)
 
-## v1.0.0
+# v1.0.0
 
 Initial stable release
 
-## v1.0.0-rc01
+# v1.0.0-rc01
 
 zoom:
 
@@ -448,7 +450,7 @@ other:
 
 * depend: Upgrade sketch 3.3.0 stable
 
-## v1.0.0-beta11
+# v1.0.0-beta11
 
 zoom:
 
@@ -460,7 +462,7 @@ other:
 * change: Rename `zoomimage-compose-coil-base` module to `zoomimage-compose-coil-core
 * improve: GlideZoomAsyncImage and GlideZoomImageView now support GlideUrl
 
-## 1.0.0-beta10
+# 1.0.0-beta10
 
 * fix: Fixed a bug where ZoomImage could not display scrollbars
 * fix: Fixed a bug where SketchZoomAsyncImage and CoilZoomAsyncImage would crash when they
@@ -470,13 +472,13 @@ other:
 * improve: composed migrated to Modifier.Node
 * depend: Upgrade Sketch 3.3.0-beta04
 
-## 1.0.0-beta09
+# 1.0.0-beta09
 
 * fix: Fixed a crash caused by BitmapFactory.Options.outMimeType being null when Android decodes
   unsupported image formats
 * change: `zoomimage-core` module minSdk changed from 21 to 16
 
-## 1.0.0-beta08
+# 1.0.0-beta08
 
 other:
 
@@ -488,7 +490,7 @@ other:
   on the non-singleton modules of Coil and Sketch respectively.
 * depend: Upgrade Sketch 3.3.0-beta02
 
-## 1.0.0-beta07
+# 1.0.0-beta07
 
 zoom:
 
@@ -511,7 +513,7 @@ subsampling:
 
 * fix: Fixed a bug with gaps between tiles on desktop platforms
 
-## 1.0.0-beta06
+# 1.0.0-beta06
 
 zoom:
 
@@ -537,7 +539,7 @@ other:
 
 * change: rememberZoomImageLogger() function adds level and pipeline parameters
 
-## 1.0.0-beta05
+# 1.0.0-beta05
 
 zoom:
 
@@ -553,7 +555,7 @@ subsampling:
 * new: The Desktop platform supports subsampling
 * new: The Desktop platform supports exif orientation
 
-## 1.0.0-beta04
+# 1.0.0-beta04
 
 zoom:
 
@@ -573,7 +575,7 @@ other:
 * new: Support for Compose Multiplatform
 * change: The rememberZoomImageLogger function removes the level parameters
 
-## 1.0.0-beta03
+# 1.0.0-beta03
 
 zoom:
 
@@ -584,14 +586,14 @@ zoom:
 * improve: Upgrade GlideImage 1.0.0-beta01
 * improve: NoClipImage rename to NoClipContentImage
 
-## 1.0.0-beta02
+# 1.0.0-beta02
 
 zoom:
 
 fix: Fixed a bug where ZoomImage could not be scaled after switching in Pager
 new: Supports one finger scale function
 
-## 1.0.0-beta01
+# 1.0.0-beta01
 
 zoom:
 
@@ -622,7 +624,7 @@ other:
 * fix: Fixed the bug that the level judgment error caused the log not to be printed
 * build: Upgrade compileSdk to 34, kotlinx-coroutines to 1.7.3, compose to 1.5.0
 
-## 1.0.0-alpha03
+# 1.0.0-alpha03
 
 zoom:
 
@@ -647,7 +649,7 @@ other:
 * change: The logger parameter for ZoomableState, SubsamplingState, ZoomableEngine, and
   SubsamplingEngine was changed to private
 
-## 1.0.0-alpha02
+# 1.0.0-alpha02
 
 zoom:
 
@@ -662,6 +664,6 @@ subsampling:
 * new: Subsampling supports tile animation
 * new: Subsampling added the pauseWhenTransforming property
 
-## 1.0.0-alpha01
+# 1.0.0-alpha01
 
 Initial release

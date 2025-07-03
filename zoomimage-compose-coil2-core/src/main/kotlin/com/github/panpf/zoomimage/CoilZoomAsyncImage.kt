@@ -21,11 +21,15 @@ import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
@@ -35,12 +39,13 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.roundToIntSize
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State
 import coil.request.ImageRequest
+import coil.transition.CrossfadeTransition
 import com.github.panpf.zoomimage.coil.CoilTileImageCache
 import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
@@ -54,7 +59,6 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 /**
  * An image component that integrates the Coil image loading framework that zoom and subsampling huge images
@@ -209,6 +213,8 @@ fun CoilZoomAsyncImage(
         zoomState.subsampling.tileImageCache = CoilTileImageCache(imageLoader)
     }
 
+    val loadingPainterState: MutableState<Painter?> = remember { mutableStateOf(null) }
+
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val context = LocalContext.current
@@ -240,7 +246,8 @@ fun CoilZoomAsyncImage(
                     imageLoader = imageLoader,
                     zoomState = zoomState,
                     model = model,
-                    loadState = loadState
+                    loadState = loadState,
+                    loadingPainterState = loadingPainterState,
                 )
                 onState?.invoke(loadState)
             },
@@ -270,6 +277,7 @@ private fun onState(
     zoomState: CoilZoomState,
     model: Any?,
     loadState: State,
+    loadingPainterState: MutableState<Painter?>,
 ) {
     val finaData = if (model is ImageRequest) model.data else model
     zoomState.zoomable.logger.d {
@@ -281,12 +289,10 @@ private fun onState(
         }
         "CoilZoomAsyncImage. onState. state=$stateName. data='${finaData}'"
     }
-    val painterSize = loadState.painter
-        ?.intrinsicSize
-        ?.takeIf { it.isSpecified }
-        ?.let { IntSize(it.width.roundToInt(), it.height.roundToInt()) }
-        ?.takeIf { it.width > 0 && it.height > 0 }
-    zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
+
+    val contentSize =
+        buildContentSizeWithCrossfade(model, loadState, loadingPainterState).roundToIntSize()
+    zoomState.zoomable.contentSize = contentSize
 
     if (loadState is State.Success) {
         coroutineScope.launch {
@@ -307,4 +313,80 @@ private fun onState(
     } else {
         zoomState.setSubsamplingImage(null as SubsamplingImage?)
     }
+}
+
+/**
+ * If crossfade mode is enabled, the coil will create a CrossfadePainter to display the image with the placeholder and the final image, but it is not CrossfadePainter in State.Success.
+ * If the size of the placeholder at this time is larger than the size of the final image, we should use the size of the CrossfadePainter as the content size, so here we simulate a CrossfadePainter.
+ */
+private fun buildContentSizeWithCrossfade(
+    model: Any?,
+    loadState: State,
+    loadingPainterState: MutableState<Painter?>,
+): Size {
+    val painter = loadState.painter
+    val painterSize = painter
+        ?.intrinsicSize
+        ?.takeIf { it.isSpecified }
+        ?.takeIf { it.width > 0 && it.height > 0 }
+        ?: Size.Zero
+
+    if (painter == null) {
+        loadingPainterState.value = null
+        return painterSize
+    }
+
+    if (model !is ImageRequest) {
+        loadingPainterState.value = null
+        return painterSize
+    }
+
+    val transitionFactory = model.transitionFactory
+    if (transitionFactory !is CrossfadeTransition.Factory) {
+        loadingPainterState.value = null
+        return painterSize
+    }
+
+    if (loadState is State.Loading) {
+        loadingPainterState.value = painter
+        return painterSize
+    }
+
+    if (loadState !is State.Success) {
+        loadingPainterState.value = null
+        return painterSize
+    }
+
+    val loadingPainter = loadingPainterState.value
+    if (loadingPainter == null) {
+        return painterSize
+    }
+
+    val crossfadePainterSize =
+        computeIntrinsicSize(loadingPainter, painter, transitionFactory.preferExactIntrinsicSize)
+    loadingPainterState.value = null
+    return crossfadePainterSize
+}
+
+private fun computeIntrinsicSize(
+    start: Painter?,
+    end: Painter?,
+    preferExactIntrinsicSize: Boolean = false
+): Size {
+    val startSize = start?.intrinsicSize ?: Size.Zero
+    val endSize = end?.intrinsicSize ?: Size.Zero
+
+    val isStartSpecified = startSize.isSpecified
+    val isEndSpecified = endSize.isSpecified
+    if (isStartSpecified && isEndSpecified) {
+        return Size(
+            width = maxOf(startSize.width, endSize.width),
+            height = maxOf(startSize.height, endSize.height),
+        )
+    }
+    if (preferExactIntrinsicSize) {
+        if (isStartSpecified) return startSize
+        if (isEndSpecified) return endSize
+    }
+    return Size.Unspecified
 }
