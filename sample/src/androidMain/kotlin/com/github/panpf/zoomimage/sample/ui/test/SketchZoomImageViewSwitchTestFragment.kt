@@ -20,7 +20,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,12 +33,13 @@ import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
 class SketchZoomImageViewSwitchTestFragment :
     BaseToolbarBindingFragment<FragmentZoomViewSwitchBinding>() {
 
-    private val viewModel by viewModels<ImageSwitchViewModel>()
+    private val imageSwitchViewModel by viewModel<ImageSwitchViewModel>()
     private val appEvents: AppEvents by inject()
 
     override fun getNavigationBarInsetsView(binding: FragmentZoomViewSwitchBinding): View {
@@ -66,9 +66,9 @@ class SketchZoomImageViewSwitchTestFragment :
             )
             adapter = AssemblyRecyclerAdapter(
                 itemFactoryList = listOf(ImageThumbnailItemFactory {
-                    viewModel.setImageUri(it)
+                    imageSwitchViewModel.setImageUri(it)
                 }),
-                initDataList = viewModel.imageUris
+                initDataList = imageSwitchViewModel.imageUris
             )
         }
 
@@ -93,7 +93,7 @@ class SketchZoomImageViewSwitchTestFragment :
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentImageUri.collect { imageUri ->
+            imageSwitchViewModel.currentImageUri.collect { imageUri ->
                 setImage(binding, imageUri)
             }
         }

@@ -6,6 +6,8 @@ import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.util.Logger
 import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsApi
+import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListViewModel
+import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListViewModel
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -14,6 +16,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 expect fun initialApp(context: PlatformContext)
@@ -24,6 +27,8 @@ fun commonModule(context: PlatformContext): Module = module {
     single { newSketch(context, appSettings = get()) }
     single { newHttpClient() }
     single { PexelsApi(get()) }
+    viewModelOf(::LocalPhotoListViewModel)
+    viewModelOf(::PexelsPhotoListViewModel)
 }
 
 expect fun platformModule(context: PlatformContext): Module

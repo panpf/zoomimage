@@ -21,13 +21,8 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -35,90 +30,54 @@ import androidx.compose.ui.unit.dp
 import com.github.panpf.sketch.ability.bindPauseLoadWhenScrolling
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.ui.components.AppendState
+import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.components.VerticalScrollbarCompat
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.koinInject
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 fun PhotoList(
+    photoPaging: SimplePaging<Photo>,
     modifier: Modifier = Modifier,
     gridCellsMinSize: Dp = 100.dp,
-    initialPageStart: Int = 0,
-    pageSize: Int = 80,
-    load: suspend (pageStart: Int, pageSize: Int) -> List<Photo>,
-    calculateNextPageStart: (currentPageStart: Int, loadedPhotoSize: Int) -> Int,
     onClick: (items: List<Photo>, photo: Photo, index: Int) -> Unit,
 ) {
-    var photos: List<Photo> by remember { mutableStateOf(emptyList()) }
-    val appSettings: AppSettings = koinInject()
-    var pageStart by remember { mutableStateOf(initialPageStart) }
-    var nextPageStart: Int? by remember { mutableStateOf(null) }
-    var refreshing: Boolean by remember { mutableStateOf(false) }
-    var appendState: AppendState? by remember { mutableStateOf(null) }
-    LaunchedEffect(Unit) {
-        snapshotFlow { pageStart }.collectLatest {
-            val finalPageStart = it.takeIf { it >= 0 } ?: initialPageStart  // refresh
-            refreshing = finalPageStart == initialPageStart
-            appendState = if (finalPageStart > initialPageStart) AppendState.Loading else null
-            val loadedPhotos = load(finalPageStart, pageSize)
-            photos = if (it == initialPageStart) {
-                loadedPhotos
-            } else {
-                photos + loadedPhotos
-            }
-            nextPageStart = calculateNextPageStart(it, loadedPhotos.size)
-            appendState = if (finalPageStart > initialPageStart && loadedPhotos.isEmpty())
-                AppendState.End else AppendState.Loading
-            refreshing = false
-        }
-    }
-
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = refreshing,
-        onRefresh = { pageStart = -1 }
+        refreshing = photoPaging.refreshing,
+        onRefresh = { photoPaging.refresh() }
     )
     Box(
         modifier = modifier
             .fillMaxSize()
             .pullRefresh(pullRefreshState)
     ) {
+        val appSettings: AppSettings = koinInject()
         val staggeredGridMode by appSettings.staggeredGridMode.collectAsState()
         if (staggeredGridMode) {
             val staggeredGridState = rememberLazyStaggeredGridState()
-            LaunchedEffect(staggeredGridState.layoutInfo, photos) {
-                val nextPageStart1 = nextPageStart
-                if (nextPageStart1 != null && staggeredGridState.layoutInfo.visibleItemsInfo.last().index == photos.size - 1) {
-                    pageStart = nextPageStart1
-                }
-            }
+            photoPaging.nextPageWith(staggeredGridState)
             PhotoStaggeredGrid(
                 staggeredGridState = staggeredGridState,
-                photos = photos,
+                photos = photoPaging.photos,
                 gridCellsMinSize = gridCellsMinSize,
-                appendState = appendState,
+                appendState = photoPaging.appendState,
                 onClick = onClick,
             )
         } else {
             val gridState = rememberLazyGridState()
-            LaunchedEffect(gridState.layoutInfo, photos) {
-                val nextPageStart1 = nextPageStart
-                if (nextPageStart1 != null && gridState.layoutInfo.visibleItemsInfo.last().index == photos.size - 1) {
-                    pageStart = nextPageStart1
-                }
-            }
+            photoPaging.nextPageWith(gridState)
             PhotoSquareGrid(
                 gridState = gridState,
-                photos = photos,
+                photos = photoPaging.photos,
                 gridCellsMinSize = gridCellsMinSize,
-                appendState = appendState,
+                appendState = photoPaging.appendState,
                 onClick = onClick,
             )
         }
 
         PullRefreshIndicator(
-            refreshing = refreshing,
+            refreshing = photoPaging.refreshing,
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter)
         )
@@ -128,6 +87,8 @@ fun PhotoList(
                 .align(Alignment.BottomEnd)
                 .padding(20.dp)
         )
+
+        PageState(photoPaging.pageState)
     }
 }
 

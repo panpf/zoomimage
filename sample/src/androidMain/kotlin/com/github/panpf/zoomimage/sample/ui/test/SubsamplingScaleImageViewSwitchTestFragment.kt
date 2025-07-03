@@ -22,7 +22,6 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -37,11 +36,12 @@ import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SubsamplingScaleImageViewSwitchTestFragment :
     BaseToolbarBindingFragment<FragmentSubsamplingViewSwitchBinding>() {
 
-    private val viewModel by viewModels<ImageSwitchViewModel>()
+    private val imageSwitchViewModel by viewModel<ImageSwitchViewModel>()
 
     override fun getNavigationBarInsetsView(binding: FragmentSubsamplingViewSwitchBinding): View {
         return binding.root
@@ -74,14 +74,14 @@ class SubsamplingScaleImageViewSwitchTestFragment :
             )
             adapter = AssemblyRecyclerAdapter(
                 itemFactoryList = listOf(ImageThumbnailItemFactory {
-                    viewModel.setImageUri(it)
+                    imageSwitchViewModel.setImageUri(it)
                 }),
-                initDataList = viewModel.imageUris
+                initDataList = imageSwitchViewModel.imageUris
             )
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentImageUri.collect { imageUri ->
+            imageSwitchViewModel.currentImageUri.collect { imageUri ->
                 setImage(binding, imageUri)
             }
         }

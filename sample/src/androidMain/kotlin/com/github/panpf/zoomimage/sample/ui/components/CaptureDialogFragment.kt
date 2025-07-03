@@ -17,14 +17,14 @@
 package com.github.panpf.zoomimage.sample.ui.components
 
 import android.os.Bundle
-import androidx.fragment.app.activityViewModels
 import com.github.panpf.zoomimage.sample.databinding.FragmentCaptureBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.CaptureViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class CaptureDialogFragment : BaseBindingDialogFragment<FragmentCaptureBinding>() {
 
-    private val captureViewModel by activityViewModels<CaptureViewModel>()
+    private val captureViewModel by activityViewModel<CaptureViewModel>()
 
     override fun onViewCreated(
         binding: FragmentCaptureBinding,

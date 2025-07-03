@@ -23,7 +23,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -59,6 +58,7 @@ import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
 
@@ -66,7 +66,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
     private val photoList by lazy {
         Json.decodeFromString<List<Photo>>(args.photos)
     }
-    private val photoPaletteViewModel by viewModels<PhotoPaletteViewModel>()
+    private val photoPaletteViewModel by viewModel<PhotoPaletteViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

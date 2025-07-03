@@ -21,7 +21,6 @@ import app.cash.paging.PagingSourceLoadParams
 import app.cash.paging.PagingSourceLoadResult
 import app.cash.paging.PagingState
 import app.cash.paging.createPagingSourceLoadResultPage
-import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.data.builtinImages
 import com.github.panpf.zoomimage.sample.data.localImages
@@ -29,7 +28,6 @@ import com.github.panpf.zoomimage.sample.data.readImageInfoOrNull
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 class LocalPhotoListPagingSource(
-    val context: PlatformContext,
     val sketch: Sketch
 ) : PagingSource<Int, Photo>() {
 
@@ -39,7 +37,7 @@ class LocalPhotoListPagingSource(
     override fun getRefreshKey(state: PagingState<Int, Photo>): Int = 0
 
     private suspend fun getBuiltInPhotos(): List<String> {
-        return _builtInPhotos ?: builtinImages(context).map { it.uri }.also {
+        return _builtInPhotos ?: builtinImages(sketch.context).map { it.uri }.also {
             _builtInPhotos = it
         }
     }
@@ -57,7 +55,7 @@ class LocalPhotoListPagingSource(
             val fromPhotoAlbumPhotos = if (fromBuiltInPhotos.size < pageSize) {
                 val photoAlbumStartPosition = 0
                 val photoAlbumPageSize = pageSize - fromBuiltInPhotos.size
-                localImages(context, photoAlbumStartPosition, photoAlbumPageSize)
+                localImages(sketch.context, photoAlbumStartPosition, photoAlbumPageSize)
             } else {
                 emptyList()
             }
@@ -66,7 +64,7 @@ class LocalPhotoListPagingSource(
             }
         } else {
             val photoAlbumStartPosition = startPosition - builtInPhotos.size
-            localImages(context, photoAlbumStartPosition, pageSize)
+            localImages(sketch.context, photoAlbumStartPosition, pageSize)
         }.map { uri -> uriToPhoto(uri) }
         val nextKey = if (photos.isNotEmpty()) startPosition + pageSize else null
         val filteredPhotos = photos.filter { keySet.add(it.originalUrl) }
@@ -79,7 +77,7 @@ class LocalPhotoListPagingSource(
 
     private suspend fun uriToPhoto(uri: String): Photo {
         val imageInfo = readImageInfoOrNull(
-            context = context,
+            context = sketch.context,
             sketch = sketch,
             uri = uri,
         )

@@ -11,13 +11,19 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriFetcher
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriKeyer
 import com.github.panpf.zoomimage.sample.image.PicassoComposeResourceRequestHandler
+import com.github.panpf.zoomimage.sample.ui.ZoomImageSettingsViewModel
+import com.github.panpf.zoomimage.sample.ui.examples.CaptureViewModel
+import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
+import com.github.panpf.zoomimage.sample.ui.test.ImageSwitchViewModel
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatform
 import java.security.SecureRandom
@@ -29,6 +35,7 @@ import javax.net.ssl.X509TrustManager
 
 actual fun initialApp(context: PlatformContext) {
     startKoin {
+        androidContext(context)
         modules(commonModule(context))
         modules(platformModule(context))
     }
@@ -70,7 +77,10 @@ actual fun initialApp(context: PlatformContext) {
 }
 
 actual fun platformModule(context: PlatformContext): Module = module {
-
+    viewModelOf(::PhotoPaletteViewModel)
+    viewModelOf(::ZoomImageSettingsViewModel)
+    viewModelOf(::CaptureViewModel)
+    viewModelOf(::ImageSwitchViewModel)
 }
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {

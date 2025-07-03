@@ -21,7 +21,6 @@ import android.graphics.Matrix
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.chrisbanes.photoview.PhotoView
@@ -35,12 +34,13 @@ import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 class PhotoViewSwitchTestFragment : BaseToolbarBindingFragment<FragmentPhotoViewSwitchBinding>() {
 
-    private val viewModel by viewModels<ImageSwitchViewModel>()
+    private val imageSwitchViewModel by viewModel<ImageSwitchViewModel>()
 
     override fun getNavigationBarInsetsView(binding: FragmentPhotoViewSwitchBinding): View {
         return binding.root
@@ -70,14 +70,14 @@ class PhotoViewSwitchTestFragment : BaseToolbarBindingFragment<FragmentPhotoView
             )
             adapter = AssemblyRecyclerAdapter(
                 itemFactoryList = listOf(ImageThumbnailItemFactory {
-                    viewModel.setImageUri(it)
+                    imageSwitchViewModel.setImageUri(it)
                 }),
-                initDataList = viewModel.imageUris
+                initDataList = imageSwitchViewModel.imageUris
             )
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentImageUri.collect { imageUri ->
+            imageSwitchViewModel.currentImageUri.collect { imageUri ->
                 setImage(binding, imageUri)
             }
         }

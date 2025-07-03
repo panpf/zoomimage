@@ -25,7 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.panpf.tools4a.view.ktx.animTranslate
@@ -43,7 +42,7 @@ import com.github.panpf.zoomimage.sample.ui.components.buildZoomImageViewInfos
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
 import com.github.panpf.zoomimage.sample.ui.util.capture
 import com.github.panpf.zoomimage.sample.ui.util.crop
-import com.github.panpf.zoomimage.sample.ui.util.parentViewModels
+import com.github.panpf.zoomimage.sample.ui.util.parentViewModel
 import com.github.panpf.zoomimage.sample.ui.util.toAndroidRect
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
@@ -57,6 +56,7 @@ import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import kotlin.math.roundToInt
 
 abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
@@ -65,8 +65,8 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     abstract val sketchImageUri: String
 
     private var zoomView: ZOOM_VIEW? = null
-    private val photoPaletteViewModel by parentViewModels<PhotoPaletteViewModel>()
-    private val captureViewModel by activityViewModels<CaptureViewModel>()
+    private val photoPaletteViewModel by parentViewModel<PhotoPaletteViewModel>()
+    private val captureViewModel by activityViewModel<CaptureViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

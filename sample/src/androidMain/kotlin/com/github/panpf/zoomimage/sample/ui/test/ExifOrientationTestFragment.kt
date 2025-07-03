@@ -9,6 +9,7 @@ import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.databinding.FragmentTabPagerBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.gallery.newPhotoDetailItemFactory
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.google.android.material.tabs.TabLayoutMediator
 
 class ExifOrientationTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBinding>() {
@@ -27,7 +28,7 @@ class ExifOrientationTestFragment : BaseToolbarBindingFragment<FragmentTabPagerB
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@ExifOrientationTestFragment,
                 itemFactoryList = listOf(newPhotoDetailItemFactory(appSettings)),
-                initDataList = exifImages.map { it.uri }
+                initDataList = exifImages.map { Photo(it.uri) }
             )
         }
 

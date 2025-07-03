@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.sample.ui
 
 import android.os.Bundle
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
@@ -32,10 +31,11 @@ import com.github.panpf.zoomimage.sample.ui.common.menu.MenuDividerItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.menu.MultiChooseMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ZoomImageSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
 
-    private val zoomImageSettingsViewModel by viewModels<ZoomImageSettingsViewModel>()
+    private val zoomImageSettingsViewModel by viewModel<ZoomImageSettingsViewModel>()
 
     override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {
         val recyclerAdapter = AssemblyRecyclerAdapter(
