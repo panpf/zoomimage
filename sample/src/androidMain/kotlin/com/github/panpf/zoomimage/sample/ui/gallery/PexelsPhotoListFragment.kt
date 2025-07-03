@@ -10,6 +10,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.Flow
+import org.koin.mp.KoinPlatform
 
 class PexelsPhotoListFragment : BasePhotoListFragment() {
 
@@ -29,7 +30,7 @@ class PexelsPhotoListFragment : BasePhotoListFragment() {
             ),
             initialKey = 0,
             pagingSourceFactory = {
-                PexelsPhotoListPagingSource()
+                PexelsPhotoListPagingSource(KoinPlatform.getKoin().get())
             }
         ).flow.cachedIn(viewModelScope)
     }

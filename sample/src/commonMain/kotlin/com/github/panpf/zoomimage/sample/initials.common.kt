@@ -5,9 +5,14 @@ import coil3.util.DebugLogger
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.util.Logger
+import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsApi
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -17,6 +22,8 @@ fun commonModule(context: PlatformContext): Module = module {
     single { AppSettings(context) }
     single { AppEvents() }
     single { newSketch(context, appSettings = get()) }
+    single { newHttpClient() }
+    single { PexelsApi(get()) }
 }
 
 expect fun platformModule(context: PlatformContext): Module
@@ -49,3 +56,15 @@ fun newCoil(context: coil3.PlatformContext): ImageLoader {
 }
 
 expect fun ImageLoader.Builder.platformCoilInitial(context: coil3.PlatformContext)
+
+private fun newHttpClient(): HttpClient {
+    return HttpClient {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                prettyPrint = true
+                isLenient = true
+            })
+        }
+    }
+}

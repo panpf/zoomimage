@@ -13,6 +13,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.github.panpf.zoomimage.sample.ui.gridCellsMinSize
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.Flow
+import org.koin.mp.KoinPlatform
 
 @Composable
 actual fun PexelsPhotoListPage(screen: Screen) {
@@ -39,7 +40,7 @@ class PexelsPhotoListScreenModel : ScreenModel {
         ),
         initialKey = 0,
         pagingSourceFactory = {
-            PexelsPhotoListPagingSource()
+            PexelsPhotoListPagingSource(KoinPlatform.getKoin().get())
         }
     ).flow.cachedIn(screenModelScope)
 }

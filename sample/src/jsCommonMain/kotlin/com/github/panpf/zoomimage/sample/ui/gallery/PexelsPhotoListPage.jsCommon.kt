@@ -4,19 +4,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.github.panpf.zoomimage.sample.data.api.Apis
 import com.github.panpf.zoomimage.sample.data.api.Response
+import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsApi
 import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsPhoto
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import org.koin.compose.koinInject
 
 @Composable
 actual fun PexelsPhotoListPage(screen: Screen) {
     val navigator = LocalNavigator.current!!
+    val pexelsApi: PexelsApi = koinInject()
     PhotoList(
         initialPageStart = 1,
         pageSize = 80,
         load = { pageStart: Int, pageSize: Int ->
-            Apis.pexelsApi.curated(pageStart, pageSize).let { response ->
+            pexelsApi.curated(pageStart, pageSize).let { response ->
                 if (response is Response.Success) {
                     response.body.photos.map { it.toPhoto() }
                 } else {
