@@ -4,10 +4,10 @@
 
 # new
 
-* depend: 更新 sketch 4.2.0-beta02
 * fix: 修复 CoilZoomAsyncImage 开启 crossfade 并且占位图像比加载图像大时内容大小不正确的问题
 * new: 新增 `zoomimage-compose-sketch4-koin` 和 `zoomimage-view-sketch4-koin` 模块，适配 sketch4 的
   koin 模式
+* depend: 更新 sketch 4.2.0
 
 # 1.4.0-beta02
 
