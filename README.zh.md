@@ -51,34 +51,34 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 Compose multiplatform：
 
 ```kotlin
-// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomAsyncImage 组件.（Sketch4 单例版本）（推荐使用）
+// 集成 Sketch v4+ 单例模式，提供 SketchZoomAsyncImage 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch4:${LAST_VERSION}")
 
-// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomAsyncImage 组件.（Sketch4 koin 版本）（推荐使用）
+// 集成 Sketch v4+ koin 模式，提供 SketchZoomAsyncImage 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch4-koin:${LAST_VERSION}")
 
-// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomAsyncImage 组件.（Sketch4 core 版本）（推荐使用）
+// 集成 Sketch v4+ core，提供 SketchZoomAsyncImage 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch4-core:${LAST_VERSION}")
 
-// 提供适配了旧版 Sketch v3 图片加载器的 SketchZoomAsyncImage 组件.（Sketch3 单例版本）
+// 集成 Sketch v3 单例模式，提供 SketchZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch3:${LAST_VERSION}")
 
-// 提供适配了旧版 Sketch v3 图片加载器的 SketchZoomAsyncImage 组件.（Sketch3 core 版本）
+// 集成 Sketch v3 core，提供 SketchZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch3-core:${LAST_VERSION}")
 
-// 提供适配了 Coil v3+ 图片加载器的 CoilZoomAsyncImage 组件.（Coil3 单例版本）
+// 集成 Coil v3+ 单例模式，提供 CoilZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:${LAST_VERSION}")
 
-// 提供适配了 Coil v3+ 图片加载器的 CoilZoomAsyncImage 组件.（Coil3 core 版本）
+// 集成 Coil v3+ core，提供 CoilZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3-core:${LAST_VERSION}")
 
-// 提供适配了旧版 Coil v2 图片加载器的 CoilZoomAsyncImage 组件.（Coil2 单例版本）
+// 集成 Coil v2 单例模式，提供 CoilZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil2:${LAST_VERSION}")
 
-// 提供适配了旧版 Coil v2 图片加载器的 CoilZoomAsyncImage 组件.（Coil2 core 版本）
+// 集成 Coil v2 core，提供 CoilZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil2-core:${LAST_VERSION}")
 
-// 提供基础的 ZoomImage 组件，还需要做额外的工作以支持子采样，不支持网络图片
+// 提供基础的 ZoomImage 组件，不支持网络图片
 implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 
 // 支持从 composeResources 文件夹下加载图片
@@ -91,7 +91,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-resources:${LAST_VER
 Only android compose：
 
 ```kotlin
-// 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件
+// 集成 Glide，提供 GlideZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 ```
 
@@ -102,40 +102,40 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 Android view：
 
 ```kotlin
-// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomImageView 组件.（Sketch4 单例版本）（推荐使用）
+// 集成 Sketch v4+ 单例模式，提供 SketchZoomImageView 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch4:${LAST_VERSION}")
 
-// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomImageView 组件.（Sketch4 koin 版本）（推荐使用）
+// 集成 Sketch v4+ koin 模式，提供 SketchZoomImageView 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch4-koin:${LAST_VERSION}")
 
-// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomImageView 组件.（Sketch4 core 版本）（推荐使用）
+// 集成 Sketch v4+ core，提供 SketchZoomImageView 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch4-core:${LAST_VERSION}")
 
-// 提供适配了旧版 Sketch v3 图片加载器的 SketchZoomImageView 组件.（Sketch3 单例版本）
+// 集成 Sketch v3 单例模式，提供 SketchZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch3:${LAST_VERSION}")
 
-// 提供适配了旧版 Sketch v3 图片加载器的 SketchZoomImageView 组件.（Sketch3 core 版本）
+// 集成 Sketch v3 core，提供 SketchZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch3-core:${LAST_VERSION}")
 
-// 提供适配了 Coil v3+ 图片加载器的 CoilZoomImageView 组件.（Coil3 单例版本）
+// 集成 Coil v3+ 单例模式，提供 CoilZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil3:${LAST_VERSION}")
 
-// 提供适配了 Coil v3+ 图片加载器的 CoilZoomImageView 组件.（Coil3 core 版本）
+// 集成 Coil v3+ core，提供 CoilZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil3-core:${LAST_VERSION}")
 
-// 提供适配了旧版 Coil v2 图片加载器的 CoilZoomImageView 组件.（Coil2 单例版本）
+// 集成 Coil v2 单例模式，提供 CoilZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil2:${LAST_VERSION}")
 
-// 提供适配了旧版 Coil v2 图片加载器的 CoilZoomImageView 组件.（Coil2 core 版本）
+// 集成 Coil v2 core，提供 CoilZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil2-core:${LAST_VERSION}")
 
-// 提供适配了 Glide 图片加载器的 GlideZoomImageView 组件
+// 集成 Glide，提供 GlideZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-glide:${LAST_VERSION}")
 
-// 提供适配了 Picasso 图片加载器的 PicassoZoomImageView 组件
+// 集成 Picasso，提供 PicassoZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-picasso:${LAST_VERSION}")
 
-// 提供最基础的 ZoomImageView 组件，还需要做额外的工作以支持子采样，不支持网络图片
+// 提供基础的 ZoomImageView 组件，不支持网络图片
 implementation("io.github.panpf.zoomimage:zoomimage-view:${LAST_VERSION}")
 ```
 

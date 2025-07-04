@@ -61,34 +61,34 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 Compose multiplatform:
 
 ```kotlin
-// Provides the SketchZoomAsyncImage component adapted to the Sketch v4+ image loader. (Sketch4 singleton) (recommended)
+// Integrate Sketch v4+ singleton mode, provides SketchZoomAsyncImage component. (Recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch4:${LAST_VERSION}")
 
-// Provides the SketchZoomAsyncImage component adapted to the Sketch v4+ image loader. (Sketch4 koin) (recommended)
+// Integrate Sketch v4+ koin mode, provides SketchZoomAsyncImage component. (Recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch4-koin:${LAST_VERSION}")
 
-// Provides the SketchZoomAsyncImage component adapted to the Sketch v4+ image loader. (Sketch4 core) (recommended)
+// Integrate Sketch v4+ core, provides SketchZoomAsyncImage component. (Recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch4-core:${LAST_VERSION}")
 
-// Provides SketchZoomAsyncImage component adapted to the old Sketch v3 image loader. (Sketch3 singleton)
+// Integrate Sketch v3 singleton mode, provides SketchZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch3:${LAST_VERSION}")
 
-// Provides SketchZoomAsyncImage component adapted to the old Sketch v3 image loader. (Sketch3 core)
+// Integrate Sketch v3 core, provides SketchZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch3-core:${LAST_VERSION}")
 
-// Provides the CoilZoomAsyncImage component adapted to the Coil v3+ image loader. (Coil3 singleton)
+// Integrate Coil v3+ singleton mode, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:${LAST_VERSION}")
 
-// Provides the CoilZoomAsyncImage component adapted to the Coil v3+ image loader. (Coil3 core)
+// Integrate Coil v3+ core, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3-core:${LAST_VERSION}")
 
-// Provides CoilZoomAsyncImage component adapted to the old Coil v2 image loader. (Coil2 singleton)
+// Integrate Coil v2 singleton mode, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil2:${LAST_VERSION}")
 
-// Provides CoilZoomAsyncImage component adapted to the old Coil v2 image loader. (Coil2 core)
+// Integrate Coil v2 core, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil2-core:${LAST_VERSION}")
 
-// Provides basic ZoomImage component, additional work needs to be done to support subsampling, and does not support network images.
+// Provides basic ZoomImage component, does not support network images.
 implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 
 // Support loading images from composeResources folder
@@ -101,7 +101,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-resources:${LAST_VER
 Only android compose:
 
 ```kotlin
-// Provides the GlideZoomAsyncImage component adapted to the Glide image loader
+// Integrate Glide, provides GlideZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 ```
 
@@ -112,40 +112,40 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 Android view:
 
 ```kotlin
-// Provides the SketchZoomImageView component adapted to the Sketch v4+ image loader. (Sketch4 singleton) (recommended)
+// Integrate Sketch v4+ singleton mode, provides SketchZoomAsyncImage component. (Recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch4:${LAST_VERSION}")
 
-// Provides the SketchZoomImageView component adapted to the Sketch v4+ image loader. (Sketch4 koin) (recommended)
+// Integrate Sketch v4+ koin mode, provides SketchZoomAsyncImage component. (Recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch4-koin:${LAST_VERSION}")
 
-// Provides the SketchZoomImageView component adapted to the Sketch v4+ image loader. (Sketch4 core) (recommended)
+// Integrate Sketch v4+ core, provides SketchZoomAsyncImage component. (Recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch4-core:${LAST_VERSION}")
 
-// Provides SketchZoomImageView component adapted to the old Sketch v3 image loader. (Sketch3 singleton)
+// Integrate Sketch v3 singleton mode, provides SketchZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch3:${LAST_VERSION}")
 
-// Provides SketchZoomImageView component adapted to the old Sketch v3 image loader. (Sketch3 core)
+// Integrate Sketch v3 core, provides SketchZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch3-core:${LAST_VERSION}")
 
-// Provides the CoilZoomImageView component adapted to the Coil v3+ image loader. (Coil3 singleton)
+// Integrate Coil v3+ singleton mode, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil3:${LAST_VERSION}")
 
-// Provides the CoilZoomImageView component adapted to the Coil v3+ image loader. (Coil3 core)
+// Integrate Coil v3+ core, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil3-core:${LAST_VERSION}")
 
-// Provides CoilZoomImageView component adapted to the old Coil v2 image loader. (Coil2 singleton)
+// Integrate Coil v2 singleton mode, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil2:${LAST_VERSION}")
 
-// Provides CoilZoomImageView component adapted to the old Coil v2 image loader. (Coil2 core)
+// Integrate Coil v2 core, provides CoilZoomAsyncImage component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil2-core:${LAST_VERSION}")
 
-// Provides the GlideZoomImageView component adapted to the Glide image loader
+// Integrate Glide, provides GlideZoomImageView component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-glide:${LAST_VERSION}")
 
-// Provides the PicassoZoomImageView component adapted to the Picasso image loader
+// Integrate Picasso, provides PicassoZoomImageView component.
 implementation("io.github.panpf.zoomimage:zoomimage-view-picasso:${LAST_VERSION}")
 
-// Provides the most basic ZoomImageView component. Additional work needs to be done to support subsampling. Network images are not supported.
+// Provides basic ZoomImageView component, does not support network images.
 implementation("io.github.panpf.zoomimage:zoomimage-view:${LAST_VERSION}")
 ```
 
