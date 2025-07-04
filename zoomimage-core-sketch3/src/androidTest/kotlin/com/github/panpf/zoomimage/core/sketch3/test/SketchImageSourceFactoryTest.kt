@@ -16,59 +16,47 @@
 
 package com.github.panpf.zoomimage.core.sketch3.test
 
-import android.graphics.BitmapFactory
 import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.datasource.AssetDataSource
 import com.github.panpf.sketch.datasource.DataFrom
-import com.github.panpf.sketch.datasource.FileDataSource
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.request.LoadRequest
 import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.runBlocking
-import okio.buffer
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-class SketchImageSourceTest {
+class SketchImageSourceFactoryTest {
 
     @Test
     fun testConstructor() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val imageUri = "/sdcard/sample.jpeg"
-        val request = LoadRequest(context, imageUri)
-        val dataSource = FileDataSource(
-            sketch = sketch,
-            request = request,
-            file = File(imageUri)
-        )
+        val imageUri = ResourceImages.dog.uri
 
-        SketchImageSource(imageUri, dataSource)
+        val request = LoadRequest(context, imageUri)
+        SketchImageSource.Factory(sketch, request)
+
+        SketchImageSource.Factory(sketch, imageUri)
     }
 
     @Test
-    fun testKey() {
+    fun testKeyAndImageUri() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val imageUri = "/sdcard/sample.jpeg"
+        val imageUri = ResourceImages.dog.uri
         val request = LoadRequest(context, imageUri)
-        val dataSource = FileDataSource(
-            sketch = sketch,
-            request = request,
-            file = File(imageUri)
-        )
-        val imageSource = SketchImageSource(imageUri, dataSource)
-        assertEquals(imageUri, imageSource.key)
+        val factory = SketchImageSource.Factory(sketch, request)
+        assertEquals(request.uriString, factory.key)
+        assertEquals(request.uriString, factory.imageUri)
     }
 
     @Test
-    fun testOpenSource() {
+    fun testCreate() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
         SketchImageSource.Factory(
@@ -80,11 +68,6 @@ class SketchImageSourceTest {
                 message = "${this.dataSource}"
             )
             assertEquals(DataFrom.LOCAL, this.dataSource.dataFrom)
-            val imageSize = this.openSource()
-                .buffer().use { it.readByteArray() }
-                .let { BitmapFactory.decodeStream(it.inputStream()) }
-                .let { IntSizeCompat(it.width, it.height) }
-            assertEquals(expected = IntSizeCompat(1100, 733), actual = imageSize)
         }
     }
 
@@ -92,55 +75,30 @@ class SketchImageSourceTest {
     fun testEqualsAndHashCode() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val imageUri1 = "/sdcard/sample.jpeg"
-        val imageUri2 = "/sdcard/sample.png"
-        val request1 = LoadRequest(context, imageUri1)
-        val request2 = LoadRequest(context, imageUri2)
-        val dataSource1 = FileDataSource(
-            sketch = sketch,
-            request = request1,
-            file = File(imageUri1)
-        )
-        val dataSource2 = FileDataSource(
-            sketch = sketch,
-            request = request2,
-            file = File(imageUri2)
-        )
+        val request1 = LoadRequest(context, ResourceImages.dog.uri)
+        val request2 = LoadRequest(context, ResourceImages.cat.uri)
 
-        val element1 = SketchImageSource(imageUri1, dataSource1)
-        val element11 = SketchImageSource(imageUri1, dataSource1)
-        val element2 = SketchImageSource(imageUri2, dataSource1)
-        val element3 = SketchImageSource(imageUri1, dataSource2)
+        val element1 = SketchImageSource.Factory(sketch, request1)
+        val element11 = SketchImageSource.Factory(sketch, request1)
+        val element2 = SketchImageSource.Factory(sketch, request2)
 
         assertEquals(expected = element1, actual = element11)
         assertNotEquals(illegal = element1, actual = element2)
-        assertNotEquals(illegal = element1, actual = element3)
-        assertNotEquals(illegal = element2, actual = element3)
         assertNotEquals(illegal = element1, actual = null as Any?)
         assertNotEquals(illegal = element1, actual = Any())
 
         assertEquals(expected = element1.hashCode(), actual = element11.hashCode())
         assertNotEquals(illegal = element1.hashCode(), actual = element2.hashCode())
-        assertNotEquals(illegal = element1.hashCode(), actual = element3.hashCode())
-        assertNotEquals(illegal = element2.hashCode(), actual = element3.hashCode())
     }
 
     @Test
     fun testToString() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val imageUri = "/sdcard/sample.jpeg"
+        val imageUri = ResourceImages.dog.uri
         val request = LoadRequest(context, imageUri)
-        val dataSource = FileDataSource(
-            sketch = sketch,
-            request = request,
-            file = File(imageUri)
-        )
-        val imageSource = SketchImageSource(imageUri, dataSource)
 
-        assertEquals(
-            expected = "SketchImageSource('$imageUri')",
-            actual = imageSource.toString()
-        )
+        val factory = SketchImageSource.Factory(sketch, request)
+        assertEquals("SketchImageSource.Factory($request)", factory.toString())
     }
 }

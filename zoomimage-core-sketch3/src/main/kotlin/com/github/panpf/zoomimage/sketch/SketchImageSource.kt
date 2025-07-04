@@ -20,6 +20,7 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.datasource.BasedStreamDataSource
 import com.github.panpf.sketch.request.Depth
+import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.LoadRequest
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import okio.Source
@@ -30,7 +31,8 @@ import okio.source
  *
  * @see com.github.panpf.zoomimage.core.sketch3.test.SketchImageSourceTest
  */
-class SketchImageSource(
+@Suppress("RedundantConstructorKeyword")
+class SketchImageSource constructor(
     val imageUri: String,
     val dataSource: BasedStreamDataSource,
 ) : ImageSource {
@@ -45,7 +47,8 @@ class SketchImageSource(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as SketchImageSource
-        return imageUri == other.imageUri
+        if (imageUri != other.imageUri) return false
+        return dataSource == other.dataSource
     }
 
     override fun hashCode(): Int {
@@ -58,23 +61,36 @@ class SketchImageSource(
         return "SketchImageSource('$imageUri')"
     }
 
-    class Factory(
+    /**
+     * @see com.github.panpf.zoomimage.core.sketch3.test.SketchImageSourceFactoryTest
+     */
+    class Factory constructor(
         val sketch: Sketch,
-        val imageUri: String,
+        val request: ImageRequest,
     ) : ImageSource.Factory {
 
-        override val key: String = imageUri
-
-        override suspend fun create(): SketchImageSource {
-            val request = LoadRequest(sketch.context, imageUri) {
+        @Deprecated("Please use constructor(sketch, request) instead")
+        constructor(
+            sketch: Sketch,
+            imageUri: String,
+        ) : this(
+            sketch = sketch,
+            request = LoadRequest(sketch.context, imageUri) {
                 downloadCachePolicy(CachePolicy.ENABLED)
                 depth(Depth.NETWORK)
             }
+        )
+
+        val imageUri: String = request.uriString
+
+        override val key: String = request.uriString
+
+        override suspend fun create(): SketchImageSource {
             val fetcher = sketch.components.newFetcherOrThrow(request)
             val fetchResult = fetcher.fetch().getOrThrow()
             val dataSource = fetchResult.dataSource
             if (dataSource !is BasedStreamDataSource) {
-                throw IllegalStateException("DataSource is not BasedStreamDataSource. imageUri='$imageUri'")
+                throw IllegalStateException("DataSource is not BasedStreamDataSource. imageUri='${request.uriString}'")
             }
             return SketchImageSource(imageUri, dataSource)
         }
@@ -84,18 +100,18 @@ class SketchImageSource(
             if (other == null || this::class != other::class) return false
             other as Factory
             if (sketch != other.sketch) return false
-            if (imageUri != other.imageUri) return false
+            if (request != other.request) return false
             return true
         }
 
         override fun hashCode(): Int {
             var result = sketch.hashCode()
-            result = 31 * result + imageUri.hashCode()
+            result = 31 * result + request.hashCode()
             return result
         }
 
         override fun toString(): String {
-            return "SketchImageSource.Factory('$imageUri')"
+            return "SketchImageSource.Factory($request)"
         }
     }
 }

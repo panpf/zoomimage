@@ -38,7 +38,7 @@ class EngineSketchViewSubsamplingImageGeneratorTest {
         assertEquals(
             expected = SubsamplingImageGenerateResult.Success(
                 SubsamplingImage(
-                    imageSource = SketchImageSource.Factory(sketch, result1.request.uriString),
+                    imageSource = SketchImageSource.Factory(sketch, result1.request),
                     imageInfo = com.github.panpf.zoomimage.subsampling.ImageInfo(
                         width = result1.imageInfo.width,
                         height = result1.imageInfo.height,
@@ -66,7 +66,7 @@ class EngineSketchViewSubsamplingImageGeneratorTest {
         assertEquals(
             expected = SubsamplingImageGenerateResult.Success(
                 SubsamplingImage(
-                    imageSource = SketchImageSource.Factory(sketch, result2.request.uriString),
+                    imageSource = SketchImageSource.Factory(sketch, result2.request),
                     imageInfo = com.github.panpf.zoomimage.subsampling.ImageInfo(
                         width = result2.imageInfo.width,
                         height = result2.imageInfo.height,
