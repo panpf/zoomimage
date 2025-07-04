@@ -38,8 +38,7 @@ class EngineCoilViewSubsamplingImageGenerator : CoilViewSubsamplingImageGenerato
         result: SuccessResult,
         drawable: Drawable
     ): SubsamplingImageGenerateResult {
-        val data = result.request.data
-        val imageSource = dataToImageSource(context, imageLoader, data)
+        val imageSource = dataToImageSource(context, imageLoader, result.request)
             ?: return SubsamplingImageGenerateResult.Error("Unsupported data")
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
     }

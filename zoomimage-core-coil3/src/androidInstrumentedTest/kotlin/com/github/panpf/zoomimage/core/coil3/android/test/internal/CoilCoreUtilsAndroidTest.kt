@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.test.platform.app.InstrumentationRegistry
 import coil3.ImageLoader
 import coil3.pathSegments
+import coil3.request.CachePolicy
 import coil3.toUri
 import com.github.panpf.zoomimage.coil.CoilHttpImageSource
 import com.github.panpf.zoomimage.coil.internal.dataToImageSource
@@ -29,6 +30,15 @@ import kotlin.test.assertEquals
 
 class CoilCoreUtilsAndroidTest {
 
+    private fun buildRequest(data: Any): coil3.request.ImageRequest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        return coil3.request.ImageRequest.Builder(context)
+            .data(data)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .networkCachePolicy(CachePolicy.ENABLED)
+            .build()
+    }
+
     @Test
     fun testDataToImageSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
@@ -36,54 +46,74 @@ class CoilCoreUtilsAndroidTest {
         try {
             val httpUri = "http://www.example.com/image.jpg"
             assertEquals(
-                expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = dataToImageSource(context, imageLoader, httpUri)
+                expected = CoilHttpImageSource.Factory(context, imageLoader, buildRequest(httpUri)),
+                actual = dataToImageSource(context, imageLoader, buildRequest(httpUri))
             )
             assertEquals(
-                expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
+                expected = CoilHttpImageSource.Factory(
+                    context,
+                    imageLoader,
+                    buildRequest(Uri.parse(httpUri))
+                ),
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    Uri.parse(httpUri)
+                    buildRequest(Uri.parse(httpUri))
                 )
             )
             assertEquals(
-                expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
+                expected = CoilHttpImageSource.Factory(
+                    context,
+                    imageLoader,
+                    buildRequest(httpUri.toUri())
+                ),
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    httpUri.toUri()
+                    buildRequest(httpUri.toUri())
                 )
             )
             assertEquals(
                 expected = null,
-                actual = dataToImageSource(context, imageLoader, URL(httpUri))
+                actual = dataToImageSource(context, imageLoader, buildRequest(URL(httpUri)))
             )
 
             val httpsUri = "https://www.example.com/image.jpg"
             assertEquals(
-                expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = dataToImageSource(context, imageLoader, httpsUri)
+                expected = CoilHttpImageSource.Factory(
+                    context,
+                    imageLoader,
+                    buildRequest(httpsUri)
+                ),
+                actual = dataToImageSource(context, imageLoader, buildRequest(httpsUri))
             )
             assertEquals(
-                expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
+                expected = CoilHttpImageSource.Factory(
+                    context,
+                    imageLoader,
+                    buildRequest(Uri.parse(httpsUri))
+                ),
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    Uri.parse(httpsUri)
+                    buildRequest(Uri.parse(httpsUri))
                 )
             )
             assertEquals(
-                expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
+                expected = CoilHttpImageSource.Factory(
+                    context,
+                    imageLoader,
+                    buildRequest(httpsUri.toUri())
+                ),
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    httpsUri.toUri()
+                    buildRequest(httpsUri.toUri())
                 )
             )
             assertEquals(
                 expected = null,
-                actual = dataToImageSource(context, imageLoader, URL(httpsUri))
+                actual = dataToImageSource(context, imageLoader, buildRequest(URL(httpsUri)))
             )
 
             val contentUri = "content://myapp/image.jpg"
@@ -92,7 +122,7 @@ class CoilCoreUtilsAndroidTest {
                     context,
                     Uri.parse(contentUri)
                 ).toFactory(),
-                actual = dataToImageSource(context, imageLoader, contentUri)
+                actual = dataToImageSource(context, imageLoader, buildRequest(contentUri))
             )
             assertEquals(
                 expected = ContentImageSource(
@@ -102,7 +132,7 @@ class CoilCoreUtilsAndroidTest {
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    Uri.parse(contentUri)
+                    buildRequest(Uri.parse(contentUri))
                 )
             )
             assertEquals(
@@ -113,7 +143,7 @@ class CoilCoreUtilsAndroidTest {
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    contentUri.toUri()
+                    buildRequest(contentUri.toUri())
                 )
             )
 
@@ -121,14 +151,14 @@ class CoilCoreUtilsAndroidTest {
             val assetFileName = assetUri.toUri().pathSegments.drop(1).joinToString("/")
             assertEquals(
                 expected = AssetImageSource(context, assetFileName).toFactory(),
-                actual = dataToImageSource(context, imageLoader, assetUri)
+                actual = dataToImageSource(context, imageLoader, buildRequest(assetUri))
             )
             assertEquals(
                 expected = AssetImageSource(context, assetFileName).toFactory(),
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    Uri.parse(assetUri)
+                    buildRequest(Uri.parse(assetUri))
                 )
             )
             assertEquals(
@@ -136,21 +166,21 @@ class CoilCoreUtilsAndroidTest {
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    assetUri.toUri()
+                    buildRequest(assetUri.toUri())
                 )
             )
 
             val pathUri = "/sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = dataToImageSource(context, imageLoader, pathUri)
+                actual = dataToImageSource(context, imageLoader, buildRequest(pathUri))
             )
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    Uri.parse(pathUri)
+                    buildRequest(Uri.parse(pathUri))
                 )
             )
             assertEquals(
@@ -158,21 +188,21 @@ class CoilCoreUtilsAndroidTest {
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    pathUri.toUri()
+                    buildRequest(pathUri.toUri())
                 )
             )
 
             val fileUri = "file:///sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = dataToImageSource(context, imageLoader, fileUri)
+                actual = dataToImageSource(context, imageLoader, buildRequest(fileUri))
             )
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    Uri.parse(fileUri)
+                    buildRequest(Uri.parse(fileUri))
                 )
             )
             assertEquals(
@@ -180,26 +210,26 @@ class CoilCoreUtilsAndroidTest {
                 actual = dataToImageSource(
                     context,
                     imageLoader,
-                    fileUri.toUri()
+                    buildRequest(fileUri.toUri())
                 )
             )
 
             val path = "/sdcard/image.jpg".toPath()
             assertEquals(
                 expected = FileImageSource(path).toFactory(),
-                actual = dataToImageSource(context, imageLoader, path)
+                actual = dataToImageSource(context, imageLoader, buildRequest(path))
             )
 
             val file = File("/sdcard/image.jpg")
             assertEquals(
                 expected = FileImageSource(file).toFactory(),
-                actual = dataToImageSource(context, imageLoader, file)
+                actual = dataToImageSource(context, imageLoader, buildRequest(file))
             )
 
             val resourceId = R.raw.huge_card
             assertEquals(
                 expected = ResourceImageSource(context, resourceId).toFactory(),
-                actual = dataToImageSource(context, imageLoader, resourceId)
+                actual = dataToImageSource(context, imageLoader, buildRequest(resourceId))
             )
 
             val resourceNameUri = "android.resource://${context.packageName}/raw/huge_card"
@@ -208,14 +238,14 @@ class CoilCoreUtilsAndroidTest {
                 actual = ((dataToImageSource(
                     context,
                     imageLoader,
-                    resourceNameUri
+                    buildRequest(resourceNameUri)
                 ) as ImageSource.WrapperFactory).imageSource as ResourceImageSource).resId
             )
             assertEquals(
                 expected = resourceId,
                 actual = ((dataToImageSource(
                     context, imageLoader,
-                    Uri.parse(resourceNameUri)
+                    buildRequest(Uri.parse(resourceNameUri))
                 ) as ImageSource.WrapperFactory).imageSource as ResourceImageSource).resId
             )
             assertEquals(
@@ -223,7 +253,7 @@ class CoilCoreUtilsAndroidTest {
                 actual = ((dataToImageSource(
                     context,
                     imageLoader,
-                    resourceNameUri.toUri()
+                    buildRequest(resourceNameUri.toUri())
                 ) as ImageSource.WrapperFactory).imageSource as ResourceImageSource).resId
             )
 
@@ -233,7 +263,7 @@ class CoilCoreUtilsAndroidTest {
                 actual = ((dataToImageSource(
                     context,
                     imageLoader,
-                    resourceIntUri
+                    buildRequest(resourceIntUri)
                 ) as ImageSource.WrapperFactory).imageSource as ResourceImageSource).resId
             )
             assertEquals(
@@ -241,7 +271,7 @@ class CoilCoreUtilsAndroidTest {
                 actual = ((dataToImageSource(
                     context,
                     imageLoader,
-                    Uri.parse(resourceIntUri)
+                    buildRequest(Uri.parse(resourceIntUri))
                 ) as ImageSource.WrapperFactory).imageSource as ResourceImageSource).resId
             )
             assertEquals(
@@ -249,21 +279,21 @@ class CoilCoreUtilsAndroidTest {
                 actual = ((dataToImageSource(
                     context,
                     imageLoader,
-                    resourceIntUri.toUri()
+                    buildRequest(resourceIntUri.toUri())
                 ) as ImageSource.WrapperFactory).imageSource as ResourceImageSource).resId
             )
 
             val byteArray = "Hello".toByteArray()
             assertEquals(
                 expected = ByteArrayImageSource(byteArray).toFactory(),
-                actual = dataToImageSource(context, imageLoader, byteArray)
+                actual = dataToImageSource(context, imageLoader, buildRequest(byteArray))
             )
 
             val byteBuffer = ByteBuffer.wrap("Hello".toByteArray())
             assertEquals(
                 expected = ByteArrayImageSource(
                     byteBuffer.asSource().buffer().use { it.readByteArray() }).toFactory(),
-                actual = dataToImageSource(context, imageLoader, byteBuffer)
+                actual = dataToImageSource(context, imageLoader, buildRequest(byteBuffer))
             )
         } finally {
             imageLoader.shutdown()

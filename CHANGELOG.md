@@ -8,6 +8,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
   crossfade and the placeholder image is larger than the loaded image.
 * fix: Fixed a bug where SketchZoomAsyncImage and SketchZoomImageView do not support parameters such
   as downloadCachePolicy and downloadCacheKey. [#89](https://github.com/panpf/zoomimage/issues/89)
+* fix: Fixed a bug where CoilZoomAsyncImage and CoilZoomImageView do not support parameters such
+  as diskCachePolicy and networkCachePolicy. [#90](https://github.com/panpf/zoomimage/issues/90)
 * new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
   sketch4's koin mode
 * depend: Update sketch to 4.2.0

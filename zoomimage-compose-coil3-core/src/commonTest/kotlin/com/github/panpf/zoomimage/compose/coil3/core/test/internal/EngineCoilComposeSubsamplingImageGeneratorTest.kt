@@ -31,7 +31,7 @@ class EngineCoilComposeSubsamplingImageGeneratorTest {
                     imageSource = CoilHttpImageSource.Factory(
                         context,
                         imageLoader,
-                        "http://sample.com/sample.jpeg"
+                        ImageRequest.Builder(context).data("http://sample.com/sample.jpeg").build()
                     ),
                     imageInfo = null
                 )

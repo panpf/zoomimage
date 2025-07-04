@@ -19,7 +19,8 @@ package com.github.panpf.zoomimage.coil
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.fetch.SourceFetchResult
-import coil3.request.CachePolicy.ENABLED
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import coil3.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import okio.Buffer
@@ -30,9 +31,10 @@ import okio.Source
  *
  * @see com.github.panpf.zoomimage.core.coil3.desktop.test.CoilHttpImageSourceTest
  */
-class CoilHttpImageSource(
-    private val url: String,
-    private val openSourceFactory: () -> Source
+@Suppress("RedundantConstructorKeyword")
+class CoilHttpImageSource constructor(
+    val url: String,
+    val openSourceFactory: () -> Source
 ) : ImageSource {
 
     override val key: String = url
@@ -56,21 +58,45 @@ class CoilHttpImageSource(
         return "CoilHttpImageSource('$url')"
     }
 
-    class Factory(
+    /**
+     * @see com.github.panpf.zoomimage.core.coil3.desktop.test.CoilHttpImageSourceFactoryTest
+     */
+    class Factory constructor(
         val context: PlatformContext,
         val imageLoader: ImageLoader,
-        val url: String
+        val request: ImageRequest
     ) : ImageSource.Factory {
 
-        override val key: String = url
+        @Deprecated("Please use constructor(context, imageLoader, request) instead")
+        constructor(
+            context: PlatformContext,
+            imageLoader: ImageLoader,
+            url: String
+        ) : this(
+            context = context,
+            imageLoader = imageLoader,
+            request = ImageRequest.Builder(context)
+                .data(url)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .networkCachePolicy(CachePolicy.ENABLED)
+                .build()
+        )
+
+        val url = request.data.toString()
+
+        override val key: String = request.data.toString()
 
         override suspend fun create(): CoilHttpImageSource {
             val options = Options(
                 context = context,
-                diskCachePolicy = ENABLED,
-                networkCachePolicy = ENABLED
+                diskCachePolicy = request.diskCachePolicy,
+                networkCachePolicy = request.networkCachePolicy,
+                diskCacheKey = request.diskCacheKey,
+                fileSystem = request.fileSystem,
+                extras = request.extras
             )
-            val mappedData = imageLoader.components.map(url, options)
+            val mappedData = imageLoader.components.map(request.data, options)
+
             val fetcher = imageLoader.components.newFetcher(mappedData, options, imageLoader)?.first
                 ?: throw IllegalStateException("Fetcher not found. data='${url}'")
             val fetchResult =
@@ -80,20 +106,20 @@ class CoilHttpImageSource(
             }
 
             val diskCache = imageLoader.diskCache
-            val openSourceFactory1 = diskCache?.openSnapshot(url)?.use {
+            val coilHttpImageSource = diskCache?.openSnapshot(url)?.use {
                 val path = it.data
                 CoilHttpImageSource(url) {
                     diskCache.fileSystem.source(path)
                 }
             }
-            if (openSourceFactory1 != null) {
+            if (coilHttpImageSource != null) {
                 try {
                     fetchResult.source.close()
                 } catch (e: RuntimeException) {
                     throw e
                 } catch (_: Exception) {
                 }
-                return openSourceFactory1
+                return coilHttpImageSource
             }
 
             val byteArray = fetchResult.source.use {
@@ -109,18 +135,18 @@ class CoilHttpImageSource(
             if (other == null || this::class != other::class) return false
             other as Factory
             if (imageLoader != other.imageLoader) return false
-            if (url != other.url) return false
+            if (request != other.request) return false
             return true
         }
 
         override fun hashCode(): Int {
             var result = imageLoader.hashCode()
-            result = 31 * result + url.hashCode()
+            result = 31 * result + request.hashCode()
             return result
         }
 
         override fun toString(): String {
-            return "CoilHttpImageSource.Factory('$url')"
+            return "CoilHttpImageSource.Factory($request)"
         }
     }
 }

@@ -18,6 +18,8 @@ package com.github.panpf.zoomimage.coil.internal
 
 import coil3.ImageLoader
 import coil3.PlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import coil3.toUri
 import com.github.panpf.zoomimage.coil.CoilHttpImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -43,16 +45,17 @@ import java.nio.ByteBuffer
 actual suspend fun dataToImageSource(
     context: PlatformContext,
     imageLoader: ImageLoader,
-    model: Any
+    request: ImageRequest,
 ): ImageSource.Factory? {
-    val uri = when (model) {
-        is String -> model.toUri()
-        is coil3.Uri -> model
+    val data = request.data
+    val uri = when (data) {
+        is String -> data.toUri()
+        is coil3.Uri -> data
         else -> null
     }
     return when {
         uri != null && (uri.scheme == "http" || uri.scheme == "https") -> {
-            CoilHttpImageSource.Factory(context, imageLoader, model.toString())
+            CoilHttpImageSource.Factory(context, imageLoader, request)
         }
 
         // /sdcard/xxx.jpg
@@ -69,21 +72,21 @@ actual suspend fun dataToImageSource(
             ImageSource.fromFile(uri.path!!.toPath()).toFactory()
         }
 
-        model is Path -> {
-            ImageSource.fromFile(model).toFactory()
+        data is Path -> {
+            ImageSource.fromFile(data).toFactory()
         }
 
-        model is File -> {
-            ImageSource.fromFile(model).toFactory()
+        data is File -> {
+            ImageSource.fromFile(data).toFactory()
         }
 
-        model is ByteArray -> {
-            ImageSource.fromByteArray(model).toFactory()
+        data is ByteArray -> {
+            ImageSource.fromByteArray(data).toFactory()
         }
 
-        model is ByteBuffer -> {
+        data is ByteBuffer -> {
             val byteArray: ByteArray = withContext(Dispatchers.IO) {
-                model.asSource().buffer().use { it.readByteArray() }
+                data.asSource().buffer().use { it.readByteArray() }
             }
             ImageSource.fromByteArray(byteArray).toFactory()
         }
@@ -93,6 +96,24 @@ actual suspend fun dataToImageSource(
         }
     }
 }
+
+/**
+ * @see com.github.panpf.zoomimage.core.coil3.desktop.test.internal.CoilCoreUtilsDesktopTest.testDataToImageSource
+ */
+@Deprecated("Please use dataToImageSource(context, imageLoader, request) instead")
+actual suspend fun dataToImageSource(
+    context: PlatformContext,
+    imageLoader: ImageLoader,
+    model: Any
+): ImageSource.Factory? = dataToImageSource(
+    context = context,
+    imageLoader = imageLoader,
+    request = ImageRequest.Builder(context)
+        .data(model)
+        .diskCachePolicy(CachePolicy.ENABLED)
+        .networkCachePolicy(CachePolicy.ENABLED)
+        .build()
+)
 
 internal fun ByteBuffer.asSource() = object : Source {
     private val buffer = this@asSource.slice()

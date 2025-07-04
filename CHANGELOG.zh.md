@@ -7,6 +7,8 @@
 * fix: 修复 CoilZoomAsyncImage 开启 crossfade 并且占位图像比加载图像大时内容大小不正确的问题
 * fix: 修复 SketchZoomAsyncImage 和 SketchZoomImageView 不支持 downloadCachePolicy 和
   downloadCacheKey 等参数的 bug。 [#89](https://github.com/panpf/zoomimage/issues/89)
+* fix: 修复 CoilZoomAsyncImage 和 CoilZoomImageView 不支持 diskCachePolicy 和
+  networkCachePolicy 等参数的 bug。 [#90](https://github.com/panpf/zoomimage/issues/90)
 * new: 新增 `zoomimage-compose-sketch4-koin` 和 `zoomimage-view-sketch4-koin` 模块，适配 sketch4 的
   koin 模式
 * depend: 更新 sketch 4.2.0
