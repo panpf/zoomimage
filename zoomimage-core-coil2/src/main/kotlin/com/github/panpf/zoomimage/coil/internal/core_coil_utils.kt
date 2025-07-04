@@ -2,6 +2,8 @@ package com.github.panpf.zoomimage.coil.internal
 
 import android.content.Context
 import coil.ImageLoader
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.github.panpf.zoomimage.coil.CoilHttpImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
@@ -27,24 +29,25 @@ import java.nio.ByteBuffer
 suspend fun dataToImageSource(
     context: Context,
     imageLoader: ImageLoader,
-    model: Any
+    request: ImageRequest,
 ): ImageSource.Factory? {
-    val uri = when (model) {
-        is String -> android.net.Uri.parse(model)
-        is android.net.Uri -> model
+    val data = request.data
+    val uri = when (data) {
+        is String -> android.net.Uri.parse(data)
+        is android.net.Uri -> data
         else -> null
     }
     return when {
-        model is HttpUrl && (model.scheme == "http" || model.scheme == "https") -> {
-            CoilHttpImageSource.Factory(context, imageLoader, model.toString())
+        data is HttpUrl && (data.scheme == "http" || data.scheme == "https") -> {
+            CoilHttpImageSource.Factory(context, imageLoader, request)
         }
 
         uri != null && (uri.scheme == "http" || uri.scheme == "https") -> {
-            CoilHttpImageSource.Factory(context, imageLoader, model.toString())
+            CoilHttpImageSource.Factory(context, imageLoader, request)
         }
 
         uri != null && uri.scheme == "content" -> {
-            val androidUri = android.net.Uri.parse(model.toString())
+            val androidUri = android.net.Uri.parse(data.toString())
             ImageSource.fromContent(context, androidUri).toFactory()
         }
 
@@ -68,12 +71,12 @@ suspend fun dataToImageSource(
             ImageSource.fromFile(uri.path!!.toPath()).toFactory()
         }
 
-        model is File -> {
-            ImageSource.fromFile(model).toFactory()
+        data is File -> {
+            ImageSource.fromFile(data).toFactory()
         }
 
-        model is Int -> {
-            ImageSource.fromResource(context, model).toFactory()
+        data is Int -> {
+            ImageSource.fromResource(context, data).toFactory()
         }
 
         // android.resource://example.package.name/drawable/image
@@ -94,13 +97,13 @@ suspend fun dataToImageSource(
             ImageSource.fromResource(resources, id).toFactory()
         }
 
-        model is ByteArray -> {
-            ImageSource.fromByteArray(model).toFactory()
+        data is ByteArray -> {
+            ImageSource.fromByteArray(data).toFactory()
         }
 
-        model is ByteBuffer -> {
+        data is ByteBuffer -> {
             val byteArray: ByteArray = withContext(Dispatchers.IO) {
-                model.asSource().buffer().use { it.readByteArray() }
+                data.asSource().buffer().use { it.readByteArray() }
             }
             ImageSource.fromByteArray(byteArray).toFactory()
         }
@@ -110,6 +113,24 @@ suspend fun dataToImageSource(
         }
     }
 }
+
+/**
+ * @see com.github.panpf.zoomimage.core.coil3.android.test.internal.CoilCoreUtilsAndroidTest.testDataToImageSource
+ */
+@Deprecated("Please use dataToImageSource(context, imageLoader, request) instead")
+suspend fun dataToImageSource(
+    context: Context,
+    imageLoader: ImageLoader,
+    model: Any
+): ImageSource.Factory? = dataToImageSource(
+    context = context,
+    imageLoader = imageLoader,
+    request = ImageRequest.Builder(context)
+        .data(model)
+        .diskCachePolicy(CachePolicy.ENABLED)
+        .networkCachePolicy(CachePolicy.ENABLED)
+        .build()
+)
 
 internal fun ByteBuffer.asSource() = object : Source {
     private val buffer = this@asSource.slice()
