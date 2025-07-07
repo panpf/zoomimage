@@ -159,6 +159,10 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         booleanSettingsStateFlow(context, "delayImageLoadEnabled", false)
     }
 
+    actual val subsamplingEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "subsamplingEnabled", true)
+    }
+
 
     // ------------------------------------------ other --------------------------------------------
 

@@ -218,6 +218,12 @@ fun ZoomImageSettingList() {
         DividerSettingItem("Subsampling")
 
         SwitchSettingItem(
+            title = "Subsampling",
+            desc = null,
+            state = appSettings.subsamplingEnabled,
+        )
+
+        SwitchSettingItem(
             title = "Tile Memory Cache",
             desc = null,
             state = appSettings.tileMemoryCache,

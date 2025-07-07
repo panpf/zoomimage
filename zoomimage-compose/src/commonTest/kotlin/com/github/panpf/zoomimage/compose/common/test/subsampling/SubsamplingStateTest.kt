@@ -29,6 +29,8 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 @OptIn(ExperimentalTestApi::class)
@@ -834,6 +836,50 @@ class SubsamplingStateTest {
             actual = subsampling.imageLoadRect.toString()
         )
         assertEquals(expected = "null", actual = subsampling.imageInfo.toString())
+    }
+
+    @Test
+    fun testDisabled() {
+        runComposeUiTest {
+            var subsamplingHolder: SubsamplingState? = null
+            setContent {
+                TestLifecycle {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    LaunchedEffect(Unit) {
+                        zoomable.containerSize = IntSize(516, 516)
+                        zoomable.contentSize = IntSize(86, 1522)
+                    }
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { zoomable.contentOriginSize }.collect {
+                            if (it.isNotEmpty()) {
+                                zoomable.scale(5f, animated = false)
+                            }
+                        }
+                    }
+                }
+            }
+            waitMillis(2000)
+            val subsampling = subsamplingHolder!!
+            assertEquals(expected = false, actual = subsampling.disabled)
+            assertNotNull(subsampling.subsamplingImage)
+            assertEquals(expected = 48, actual = subsampling.foregroundTiles.size)
+
+            subsampling.disabled = true
+            waitMillis(2000)
+            assertEquals(expected = true, actual = subsampling.disabled)
+            assertNull(subsampling.subsamplingImage)
+            assertEquals(expected = 0, actual = subsampling.foregroundTiles.size)
+
+            subsampling.disabled = false
+            waitMillis(2000)
+            assertEquals(expected = false, actual = subsampling.disabled)
+            assertNotNull(subsampling.subsamplingImage)
+            assertEquals(expected = 48, actual = subsampling.foregroundTiles.size)
+        }
     }
 
     // TODO test: backgroundTiles

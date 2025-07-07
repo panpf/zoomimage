@@ -26,6 +26,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class SubsamplingEngineTest {
@@ -684,6 +686,45 @@ class SubsamplingEngineTest {
             actual = subsampling.imageLoadRectState.value.toString()
         )
         assertEquals(expected = "null", actual = subsampling.imageInfoState.value.toString())
+    }
+
+    @Test
+    fun testDisabled() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test", level = Logger.Level.Debug), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            val subsampling = SubsamplingEngine(zoomable)
+            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            Thread.sleep(500)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(5f, animated = false)
+            }
+
+            Thread.sleep(2000)
+            assertEquals(expected = false, actual = subsampling.disabledState.value)
+            assertNotNull(subsampling.subsamplingImage)
+            assertEquals(expected = 48, actual = subsampling.foregroundTilesState.value.size)
+
+            subsampling.disabledState.value = true
+            Thread.sleep(2000)
+            assertEquals(expected = true, actual = subsampling.disabledState.value)
+            assertNull(subsampling.subsamplingImage)
+            assertEquals(expected = 0, actual = subsampling.foregroundTilesState.value.size)
+
+            subsampling.disabledState.value = false
+            Thread.sleep(2000)
+            assertEquals(expected = false, actual = subsampling.disabledState.value)
+            assertNotNull(subsampling.subsamplingImage)
+            assertEquals(expected = 0, actual = subsampling.foregroundTilesState.value.size)
+        }
     }
 
     // TODO test: backgroundTiles

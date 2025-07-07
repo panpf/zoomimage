@@ -125,6 +125,11 @@ class SubsamplingState(
     /* *********************************** Configurable properties ****************************** */
 
     /**
+     * If true, disabled subsampling
+     */
+    var disabled: Boolean by mutableStateOf(subsamplingCore.disabled)
+
+    /**
      * Set up the TileImage memory cache container
      */
     var tileImageCache: TileImageCache? by mutableStateOf(subsamplingCore.tileImageCache)
@@ -309,6 +314,11 @@ class SubsamplingState(
             }
         }
 
+        coroutineScope.launch {
+            snapshotFlow { disabled }.collect {
+                subsamplingCore.disabled = it
+            }
+        }
         coroutineScope.launch {
             snapshotFlow { tileImageCache }.collect {
                 subsamplingCore.tileImageCache = it

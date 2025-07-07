@@ -66,6 +66,7 @@ class SubsamplingCore(
     private val refreshTilesFlow = MutableSharedFlow<String>()
     private var preferredTileSize = IntSizeCompat.Zero
     private var contentSize = IntSizeCompat.Zero
+    private var cachedImage: SubsamplingImage? = null
     private val stoppedLifecycleObserver = LifecycleEventObserver { owner, _ ->
         val stopped = !owner.lifecycle.currentState.isAtLeast(STARTED)
         this@SubsamplingCore.stopped = stopped
@@ -74,6 +75,20 @@ class SubsamplingCore(
     var subsamplingImage: SubsamplingImage? = null
         private set
 
+    var disabled: Boolean = false
+        set(value) {
+            if (field != value) {
+                if (value) {
+                    cachedImage = subsamplingImage
+                    setImage(null as SubsamplingImage?)
+                    field = value
+                } else {
+                    field = value
+                    setImage(cachedImage)
+                    cachedImage = null
+                }
+            }
+        }
 
     var tileImageCache: TileImageCache?
         get() = tileImageCacheHelper.tileImageCache
@@ -148,6 +163,11 @@ class SubsamplingCore(
 
 
     fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+        if (disabled) {
+            cachedImage = subsamplingImage
+            return false
+        }
+
         if (this.subsamplingImage == subsamplingImage) return false
         logger.d {
             "$module. setImage. '${this.subsamplingImage}' -> '${subsamplingImage}'"

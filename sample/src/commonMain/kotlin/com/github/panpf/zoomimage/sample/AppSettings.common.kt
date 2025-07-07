@@ -88,6 +88,8 @@ expect class AppSettings(context: PlatformContext) {
 
     val delayImageLoadEnabled: SettingsStateFlow<Boolean>
 
+    val subsamplingEnabled: SettingsStateFlow<Boolean>
+
 
     // ------------------------------------------ other --------------------------------------------
 

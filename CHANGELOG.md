@@ -13,6 +13,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * change: Now the stopped property of the subsample is also involved in the calculation of ready
 * new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
   sketch4's koin mode
+* new: SubsamplingState and SubsamplingEngine add disabled attributes to disable subsampling feature
 * depend: Update sketch to 4.2.0
 
 # 1.4.0-beta02

@@ -398,6 +398,25 @@ val sketchZoomImageView = SketchZoomImageView(context)
 sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecoder.Factory())
 ```
 
+### 禁用子采样
+
+子采样功能默认开启，你可以通过 disabled 属性禁用它，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+LaunchEffect(zoomState.subsampling) {
+    zoomState.subsampling.disabled = true
+}
+
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
 ### 可访问属性
 
 ```kotlin

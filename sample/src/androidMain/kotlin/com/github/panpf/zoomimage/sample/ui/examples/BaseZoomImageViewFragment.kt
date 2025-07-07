@@ -239,10 +239,11 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.pausedContinuousTransformTypes.collectWithLifecycle(viewLifecycleOwner) {
                     pausedContinuousTransformTypesState.value = it
                 }
-                appSettings.disabledBackgroundTiles.collectWithLifecycle(
-                    viewLifecycleOwner
-                ) {
+                appSettings.disabledBackgroundTiles.collectWithLifecycle(viewLifecycleOwner) {
                     disabledBackgroundTilesState.value = it
+                }
+                appSettings.subsamplingEnabled.collectWithLifecycle(viewLifecycleOwner) {
+                    disabledState.value = !it
                 }
             }
         }

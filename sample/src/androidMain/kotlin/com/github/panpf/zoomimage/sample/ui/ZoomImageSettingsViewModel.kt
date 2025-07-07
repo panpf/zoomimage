@@ -239,6 +239,14 @@ class ZoomImageSettingsViewModel(
 
         add(
             SwitchMenuFlow(
+                title = "Subsampling",
+                desc = null,
+                data = appSettings.subsamplingEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
                 title = "Tile Memory Cache",
                 desc = null,
                 data = appSettings.tileMemoryCache,

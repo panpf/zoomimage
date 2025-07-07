@@ -431,6 +431,26 @@ val sketchZoomImageView = SketchZoomImageView(context)
 sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecoder.Factory())
 ```
 
+### Disable subsampling
+
+The subsampling function is enabled by default, you can disable it through the disabled property, as
+follows:
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+LaunchEffect(zoomState.subsampling) {
+  zoomState.subsampling.disabled = true
+}
+
+SketchZoomAsyncImage(
+  uri = "https://sample.com/sample.jpeg",
+  contentDescription = "view image",
+  modifier = Modifier.fillMaxSize(),
+  zoomState = zoomState,
+)
+```
+
 ### Public Properties
 
 ```kotlin

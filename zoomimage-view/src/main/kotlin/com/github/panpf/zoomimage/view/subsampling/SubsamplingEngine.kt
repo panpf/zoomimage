@@ -98,6 +98,12 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     /* *********************************** Configurable properties ****************************** */
 
     /**
+     * If true, disabled subsampling
+     */
+    val disabledState: MutableStateFlow<Boolean> =
+        MutableStateFlow(subsamplingCore.disabled)
+
+    /**
      * Set up the TileImage memory cache container
      */
     val tileImageCacheState: MutableStateFlow<TileImageCache?> =
@@ -302,6 +308,11 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
             }
         }
 
+        coroutineScope.launch {
+            disabledState.collect {
+                subsamplingCore.disabled = it
+            }
+        }
         coroutineScope.launch {
             tileImageCacheState.collect {
                 subsamplingCore.tileImageCache = it
