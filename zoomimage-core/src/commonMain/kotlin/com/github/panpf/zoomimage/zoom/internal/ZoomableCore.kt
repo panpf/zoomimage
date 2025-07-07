@@ -847,6 +847,7 @@ class ZoomableCore constructor(
                         "velocity=${velocity.toShortString()}"
             }
         } finally {
+            // TODO Add ContinuousTransformType.None
             setContinuousTransformType(0)
         }
         true

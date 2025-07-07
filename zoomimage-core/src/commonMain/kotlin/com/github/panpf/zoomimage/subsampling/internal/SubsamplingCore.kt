@@ -69,13 +69,6 @@ class SubsamplingCore(
     private val stoppedLifecycleObserver = LifecycleEventObserver { owner, _ ->
         val stopped = !owner.lifecycle.currentState.isAtLeast(STARTED)
         this@SubsamplingCore.stopped = stopped
-        onReadyChanged(this@SubsamplingCore)
-        if (stopped) {
-            tileManager?.clean("stopped")
-        }
-        coroutineScope?.launch {
-            refreshTilesFlow.emit(if (stopped) "stopped" else "started")
-        }
     }
 
     var subsamplingImage: SubsamplingImage? = null
@@ -113,6 +106,15 @@ class SubsamplingCore(
         }
 
     var stopped: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (value) {
+                    tileManager?.clean("stopped")
+                }
+                refreshReadyState(if (value) "stopped" else "started")
+            }
+        }
 
     var lifecycle: Lifecycle? = null
         set(value) {
@@ -152,7 +154,7 @@ class SubsamplingCore(
         }
         clean("setImage")
         this.subsamplingImage = subsamplingImage
-        if (coroutineScope != null) {
+        if (coroutineScope != null && subsamplingImage != null) {
             resetTileDecoder("setImage")
         }
         return true
@@ -276,7 +278,6 @@ class SubsamplingCore(
             val tileDecoder = tileDecoderResult.getOrThrow()
             val imageInfo = subsamplingImage.imageInfo ?: tileDecoder.imageInfo
             this@SubsamplingCore.imageInfo = imageInfo
-            onReadyChanged(this@SubsamplingCore)
             this@SubsamplingCore.tileDecoder = tileDecoder
             logger.d {
                 "$module. resetTileDecoder:$caller. success. " +
@@ -284,13 +285,13 @@ class SubsamplingCore(
                         "imageInfo=${imageInfo.toShortString()}. " +
                         "'${subsamplingImage.key}'"
             }
-
-            resetTileManager(caller)
+            refreshReadyState("resetTileDecoder:$caller")
+            resetTileManager("resetTileDecoder:$caller")
         }
     }
 
     private fun resetTileManager(caller: String) {
-        cleanTileManager(caller)
+        cleanTileManager("resetTileManager:$caller")
 
         val subsamplingImage = subsamplingImage
         val tileDecoder = tileDecoder
@@ -381,7 +382,9 @@ class SubsamplingCore(
     }
 
     private fun refreshReadyState(caller: String) {
-        val newReady = imageInfo != null && tileManager != null && tileDecoder != null
+        val newReady = imageInfo != null && tileManager != null && tileDecoder != null && !stopped
+        // Duplicate callbacks cannot be intercepted by validating 'this@SubsamplingCore.ready != newReady',
+        // because SubsamplingState and SubsamplingEngine need to rely on this callback to update properties such as stopped, imageInfo, tileGridSizeMap, etc
         logger.d {
             "$module. refreshReadyState:$caller. ready=$newReady. '${subsamplingImage?.key}'"
         }
@@ -398,7 +401,9 @@ class SubsamplingCore(
             resetTileDecoderJob1.cancel("cleanTileDecoder:$caller")
             this@SubsamplingCore.resetTileDecoderJob = null
         }
+
         val tileDecoder = this@SubsamplingCore.tileDecoder
+        val imageInfo = this@SubsamplingCore.imageInfo
         if (tileDecoder != null) {
             logger.d { "$module. cleanTileDecoder:$caller. '${subsamplingImage?.key}'" }
             @Suppress("OPTthis@SubsamplingCore.IN_USAGE", "OPT_IN_USAGE")
@@ -406,10 +411,14 @@ class SubsamplingCore(
                 tileDecoder.closeQuietly()
             }
             this@SubsamplingCore.tileDecoder = null
+        }
+        if (imageInfo != null) {
+            this@SubsamplingCore.imageInfo = null
+        }
+        if (tileDecoder != null || imageInfo != null) {
             refreshReadyState("cleanTileDecoder:$caller")
         }
-        this@SubsamplingCore.imageInfo = null
-        onReadyChanged(this@SubsamplingCore)
+
         @Suppress("OPT_IN_USAGE")
         GlobalScope.launch(Dispatchers.Main) {
             zoomableCore.setContentOriginSize(IntSizeCompat.Zero)

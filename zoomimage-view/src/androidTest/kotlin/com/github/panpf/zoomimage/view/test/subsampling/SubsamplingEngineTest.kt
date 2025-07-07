@@ -2,13 +2,16 @@ package com.github.panpf.zoomimage.view.test.subsampling
 
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.lifecycle.Lifecycle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.test.TestActivity
+import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.TestTileImageCache
 import com.github.panpf.zoomimage.test.delayUntil
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -113,15 +116,46 @@ class SubsamplingEngineTest {
     }
 
     @Test
-    fun testStopped() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val imageView = ImageView(context)
-        val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
-        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+    fun testStopped() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            val subsampling = SubsamplingEngine(zoomable)
+            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            Thread.sleep(500)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(5f, animated = false)
+            }
 
-        subsampling.stoppedState.value = true
-        assertEquals(expected = true, actual = subsampling.stoppedState.value)
+            Thread.sleep(2000)
+            delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
+            assertEquals(expected = true, actual = subsampling.readyState.value)
+            assertEquals(expected = false, actual = subsampling.stoppedState.value)
+            assertEquals(expected = 48, actual = subsampling.foregroundTilesState.value.size)
+            assertEquals(
+                expected = true,
+                actual = subsampling.foregroundTilesState.value.any { it.state != TileState.STATE_NONE },
+            )
+
+            subsampling.stoppedState.value = true
+            Thread.sleep(2000)
+            delayUntil(2000) { !subsampling.foregroundTilesState.value.isNotEmpty() }
+            assertEquals(expected = false, actual = subsampling.readyState.value)
+            assertEquals(expected = true, actual = subsampling.stoppedState.value)
+            assertEquals(expected = 48, actual = subsampling.foregroundTilesState.value.size)
+            assertEquals(
+                expected = true,
+                actual = subsampling.foregroundTilesState.value.all { it.state == TileState.STATE_NONE },
+            )
+        }
     }
 
     @Test
@@ -309,11 +343,31 @@ class SubsamplingEngineTest {
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(expected = true, actual = subsampling.readyState.value)
         }
+
+        // setImage, containerSizeState.value, contentSizeState.value, CREATED Lifecycle
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val imageView = ImageView(activity).apply {
+                withContext(Dispatchers.Main) {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = ZoomableEngine(Logger("Test"), imageView)
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            val subsampling = SubsamplingEngine(zoomable)
+            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            subsampling.lifecycle = TestLifecycle(Lifecycle.State.CREATED)
+            Thread.sleep(500)
+            delayUntil(1000) { subsampling.readyState.value }
+            assertEquals(expected = false, actual = subsampling.readyState.value)
+        }
     }
 
     @Test
     fun testForegroundTiles() = runTest {
-        // setImage, containerSizeState.value, contentSizeState.value, scale 10
+        // setImage, containerSizeState.value, contentSizeState.value, scale 5
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val imageView = ImageView(activity).apply {
@@ -385,7 +439,7 @@ class SubsamplingEngineTest {
             assertEquals(expected = 0, actual = subsampling.sampleSizeState.value)
         }
 
-        // setImage, containerSizeState.value, contentSizeState.value, scale 10
+        // setImage, containerSizeState.value, contentSizeState.value, scale 5
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
             val imageView = ImageView(activity).apply {

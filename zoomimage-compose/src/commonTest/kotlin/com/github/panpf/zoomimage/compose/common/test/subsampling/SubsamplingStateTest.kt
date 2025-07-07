@@ -6,6 +6,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
@@ -16,6 +17,7 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.TestLifecycle
@@ -141,14 +143,56 @@ class SubsamplingStateTest {
 
     @Test
     fun testStopped() {
-        val logger = Logger("Test")
-        val zoomable = ZoomableState(logger)
-        val testLifecycle = TestLifecycle()
-        val subsampling = SubsamplingState(zoomable, testLifecycle)
-        assertEquals(expected = false, actual = subsampling.stopped)
+        runComposeUiTest {
+            var subsamplingHolder: SubsamplingState? = null
+            setContent {
+                TestLifecycle {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    LaunchedEffect(Unit) {
+                        zoomable.containerSize = IntSize(516, 516)
+                        zoomable.contentSize = IntSize(86, 1522)
+                    }
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { zoomable.contentOriginSize }.collect {
+                            if (it.isNotEmpty()) {
+                                zoomable.scale(5f, animated = false)
+                            }
+                        }
+                    }
+                }
+            }
+            waitMillis(2000)
+            val subsampling = subsamplingHolder!!
+            waitUntil(timeoutMillis = 1000) { subsampling.ready }
+            assertEquals(expected = true, actual = subsampling.ready)
+            assertEquals(expected = false, actual = subsampling.stopped)
+            assertEquals(
+                expected = 48,
+                actual = subsampling.foregroundTiles.size,
+            )
+            assertEquals(
+                expected = true,
+                actual = subsampling.foregroundTiles.any { it.state != TileState.STATE_NONE },
+            )
 
-        subsampling.stopped = true
-        assertEquals(expected = true, actual = subsampling.stopped)
+            subsampling.stopped = true
+            waitMillis(2000)
+            waitUntil(timeoutMillis = 1000) { !subsampling.ready }
+            assertEquals(expected = false, actual = subsampling.ready)
+            assertEquals(expected = true, actual = subsampling.stopped)
+            assertEquals(
+                expected = 48,
+                actual = subsampling.foregroundTiles.size,
+            )
+            assertEquals(
+                expected = true,
+                actual = subsampling.foregroundTiles.all { it.state == TileState.STATE_NONE },
+            )
+        }
     }
 
     @Test
@@ -360,6 +404,27 @@ class SubsamplingStateTest {
             waitUntil(timeoutMillis = 1000) { subsampling.ready }
             assertEquals(expected = true, actual = subsampling.ready)
         }
+
+        // setImage, containerSize, contentSize, CREATED Lifecycle
+        runComposeUiTest {
+            var subsamplingHolder: SubsamplingState? = null
+            setContent {
+                TestLifecycle(Lifecycle.State.CREATED) {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    LaunchedEffect(Unit) {
+                        zoomable.containerSize = IntSize(516, 516)
+                        zoomable.contentSize = IntSize(86, 1522)
+                    }
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                }
+            }
+            waitMillis(1000)
+            val subsampling = subsamplingHolder!!
+            assertEquals(expected = false, actual = subsampling.ready)
+        }
     }
 
     @Test
@@ -405,7 +470,7 @@ class SubsamplingStateTest {
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
 //        }
 
-        // setImage, containerSize, contentSize, scale 10
+        // setImage, containerSize, contentSize, scale 5
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -491,7 +556,7 @@ class SubsamplingStateTest {
             assertEquals(expected = 0, actual = subsampling.sampleSize)
         }
 
-        // setImage, containerSize, contentSize, scale 10
+        // setImage, containerSize, contentSize, scale 5
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {

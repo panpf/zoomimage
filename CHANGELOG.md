@@ -10,6 +10,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
   as downloadCachePolicy and downloadCacheKey. [#89](https://github.com/panpf/zoomimage/issues/89)
 * fix: Fixed a bug where CoilZoomAsyncImage and CoilZoomImageView do not support parameters such
   as diskCachePolicy and networkCachePolicy. [#90](https://github.com/panpf/zoomimage/issues/90)
+* change: Now the stopped property of the subsample is also involved in the calculation of ready
 * new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
   sketch4's koin mode
 * depend: Update sketch to 4.2.0
