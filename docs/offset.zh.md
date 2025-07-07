@@ -14,13 +14,13 @@ ZoomImage 支持单指拖动、惯性滑动、键盘拖动，以及 `offset()` �
 ZoomImage 默认开启单指拖动手势，但你可以关闭它，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -61,13 +61,13 @@ LaunchedEffect(Unit) {
 你还可以通过手势控制动态关闭它，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -84,10 +84,10 @@ ZoomImage 提供了 `offset()` 方法用来移动图像到指定位置，它有�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -129,14 +129,14 @@ Center，那么默认只显示图像中间的部分，然后你还可以单指�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -151,7 +151,7 @@ ZoomImage 默认在拖动图像时图像的边缘始终和容器的边缘对齐�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     // 通过 containerWhitespace 属性设置具体的大小
@@ -168,7 +168,7 @@ LaunchEffect(zoomState.zoomable) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -179,7 +179,7 @@ SketchZoomAsyncImage(
 
 ```kotlin
 // compose
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 SketchZoomAsyncImage(zoomState = zoomState)
 val zoomable: ZoomableState = zoomState.zoomable
 

@@ -23,14 +23,14 @@ it to expand the output range of the log
 example：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.logger) {
     zoomState.logger.level = Logger.DEBUG
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -46,12 +46,12 @@ console, you can modify it to output logs elsewhere
 example：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 zoomState.logger.pipeline = MyLoggerPipeline()
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,

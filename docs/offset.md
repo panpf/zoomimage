@@ -15,13 +15,13 @@ move the image.
 ZoomImage enables one finger drag gestures by default, but you can turn it off as follows:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -65,13 +65,13 @@ LaunchedEffect(Unit) {
 You can also turn it off dynamically via gesture control, as follows:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -90,10 +90,10 @@ two parameters:
 example：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -137,14 +137,14 @@ by [ContentScale] and [Alignment], and not the entire content, you can modify th
 example：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -161,7 +161,7 @@ To achieve this, set the `containerWhitespace` or `containerWhitespaceMultiple` 
 example：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     // Set the specific size through the containerWhitespace property
@@ -178,7 +178,7 @@ LaunchEffect(zoomState.zoomable) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -189,7 +189,7 @@ SketchZoomAsyncImage(
 
 ```kotlin
 // compose
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 SketchZoomAsyncImage(zoomState = zoomState)
 val zoomable: ZoomableState = zoomState.zoomable
 

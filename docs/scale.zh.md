@@ -84,7 +84,7 @@ scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
@@ -93,7 +93,7 @@ LaunchEffect(zoomState.zoomable) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -105,13 +105,13 @@ SketchZoomAsyncImage(
 你可以通过双指捏合收拾缩放图像，ZoomImage 会根据双指的距离来计算缩放倍数。双指缩放功能默认开启，但你可以关闭它，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.TWO_FINGER_SCALE
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -128,14 +128,14 @@ ZoomImage 支持双击图像切换缩放倍数
 threeStepScale 属性为 true，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.threeStepScale = true
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -157,10 +157,10 @@ SketchZoomAsyncImage(
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -185,7 +185,7 @@ Button(
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 zoomState.zoomable.getNextStepScale()
 ```
@@ -195,13 +195,13 @@ zoomState.zoomable.getNextStepScale()
 双击缩放功能默认开启，但你可以关闭它，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.DOUBLE_TAP_SCALE
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -213,13 +213,13 @@ SketchZoomAsyncImage(
 ZoomImage 支持单指缩放图像，双击后按住屏幕上下滑动即可缩放图像。此功能默认开启，但你可以关闭它，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_SCALE
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -233,12 +233,12 @@ ZoomImage 支持通过鼠标滚轮缩放图像，ZoomImage 以当前鼠标位置
 你可以通过设置 `reverseMouseWheelScale` 属性来反转鼠标滚轮缩放，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.reverseMouseWheelScale = true
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -248,13 +248,13 @@ SketchZoomAsyncImage(
 鼠标滚轮缩放功能默认开启，但你可以关闭它，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -265,7 +265,7 @@ SketchZoomAsyncImage(
 `MouseWheelScaleCalculator.Default`，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.mouseWheelScaleCalculator =
         MouseWheelScaleCalculator { currentScale, scrollDelta ->
@@ -273,7 +273,7 @@ LaunchEffect(zoomState.zoomable) {
         }
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -312,13 +312,13 @@ LaunchedEffect(Unit) {
 你还可以通过手势控制动态关闭它，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
 }
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -340,10 +340,10 @@ ZoomImage 提供了 scale() 方法用来缩放图像到指定的倍数，它有�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -386,10 +386,10 @@ ZoomImage 提供了 scaleBy() 方法用来以乘法的方式增量缩放图像�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -432,10 +432,10 @@ ZoomImage 提供了 scaleByPlus() 方法用来以加法的方式缩放图像到�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -472,14 +472,14 @@ ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.rubberBandScale = false
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -493,7 +493,7 @@ ZoomImage 提供了 `animationSpec` 参数用来修改缩放动画的时长、Ea
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.zoomable) {
     zoomState.animationSpec = ZoomAnimationSpec(
@@ -507,7 +507,7 @@ LaunchEffect(zoomState.zoomable) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -518,7 +518,7 @@ SketchZoomAsyncImage(
 
 ```kotlin
 // compose
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 SketchZoomAsyncImage(zoomState = zoomState)
 val zoomable: ZoomableState = zoomState.zoomable
 

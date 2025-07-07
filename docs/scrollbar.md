@@ -32,7 +32,7 @@ val scrollBar = remember {
     )
 }
 SketchZoomAsyncImage(
-  imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     scrollBar = scrollBar,
@@ -58,10 +58,10 @@ compose:
 
 ```kotlin
 SketchZoomAsyncImage(
-  imageUri = "https://sample.com/sample.jpeg",
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
-  scrollBar = null,
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    scrollBar = null,
 )
 ```
 

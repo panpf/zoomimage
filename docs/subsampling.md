@@ -56,7 +56,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-  zoomState.setSubsamplingImage(imageSource)
+    zoomState.setSubsamplingImage(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -111,89 +111,89 @@ Other components are similar:
 ```kotlin
 class MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGenerator {
 
-  override fun generateImage(
-    sketch: Sketch,
-    request: ImageRequest,
-    result: ImageResult.Success,
-    painter: Painter
-  ): SubsamplingImageGenerateResult? {
-    // If the conditions are not met, skip the current SubsamplingImageGenerator
-    if (true) {
-      return null
+    override fun generateImage(
+        sketch: Sketch,
+        request: ImageRequest,
+        result: ImageResult.Success,
+        painter: Painter
+    ): SubsamplingImageGenerateResult? {
+        // If the conditions are not met, skip the current SubsamplingImageGenerator
+        if (true) {
+            return null
+        }
+
+        // If the conditions are not met, the generation fails and a failure result is returned.
+        if (true) {
+            return SubsamplingImageGenerateResult.Error("message")
+        }
+
+        // Success
+        val imageSource: ImageSource = ...
+        val imageInfo: ImageInfo = ...
+        val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
+        return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
 
-    // If the conditions are not met, the generation fails and a failure result is returned.
-    if (true) {
-      return SubsamplingImageGenerateResult.Error("message")
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
     }
 
-    // Success
-    val imageSource: ImageSource = ...
-    val imageInfo: ImageInfo = ...
-    val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
-    return SubsamplingImageGenerateResult.Success(subsamplingImage)
+    override fun hashCode(): Int {
+        return this::class.hashCode()
     }
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    return other != null && this::class == other::class
-  }
-
-  override fun hashCode(): Int {
-    return this::class.hashCode()
-  }
-
-  override fun toString(): String {
-    return "MySketchComposeSubsamplingImageGenerator"
-  }
+    override fun toString(): String {
+        return "MySketchComposeSubsamplingImageGenerator"
+    }
 }
 
 val subsamplingImageGenerators =
-  remember { listOf(MySketchComposeSubsamplingImageGenerator()).toImmutableList() }
+    remember { listOf(MySketchComposeSubsamplingImageGenerator()).toImmutableList() }
 val sketchZoomState = rememberSketchZoomState(subsamplingImageGenerators)
 SketchAsyncZoomImage(
-  zoomState = sketchZoomState,
+    zoomState = sketchZoomState,
     ...
 )
 
 
 class MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
 
-  override fun generateImage(
-    sketch: Sketch,
-    request: ImageRequest,
-    result: ImageResult.Success,
-    drawable: Drawable
-  ): SubsamplingImageGenerateResult? {
-    // If the conditions are not met, skip the current SubsamplingImageGenerator
-    if (true) {
-      return null
+    override fun generateImage(
+        sketch: Sketch,
+        request: ImageRequest,
+        result: ImageResult.Success,
+        drawable: Drawable
+    ): SubsamplingImageGenerateResult? {
+        // If the conditions are not met, skip the current SubsamplingImageGenerator
+        if (true) {
+            return null
+        }
+
+        // If the conditions are not met, the generation fails and a failure result is returned.
+        if (true) {
+            return SubsamplingImageGenerateResult.Error("message")
+        }
+
+        // Success
+        val imageSource: ImageSource = ...
+        val imageInfo: ImageInfo = ...
+        val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
+        return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
 
-    // If the conditions are not met, the generation fails and a failure result is returned.
-    if (true) {
-      return SubsamplingImageGenerateResult.Error("message")
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
     }
 
-    // Success
-    val imageSource: ImageSource = ...
-    val imageInfo: ImageInfo = ...
-    val subsamplingImage = SubsamplingImage(imageSource, imageInfo)
-    return SubsamplingImageGenerateResult.Success(subsamplingImage)
+    override fun hashCode(): Int {
+        return this::class.hashCode()
     }
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    return other != null && this::class == other::class
-  }
-
-  override fun hashCode(): Int {
-    return this::class.hashCode()
-  }
-
-  override fun toString(): String {
-    return "MySketchViewSubsamplingImageGenerator"
-  }
+    override fun toString(): String {
+        return "MySketchViewSubsamplingImageGenerator"
+    }
 }
 
 val sketchZoomImageView = SketchZoomImageView(context)
@@ -219,7 +219,7 @@ interval
 example:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // Turn off animations
@@ -230,7 +230,7 @@ LaunchEffect(zoomState.subsampling) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -252,7 +252,7 @@ The 'FLING' two types load tiles in real time, which you can configure via the
 example:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // All continuous transform types load tiles in real time
@@ -264,7 +264,7 @@ LaunchEffect(zoomState.subsampling) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -280,7 +280,7 @@ the `stopped` attribute
 example:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // stop
@@ -290,7 +290,7 @@ LaunchEffect(zoomState.subsampling) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -304,6 +304,23 @@ pausing or resuming subsampling at the Lifecycle stop or start
 
 Get the latest Lifecycle in View through View.findViewTreeLifecycleOwner() API; in Compose, get
 Lifecycle through LocalLifecycleOwner.current API
+
+If you don't need this feature, just set the lifecycle to null, like this:
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+LaunchEffect(zoomState.subsampling) {
+    zoomState.subsampling.lifecycle = null
+}
+
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
 
 ### Background tiles
 
@@ -319,14 +336,14 @@ it
 example:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     zoomState.subsampling.disabledBackgroundTiles = true
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -346,14 +363,14 @@ their own first
 example:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.tileImageCache = MyTileImageCache()
+    zoomState.subsampling.tileImageCache = MyTileImageCache()
 }
 
-ZoomImage(
-    imageUri = "https://sample.com/sample.jpeg",
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -367,17 +384,17 @@ The `disabledTileImageCache` property controls the use of the memory cache featu
 example:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // Disable memory caching
-  zoomState.subsampling.disabledTileImageCache = true
+    zoomState.subsampling.disabledTileImageCache = true
     // Memory caching is allowed
-  zoomState.subsampling.disabledTileImageCache = false
+    zoomState.subsampling.disabledTileImageCache = false
 }
 
-ZoomImage(
-    imageUri = "https://sample.com/sample.jpeg",
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -397,17 +414,17 @@ refer to [SkiaRegionDecoder] and [AndroidRegionDecoder]
 Then apply your [RegionDecoder] on [SubsamplingState] or [SubsamplingEngine] as follows:
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
+    zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
 }
 
-ZoomImage(
-  imageUri = "https://sample.com/sample.jpeg",
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
 )
 
 val sketchZoomImageView = SketchZoomImageView(context)
@@ -418,7 +435,7 @@ sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecod
 
 ```kotlin
 // compose
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 SketchZoomAsyncImage(zoomState = zoomState)
 val subsampling: SubsamplingState = zoomState.subsampling
 

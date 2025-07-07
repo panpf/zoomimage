@@ -118,22 +118,22 @@ class MySketchComposeSubsamplingImageGenerator : SketchComposeSubsamplingImageGe
         return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    return other != null && this::class == other::class
-  }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
 
-  override fun hashCode(): Int {
-    return this::class.hashCode()
-  }
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
 
-  override fun toString(): String {
-    return "MySketchComposeSubsamplingImageGenerator"
-  }
+    override fun toString(): String {
+        return "MySketchComposeSubsamplingImageGenerator"
+    }
 }
 
 val subsamplingImageGenerators =
-  remember { listOf(MySketchComposeSubsamplingImageGenerator()).toImmutableList() }
+    remember { listOf(MySketchComposeSubsamplingImageGenerator()).toImmutableList() }
 val sketchZoomState = rememberSketchZoomState(subsamplingImageGenerators)
 SketchAsyncZoomImage(
     zoomState = sketchZoomState,
@@ -166,18 +166,18 @@ class MySketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerato
         return SubsamplingImageGenerateResult.Success(subsamplingImage)
     }
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    return other != null && this::class == other::class
-  }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other != null && this::class == other::class
+    }
 
-  override fun hashCode(): Int {
-    return this::class.hashCode()
-  }
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
 
-  override fun toString(): String {
-    return "MySketchViewSubsamplingImageGenerator"
-  }
+    override fun toString(): String {
+        return "MySketchViewSubsamplingImageGenerator"
+    }
 }
 
 val sketchZoomImageView = SketchZoomImageView(context)
@@ -199,7 +199,7 @@ ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // 关闭动画
@@ -210,7 +210,7 @@ LaunchEffect(zoomState.subsampling) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -229,7 +229,7 @@ ZoomImage 在兼顾性能和体验的情况默认配置是 `SCALE`, `OFFSET`, `L
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // 所有连续变换类型都实时加载图块
@@ -241,7 +241,7 @@ LaunchEffect(zoomState.subsampling) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -256,7 +256,7 @@ ZoomImage 支持停止子采样，停止后会释放已加载的图块并不再�
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // stop
@@ -266,7 +266,7 @@ LaunchEffect(zoomState.subsampling) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -280,6 +280,23 @@ ZoomImage 默认会自动获取最近的 Lifecycle 然后监听它的状态，�
 在 View 中通过 View.findViewTreeLifecycleOwner() API 获取到最近的 Lifecycle；在 Compose 通过
 LocalLifecycleOwner.current API 获取 Lifecycle
 
+如果你不需要此功能只需要将 lifecycle 设置为 null 即可，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+LaunchEffect(zoomState.subsampling) {
+    zoomState.subsampling.lifecycle = null
+}
+
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
 ### 背景图块
 
 ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
@@ -292,14 +309,14 @@ ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     zoomState.subsampling.disabledBackgroundTiles = true
 }
 
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -316,14 +333,14 @@ SketchZoomAsyncImage(
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.tileImageCache = MyTileImageCache()
+    zoomState.subsampling.tileImageCache = MyTileImageCache()
 }
 
-ZoomImage(
-    imageUri = "https://sample.com/sample.jpeg",
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -336,17 +353,17 @@ ZoomImage(
 示例：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // 禁用内存缓存
-  zoomState.subsampling.disabledTileImageCache = true
+    zoomState.subsampling.disabledTileImageCache = true
     // 允许使用内存缓存
-  zoomState.subsampling.disabledTileImageCache = false
+    zoomState.subsampling.disabledTileImageCache = false
 }
 
-ZoomImage(
-    imageUri = "https://sample.com/sample.jpeg",
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -364,14 +381,14 @@ ZoomImage 在 Android 平台上使用 BitmapRegionDecoder 来解码图片，非 
 然后在 [SubsamplingState] 或 [SubsamplingEngine] 上应用你的 [RegionDecoder]，如下：
 
 ```kotlin
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
 }
 
-ZoomImage(
-    imageUri = "https://sample.com/sample.jpeg",
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -385,7 +402,7 @@ sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecod
 
 ```kotlin
 // compose
-val zoomState: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberSketchZoomState()
 SketchZoomAsyncImage(zoomState = zoomState)
 val subsampling: SubsamplingState = zoomState.subsampling
 

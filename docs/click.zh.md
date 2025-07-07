@@ -15,7 +15,7 @@ compose：
 
 ```kotlin
 SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     onTap = { touch: Offset ->
