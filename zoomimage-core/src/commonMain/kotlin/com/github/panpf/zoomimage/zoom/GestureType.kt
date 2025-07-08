@@ -29,6 +29,9 @@ import androidx.annotation.IntDef
     GestureType.TWO_FINGER_SCALE,
     GestureType.ONE_FINGER_SCALE,
     GestureType.DOUBLE_TAP_SCALE,
+    GestureType.MOUSE_WHEEL_SCALE,
+    GestureType.KEYBOARD_SCALE,
+    GestureType.KEYBOARD_DRAG,
 )
 @Target(
     AnnotationTarget.VALUE_PARAMETER,

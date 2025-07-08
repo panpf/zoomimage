@@ -128,7 +128,7 @@ class ZoomableCore constructor(
         private set
 
     @ContinuousTransformType
-    var continuousTransformType: Int = 0
+    var continuousTransformType: Int = ContinuousTransformType.NONE
         private set
 
     private var resetParams: ResetParams? = null
@@ -684,7 +684,7 @@ class ZoomableCore constructor(
 
         val lastContinuousTransformType = continuousTransformType
         if (lastContinuousTransformType != 0) {
-            setContinuousTransformType(0)
+            setContinuousTransformType(ContinuousTransformType.NONE)
         }
     }
 
@@ -847,8 +847,7 @@ class ZoomableCore constructor(
                         "velocity=${velocity.toShortString()}"
             }
         } finally {
-            // TODO Add ContinuousTransformType.None
-            setContinuousTransformType(0)
+            setContinuousTransformType(ContinuousTransformType.NONE)
         }
         true
     }
@@ -933,7 +932,7 @@ class ZoomableCore constructor(
             }
         } finally {
             if (newContinuousTransformType != null) {
-                setContinuousTransformType(0)
+                setContinuousTransformType(ContinuousTransformType.NONE)
             }
         }
     }

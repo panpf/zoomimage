@@ -192,6 +192,39 @@ fun calculateBaseTransform(
 }
 
 /**
+ * Calculate the transformation required to restore the content to its original position
+ */
+fun calculateRestoreContentBaseTransformTransform(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rtlLayoutDirection: Boolean,
+): TransformCompat {
+    val baseTransform = calculateBaseTransform(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rtlLayoutDirection = rtlLayoutDirection,
+        rotation = 0
+    )
+    val scaleX = 1f / baseTransform.scaleX
+    val scaleY = 1f / baseTransform.scaleY
+    val scaledBaseOffsetX = baseTransform.offsetX * scaleX
+    val scaledBaseOffsetY = baseTransform.offsetY * scaleY
+    val translationX = 0f - scaledBaseOffsetX
+    val translationY = 0f - scaledBaseOffsetY
+    val transformOrigin = TransformOriginCompat(0f, 0f)
+    return TransformCompat(
+        scale = ScaleFactorCompat(scaleX, scaleY),
+        offset = OffsetCompat(translationX, translationY),
+        rotation = 0f,
+        rotationOrigin = transformOrigin
+    )
+}
+
+/**
  * Calculate the transformation based on the reading mode under the basic transformation.
  * The reading mode will make the picture fill the screen and move to the starting position,
  * allowing the user to read the picture content immediately

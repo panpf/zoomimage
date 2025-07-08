@@ -3948,9 +3948,9 @@ class ZoomableCoreTest {
         assertEquals(5, count)
         assertEquals(ContinuousTransformType.GESTURE, zoomableCore.continuousTransformType)
 
-        zoomableCore.setContinuousTransformType(-1000000)
+        zoomableCore.setContinuousTransformType(ContinuousTransformType.NONE)
         assertEquals(6, count)
-        assertEquals(-1000000, zoomableCore.continuousTransformType)
+        assertEquals(ContinuousTransformType.NONE, zoomableCore.continuousTransformType)
     }
 
     @Test
