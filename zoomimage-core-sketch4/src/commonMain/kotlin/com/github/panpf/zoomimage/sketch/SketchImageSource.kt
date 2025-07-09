@@ -109,7 +109,7 @@ class SketchImageSource constructor(
         }
 
         override fun toString(): String {
-            return "SketchImageSource.Factory($request)"
+            return "SketchImageSource.Factory(${request.uri})"
         }
     }
 }

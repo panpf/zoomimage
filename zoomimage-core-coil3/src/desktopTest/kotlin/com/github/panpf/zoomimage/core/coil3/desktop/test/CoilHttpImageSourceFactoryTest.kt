@@ -64,6 +64,6 @@ class CoilHttpImageSourceFactoryTest {
             ImageRequest.Builder(context).data("https://www.example.com/image1.jpg").build()
 
         val factory = CoilHttpImageSource.Factory(context, imageLoader, request)
-        assertEquals("CoilHttpImageSource.Factory($request)", factory.toString())
+        assertEquals("CoilHttpImageSource.Factory(${request.data})", factory.toString())
     }
 }

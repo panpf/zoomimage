@@ -99,6 +99,6 @@ class SketchImageSourceFactoryTest {
         val request = LoadRequest(context, imageUri)
 
         val factory = SketchImageSource.Factory(sketch, request)
-        assertEquals("SketchImageSource.Factory($request)", factory.toString())
+        assertEquals("SketchImageSource.Factory(${request.uriString})", factory.toString())
     }
 }

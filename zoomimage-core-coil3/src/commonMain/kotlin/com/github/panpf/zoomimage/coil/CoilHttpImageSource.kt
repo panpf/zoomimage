@@ -146,7 +146,7 @@ class CoilHttpImageSource constructor(
         }
 
         override fun toString(): String {
-            return "CoilHttpImageSource.Factory($request)"
+            return "CoilHttpImageSource.Factory(${request.data})"
         }
     }
 }
