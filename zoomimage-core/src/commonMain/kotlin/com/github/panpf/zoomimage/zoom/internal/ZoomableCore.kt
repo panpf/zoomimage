@@ -529,7 +529,7 @@ class ZoomableCore constructor(
             return
         }
 
-        stopAllAnimation("reset:$caller")
+        stopAllAnimation(caller)
 
         val newInitialZoom = calculateInitialZoom(
             containerSize = newResetParams.containerSize,
@@ -559,7 +559,7 @@ class ZoomableCore constructor(
             && lastResetParams.containerSize.isNotEmpty()
             && newResetParams.containerSize.isNotEmpty()
         ) {
-            mode = "RestoreVisibleCenter"
+            mode = "restoreVisibleCenter"
             val restoreTransform =
                 calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
                     oldContainerSize = lastResetParams.containerSize,
@@ -591,7 +591,7 @@ class ZoomableCore constructor(
                 diffResult = diffResult
             )
         ) {
-            mode = "RestoreVisibleRect"
+            mode = "restoreVisibleRect"
             val restoreTransform =
                 calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged(
                     oldContentSize = lastResetParams.contentSize,
@@ -605,7 +605,7 @@ class ZoomableCore constructor(
             )
             restoreUserTransform.copy(offset = limitUserOffset)
         } else {
-            mode = "Reset"
+            mode = "reset"
             newInitialZoom.userTransform
         }
 

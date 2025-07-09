@@ -83,7 +83,16 @@ annotation class ContinuousTransformType {
         }
 
         fun parse(continuousTransformTypes: Int): List<Int> {
-            return values.asSequence().filter { continuousTransformTypes and it != 0 }.toList()
+            return values.asSequence()
+                .filter { continuousTransformTypes and it != 0 }
+                .toList()
+        }
+
+        fun names(continuousTransformTypes: Int): List<String> {
+            return values.asSequence()
+                .filter { continuousTransformTypes and it != 0 }
+                .map { name(it) }
+                .toList()
         }
     }
 }

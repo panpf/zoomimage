@@ -87,6 +87,7 @@ class SubsamplingCore(
     var disabled: Boolean = false
         set(value) {
             if (field != value) {
+                logger.d { "$module. disabled=$value. '$logKey'" }
                 if (value) {
                     cachedImage = subsamplingImage
                     setImage(null as SubsamplingImage?)
@@ -108,35 +109,53 @@ class SubsamplingCore(
     var disabledTileImageCache: Boolean
         get() = tileImageCacheHelper.disabled
         set(value) {
-            tileImageCacheHelper.disabled = value
+            if (tileImageCacheHelper.disabled != value) {
+                logger.d { "$module. disabledTileImageCache=$value. '$logKey'" }
+                tileImageCacheHelper.disabled = value
+            }
         }
 
     var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
         set(value) {
-            tileManager?.tileAnimationSpec = value
-            field = value
+            if (field != value) {
+                field = value
+                logger.d { "$module. tileAnimationSpec=$value. '$logKey'" }
+                tileManager?.tileAnimationSpec = value
+            }
         }
 
     var pausedContinuousTransformTypes: Int = DefaultPausedContinuousTransformTypes
         set(value) {
-            tileManager?.pausedContinuousTransformTypes = value
-            field = value
+            if (field != value) {
+                field = value
+                logger.d {
+                    val namesString = ContinuousTransformType.names(value)
+                        .joinToString(prefix = "[", postfix = "]")
+                    "$module. pausedContinuousTransformTypes=$namesString. '$logKey'"
+                }
+                tileManager?.pausedContinuousTransformTypes = value
+            }
         }
 
     var disabledBackgroundTiles: Boolean = false
         set(value) {
-            tileManager?.disabledBackgroundTiles = value
-            field = value
+            if (field != value) {
+                field = value
+                logger.d { "$module. disabledBackgroundTiles=$value. '$logKey'" }
+                tileManager?.disabledBackgroundTiles = value
+            }
         }
 
     var stopped: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
+                logger.d { "$module. stopped=$value. '$logKey'" }
+                val stoppedState = if (value) "stopped" else "started"
                 if (value) {
-                    tileManager?.clean("stopped")
+                    tileManager?.clean(stoppedState)
                 }
-                refreshReadyState(if (value) "stopped" else "started")
+                refreshReadyState(stoppedState)
             }
         }
 
@@ -186,14 +205,13 @@ class SubsamplingCore(
 
     fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
         if (disabled) {
+            logger.d { "$module. setImage. disabled. '${subsamplingImage}'" }
             cachedImage = subsamplingImage
             return false
         }
 
         if (this.subsamplingImage == subsamplingImage) return false
-        logger.d {
-            "$module. setImage. '${this.subsamplingImage}' -> '${subsamplingImage}'"
-        }
+        logger.d { "$module. setImage. '${this.subsamplingImage}' -> '${subsamplingImage}'" }
         clean("setImage")
         this.subsamplingImage = subsamplingImage
         if (coroutineScope != null && subsamplingImage != null) {
@@ -225,7 +243,7 @@ class SubsamplingCore(
                     "oldPreferredTileSize=${oldPreferredTileSize.toShortString()}, " +
                     "newPreferredTileSize=${newPreferredTileSize.toShortString()}, " +
                     "containerSize=${containerSize.toShortString()}. " +
-                    "'${subsamplingImage?.key}'"
+                    "'$logKey'"
         }
         if (checkPassed) {
             this.preferredTileSize = newPreferredTileSize
@@ -280,8 +298,8 @@ class SubsamplingCore(
     }
 
     private fun resetTileDecoder(caller: String) {
-        cleanTileManager("resetTileDecoder:$caller")
-        cleanTileDecoder("resetTileDecoder:$caller")
+        cleanTileManager(caller)
+        cleanTileDecoder(caller)
 
         val subsamplingImage = subsamplingImage
         val contentSize = contentSize
@@ -327,13 +345,13 @@ class SubsamplingCore(
                         "imageInfo=${imageInfo.toShortString()}. " +
                         "'${subsamplingImage.key}'"
             }
-            refreshReadyState("resetTileDecoder:$caller")
-            resetTileManager("resetTileDecoder:$caller")
+            refreshReadyState(caller)
+            resetTileManager(caller)
         }
     }
 
     private fun resetTileManager(caller: String) {
-        cleanTileManager("resetTileManager:$caller")
+        cleanTileManager(caller)
 
         val subsamplingImage = subsamplingImage
         val tileDecoder = tileDecoder
@@ -347,7 +365,7 @@ class SubsamplingCore(
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileDecoder=${tileDecoder}, " +
-                        "'${subsamplingImage?.key}'"
+                        "'$logKey'"
             }
             return
         }
@@ -399,7 +417,7 @@ class SubsamplingCore(
                     "'${subsamplingImage.key}'"
         }
         this@SubsamplingCore.tileManager = tileManager
-        refreshReadyState("resetTileManager:$caller")
+        refreshReadyState(caller)
     }
 
     private fun refreshTiles(
@@ -411,7 +429,7 @@ class SubsamplingCore(
     ) {
         val tileManager = tileManager ?: return
         if (stopped) {
-            logger.d { "$module. refreshTiles:$caller. interrupted, stopped. '${subsamplingImage?.key}'" }
+            logger.d { "$module. refreshTiles:$caller. interrupted, stopped. '$logKey'" }
             return
         }
         tileManager.refreshTiles(
@@ -427,9 +445,7 @@ class SubsamplingCore(
         val newReady = imageInfo != null && tileManager != null && tileDecoder != null && !stopped
         // Duplicate callbacks cannot be intercepted by validating 'this@SubsamplingCore.ready != newReady',
         // because SubsamplingState and SubsamplingEngine need to rely on this callback to update properties such as stopped, imageInfo, tileGridSizeMap, etc
-        logger.d {
-            "$module. refreshReadyState:$caller. ready=$newReady. '${subsamplingImage?.key}'"
-        }
+        logger.d { "$module. refreshReadyState:$caller. ready=$newReady. '$logKey'" }
         this@SubsamplingCore.ready = newReady
         onReadyChanged(this@SubsamplingCore)
         coroutineScope?.launch {
@@ -455,7 +471,7 @@ class SubsamplingCore(
         val tileDecoder = this@SubsamplingCore.tileDecoder
         val imageInfo = this@SubsamplingCore.imageInfo
         if (tileDecoder != null) {
-            logger.d { "$module. cleanTileDecoder:$caller. '${subsamplingImage?.key}'" }
+            logger.d { "$module. cleanTileDecoder:$caller. '$logKey'" }
             @Suppress("OPTthis@SubsamplingCore.IN_USAGE", "OPT_IN_USAGE")
             GlobalScope.launch(ioCoroutineDispatcher()) {
                 tileDecoder.closeQuietly()
@@ -466,7 +482,7 @@ class SubsamplingCore(
             this@SubsamplingCore.imageInfo = null
         }
         if (tileDecoder != null || imageInfo != null) {
-            refreshReadyState("cleanTileDecoder:$caller")
+            refreshReadyState(caller)
         }
 
         @Suppress("OPT_IN_USAGE")
@@ -478,21 +494,21 @@ class SubsamplingCore(
     private fun cleanTileManager(caller: String) {
         val tileManager = this@SubsamplingCore.tileManager
         if (tileManager != null) {
-            logger.d { "$module. cleanTileManager:$caller. '${subsamplingImage?.key}'" }
-            tileManager.clean("cleanTileManager:$caller")
+            logger.d { "$module. cleanTileManager:$caller. '$logKey'" }
+            tileManager.clean(caller)
             this@SubsamplingCore.tileManager = null
             this@SubsamplingCore.tileGridSizeMap = emptyMap()
             this@SubsamplingCore.foregroundTiles = emptyList()
             this@SubsamplingCore.backgroundTiles = emptyList()
             this@SubsamplingCore.sampleSize = 0
             this@SubsamplingCore.imageLoadRect = IntRectCompat.Zero
-            refreshReadyState("cleanTileManager:$caller")
+            refreshReadyState(caller)
             onTileChanged(this@SubsamplingCore)
         }
     }
 
     private fun clean(caller: String) {
-        cleanTileDecoder("clean:$caller")
-        cleanTileManager("clean:$caller")
+        cleanTileDecoder(caller)
+        cleanTileManager(caller)
     }
 }
