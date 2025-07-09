@@ -13,6 +13,8 @@
 * new: 新增 `zoomimage-compose-sketch4-koin` 和 `zoomimage-view-sketch4-koin` 模块，适配 sketch4 的
   koin 模式
 * new: SubsamplingState 和 SubsamplingEngine 新增 disabled 属性可以禁用子采样功能
+* new: SubsamplingState 和 SubsamplingEngine 新增 disabledAutoStopWithLifecycle 属性可以禁用根据
+  Lifecycle 自动停止子采样功能。 [#91](https://github.com/panpf/zoomimage/issues/91)
 * depend: 更新 sketch 4.2.0
 
 # 1.4.0-beta02

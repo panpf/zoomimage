@@ -161,6 +161,98 @@ class SubsamplingEngineTest {
     }
 
     @Test
+    fun testDisabledAutoStopWithLifecycle() {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        val imageView = ImageView(context)
+        val zoomable = ZoomableEngine(Logger("Test"), imageView)
+        val subsampling = SubsamplingEngine(zoomable)
+        subsampling.onAttachToWindow()
+        val lifecycle = TestLifecycle()
+        subsampling.lifecycle = lifecycle
+
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.RESUMED, actual = lifecycle.currentState)
+        assertEquals(
+            expected = false,
+            actual = subsampling.disabledAutoStopWithLifecycleState.value
+        )
+        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+
+
+        lifecycle.currentState = Lifecycle.State.CREATED
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
+        assertEquals(
+            expected = false,
+            actual = subsampling.disabledAutoStopWithLifecycleState.value
+        )
+        assertEquals(expected = true, actual = subsampling.stoppedState.value)
+
+        lifecycle.currentState = Lifecycle.State.STARTED
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
+        assertEquals(
+            expected = false,
+            actual = subsampling.disabledAutoStopWithLifecycleState.value
+        )
+        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+
+        // disabledAutoStopWithLifecycle is true, so it will not stop when the lifecycle is stopped
+        subsampling.disabledAutoStopWithLifecycleState.value = true
+        lifecycle.currentState = Lifecycle.State.STARTED
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
+        assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
+        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+
+        lifecycle.currentState = Lifecycle.State.CREATED
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
+        assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
+        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+
+        lifecycle.currentState = Lifecycle.State.STARTED
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
+        assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
+        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+
+
+        subsampling.disabledAutoStopWithLifecycleState.value = false
+        lifecycle.currentState = Lifecycle.State.CREATED
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
+        assertEquals(
+            expected = false,
+            actual = subsampling.disabledAutoStopWithLifecycleState.value
+        )
+        assertEquals(expected = true, actual = subsampling.stoppedState.value)
+
+        subsampling.disabledAutoStopWithLifecycleState.value = true
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
+        assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
+        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+
+        subsampling.disabledAutoStopWithLifecycleState.value = true
+        subsampling.stoppedState.value = true
+        lifecycle.currentState = Lifecycle.State.STARTED
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
+        assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
+        assertEquals(expected = true, actual = subsampling.stoppedState.value)
+
+        subsampling.disabledAutoStopWithLifecycleState.value = false
+        Thread.sleep(100)
+        assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
+        assertEquals(
+            expected = false,
+            actual = subsampling.disabledAutoStopWithLifecycleState.value
+        )
+        assertEquals(expected = false, actual = subsampling.stoppedState.value)
+    }
+
+    @Test
     fun testShowTileBounds() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)

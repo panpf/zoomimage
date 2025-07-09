@@ -90,6 +90,8 @@ expect class AppSettings(context: PlatformContext) {
 
     val subsamplingEnabled: SettingsStateFlow<Boolean>
 
+    val autoStopWithLifecycleEnabled: SettingsStateFlow<Boolean>
+
 
     // ------------------------------------------ other --------------------------------------------
 

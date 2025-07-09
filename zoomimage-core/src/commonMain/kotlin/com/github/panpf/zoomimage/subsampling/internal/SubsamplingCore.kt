@@ -67,9 +67,18 @@ class SubsamplingCore(
     private var preferredTileSize = IntSizeCompat.Zero
     private var contentSize = IntSizeCompat.Zero
     private var cachedImage: SubsamplingImage? = null
+    private val logKey: String?
+        get() = subsamplingImage?.key ?: "null"
     private val stoppedLifecycleObserver = LifecycleEventObserver { owner, _ ->
-        val stopped = !owner.lifecycle.currentState.isAtLeast(STARTED)
-        this@SubsamplingCore.stopped = stopped
+        val disabledAutoStopWithLifecycle = disabledAutoStopWithLifecycle
+        logger.d {
+            "$module. lifecycle. ${owner.lifecycle.currentState}. " +
+                    "disabledAutoStopWithLifecycle=$disabledAutoStopWithLifecycle. " +
+                    "'$logKey'"
+        }
+        if (!disabledAutoStopWithLifecycle) {
+            refreshStoppedState()
+        }
     }
 
     var subsamplingImage: SubsamplingImage? = null
@@ -138,6 +147,19 @@ class SubsamplingCore(
                 field = value
                 if (coroutineScope != null) {
                     value?.addObserver(stoppedLifecycleObserver)
+                }
+            }
+        }
+
+    var disabledAutoStopWithLifecycle: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                logger.d { "$module. disabledAutoStopWithLifecycle=$value. '$logKey'" }
+                if (value) {
+                    stopped = false
+                } else {
+                    refreshStoppedState()
                 }
             }
         }
@@ -412,6 +434,14 @@ class SubsamplingCore(
         onReadyChanged(this@SubsamplingCore)
         coroutineScope?.launch {
             refreshTilesFlow.emit("refreshReadyState:$caller")
+        }
+    }
+
+    private fun refreshStoppedState() {
+        val lifecycle = lifecycle
+        if (lifecycle != null) {
+            val stopped = !lifecycle.currentState.isAtLeast(STARTED)
+            this@SubsamplingCore.stopped = stopped
         }
     }
 

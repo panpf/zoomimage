@@ -141,6 +141,12 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     val stoppedState: MutableStateFlow<Boolean> = MutableStateFlow(subsamplingCore.stopped)
 
     /**
+     * If true, the automatic stop function based on lifecycle is disabled
+     */
+    val disabledAutoStopWithLifecycleState: MutableStateFlow<Boolean> =
+        MutableStateFlow(subsamplingCore.disabledAutoStopWithLifecycle)
+
+    /**
      * User-defined RegionDecoder
      */
     var regionDecodersState: MutableStateFlow<List<RegionDecoder.Factory>> =
@@ -341,6 +347,11 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         coroutineScope.launch {
             stoppedState.collect {
                 subsamplingCore.stopped = it
+            }
+        }
+        coroutineScope.launch {
+            disabledAutoStopWithLifecycleState.collect {
+                subsamplingCore.disabledAutoStopWithLifecycle = it
             }
         }
         coroutineScope.launch {

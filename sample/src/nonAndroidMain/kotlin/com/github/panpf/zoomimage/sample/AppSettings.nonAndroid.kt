@@ -163,6 +163,10 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         booleanSettingsStateFlow(context, "subsamplingEnabled", true)
     }
 
+    actual val autoStopWithLifecycleEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "autoStopWithLifecycleEnabled", true)
+    }
+
 
     // ------------------------------------------ other --------------------------------------------
 

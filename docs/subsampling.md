@@ -305,13 +305,14 @@ pausing or resuming subsampling at the Lifecycle stop or start
 Get the latest Lifecycle in View through View.findViewTreeLifecycleOwner() API; in Compose, get
 Lifecycle through LocalLifecycleOwner.current API
 
-If you don't need this feature, just set the lifecycle to null, like this:
+If you do not need this feature, you can turn it off via the `disabledAutoStopWithLifecycle`
+property as follows:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.lifecycle = null
+  zoomState.subsampling.disabledAutoStopWithLifecycle = true
 }
 
 SketchZoomAsyncImage(

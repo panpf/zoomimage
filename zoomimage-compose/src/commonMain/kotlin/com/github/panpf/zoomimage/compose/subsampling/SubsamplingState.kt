@@ -166,6 +166,11 @@ class SubsamplingState(
     var stopped by mutableStateOf(subsamplingCore.stopped)
 
     /**
+     * If true, the automatic stop function based on lifecycle is disabled
+     */
+    var disabledAutoStopWithLifecycle by mutableStateOf(subsamplingCore.disabledAutoStopWithLifecycle)
+
+    /**
      * User-defined RegionDecoder
      */
     var regionDecoders: List<RegionDecoder.Factory> by mutableStateOf(subsamplingCore.regionDecoders)
@@ -347,6 +352,11 @@ class SubsamplingState(
         coroutineScope.launch {
             snapshotFlow { stopped }.collect {
                 subsamplingCore.stopped = it
+            }
+        }
+        coroutineScope.launch {
+            snapshotFlow { disabledAutoStopWithLifecycle }.collect {
+                subsamplingCore.disabledAutoStopWithLifecycle = it
             }
         }
         coroutineScope.launch {

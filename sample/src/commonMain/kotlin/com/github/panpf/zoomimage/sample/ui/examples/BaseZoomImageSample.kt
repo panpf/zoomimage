@@ -210,6 +210,7 @@ private fun ZoomState.bindSettings(settingsService: AppSettings) {
     val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.collectAsState()
     val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by settingsService.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectAsState()
     val subsamplingEnabled by settingsService.subsamplingEnabled.collectAsState()
+    val autoStopWithLifecycleEnabled by settingsService.autoStopWithLifecycleEnabled.collectAsState()
     val logLevel by settingsService.logLevel.collectAsState()
     val animateScale by settingsService.animateScale.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
@@ -294,6 +295,9 @@ private fun ZoomState.bindSettings(settingsService: AppSettings) {
     }
     LaunchedEffect(subsamplingEnabled) {
         subsampling.disabled = !subsamplingEnabled
+    }
+    LaunchedEffect(autoStopWithLifecycleEnabled) {
+        subsampling.disabledAutoStopWithLifecycle = !autoStopWithLifecycleEnabled
     }
     LaunchedEffect(pausedContinuousTransformTypes) {
         subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes

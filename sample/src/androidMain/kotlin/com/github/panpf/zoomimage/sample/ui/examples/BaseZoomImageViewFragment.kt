@@ -245,6 +245,9 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.subsamplingEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     disabledState.value = !it
                 }
+                appSettings.autoStopWithLifecycleEnabled.collectWithLifecycle(viewLifecycleOwner) {
+                    disabledAutoStopWithLifecycleState.value = !it
+                }
             }
         }
 

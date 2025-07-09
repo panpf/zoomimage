@@ -280,13 +280,13 @@ ZoomImage 默认会自动获取最近的 Lifecycle 然后监听它的状态，�
 在 View 中通过 View.findViewTreeLifecycleOwner() API 获取到最近的 Lifecycle；在 Compose 通过
 LocalLifecycleOwner.current API 获取 Lifecycle
 
-如果你不需要此功能只需要将 lifecycle 设置为 null 即可，如下：
+如果你不需要此功能可以通过 `disabledAutoStopWithLifecycle` 属性关闭它，如下：
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.lifecycle = null
+  zoomState.subsampling.disabledAutoStopWithLifecycle = true
 }
 
 SketchZoomAsyncImage(
@@ -303,8 +303,7 @@ ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
 的变化图片清晰度也逐级变化的效果，并且在加载新图块的过程中也不会露出底图，这样就保证了清晰度变化的连续性，用户体验更好
 
 但是此功能使用了更多的内存，在性能较差的设备上可能会对流畅性有影响，此功能默认开启，你可以通过
-`disabledBackgroundTiles`
-属性关闭它
+`disabledBackgroundTiles` 属性关闭它
 
 示例：
 

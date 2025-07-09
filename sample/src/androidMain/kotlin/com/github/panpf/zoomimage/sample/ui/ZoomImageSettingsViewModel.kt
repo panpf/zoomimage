@@ -247,6 +247,14 @@ class ZoomImageSettingsViewModel(
 
         add(
             SwitchMenuFlow(
+                title = "Auto Stop With Lifecycle",
+                desc = null,
+                data = appSettings.autoStopWithLifecycleEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
                 title = "Tile Memory Cache",
                 desc = null,
                 data = appSettings.tileMemoryCache,

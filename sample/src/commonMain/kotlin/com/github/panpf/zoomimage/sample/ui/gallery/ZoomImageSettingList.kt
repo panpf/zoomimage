@@ -224,6 +224,12 @@ fun ZoomImageSettingList() {
         )
 
         SwitchSettingItem(
+            title = "Auto Stop With Lifecycle",
+            desc = null,
+            state = appSettings.autoStopWithLifecycleEnabled,
+        )
+
+        SwitchSettingItem(
             title = "Tile Memory Cache",
             desc = null,
             state = appSettings.tileMemoryCache,

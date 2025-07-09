@@ -14,6 +14,9 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
   sketch4's koin mode
 * new: SubsamplingState and SubsamplingEngine add disabled attributes to disable subsampling feature
+* new: SubsamplingState and SubsamplingEngine add disabledAutoStopWithLifecycle attributes to
+  disable automatic subsampling stopping according to
+  Lifecycle. [#91](https://github.com/panpf/zoomimage/issues/91)
 * depend: Update sketch to 4.2.0
 
 # 1.4.0-beta02
