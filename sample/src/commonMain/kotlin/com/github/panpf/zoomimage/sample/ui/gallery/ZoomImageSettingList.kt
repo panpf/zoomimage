@@ -199,7 +199,7 @@ fun ZoomImageSettingList() {
         SwitchSettingItem(
             title = "Container Whitespace",
             desc = null,
-            state = appSettings.containerWhitespace,
+            state = appSettings.containerWhitespaceEnabled,
         )
 
         DividerSettingItem("Read Mode")
@@ -276,7 +276,7 @@ fun ZoomImageSettingList() {
         SwitchSettingItem(
             title = "Tile Animation",
             desc = null,
-            state = appSettings.tileAnimation,
+            state = appSettings.tileAnimationEnabled,
         )
 
         DividerSettingItem("Other")

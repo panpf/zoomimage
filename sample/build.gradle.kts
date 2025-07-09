@@ -1,3 +1,4 @@
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -108,6 +109,7 @@ kotlin {
             implementation(libs.androidx.recyclerview)
             implementation(libs.androidx.swiperefreshlayout)
             implementation(libs.coil3.gif)
+            implementation(libs.glide.compose)
             implementation(libs.google.material)
             implementation(libs.koin.android)
             implementation(libs.moko.permissions)

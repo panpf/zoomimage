@@ -66,7 +66,7 @@ expect class AppSettings(context: PlatformContext) {
 
     val containerWhitespaceMultiple: SettingsStateFlow<Float>
 
-    val containerWhitespace: SettingsStateFlow<Boolean>
+    val containerWhitespaceEnabled: SettingsStateFlow<Boolean>
 
     val readModeEnabled: SettingsStateFlow<Boolean>
 
@@ -78,7 +78,7 @@ expect class AppSettings(context: PlatformContext) {
 
     val showTileBounds: SettingsStateFlow<Boolean>
 
-    val tileAnimation: SettingsStateFlow<Boolean>
+    val tileAnimationEnabled: SettingsStateFlow<Boolean>
 
     val tileMemoryCache: SettingsStateFlow<Boolean>
 

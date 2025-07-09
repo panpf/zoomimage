@@ -203,40 +203,59 @@ fun <T : ZoomState> BaseZoomImageSample(
 }
 
 @Composable
-private fun ZoomState.bindSettings(settingsService: AppSettings) {
-    val threeStepScale by settingsService.threeStepScale.collectAsState()
-    val rubberBandScale by settingsService.rubberBandScale.collectAsState()
-    val readModeEnabled by settingsService.readModeEnabled.collectAsState()
-    val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.collectAsState()
-    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by settingsService.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectAsState()
-    val subsamplingEnabled by settingsService.subsamplingEnabled.collectAsState()
-    val autoStopWithLifecycleEnabled by settingsService.autoStopWithLifecycleEnabled.collectAsState()
-    val logLevel by settingsService.logLevel.collectAsState()
-    val animateScale by settingsService.animateScale.collectAsState()
-    val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
-    val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
-    val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
-    val containerWhitespaceMultiple by settingsService.containerWhitespaceMultiple.collectAsState()
-    val containerWhitespace by settingsService.containerWhitespace.collectAsState()
-    val scalesCalculatorName by settingsService.scalesCalculatorName.collectAsState()
-    val scalesMultiple by settingsService.scalesMultiple.collectAsState()
-    val scalesCalculator = remember(scalesCalculatorName, scalesMultiple) {
-        buildScalesCalculator(scalesCalculatorName, scalesMultiple.toFloat())
-    }
-    val pausedContinuousTransformTypes by settingsService.pausedContinuousTransformTypes.collectAsState()
-    val disabledGestureTypes by settingsService.disabledGestureTypes.collectAsState()
-    val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()
-    val showTileBounds by settingsService.showTileBounds.collectAsState()
-    val tileAnimation by settingsService.tileAnimation.collectAsState()
-    val tileMemoryCache by settingsService.tileMemoryCache.collectAsState()
-    val horizontalLayout by settingsService.horizontalPagerLayout.collectAsState()
+private fun ZoomState.bindSettings(appSettings: AppSettings) {
+    val logLevel by appSettings.logLevel.collectAsState()
+    logger.level = logLevel
 
+    val threeStepScale by appSettings.threeStepScale.collectAsState()
+    zoomable.threeStepScale = threeStepScale
+
+    val rubberBandScale by appSettings.rubberBandScale.collectAsState()
+    zoomable.rubberBandScale = rubberBandScale
+
+    val animateScale by appSettings.animateScale.collectAsState()
+    val slowerScaleAnimation by appSettings.slowerScaleAnimation.collectAsState()
     val zoomAnimationSpec by remember {
         derivedStateOf {
             val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
             ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
         }
     }
+    zoomable.animationSpec = zoomAnimationSpec
+
+    val reverseMouseWheelScale by appSettings.reverseMouseWheelScale.collectAsState()
+    zoomable.reverseMouseWheelScale = reverseMouseWheelScale
+
+    val scalesCalculatorName by appSettings.scalesCalculatorName.collectAsState()
+    val scalesMultiple by appSettings.scalesMultiple.collectAsState()
+    val scalesCalculator by remember {
+        derivedStateOf {
+            buildScalesCalculator(scalesCalculatorName, scalesMultiple.toFloat())
+        }
+    }
+    zoomable.scalesCalculator = scalesCalculator
+
+    val limitOffsetWithinBaseVisibleRect by appSettings.limitOffsetWithinBaseVisibleRect.collectAsState()
+    zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+
+    val containerWhitespaceMultiple by appSettings.containerWhitespaceMultiple.collectAsState()
+    zoomable.containerWhitespaceMultiple = containerWhitespaceMultiple
+
+    val containerWhitespaceEnabled by appSettings.containerWhitespaceEnabled.collectAsState()
+    val containerWhitespace by remember {
+        derivedStateOf {
+            if (containerWhitespaceEnabled) {
+                ContainerWhitespace(left = 100f, top = 200f, right = 300f, bottom = 400f)
+            } else {
+                ContainerWhitespace.Zero
+            }
+        }
+    }
+    zoomable.containerWhitespace = containerWhitespace
+
+    val readModeEnabled by appSettings.readModeEnabled.collectAsState()
+    val readModeAcceptedBoth by appSettings.readModeAcceptedBoth.collectAsState()
+    val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState()
     val readMode by remember {
         derivedStateOf {
             val sizeType = when {
@@ -247,74 +266,40 @@ private fun ZoomState.bindSettings(settingsService: AppSettings) {
             if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
         }
     }
-    LaunchedEffect(logLevel) {
-        logger.level = logLevel
-    }
-    LaunchedEffect(threeStepScale) {
-        zoomable.threeStepScale = threeStepScale
-    }
-    LaunchedEffect(rubberBandScale) {
-        zoomable.rubberBandScale = rubberBandScale
-    }
-    LaunchedEffect(zoomAnimationSpec) {
-        zoomable.animationSpec = zoomAnimationSpec
-    }
-    LaunchedEffect(reverseMouseWheelScale) {
-        zoomable.reverseMouseWheelScale = reverseMouseWheelScale
-    }
-    LaunchedEffect(scalesCalculator) {
-        zoomable.scalesCalculator = scalesCalculator
-    }
-    LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
-        zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
-    }
-    LaunchedEffect(containerWhitespaceMultiple) {
-        zoomable.containerWhitespaceMultiple = containerWhitespaceMultiple
-    }
-    LaunchedEffect(containerWhitespace) {
-        zoomable.containerWhitespace = if (containerWhitespace) {
-            ContainerWhitespace(
-                left = 100f,
-                top = 200f,
-                right = 300f,
-                bottom = 400f
-            )
-        } else {
-            ContainerWhitespace.Zero
+    zoomable.readMode = readMode
+
+    val disabledGestureTypes by appSettings.disabledGestureTypes.collectAsState()
+    zoomable.disabledGestureTypes = disabledGestureTypes
+
+    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectAsState()
+    zoomable.keepTransformWhenSameAspectRatioContentSizeChanged =
+        keepTransformWhenSameAspectRatioContentSizeChangedEnabled
+
+    val subsamplingEnabled by appSettings.subsamplingEnabled.collectAsState()
+    subsampling.disabled = !subsamplingEnabled
+
+    val autoStopWithLifecycleEnabled by appSettings.autoStopWithLifecycleEnabled.collectAsState()
+    subsampling.disabledAutoStopWithLifecycle = !autoStopWithLifecycleEnabled
+
+    val pausedContinuousTransformTypes by appSettings.pausedContinuousTransformTypes.collectAsState()
+    subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
+
+    val disabledBackgroundTiles by appSettings.disabledBackgroundTiles.collectAsState()
+    subsampling.disabledBackgroundTiles = disabledBackgroundTiles
+
+    val showTileBounds by appSettings.showTileBounds.collectAsState()
+    subsampling.showTileBounds = showTileBounds
+
+    val tileAnimationEnabled by appSettings.tileAnimationEnabled.collectAsState()
+    val tileAnimationSpec by remember {
+        derivedStateOf {
+            if (tileAnimationEnabled) TileAnimationSpec.Default else TileAnimationSpec.None
         }
     }
-    LaunchedEffect(readMode) {
-        zoomable.readMode = readMode
-    }
-    LaunchedEffect(disabledGestureTypes) {
-        zoomable.disabledGestureTypes = disabledGestureTypes
-    }
-    LaunchedEffect(keepTransformWhenSameAspectRatioContentSizeChangedEnabled) {
-        zoomable.keepTransformWhenSameAspectRatioContentSizeChanged =
-            keepTransformWhenSameAspectRatioContentSizeChangedEnabled
-    }
-    LaunchedEffect(subsamplingEnabled) {
-        subsampling.disabled = !subsamplingEnabled
-    }
-    LaunchedEffect(autoStopWithLifecycleEnabled) {
-        subsampling.disabledAutoStopWithLifecycle = !autoStopWithLifecycleEnabled
-    }
-    LaunchedEffect(pausedContinuousTransformTypes) {
-        subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
-    }
-    LaunchedEffect(disabledBackgroundTiles) {
-        subsampling.disabledBackgroundTiles = disabledBackgroundTiles
-    }
-    LaunchedEffect(showTileBounds) {
-        subsampling.showTileBounds = showTileBounds
-    }
-    LaunchedEffect(tileAnimation) {
-        subsampling.tileAnimationSpec =
-            if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
-    }
-    LaunchedEffect(tileMemoryCache) {
-        subsampling.disabledTileImageCache = !tileMemoryCache
-    }
+    subsampling.tileAnimationSpec = tileAnimationSpec
+
+    val tileMemoryCache by appSettings.tileMemoryCache.collectAsState()
+    subsampling.disabledTileImageCache = !tileMemoryCache
 }
 
 @Stable

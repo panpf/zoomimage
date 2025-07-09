@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import com.github.panpf.zoomimage.compose.glide.CrossFade
-import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
-import com.github.panpf.zoomimage.compose.glide.GlideImage
+import com.bumptech.glide.integration.compose.CrossFade
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 import com.github.panpf.zoomimage.sample.ui.model.Photo

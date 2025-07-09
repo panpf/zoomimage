@@ -22,22 +22,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
+import com.github.panpf.zoomimage.compose.internal.BaseZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.util.round
@@ -124,7 +118,7 @@ fun ZoomImage(
         }
         zoomState.zoomable.containerSize = newContainerSize
 
-        ClippableImage(
+        BaseZoomImage(
             painter = painter,
             contentDescription = contentDescription,
             alignment = alignment,
@@ -132,12 +126,12 @@ fun ZoomImage(
             alpha = alpha,
             colorFilter = colorFilter,
             clipToBounds = false,
+            keepContentNoneStartOnDraw = true,
             modifier = Modifier
                 .matchParentSize()
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
-                    firstRestoreContentBaseTransform = true,
                     onLongPress = onLongPress,
                     onTap = onTap
                 ),
@@ -146,7 +140,7 @@ fun ZoomImage(
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(zoomable = zoomState.zoomable, firstRestoreContentBaseTransform = false)
+                .zooming(zoomable = zoomState.zoomable)
                 .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
@@ -157,43 +151,5 @@ fun ZoomImage(
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }
-    }
-}
-
-@Composable
-private fun ClippableImage(
-    painter: Painter,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Fit,
-    alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null,
-    clipToBounds: Boolean = true,
-) {
-    val semantics = if (contentDescription != null) {
-        Modifier.semantics {
-            this.contentDescription = contentDescription
-            this.role = Role.Image
-        }
-    } else {
-        Modifier
-    }
-
-    // Explicitly use a simple Layout implementation here as Spacer squashes any non fixed
-    // constraint with zero
-    Layout(
-        modifier
-            .then(semantics)
-            .let { if (clipToBounds) it.clipToBounds() else it }
-            .paint(
-                painter = painter,
-                alignment = alignment,
-                contentScale = contentScale,
-                alpha = alpha,
-                colorFilter = colorFilter
-            )
-    ) { _, constraints ->
-        layout(constraints.minWidth, constraints.minHeight) {}
     }
 }

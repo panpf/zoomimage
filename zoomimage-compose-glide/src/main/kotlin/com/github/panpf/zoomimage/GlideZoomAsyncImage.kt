@@ -40,8 +40,8 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.panpf.zoomimage.compose.glide.BaseZoomGlideImage
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
-import com.github.panpf.zoomimage.compose.glide.GlideImage
 import com.github.panpf.zoomimage.compose.glide.Placeholder
 import com.github.panpf.zoomimage.compose.glide.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.glide.Transition
@@ -160,7 +160,7 @@ fun GlideZoomAsyncImage(
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val coroutineScope = rememberCoroutineScope()
-        GlideImage(
+        BaseZoomGlideImage(
             model = model,
             contentDescription = contentDescription,
             alignment = alignment,
@@ -168,6 +168,7 @@ fun GlideZoomAsyncImage(
             alpha = alpha,
             colorFilter = colorFilter,
             clipToBounds = false,
+            keepContentNoneStartOnDraw = true,
             loading = loading,
             failure = failure,
             transition = transition,
@@ -189,7 +190,6 @@ fun GlideZoomAsyncImage(
                 .zoom(
                     zoomable = zoomState.zoomable,
                     userSetupContentSize = true,
-                    firstRestoreContentBaseTransform = true,
                     onLongPress = onLongPress,
                     onTap = onTap
                 ),
@@ -198,7 +198,7 @@ fun GlideZoomAsyncImage(
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(zoomable = zoomState.zoomable, firstRestoreContentBaseTransform = false)
+                .zooming(zoomable = zoomState.zoomable)
                 .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 

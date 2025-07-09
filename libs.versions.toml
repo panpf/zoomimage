@@ -26,6 +26,7 @@ coil3 = "3.2.0"
 
 glide = "4.16.0"
 glide-ktx = "1.0.0-beta01"
+glide-compose = "1.0.0-beta01"
 google-accompanist = "0.37.3"
 google-material = "1.12.0"
 gradle-maven-publish-plugin = "0.33.0"
@@ -123,6 +124,7 @@ google-drawablepainter = { module = "com.google.accompanist:accompanist-drawable
 google-material = { module = "com.google.android.material:material", version.ref = "google-material" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 
 jetbrains-lifecycle-common = { module = "org.jetbrains.androidx.lifecycle:lifecycle-common", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrains-lifecycle" }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,20 +37,25 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.roundToIntSize
 import coil3.ImageLoader
 import coil3.PlatformContext
-import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePainter.Companion.DefaultTransform
 import coil3.compose.AsyncImagePainter.State
+import coil3.compose.ConstraintsSizeResolver
 import coil3.compose.CrossfadePainter
 import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
+import coil3.request.NullRequestDataException
 import coil3.request.crossfadeMillis
+import coil3.size.SizeResolver
 import com.github.panpf.zoomimage.coil.CoilTileImageCache
-import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
-import com.github.panpf.zoomimage.compose.coil.internal.transformOf
+import com.github.panpf.zoomimage.compose.internal.BaseZoomImage
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -194,7 +200,7 @@ fun CoilZoomAsyncImage(
     contentDescription: String?,
     imageLoader: ImageLoader,
     modifier: Modifier = Modifier,
-    transform: (State) -> State = AsyncImagePainter.DefaultTransform,
+    transform: (State) -> State = DefaultTransform,
     onState: ((State) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
@@ -220,26 +226,13 @@ fun CoilZoomAsyncImage(
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val context = LocalPlatformContext.current
         val coroutineScope = rememberCoroutineScope()
-        AsyncImage(
-            model = model,
-            contentDescription = contentDescription,
+        val request = requestOfWithSizeResolver(model, contentScale)
+        val painter = rememberAsyncImagePainter(
+            model = request,
             imageLoader = imageLoader,
             transform = transform,
             contentScale = contentScale,
-            alignment = alignment,
-            alpha = alpha,
-            colorFilter = colorFilter,
             filterQuality = filterQuality,
-            clipToBounds = false,
-            modifier = Modifier
-                .matchParentSize()
-                .zoom(
-                    zoomable = zoomState.zoomable,
-                    userSetupContentSize = true,
-                    firstRestoreContentBaseTransform = true,
-                    onLongPress = onLongPress,
-                    onTap = onTap
-                ),
             onState = { loadState ->
                 onState(
                     context = context,
@@ -251,13 +244,43 @@ fun CoilZoomAsyncImage(
                     loadingPainterState = loadingPainterState,
                 )
                 onState?.invoke(loadState)
-            },
+            }
+        )
+
+        BaseZoomImage(
+            painter = painter,
+            contentDescription = contentDescription,
+            contentScale = contentScale,
+            alignment = alignment,
+            alpha = alpha,
+            colorFilter = colorFilter,
+            clipToBounds = false,
+            keepContentNoneStartOnDraw = true,
+            modifier = Modifier
+                .matchParentSize()
+                .let {
+                    val sizeResolver = request.defined.sizeResolver
+                    if (sizeResolver is ConstraintsSizeResolver) {
+                        it.onSizeChanged { size ->
+                            sizeResolver.setConstraints(
+                                Constraints(maxWidth = size.width, maxHeight = size.height)
+                            )
+                        }
+                    } else {
+                        it
+                    }
+                }.zoom(
+                    zoomable = zoomState.zoomable,
+                    userSetupContentSize = true,
+                    onLongPress = onLongPress,
+                    onTap = onTap
+                ),
         )
 
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(zoomable = zoomState.zoomable, firstRestoreContentBaseTransform = false)
+                .zooming(zoomable = zoomState.zoomable)
                 .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
@@ -360,4 +383,94 @@ private fun buildContentSizeWithCrossfade(
     val crossfadePainterSize = CrossfadePainter(start = loadingPainter, end = painter).intrinsicSize
     loadingPainterState.value = null
     return crossfadePainterSize
+}
+
+@Stable
+private fun transformOf(
+    placeholder: Painter?,
+    error: Painter?,
+    fallback: Painter?,
+): (State) -> State {
+    return if (placeholder != null || error != null || fallback != null) {
+        { state ->
+            when (state) {
+                is State.Loading -> {
+                    if (placeholder != null) state.copy(painter = placeholder) else state
+                }
+
+                is State.Error -> if (state.result.throwable is NullRequestDataException) {
+                    if (fallback != null) state.copy(painter = fallback) else state
+                } else {
+                    if (error != null) state.copy(painter = error) else state
+                }
+
+                else -> state
+            }
+        }
+    } else {
+        DefaultTransform
+    }
+}
+
+@Stable
+private fun onStateOf(
+    onLoading: ((State.Loading) -> Unit)?,
+    onSuccess: ((State.Success) -> Unit)?,
+    onError: ((State.Error) -> Unit)?,
+): ((State) -> Unit)? {
+    return if (onLoading != null || onSuccess != null || onError != null) {
+        { state ->
+            when (state) {
+                is State.Loading -> onLoading?.invoke(state)
+                is State.Success -> onSuccess?.invoke(state)
+                is State.Error -> onError?.invoke(state)
+                is State.Empty -> {}
+            }
+        }
+    } else {
+        null
+    }
+}
+
+
+/** Create an [ImageRequest] with a not-null [SizeResolver] from the [model]. */
+@Composable
+@NonRestartableComposable
+internal fun requestOfWithSizeResolver(
+    model: Any?,
+    contentScale: ContentScale,
+): ImageRequest {
+    if (model is ImageRequest) {
+        if (model.defined.sizeResolver != null) {
+            return model
+        } else {
+            val sizeResolver = rememberSizeResolver(contentScale)
+            return remember(model, sizeResolver) {
+                model.newBuilder()
+                    .size(sizeResolver)
+                    .build()
+            }
+        }
+    } else {
+        val context = LocalPlatformContext.current
+        val sizeResolver = rememberSizeResolver(contentScale)
+        return remember(context, model, sizeResolver) {
+            ImageRequest.Builder(context)
+                .data(model)
+                .size(sizeResolver)
+                .build()
+        }
+    }
+}
+
+@Composable
+private fun rememberSizeResolver(contentScale: ContentScale): SizeResolver {
+    val isNone = contentScale == ContentScale.None
+    return remember(isNone) {
+        if (isNone) {
+            SizeResolver.ORIGINAL
+        } else {
+            ConstraintsSizeResolver()
+        }
+    }
 }

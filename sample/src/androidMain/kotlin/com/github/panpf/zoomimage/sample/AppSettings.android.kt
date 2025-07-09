@@ -136,8 +136,8 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         floatSettingsStateFlow(context, "containerWhitespaceMultiple1", 0f)
     }
 
-    actual val containerWhitespace: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "containerWhitespace", false)
+    actual val containerWhitespaceEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "containerWhitespaceEnabled", false)
     }
 
     actual val readModeEnabled: SettingsStateFlow<Boolean> by lazy {
@@ -161,8 +161,8 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         booleanSettingsStateFlow(context, "showTileBounds", false)
     }
 
-    actual val tileAnimation: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "tileAnimation", true)
+    actual val tileAnimationEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "tileAnimationEnabled", true)
     }
 
     actual val tileMemoryCache: SettingsStateFlow<Boolean> by lazy {

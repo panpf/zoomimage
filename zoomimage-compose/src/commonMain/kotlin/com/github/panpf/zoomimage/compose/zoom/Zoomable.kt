@@ -31,14 +31,10 @@ import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.util.format
-import com.github.panpf.zoomimage.compose.util.ifLet
-import com.github.panpf.zoomimage.compose.util.toCompat
-import com.github.panpf.zoomimage.compose.util.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
-import com.github.panpf.zoomimage.zoom.internal.calculateRestoreContentBaseTransformTransform
 import kotlinx.coroutines.launch
 
 /**
@@ -54,7 +50,6 @@ import kotlinx.coroutines.launch
 fun Modifier.zoom(
     zoomable: ZoomableState,
     userSetupContentSize: Boolean = false,
-    firstRestoreContentBaseTransform: Boolean = false,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = this
@@ -64,31 +59,7 @@ fun Modifier.zoom(
         onLongPress = onLongPress,
         onTap = onTap
     )
-    .zooming(zoomable, firstRestoreContentBaseTransform)
-
-/**
- * A Modifier that can recognize gestures such as click, long press, double-click, one-finger zoom, two-finger zoom, drag, fling, etc.,
- * and then apply the gesture changes to the component. It can be used on any composable component.
- *
- * Since it consumes all gestures, [Modifier.clickable] and [Modifier.combinedClickable] will not work.
- * You can pass [onTap] and [onLongPress] parameters instead.
- *
- * If the zoomed content does not fill the container, you can set the size, scaling and alignment of the content through
- * the contentSize, contentScale, and alignment properties of [ZoomableState]. This will only translate within the content area after scaling.
- */
-// For binary API compatibility.
-fun Modifier.zoom(
-    zoomable: ZoomableState,
-    userSetupContentSize: Boolean = false,
-    onLongPress: ((Offset) -> Unit)? = null,
-    onTap: ((Offset) -> Unit)? = null,
-): Modifier = this.zoom(
-    zoomable = zoomable,
-    userSetupContentSize = userSetupContentSize,
-    firstRestoreContentBaseTransform = false,
-    onLongPress = onLongPress,
-    onTap = onTap
-)
+    .zooming(zoomable)
 
 /**
  * A Modifier that can recognize gestures such as click, long press, double-click, one-finger zoom, two-finger zoom, drag, fling, etc.
@@ -113,10 +84,7 @@ fun Modifier.zoomable(
 /**
  * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
  */
-fun Modifier.zooming(
-    zoomable: ZoomableState,
-    firstRestoreContentBaseTransform: Boolean = false,
-): Modifier = this
+fun Modifier.zooming(zoomable: ZoomableState): Modifier = this
     .clipToBounds()
     .graphicsLayer {
         val transform = zoomable.transform
@@ -133,34 +101,29 @@ fun Modifier.zooming(
         rotationZ = transform.rotation
         transformOrigin = transform.rotationOrigin
     }
-    .ifLet(firstRestoreContentBaseTransform) {
-        // ZoomImage's zoom is located in the upper left corner based on the image in its original size, so you must first restore the zoom and offset of the image.
-        it.graphicsLayer {
-            // transform.isNotEmpty() can avoid content position drift
-            val transform = zoomable.transform
-            if (transform.isNotEmpty()) {
-                val restoreTransform = calculateRestoreContentBaseTransformTransform(
-                    containerSize = zoomable.containerSize.toCompat(),
-                    contentSize = zoomable.contentSize.toCompat(),
-                    contentScale = zoomable.contentScale.toCompat(),
-                    alignment = zoomable.alignment.toCompat(),
-                    rtlLayoutDirection = zoomable.layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl,
-                )
-                scaleX = restoreTransform.scaleX
-                scaleY = restoreTransform.scaleY
-                translationX = restoreTransform.offsetX
-                translationY = restoreTransform.offsetY
-                transformOrigin = restoreTransform.scaleOrigin.toPlatform()
-            }
-        }
-    }
 
-/**
- * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
- */
-// For binary API compatibility.
-fun Modifier.zooming(zoomable: ZoomableState): Modifier =
-    this.zooming(zoomable, firstRestoreContentBaseTransform = false)
+///**
+// * A Modifier that restores the content base transform of the [ZoomableState] to the component.
+// */
+//fun Modifier.restoreContentBaseTransform(zoomable: ZoomableState): Modifier =
+//    this.graphicsLayer {
+//        // transform.isNotEmpty() can avoid content position drift
+//        val transform = zoomable.transform
+//        if (transform.isNotEmpty()) {
+//            val restoreTransform = calculateRestoreContentBaseTransformTransform(
+//                containerSize = zoomable.containerSize.toCompat(),
+//                contentSize = zoomable.contentSize.toCompat(),
+//                contentScale = zoomable.contentScale.toCompat(),
+//                alignment = zoomable.alignment.toCompat(),
+//                rtlLayoutDirection = zoomable.layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl,
+//            )
+//            scaleX = restoreTransform.scaleX
+//            scaleY = restoreTransform.scaleY
+//            translationX = restoreTransform.offsetX
+//            translationY = restoreTransform.offsetY
+//            transformOrigin = restoreTransform.scaleOrigin.toPlatform()
+//        }
+//    }
 
 internal data class ZoomableElement(
     val zoomable: ZoomableState,

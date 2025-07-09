@@ -159,7 +159,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     .collectWithLifecycle(viewLifecycleOwner) {
                         containerWhitespaceMultipleState.value = it
                     }
-                appSettings.containerWhitespace
+                appSettings.containerWhitespaceEnabled
                     .collectWithLifecycle(viewLifecycleOwner) {
                         containerWhitespaceState.value = if (it) {
                             ContainerWhitespace(
@@ -229,7 +229,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.showTileBounds.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBoundsState.value = it
                 }
-                appSettings.tileAnimation.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.tileAnimationEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     tileAnimationSpecState.value =
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }

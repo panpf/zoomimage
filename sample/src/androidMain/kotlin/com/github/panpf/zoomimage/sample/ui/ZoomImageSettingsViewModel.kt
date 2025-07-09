@@ -214,7 +214,7 @@ class ZoomImageSettingsViewModel(
             SwitchMenuFlow(
                 title = "Container Whitespace",
                 desc = null,
-                data = appSettings.containerWhitespace,
+                data = appSettings.containerWhitespaceEnabled,
             )
         )
 
@@ -299,7 +299,7 @@ class ZoomImageSettingsViewModel(
             SwitchMenuFlow(
                 title = "Tile Animation",
                 desc = null,
-                data = appSettings.tileAnimation,
+                data = appSettings.tileAnimationEnabled,
             )
         )
 

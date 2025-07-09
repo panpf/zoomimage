@@ -31,18 +31,20 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.compose.AsyncImageState
 import com.github.panpf.sketch.compose.PainterState
 import com.github.panpf.sketch.compose.internal.onPainterStateOf
 import com.github.panpf.sketch.compose.internal.transformOf
+import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.zoomimage.compose.internal.BaseZoomImage
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -372,37 +374,45 @@ fun SketchZoomAsyncImage(
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val coroutineScope = rememberCoroutineScope()
-        AsyncImage(
+        val painter = rememberAsyncImagePainter(
             request = request,
-            contentDescription = contentDescription,
             sketch = sketch,
             state = state,
             transform = transform,
             contentScale = contentScale,
-            alignment = alignment,
-            alpha = alpha,
-            colorFilter = colorFilter,
             filterQuality = filterQuality,
-            clipToBounds = false,
-            modifier = Modifier
-                .matchParentSize()
-                .zoom(
-                    zoomable = zoomState.zoomable,
-                    userSetupContentSize = true,
-                    firstRestoreContentBaseTransform = true,
-                    onLongPress = onLongPress,
-                    onTap = onTap
-                ),
             onPainterState = { loadState ->
                 onPainterState(coroutineScope, sketch, zoomState, request, loadState)
                 onPainterState?.invoke(loadState)
             },
         )
+        BaseZoomImage(
+            painter = painter,
+            contentDescription = contentDescription,
+            contentScale = contentScale,
+            alignment = alignment,
+            alpha = alpha,
+            colorFilter = colorFilter,
+            clipToBounds = false,
+            keepContentNoneStartOnDraw = true,
+            modifier = Modifier
+                .matchParentSize()
+                .onSizeChanged { size ->
+                    // Ensure images are prepared before content is drawn when in-memory cache exists
+                    state.setSize(size)
+                }
+                .zoom(
+                    zoomable = zoomState.zoomable,
+                    userSetupContentSize = true,
+                    onLongPress = onLongPress,
+                    onTap = onTap
+                ),
+        )
 
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(zoomable = zoomState.zoomable, firstRestoreContentBaseTransform = false)
+                .zooming(zoomable = zoomState.zoomable)
                 .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 

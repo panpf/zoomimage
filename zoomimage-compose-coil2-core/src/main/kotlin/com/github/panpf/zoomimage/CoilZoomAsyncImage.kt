@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,14 +42,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.roundToIntSize
 import coil.ImageLoader
-import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.request.NullRequestDataException
 import coil.transition.CrossfadeTransition
 import com.github.panpf.zoomimage.coil.CoilTileImageCache
-import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
-import com.github.panpf.zoomimage.compose.coil.internal.transformOf
+import com.github.panpf.zoomimage.compose.internal.BaseZoomImage
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -219,26 +220,12 @@ fun CoilZoomAsyncImage(
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
-        AsyncImage(
+        val painter = rememberAsyncImagePainter(
             model = model,
-            contentDescription = contentDescription,
             imageLoader = imageLoader,
             transform = transform,
             contentScale = contentScale,
-            alignment = alignment,
-            alpha = alpha,
-            colorFilter = colorFilter,
             filterQuality = filterQuality,
-            clipToBounds = false,
-            modifier = Modifier
-                .matchParentSize()
-                .zoom(
-                    zoomable = zoomState.zoomable,
-                    userSetupContentSize = true,
-                    firstRestoreContentBaseTransform = true,
-                    onLongPress = onLongPress,
-                    onTap = onTap
-                ),
             onState = { loadState ->
                 onState(
                     context = context,
@@ -252,11 +239,29 @@ fun CoilZoomAsyncImage(
                 onState?.invoke(loadState)
             },
         )
+        BaseZoomImage(
+            painter = painter,
+            contentDescription = contentDescription,
+            contentScale = contentScale,
+            alignment = alignment,
+            alpha = alpha,
+            colorFilter = colorFilter,
+            clipToBounds = false,
+            keepContentNoneStartOnDraw = true,
+            modifier = Modifier
+                .matchParentSize()
+                .zoom(
+                    zoomable = zoomState.zoomable,
+                    userSetupContentSize = true,
+                    onLongPress = onLongPress,
+                    onTap = onTap
+                ),
+        )
 
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(zoomable = zoomState.zoomable, firstRestoreContentBaseTransform = false)
+                .zooming(zoomable = zoomState.zoomable)
                 .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
@@ -389,4 +394,51 @@ private fun computeIntrinsicSize(
         if (isEndSpecified) return endSize
     }
     return Size.Unspecified
+}
+
+@Stable
+private fun transformOf(
+    placeholder: Painter?,
+    error: Painter?,
+    uriEmpty: Painter?,
+): (State) -> State {
+    return if (placeholder != null || error != null || uriEmpty != null) {
+        { state ->
+            when (state) {
+                is State.Loading -> {
+                    if (placeholder != null) state.copy(painter = placeholder) else state
+                }
+
+                is State.Error -> if (state.result.throwable is NullRequestDataException) {
+                    if (uriEmpty != null) state.copy(painter = uriEmpty) else state
+                } else {
+                    if (error != null) state.copy(painter = error) else state
+                }
+
+                else -> state
+            }
+        }
+    } else {
+        AsyncImagePainter.DefaultTransform
+    }
+}
+
+@Stable
+private fun onStateOf(
+    onLoading: ((State.Loading) -> Unit)?,
+    onSuccess: ((State.Success) -> Unit)?,
+    onError: ((State.Error) -> Unit)?,
+): ((State) -> Unit)? {
+    return if (onLoading != null || onSuccess != null || onError != null) {
+        { state ->
+            when (state) {
+                is State.Loading -> onLoading?.invoke(state)
+                is State.Success -> onSuccess?.invoke(state)
+                is State.Error -> onError?.invoke(state)
+                is State.Empty -> {}
+            }
+        }
+    } else {
+        null
+    }
 }

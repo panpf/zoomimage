@@ -19,11 +19,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalLayoutDirection
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
-import com.github.panpf.zoomimage.compose.glide.RequestState.Success
+import com.github.panpf.zoomimage.compose.util.rtlFlipped
 
 /** Mutates and returns the given [RequestBuilder] to apply relevant options. */
 typealias RequestBuilderTransform<T> = (RequestBuilder<T>) -> RequestBuilder<T>
@@ -31,7 +32,7 @@ typealias RequestBuilderTransform<T> = (RequestBuilder<T>) -> RequestBuilder<T>
 /**
  * Copy from glide-compose 1.0.0-beta01
  *
- * Add clipToBounds parameter
+ * Supports clipToBounds and keepContentNoneStartOnDraw parameters.
  *
  * Start a request by passing [model] to [RequestBuilder.load] and then applying the
  * [requestBuilderTransform] function to add options or apply mutations if the caller desires.
@@ -87,7 +88,7 @@ typealias RequestBuilderTransform<T> = (RequestBuilder<T>) -> RequestBuilder<T>
 // to RequestBuilder (though thumbnail() may make that a challenge).
 @ExperimentalGlideComposeApi
 @Composable
-fun GlideImage(
+internal fun BaseZoomGlideImage(
   model: Any?,
   contentDescription: String?,
   modifier: Modifier = Modifier,
@@ -96,6 +97,7 @@ fun GlideImage(
   alpha: Float = DefaultAlpha,
   colorFilter: ColorFilter? = null,
   clipToBounds: Boolean = true,
+  keepContentNoneStartOnDraw: Boolean = false,
   // TODO(judds): Consider using separate GlideImage* methods instead of sealed classes.
   // See http://shortn/_x79pjkMZIH for an internal discussion.
   loading: Placeholder? = null,
@@ -119,6 +121,14 @@ fun GlideImage(
     return
   }
 
+  val drawAlignment = if (keepContentNoneStartOnDraw) {
+    Alignment.TopStart.rtlFlipped(LocalLayoutDirection.current)
+  } else {
+    alignment
+  }
+  val drawContentScale =
+    if (keepContentNoneStartOnDraw) ContentScale.None else contentScale
+
   // TODO(sam): Remove this branch when GlideSubcomposition has been out for a bit.
   val loadingComposable = loading?.maybeComposable()
   val failureComposable = failure?.maybeComposable()
@@ -133,8 +143,8 @@ fun GlideImage(
             painter,
             contentDescription,
             modifier,
-            alignment,
-            contentScale,
+            drawAlignment,
+            drawContentScale,
             alpha,
             colorFilter,
           )
@@ -146,8 +156,8 @@ fun GlideImage(
         .glideNode(
           requestBuilder,
           contentDescription,
-          alignment,
-          contentScale,
+          drawAlignment,
+          drawContentScale,
           alpha,
           colorFilter,
           clipToBounds,
@@ -216,7 +226,7 @@ sealed class RequestState {
  * Starts an image load with Glide, exposing the state of the load via [GlideSubcompositionScope]
  * to allow complex subcompositions or animations that depend on the load's state.
  *
- * [GlideImage] is significantly more efficient and easier to use than this method. GlideImage
+ * [BaseZoomGlideImage] is significantly more efficient and easier to use than this method. GlideImage
  * should be preferred over GlideSubcomposition whenever possible. Using GlideSubcomposition in a
  * scrolling list will cause multiple recompositions per image, significantly degrading performance.
  * The use case for this method is as a fallback for cases where you cannot animate or compose your
@@ -248,7 +258,7 @@ sealed class RequestState {
  * If your [requestBuilderTransform] does not have an [overrideSize] set, this method will wrap your
  * subcomposition in [Box] and use the size of that `Box` to determine the
  * size to use when loading the image. The box's modifier will be set to the [modifier] you provide.
- * As with [GlideImage] try to ensure that you either set a reasonable [RequestBuilder.override]
+ * As with [BaseZoomGlideImage] try to ensure that you either set a reasonable [RequestBuilder.override]
  * size using [requestBuilderTransform] or that you provide a [modifier] that will cause this
  * composition to go through layout with a reasonable size. Failing to do so may result in the image
  * load never starting, or in an unreasonably large amount of memory being used. Loading overly
@@ -335,7 +345,7 @@ private fun PreviewResourceOrDrawable(
 }
 
 /**
- * Used to specify a [Drawable] to use in conjunction with [GlideImage]'s `loading` or `failure`
+ * Used to specify a [Drawable] to use in conjunction with [BaseZoomGlideImage]'s `loading` or `failure`
  * parameters.
  *
  * Ideally [drawable] is non-null, but because [android.content.Context.getDrawable] can return
@@ -346,7 +356,7 @@ private fun PreviewResourceOrDrawable(
 fun placeholder(drawable: Drawable?): Placeholder = Placeholder.OfDrawable(drawable)
 
 /**
- * Used to specify a resource id to use in conjunction with [GlideImage]'s `loading` or `failure`
+ * Used to specify a resource id to use in conjunction with [BaseZoomGlideImage]'s `loading` or `failure`
  * parameters.
  *
  * In addition to being slightly simpler than manually fetching a [Drawable] and passing it to
@@ -358,7 +368,7 @@ fun placeholder(@DrawableRes resourceId: Int): Placeholder =
   Placeholder.OfResourceId(resourceId)
 
 /**
- * Used to specify a [Painter] to use in conjunction with [GlideImage]'s `loading` or `failure`
+ * Used to specify a [Painter] to use in conjunction with [BaseZoomGlideImage]'s `loading` or `failure`
  * parameters.
  */
 @ExperimentalGlideComposeApi
@@ -366,10 +376,10 @@ fun placeholder(painter: Painter?): Placeholder =
   Placeholder.OfPainter(painter ?: ColorPainter(Color.Transparent))
 
 /**
- * Used to specify a [Composable] function to use in conjunction with [GlideImage]'s `loading` or
+ * Used to specify a [Composable] function to use in conjunction with [BaseZoomGlideImage]'s `loading` or
  * `failure` parameter.
  *
- * Providing a nested [GlideImage] is not recommended. Use [RequestBuilder.thumbnail] or
+ * Providing a nested [BaseZoomGlideImage] is not recommended. Use [RequestBuilder.thumbnail] or
  * [RequestBuilder.error] as an alternative.
  */
 @Deprecated(
@@ -390,7 +400,7 @@ fun placeholder(composable: @Composable () -> Unit): Placeholder =
  * simple color or a static image.
  *
  * `of(@Composable () -> Unit)` will display the [Composable] inside a [Box] whose modifier is the
- * one provided to [GlideImage]. Doing so allows Glide to infer the requested size if one is not
+ * one provided to [BaseZoomGlideImage]. Doing so allows Glide to infer the requested size if one is not
  * explicitly specified on the request itself.
  */
 @ExperimentalGlideComposeApi
