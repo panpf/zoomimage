@@ -382,7 +382,7 @@ fun SketchZoomAsyncImage(
             contentScale = contentScale,
             filterQuality = filterQuality,
             onPainterState = { loadState ->
-                onPainterState(coroutineScope, sketch, zoomState, request, loadState)
+                updateZoom(coroutineScope, sketch, zoomState, request, loadState)
                 onPainterState?.invoke(loadState)
             },
         )
@@ -426,7 +426,7 @@ fun SketchZoomAsyncImage(
     }
 }
 
-private fun onPainterState(
+private fun updateZoom(
     coroutineScope: CoroutineScope,
     sketch: Sketch,
     zoomState: SketchZoomState,

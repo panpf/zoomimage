@@ -229,7 +229,7 @@ private class ResetListener(
         isFirstResource: Boolean
     ): Boolean {
         logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
-        reset(ready = false, resource = null)
+        updateZoom(ready = false, resource = null)
         return false
     }
 
@@ -241,11 +241,11 @@ private class ResetListener(
         isFirstResource: Boolean
     ): Boolean {
         logger.d { "GlideZoomAsyncImage. onResourceReady. resource=$resource. model='$model'" }
-        reset(ready = true, resource = resource)
+        updateZoom(ready = true, resource = resource)
         return false
     }
 
-    private fun reset(ready: Boolean, resource: Drawable?) {
+    private fun updateZoom(ready: Boolean, resource: Drawable?) {
         val drawableSize = resource
             ?.let { IntSize(it.intrinsicWidth, it.intrinsicHeight) }
             ?.takeIf { it.isNotEmpty() }

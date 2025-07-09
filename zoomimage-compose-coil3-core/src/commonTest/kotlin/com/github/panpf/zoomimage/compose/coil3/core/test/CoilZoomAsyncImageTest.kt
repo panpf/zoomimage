@@ -383,7 +383,9 @@ class CoilZoomAsyncImageTest {
                             val zoomState = rememberCoilZoomState()
                             LaunchedEffect(Unit) {
                                 snapshotFlow { zoomState.zoomable.contentSize }.collect {
-                                    contentSizes.add(it)
+                                    if (it.width > 0 && it.height > 0) {
+                                        contentSizes.add(it)
+                                    }
                                 }
                             }
                             CoilZoomAsyncImage(

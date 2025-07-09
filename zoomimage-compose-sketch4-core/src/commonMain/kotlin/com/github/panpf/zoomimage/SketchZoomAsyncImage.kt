@@ -198,7 +198,7 @@ fun SketchZoomAsyncImage(
     // and then quickly changes to the middle of the screen.
     state.onPainterState = remember {
         {
-            onPainterState(coroutineScope, sketch, zoomState, request, it)
+            updateZoom(coroutineScope, sketch, zoomState, request, it)
         }
     }
 
@@ -251,7 +251,7 @@ fun SketchZoomAsyncImage(
     }
 }
 
-private fun onPainterState(
+private fun updateZoom(
     coroutineScope: CoroutineScope,
     sketch: Sketch,
     zoomState: SketchZoomState,
