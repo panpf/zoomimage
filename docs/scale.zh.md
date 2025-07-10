@@ -86,11 +86,9 @@ scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
-    // 或
-    zoomState.zoomable.scalesCalculator = MyScalesCalculator()
-}
+zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
+// 或
+zoomState.zoomable.scalesCalculator = MyScalesCalculator()
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -106,10 +104,10 @@ SketchZoomAsyncImage(
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.TWO_FINGER_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.TWO_FINGER_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -130,9 +128,7 @@ threeStepScale 属性为 true，如下：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.threeStepScale = true
-}
+zoomState.zoomable.threeStepScale = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -196,10 +192,10 @@ zoomState.zoomable.getNextStepScale()
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.DOUBLE_TAP_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.DOUBLE_TAP_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -214,10 +210,10 @@ ZoomImage 支持单指缩放图像，双击后按住屏幕上下滑动即可缩�
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -234,9 +230,9 @@ ZoomImage 支持通过鼠标滚轮缩放图像，ZoomImage 以当前鼠标位置
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.reverseMouseWheelScale = true
-}
+
+zoomState.zoomable.reverseMouseWheelScale = true
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -249,10 +245,10 @@ SketchZoomAsyncImage(
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -266,12 +262,12 @@ SketchZoomAsyncImage(
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.mouseWheelScaleCalculator =
-        MouseWheelScaleCalculator { currentScale, scrollDelta ->
-            // return new scale
-        }
-}
+
+zoomState.zoomable.mouseWheelScaleCalculator =
+    MouseWheelScaleCalculator { currentScale, scrollDelta ->
+        // return new scale
+    }
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -313,10 +309,10 @@ LaunchedEffect(Unit) {
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -474,9 +470,7 @@ ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指�
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.rubberBandScale = false
-}
+zoomState.zoomable.rubberBandScale = false
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -495,16 +489,14 @@ ZoomImage 提供了 `animationSpec` 参数用来修改缩放动画的时长、Ea
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.animationSpec = ZoomAnimationSpec(
-        durationMillis = 500,
-        easing = LinearOutSlowInEasing,
-        initialVelocity = 10f
-    )
+zoomState.animationSpec = ZoomAnimationSpec(
+    durationMillis = 500,
+    easing = LinearOutSlowInEasing,
+    initialVelocity = 10f
+)
 
-    // 或者在默认值的基础上修改部分参数
-    zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
-}
+// 或者在默认值的基础上修改部分参数
+zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

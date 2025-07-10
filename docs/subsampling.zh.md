@@ -201,13 +201,11 @@ ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，�
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // 关闭动画
-    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
+// 关闭动画
+zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
-    // 修改动画的持续时间和刷新间隔
-    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
-}
+// 修改动画的持续时间和刷新间隔
+zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -231,14 +229,12 @@ ZoomImage 在兼顾性能和体验的情况默认配置是 `SCALE`, `OFFSET`, `L
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // 所有连续变换类型都实时加载图块
-    zoomState.subsampling.pausedContinuousTransformTypes = 0
+// 所有连续变换类型都实时加载图块
+zoomState.subsampling.pausedContinuousTransformTypes = 0
 
-    // 所有连续变换类型都暂停加载图块
-    zoomState.subsampling.pausedContinuousTransformTypes =
-        TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
-}
+// 所有连续变换类型都暂停加载图块
+zoomState.subsampling.pausedContinuousTransformTypes =
+    TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -258,12 +254,10 @@ ZoomImage 支持停止子采样，停止后会释放已加载的图块并不再�
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // stop
-    zoomState.subsampling.stopped = true
-    // restart
-    zoomState.subsampling.stopped = false
-}
+// stop
+zoomState.subsampling.stopped = true
+// restart
+zoomState.subsampling.stopped = false
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -285,9 +279,7 @@ LocalLifecycleOwner.current API 获取 Lifecycle
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.disabledAutoStopWithLifecycle = true
-}
+zoomState.subsampling.disabledAutoStopWithLifecycle = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -310,9 +302,7 @@ ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.disabledBackgroundTiles = true
-}
+zoomState.subsampling.disabledBackgroundTiles = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -334,9 +324,7 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.tileImageCache = MyTileImageCache()
-}
+zoomState.subsampling.tileImageCache = MyTileImageCache()
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -354,12 +342,10 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // 禁用内存缓存
-    zoomState.subsampling.disabledTileImageCache = true
-    // 允许使用内存缓存
-    zoomState.subsampling.disabledTileImageCache = false
-}
+// 禁用内存缓存
+zoomState.subsampling.disabledTileImageCache = true
+// 允许使用内存缓存
+zoomState.subsampling.disabledTileImageCache = false
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -382,9 +368,7 @@ ZoomImage 在 Android 平台上使用 BitmapRegionDecoder 来解码图片，非 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
-}
+zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -404,9 +388,7 @@ sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecod
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.disabled = true
-}
+zoomState.subsampling.disabled = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

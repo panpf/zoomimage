@@ -106,11 +106,9 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
-    // or
-    zoomState.zoomable.scalesCalculator = MyScalesCalculator()
-}
+zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
+// or
+zoomState.zoomable.scalesCalculator = MyScalesCalculator()
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -128,10 +126,10 @@ turn it off as follows:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.TWO_FINGER_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.TWO_FINGER_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -153,9 +151,7 @@ The threeStepScale property is true, as follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.threeStepScale = true
-}
+zoomState.zoomable.threeStepScale = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -221,10 +217,10 @@ The double-click scale feature is on by default, but you can turn it off as foll
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.DOUBLE_TAP_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.DOUBLE_TAP_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -240,10 +236,10 @@ down to scale the image. This feature is enabled by default, but you can turn it
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -262,9 +258,9 @@ You can reverse mouse wheel scaling by setting the `reverseMouseWheelScale` prop
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.reverseMouseWheelScale = true
-}
+
+zoomState.zoomable.reverseMouseWheelScale = true
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -277,15 +273,15 @@ The mouse wheel scale function is enabled by default, but you can turn it off as
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
 )
 ```
 
@@ -295,15 +291,15 @@ follows:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-  zoomState.zoomable.mouseWheelScaleCalculator =
+
+zoomState.zoomable.mouseWheelScaleCalculator =
     MouseWheelScaleCalculator { currentScale, scrollDelta ->
-      // return new scale
+        // return new scale
     }
-}
+
 SketchZoomAsyncImage(
-  uri = "https://sample.com/sample.jpeg",
-  contentDescription = "view image",
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
 )
@@ -345,10 +341,10 @@ You can also turn it off dynamically via gesture control, as follows:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -513,9 +509,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.rubberBandScale = false
-}
+zoomState.zoomable.rubberBandScale = false
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -535,16 +529,14 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.animationSpec = ZoomAnimationSpec(
-        durationMillis = 500,
-        easing = LinearOutSlowInEasing,
-        initialVelocity = 10f
-    )
+zoomState.animationSpec = ZoomAnimationSpec(
+    durationMillis = 500,
+    easing = LinearOutSlowInEasing,
+    initialVelocity = 10f
+)
 
-    // Or modify some parameters based on the default values
-    zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
-}
+// Or modify some parameters based on the default values
+zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

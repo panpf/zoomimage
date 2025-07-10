@@ -25,9 +25,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.logger) {
-    zoomState.logger.level = Logger.DEBUG
-}
+zoomState.logger.level = Logger.DEBUG
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

@@ -16,10 +16,10 @@ ZoomImage enables one finger drag gestures by default, but you can turn it off a
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -66,10 +66,10 @@ You can also turn it off dynamically via gesture control, as follows:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
-}
+
+zoomState.zoomable.disabledGestureTypes =
+    zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
+
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
@@ -139,9 +139,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
-}
+zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -163,19 +161,17 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    // Set the specific size through the containerWhitespace property
-    zoomState.zoomable.containerWhitespace = ContainerWhitespace(
-        left = 4f, top = 3f, right = 2f, bottom = 1f
-    )
-    // or
-    zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
-    // or
-    zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
+// Set the specific size through the containerWhitespace property
+zoomState.zoomable.containerWhitespace = ContainerWhitespace(
+    left = 4f, top = 3f, right = 2f, bottom = 1f
+)
+// or
+zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
+// or
+zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
 
-    // Leave 50% of the container size white space between the edge of the image and the edge of the container
-    zoomState.zoomable.containerWhitespaceMultiple = 0.5f
-}
+// Leave 50% of the container size white space between the edge of the image and the edge of the container
+zoomState.zoomable.containerWhitespaceMultiple = 0.5f
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

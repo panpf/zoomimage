@@ -17,9 +17,7 @@
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.readMode = ReadMode.Default
-}
+zoomState.zoomable.readMode = ReadMode.Default
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

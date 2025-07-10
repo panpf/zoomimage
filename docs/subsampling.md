@@ -221,13 +221,11 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // Turn off animations
-    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
+// Turn off animations
+zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
-    // Modify the duration and refresh interval of the animation
-    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
-}
+// Modify the duration and refresh interval of the animation
+zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -254,14 +252,12 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // All continuous transform types load tiles in real time
-    zoomState.subsampling.pausedContinuousTransformTypes = 0
+// All continuous transform types load tiles in real time
+zoomState.subsampling.pausedContinuousTransformTypes = 0
 
-    // All continuous transform types pause loading of tiles
-    zoomState.subsampling.pausedContinuousTransformTypes =
-        TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
-}
+// All continuous transform types pause loading of tiles
+zoomState.subsampling.pausedContinuousTransformTypes =
+  TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -282,12 +278,10 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // stop
-    zoomState.subsampling.stopped = true
-    // restart
-    zoomState.subsampling.stopped = false
-}
+// stop
+zoomState.subsampling.stopped = true
+// restart
+zoomState.subsampling.stopped = false
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -311,9 +305,7 @@ property as follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.disabledAutoStopWithLifecycle = true
-}
+zoomState.subsampling.disabledAutoStopWithLifecycle = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -339,9 +331,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.disabledBackgroundTiles = true
-}
+zoomState.subsampling.disabledBackgroundTiles = true
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -366,9 +356,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.tileImageCache = MyTileImageCache()
-}
+zoomState.subsampling.tileImageCache = MyTileImageCache()
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -387,12 +375,10 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    // Disable memory caching
-    zoomState.subsampling.disabledTileImageCache = true
-    // Memory caching is allowed
-    zoomState.subsampling.disabledTileImageCache = false
-}
+// Disable memory caching
+zoomState.subsampling.disabledTileImageCache = true
+// Memory caching is allowed
+zoomState.subsampling.disabledTileImageCache = false
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -417,9 +403,7 @@ Then apply your [RegionDecoder] on [SubsamplingState] or [SubsamplingEngine] as 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-    zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
-}
+zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -440,15 +424,13 @@ follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.disabled = true
-}
+zoomState.subsampling.disabled = true
 
 SketchZoomAsyncImage(
-  uri = "https://sample.com/sample.jpeg",
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
 )
 ```
 
