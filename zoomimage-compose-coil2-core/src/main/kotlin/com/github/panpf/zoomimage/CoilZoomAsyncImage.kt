@@ -271,7 +271,6 @@ private fun CoilZoomAsyncImage(
             filterQuality = filterQuality,
             modelEqualityDelegate = state.modelEqualityDelegate,
             onState = { loadState ->
-                onState?.invoke(loadState)
                 updateZoom(
                     context = context,
                     coroutineScope = coroutineScope,
@@ -281,6 +280,7 @@ private fun CoilZoomAsyncImage(
                     loadState = loadState,
                     loadingPainterState = loadingPainterState,
                 )
+                onState?.invoke(loadState)
             },
         )
         BaseZoomImage(
