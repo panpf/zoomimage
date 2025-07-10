@@ -37,9 +37,9 @@ internal val SingleRequest<*>.internalRequestOptions: BaseRequestOptions<*>
 val SingleRequest<*>.internalModel: Any?
     get() {
         return try {
-            this.javaClass.getDeclaredField("model").apply {
-                isAccessible = true
-            }.get(this)
+            this.javaClass.getDeclaredField("model")
+                .apply { isAccessible = true }
+                .get(this)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -52,9 +52,9 @@ val SingleRequest<*>.internalModel: Any?
 val RequestBuilder<*>.internalModel: Any?
     get() {
         return try {
-            this.javaClass.getDeclaredField("model").apply {
-                isAccessible = true
-            }.get(this)
+            this.javaClass.getDeclaredField("model")
+                .apply { isAccessible = true }
+                .get(this)
         } catch (e: Exception) {
             e.printStackTrace()
             return null

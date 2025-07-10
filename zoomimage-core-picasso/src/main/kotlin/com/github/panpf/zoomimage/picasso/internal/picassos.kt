@@ -33,9 +33,9 @@ internal fun checkMemoryCacheDisabled(memoryPolicy: Int): Boolean {
 @Deprecated("No use anymore")
 internal val RequestCreator.internalMemoryPolicy: Int
     get() = try {
-        this.javaClass.getDeclaredField("memoryPolicy").apply {
-            isAccessible = true
-        }.getInt(this)
+        this.javaClass.getDeclaredField("memoryPolicy")
+            .apply { isAccessible = true }
+            .getInt(this)
     } catch (e: Exception) {
         e.printStackTrace()
         0

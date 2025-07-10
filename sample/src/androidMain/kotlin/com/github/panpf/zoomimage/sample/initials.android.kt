@@ -149,10 +149,11 @@ private fun onToggleImageLoader(context: PlatformContext, sketch: Sketch, newIma
         Log.d("ZoomImage", "Clean Picasso memory cache")
         val picasso = Picasso.get()
         try {
-            val cacheField = Picasso::class.java.getDeclaredField("cache")
-            cacheField.isAccessible = true
-            val cache = cacheField.get(picasso) as? com.squareup.picasso.Cache
-            cache?.clear()
+            Picasso::class.java.getDeclaredField("cache")
+                .apply { isAccessible = true }
+                .get(picasso)
+                .let { it as? com.squareup.picasso.Cache }
+                ?.clear()
         } catch (e: Exception) {
             e.printStackTrace()
         }
