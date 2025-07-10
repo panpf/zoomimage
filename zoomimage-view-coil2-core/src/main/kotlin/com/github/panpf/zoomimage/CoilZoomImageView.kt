@@ -112,14 +112,17 @@ open class CoilZoomImageView @JvmOverloads constructor(
                     val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
                         it.generateImage(context, imageLoader, result, drawable)
                     }
-                    if (generateResult is SubsamplingImageGenerateResult.Error) {
-                        logger.d {
-                            "CoilZoomImageView. ${generateResult.message}. data='${result.request.data}'"
-                        }
-                    }
                     if (generateResult is SubsamplingImageGenerateResult.Success) {
                         setSubsamplingImage(generateResult.subsamplingImage)
                     } else {
+                        logger.d {
+                            val errorMessage =
+                                if (generateResult is SubsamplingImageGenerateResult.Error)
+                                    generateResult.message else "unknown error"
+                            "CoilZoomImageView. setSubsamplingImage failed. $errorMessage. " +
+                                    "result=${result}, drawable=${drawable}. " +
+                                    "data='${result.request.data}'"
+                        }
                         setSubsamplingImage(null as SubsamplingImage?)
                     }
                 }

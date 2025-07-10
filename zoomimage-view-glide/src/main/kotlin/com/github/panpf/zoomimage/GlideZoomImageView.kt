@@ -114,18 +114,27 @@ open class GlideZoomImageView @JvmOverloads constructor(
                     val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
                         it.generateImage(context, Glide.get(context), model, drawable)
                     }
-                    if (generateResult is SubsamplingImageGenerateResult.Error) {
-                        logger.d {
-                            "GlideZoomImageView. ${generateResult.message}. model='$model'"
-                        }
-                    }
                     if (generateResult is SubsamplingImageGenerateResult.Success) {
                         setSubsamplingImage(generateResult.subsamplingImage)
                     } else {
+                        logger.d {
+                            val errorMessage =
+                                if (generateResult is SubsamplingImageGenerateResult.Error)
+                                    generateResult.message else "unknown error"
+                            "GlideZoomImageView. setSubsamplingImage failed. $errorMessage. " +
+                                    "model='$model', drawable=$drawable"
+                        }
                         setSubsamplingImage(null as SubsamplingImage?)
                     }
                 }
             } else {
+                logger.v {
+                    "GlideZoomImageView. setSubsamplingImage failed. " +
+                            "request=$request, " +
+                            "request.isComplete=${request?.isComplete}, " +
+                            "model='${model}', " +
+                            "drawable=${drawable}"
+                }
                 setSubsamplingImage(null as SubsamplingImage?)
             }
         }

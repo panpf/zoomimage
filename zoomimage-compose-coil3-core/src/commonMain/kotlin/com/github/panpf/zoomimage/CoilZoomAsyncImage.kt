@@ -347,14 +347,17 @@ private fun updateZoom(
             val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
                 it.generateImage(context, imageLoader, loadState.result, loadState.painter)
             }
-            if (generateResult is SubsamplingImageGenerateResult.Error) {
-                zoomState.subsampling.logger.d {
-                    "CoilZoomAsyncImage. ${generateResult.message}. data='${finaData}'"
-                }
-            }
             if (generateResult is SubsamplingImageGenerateResult.Success) {
                 zoomState.setSubsamplingImage(generateResult.subsamplingImage)
             } else {
+                zoomState.subsampling.logger.d {
+                    val errorMessage =
+                        if (generateResult is SubsamplingImageGenerateResult.Error)
+                            generateResult.message else "unknown error"
+                    "CoilZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
+                            "result=${loadState.result}, painter=${loadState.painter}. " +
+                            "data='${loadState.result.request.data}'"
+                }
                 zoomState.setSubsamplingImage(null as SubsamplingImage?)
             }
         }

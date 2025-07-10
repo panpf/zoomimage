@@ -196,14 +196,16 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                 val generateResult = subsamplingImageGenerators.firstNotNullOfOrNull {
                     it.generateImage(context, Picasso.get(), data, drawable)
                 }
-                if (generateResult is SubsamplingImageGenerateResult.Error) {
-                    logger.d {
-                        "PicassoZoomImageView. ${generateResult.message}. data='$data'"
-                    }
-                }
                 if (generateResult is SubsamplingImageGenerateResult.Success) {
                     setSubsamplingImage(generateResult.subsamplingImage)
                 } else {
+                    logger.d {
+                        val errorMessage =
+                            if (generateResult is SubsamplingImageGenerateResult.Error)
+                                generateResult.message else "unknown error"
+                        "PicassoZoomImageView. setSubsamplingImage failed. $errorMessage. " +
+                                "data='${data}', drawable=${drawable}"
+                    }
                     setSubsamplingImage(null as SubsamplingImage?)
                 }
             } else {

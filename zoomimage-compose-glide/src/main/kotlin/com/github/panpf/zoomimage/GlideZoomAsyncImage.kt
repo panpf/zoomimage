@@ -256,16 +256,24 @@ private class ResetListener(
                 val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
                     it.generateImage(context, glide, model, resource)
                 }
-                if (generateResult is SubsamplingImageGenerateResult.Error) {
-                    logger.d { "GlideZoomAsyncImage. ${generateResult.message}. model='$model'" }
-                }
                 if (generateResult is SubsamplingImageGenerateResult.Success) {
                     zoomState.setSubsamplingImage(generateResult.subsamplingImage)
                 } else {
+                    logger.d {
+                        val errorMessage =
+                            if (generateResult is SubsamplingImageGenerateResult.Error)
+                                generateResult.message else "unknown error"
+                        "GlideZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
+                                "model='$model', drawable=$resource"
+                    }
                     zoomState.setSubsamplingImage(null as SubsamplingImage?)
                 }
             }
         } else {
+            logger.v {
+                "GlideZoomAsyncImage. setSubsamplingImage failed. " +
+                        "ready=$ready, model='${model}', drawable=${resource}"
+            }
             zoomState.setSubsamplingImage(null as SubsamplingImage?)
         }
     }
