@@ -5,17 +5,20 @@ Translations: [简体中文](CHANGELOG.zh.md)
 # new
 
 * fix: Fixed the problem that the content size is incorrect when CoilZoomAsyncImage is turned on
-  crossfade and the placeholder image is larger than the loaded image.
+  crossfade and the placeholder image is larger than the loaded
+  image. [#94](https://github.com/panpf/zoomimage/issues/94)
 * fix: Fixed a bug where SketchZoomAsyncImage and SketchZoomImageView do not support parameters such
   as downloadCachePolicy and downloadCacheKey. [#89](https://github.com/panpf/zoomimage/issues/89)
 * fix: Fixed a bug where CoilZoomAsyncImage and CoilZoomImageView do not support parameters such
   as diskCachePolicy and networkCachePolicy. [#90](https://github.com/panpf/zoomimage/issues/90)
 * fix: Fixed a bug where GlideZoomImageView does not support
   thumbnail(). [#93](https://github.com/panpf/zoomimage/issues/93)
-* change: Now the stopped property of the subsample is also involved in the calculation of ready
+* fix: Now the stopped property of the subsample is also involved in the calculation of
+  ready. [#97](https://github.com/panpf/zoomimage/issues/97)
 * new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
-  sketch4's koin mode
-* new: SubsamplingState and SubsamplingEngine add disabled attributes to disable subsampling feature
+  sketch4's koin mode. [#95](https://github.com/panpf/zoomimage/issues/95)
+* new: SubsamplingState and SubsamplingEngine add disabled attributes to disable subsampling
+  feature. [#96](https://github.com/panpf/zoomimage/issues/96)
 * new: SubsamplingState and SubsamplingEngine add disabledAutoStopWithLifecycle attributes to
   disable automatic subsampling stopping according to
   Lifecycle. [#91](https://github.com/panpf/zoomimage/issues/91)

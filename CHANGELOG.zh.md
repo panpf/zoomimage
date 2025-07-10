@@ -4,17 +4,19 @@
 
 # new
 
-* fix: 修复 CoilZoomAsyncImage 开启 crossfade 并且占位图像比加载图像大时内容大小不正确的问题
+* fix: 修复 CoilZoomAsyncImage 开启 crossfade
+  并且占位图像比加载图像大时内容大小不正确的问题。[#94](https://github.com/panpf/zoomimage/issues/94)
 * fix: 修复 SketchZoomAsyncImage 和 SketchZoomImageView 不支持 downloadCachePolicy 和
   downloadCacheKey 等参数的 bug。 [#89](https://github.com/panpf/zoomimage/issues/89)
 * fix: 修复 CoilZoomAsyncImage 和 CoilZoomImageView 不支持 diskCachePolicy 和
   networkCachePolicy 等参数的 bug。 [#90](https://github.com/panpf/zoomimage/issues/90)
 * fix: 修复 GlideZoomImageView 不支持 thumbnail() 的
   bug。 [#93](https://github.com/panpf/zoomimage/issues/93)
-* change: 现在子采样的 stopped 属性也参与计算 ready
+* fix: 现在子采样的 stopped 属性也参与计算 ready。[#97](https://github.com/panpf/zoomimage/issues/97)
 * new: 新增 `zoomimage-compose-sketch4-koin` 和 `zoomimage-view-sketch4-koin` 模块，适配 sketch4 的
-  koin 模式
-* new: SubsamplingState 和 SubsamplingEngine 新增 disabled 属性可以禁用子采样功能
+  koin 模式。[#95](https://github.com/panpf/zoomimage/issues/95)
+* new: SubsamplingState 和 SubsamplingEngine 新增 disabled
+  属性可以禁用子采样功能。[#96](https://github.com/panpf/zoomimage/issues/96)
 * new: SubsamplingState 和 SubsamplingEngine 新增 disabledAutoStopWithLifecycle 属性可以禁用根据
   Lifecycle 自动停止子采样功能。 [#91](https://github.com/panpf/zoomimage/issues/91)
 * depend: 更新 sketch 4.2.0
