@@ -6,8 +6,10 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.internalGlideContext
 import com.bumptech.glide.internalModel
 import com.bumptech.glide.internalRequestOptions
+import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.SingleRequest
+import com.bumptech.glide.request.ThumbnailRequestCoordinator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -76,6 +78,107 @@ class GlidesTest {
         assertEquals(
             expected = "https://sample.com/sample.jpeg",
             actual = builder.internalModel
+        )
+    }
+
+    @Test
+    fun testThumbnailRequestCoordinatorInternalModel() {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        val glide = Glide.get(context)
+        val request = SingleRequest.obtain<Any>(
+            /* context = */ context,
+            /* glideContext = */ glide.internalGlideContext,
+            /* requestLock = */ Any(),
+            /* model = */ "https://sample.com/sample.jpeg",
+            /* transcodeClass = */ null,
+            /* requestOptions = */ RequestOptions.sizeMultiplierOf(0.5f),
+            /* overrideWidth = */ 0,
+            /* overrideHeight = */ 0,
+            /* priority = */ Priority.HIGH,
+            /* target = */ null,
+            /* targetListener = */ null,
+            /* requestListeners = */ null,
+            /* requestCoordinator = */ null,
+            /* engine = */ null,
+            /* animationFactory = */ null,
+            /* callbackExecutor = */ null,
+        )
+        val request2 = SingleRequest.obtain<Any>(
+            /* context = */ context,
+            /* glideContext = */ glide.internalGlideContext,
+            /* requestLock = */ Any(),
+            /* model = */ "https://sample.com/sample.jpeg",
+            /* transcodeClass = */ null,
+            /* requestOptions = */ RequestOptions.sizeMultiplierOf(0.5f),
+            /* overrideWidth = */ 0,
+            /* overrideHeight = */ 0,
+            /* priority = */ Priority.HIGH,
+            /* target = */ null,
+            /* targetListener = */ null,
+            /* requestListeners = */ null,
+            /* requestCoordinator = */ null,
+            /* engine = */ null,
+            /* animationFactory = */ null,
+            /* callbackExecutor = */ null,
+        )
+        val coordinator = ThumbnailRequestCoordinator(Any(), null)
+        coordinator.setRequests(request, request2)
+        assertEquals(
+            expected = "https://sample.com/sample.jpeg",
+            actual = coordinator.internalModel
+        )
+    }
+
+    @Test
+    fun testRequestInternalModel() {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        val glide = Glide.get(context)
+        val request = SingleRequest.obtain<Any>(
+            /* context = */ context,
+            /* glideContext = */ glide.internalGlideContext,
+            /* requestLock = */ Any(),
+            /* model = */ "https://sample.com/sample.jpeg",
+            /* transcodeClass = */ null,
+            /* requestOptions = */ RequestOptions.sizeMultiplierOf(0.5f),
+            /* overrideWidth = */ 0,
+            /* overrideHeight = */ 0,
+            /* priority = */ Priority.HIGH,
+            /* target = */ null,
+            /* targetListener = */ null,
+            /* requestListeners = */ null,
+            /* requestCoordinator = */ null,
+            /* engine = */ null,
+            /* animationFactory = */ null,
+            /* callbackExecutor = */ null,
+        )
+        assertEquals(
+            expected = "https://sample.com/sample.jpeg",
+            actual = (request as Request).internalModel
+        )
+
+        val coordinator = ThumbnailRequestCoordinator(Any(), null)
+        val request2 = SingleRequest.obtain<Any>(
+            /* context = */ context,
+            /* glideContext = */ glide.internalGlideContext,
+            /* requestLock = */ Any(),
+            /* model = */ "https://sample.com/sample.jpeg",
+            /* transcodeClass = */ null,
+            /* requestOptions = */ RequestOptions.sizeMultiplierOf(0.5f),
+            /* overrideWidth = */ 0,
+            /* overrideHeight = */ 0,
+            /* priority = */ Priority.HIGH,
+            /* target = */ null,
+            /* targetListener = */ null,
+            /* requestListeners = */ null,
+            /* requestCoordinator = */ null,
+            /* engine = */ null,
+            /* animationFactory = */ null,
+            /* callbackExecutor = */ null,
+        )
+        coordinator.setRequests(request, request2)
+        assertEquals(
+            expected = "https://sample.com/sample.jpeg",
+            actual = (coordinator as Request).internalModel
         )
     }
 

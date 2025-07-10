@@ -209,4 +209,15 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/tempTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.TempTestFragment" />
+    <action
+        android:id="@+id/action_global_tempTestFragment"
+        app:destination="@id/tempTestFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
 </navigation>

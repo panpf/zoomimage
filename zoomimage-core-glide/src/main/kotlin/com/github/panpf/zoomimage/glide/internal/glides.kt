@@ -20,7 +20,9 @@ package com.bumptech.glide
 
 import android.widget.ImageView
 import com.bumptech.glide.request.BaseRequestOptions
+import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.SingleRequest
+import com.bumptech.glide.request.ThumbnailRequestCoordinator
 
 /**
  * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testSingleRequestInternalRequestOptions
@@ -62,12 +64,38 @@ val RequestBuilder<*>.internalModel: Any?
     }
 
 /**
+ * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testThumbnailRequestCoordinatorInternalModel
+ */
+val ThumbnailRequestCoordinator.internalModel: Any?
+    get() {
+        return try {
+            val fullRequest = this.javaClass.getDeclaredField("full")
+                .apply { isAccessible = true }
+                .get(this) as Request
+            fullRequest.internalModel
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+/**
+ * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testRequestInternalModel
+ */
+val Request.internalModel: Any?
+    get() = when (this) {
+        is SingleRequest<*> -> this.internalModel
+        is ThumbnailRequestCoordinator -> this.internalModel
+        else -> null
+    }
+
+/**
  * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testInternalGlideContext
  */
 val Glide.internalGlideContext: GlideContext
     get() = glideContext
 
-fun getRequestFromView(view: ImageView): SingleRequest<*>? {
+fun getRequestFromView(view: ImageView): Request? {
     @Suppress("RemoveRedundantQualifierName")
-    return view.getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag) as? SingleRequest<*>
+    return view.getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag) as? Request
 }

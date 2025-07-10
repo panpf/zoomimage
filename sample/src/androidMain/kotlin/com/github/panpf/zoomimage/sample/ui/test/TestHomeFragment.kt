@@ -99,6 +99,11 @@ class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
             navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewSwitchTestFragment(),
             minSdk = 21,
         ),
+        Link(
+            title = "Temp",
+            navDirections = NavMainDirections.actionGlobalTempTestFragment(),
+            minSdk = 21,
+        ),
     )
 
     private fun startLink(data: Link) {
