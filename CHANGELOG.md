@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.4.0-beta03
 
 * fix: Fixed the problem that the content size is incorrect when CoilZoomAsyncImage is turned on
   crossfade and the placeholder image is larger than the loaded

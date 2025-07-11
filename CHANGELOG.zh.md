@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.4.0-beta03
 
 * fix: 修复 CoilZoomAsyncImage 开启 crossfade
   并且占位图像比加载图像大时内容大小不正确的问题。[#94](https://github.com/panpf/zoomimage/issues/94)
