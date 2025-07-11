@@ -12,6 +12,7 @@ $dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource
 module:zoomimage-compose
 com.github.panpf.zoomimage
 com.github.panpf.zoomimage.compose
+com.github.panpf.zoomimage.compose.internal
 com.github.panpf.zoomimage.compose.subsampling
 com.github.panpf.zoomimage.compose.util
 com.github.panpf.zoomimage.compose.zoom
@@ -46,6 +47,8 @@ module:zoomimage-compose-sketch4-core
 com.github.panpf.zoomimage
 com.github.panpf.zoomimage.compose.sketch
 com.github.panpf.zoomimage.compose.sketch.internal
+module:zoomimage-compose-sketch4-koin
+com.github.panpf.zoomimage
 module:zoomimage-core
 com.github.panpf.zoomimage.subsampling
 com.github.panpf.zoomimage.subsampling.internal
