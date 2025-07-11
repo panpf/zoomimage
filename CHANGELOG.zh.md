@@ -13,6 +13,8 @@
 * fix: 修复 GlideZoomImageView 不支持 thumbnail() 的
   bug。 [#93](https://github.com/panpf/zoomimage/issues/93)
 * fix: 现在子采样的 stopped 属性也参与计算 ready。[#97](https://github.com/panpf/zoomimage/issues/97)
+* improve: GlideZoomAsyncImage 和 GlideZoomImageView 现在使用 asFile 的方式
+  加载未知类型的 model。 [#76](https://github.com/panpf/zoomimage/issues/76)
 * new: 新增 `zoomimage-compose-sketch4-koin` 和 `zoomimage-view-sketch4-koin` 模块，适配 sketch4 的
   koin 模式。[#95](https://github.com/panpf/zoomimage/issues/95)
 * new: SubsamplingState 和 SubsamplingEngine 新增 disabled

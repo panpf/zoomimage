@@ -6,8 +6,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.bumptech.glide.Glide
 import com.github.panpf.zoomimage.glide.GlideHttpImageSource
 import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
+import com.github.panpf.zoomimage.glide.internal.GlideAsFileImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
+import com.github.panpf.zoomimage.subsampling.toFactory
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,7 +42,15 @@ class EngineGlideSubsamplingImageGeneratorTest {
         )
 
         assertEquals(
-            expected = SubsamplingImageGenerateResult.Error("Unsupported model"),
+            expected = SubsamplingImageGenerateResult.Success(
+                SubsamplingImage(
+                    GlideAsFileImageSource(
+                        context,
+                        "fakehttp://sample.com/sample.jpeg"
+                    ).toFactory(),
+                    null
+                )
+            ),
             actual = generator.generateImage(
                 context = context,
                 glide = glide,

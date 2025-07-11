@@ -15,6 +15,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
   thumbnail(). [#93](https://github.com/panpf/zoomimage/issues/93)
 * fix: Now the stopped property of the subsample is also involved in the calculation of
   ready. [#97](https://github.com/panpf/zoomimage/issues/97)
+* improve: GlideZoomAsyncImage and GlideZoomImageView now use asFile to load models of unknown
+  types. [#76](https://github.com/panpf/zoomimage/issues/76)
 * new: Added `zoomimage-compose-sketch4-koin` and `zoomimage-view-sketch4-koin` modules to adapt to
   sketch4's koin mode. [#95](https://github.com/panpf/zoomimage/issues/95)
 * new: SubsamplingState and SubsamplingEngine add disabled attributes to disable subsampling

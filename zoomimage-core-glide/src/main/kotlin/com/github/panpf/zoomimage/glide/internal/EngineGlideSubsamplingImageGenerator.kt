@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
+import com.github.panpf.zoomimage.subsampling.toFactory
 
 /**
  * [GlideSubsamplingImageGenerator] implementation that uses the Glide library to generate images
@@ -37,7 +38,7 @@ class EngineGlideSubsamplingImageGenerator : GlideSubsamplingImageGenerator {
         drawable: Drawable
     ): SubsamplingImageGenerateResult {
         val imageSource = modelToImageSource(context, glide, model)
-            ?: return SubsamplingImageGenerateResult.Error("Unsupported model")
+            ?: GlideAsFileImageSource(context, model).toFactory()
         return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
     }
 
