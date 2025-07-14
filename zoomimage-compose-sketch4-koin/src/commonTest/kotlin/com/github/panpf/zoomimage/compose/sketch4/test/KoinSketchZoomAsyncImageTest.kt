@@ -34,7 +34,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class SingletonSketchZoomAsyncImageTest {
+class KoinSketchZoomAsyncImageTest {
 
     init {
         Koins.initial(module {
