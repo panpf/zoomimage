@@ -49,6 +49,7 @@ fun testItems(): List<TestItem> = listOf(
     TestItem("ZoomImage (Switch)", ZoomImageSwitchTestScreen()),
     TestItem("RestoreContent", RestoreContentTestScreen()),
     TestItem("CoilBigStartCrossfade", CoilBigStartCrossfadeTestScreen()),
+    TestItem("Overlay", OverlayTestScreen()),
     TestItem("Temp", TempTestScreen()),
 ).plus(platformTestItems())
 

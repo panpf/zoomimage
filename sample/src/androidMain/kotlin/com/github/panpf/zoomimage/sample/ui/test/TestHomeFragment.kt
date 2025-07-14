@@ -100,6 +100,11 @@ class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
             minSdk = 21,
         ),
         Link(
+            title = "Overlay",
+            navDirections = NavMainDirections.actionGlobalOverlayTestFragment(),
+            minSdk = 21,
+        ),
+        Link(
             title = "Temp",
             navDirections = NavMainDirections.actionGlobalTempTestFragment(),
             minSdk = 21,

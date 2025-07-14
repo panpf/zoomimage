@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -46,9 +47,26 @@ fun Dp.toPx(): Float {
     return with(LocalDensity.current) { this@toPx.toPx() }
 }
 
+fun Dp.toPx(density: Density): Float {
+    return with(density) { this@toPx.toPx() }
+}
+
 @Composable
 fun Float.toDp(): Dp {
     return with(LocalDensity.current) { this@toDp.toDp() }
+}
+
+@Composable
+fun Int.toDp(): Dp {
+    return with(LocalDensity.current) { this@toDp.toDp() }
+}
+
+fun Float.toDp(density: Density): Dp {
+    return with(density) { this@toDp.toDp() }
+}
+
+fun Int.toDp(density: Density): Dp {
+    return with(density) { this@toDp.toDp() }
 }
 
 

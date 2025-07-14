@@ -8,6 +8,7 @@ import com.github.panpf.sketch.util.Logger
 import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsApi
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListViewModel
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListViewModel
+import com.github.panpf.zoomimage.sample.ui.test.OverlayTestViewModel
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -29,6 +30,7 @@ fun commonModule(context: PlatformContext): Module = module {
     single { PexelsApi(get()) }
     viewModelOf(::LocalPhotoListViewModel)
     viewModelOf(::PexelsPhotoListViewModel)
+    viewModelOf(::OverlayTestViewModel)
 }
 
 expect fun platformModule(context: PlatformContext): Module
