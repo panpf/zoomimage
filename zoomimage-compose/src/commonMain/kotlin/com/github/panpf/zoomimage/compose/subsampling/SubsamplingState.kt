@@ -83,7 +83,7 @@ class SubsamplingState(
         module = "SubsamplingState",
         logger = zoomableState.logger,
         tileImageConvertor = ComposeTileImageConvertor(),
-        zoomableCore = object : ZoomableBridge {
+        zoomableBridge = object : ZoomableBridge {
             override val contentVisibleRect: RectCompat
                 get() = zoomableState.contentVisibleRectF.toCompat()
 

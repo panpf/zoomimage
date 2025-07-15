@@ -55,7 +55,7 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         module = "SubsamplingEngine",
         logger = zoomableEngine.logger,
         tileImageConvertor = null,
-        zoomableCore = object : ZoomableBridge {
+        zoomableBridge = object : ZoomableBridge {
             override val contentVisibleRect: RectCompat
                 get() = zoomableEngine.contentVisibleRectFState.value
 

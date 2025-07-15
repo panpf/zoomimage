@@ -53,7 +53,7 @@ class SubsamplingCore(
     val module: String,
     val logger: Logger,
     val tileImageConvertor: TileImageConvertor?,
-    val zoomableCore: ZoomableBridge,
+    val zoomableBridge: ZoomableBridge,
     val onReadyChanged: (SubsamplingCore) -> Unit,
     val onTileChanged: (SubsamplingCore) -> Unit,
 ) {
@@ -273,12 +273,12 @@ class SubsamplingCore(
                 lifecycle?.addObserver(stoppedLifecycleObserver)
 
                 coroutineScope.launch {
-                    zoomableCore.transformFlow.collect {
+                    zoomableBridge.transformFlow.collect {
                         refreshTiles(caller = "transformChanged")
                     }
                 }
                 coroutineScope.launch {
-                    zoomableCore.continuousTransformTypeFlow.collect {
+                    zoomableBridge.continuousTransformTypeFlow.collect {
                         refreshTiles(caller = "continuousTransformTypeChanged")
                     }
                 }
@@ -322,7 +322,7 @@ class SubsamplingCore(
                 contentSize = contentSize,
                 regionDecoders = regionDecoders,
                 onImageInfoPassed = {
-                    zoomableCore.setContentOriginSize(it.size)
+                    zoomableBridge.setContentOriginSize(it.size)
                 }
             )
             if (tileDecoderResult.isFailure) {
@@ -331,7 +331,7 @@ class SubsamplingCore(
                             "${tileDecoderResult.exceptionOrNull()!!.message}. " +
                             "'${subsamplingImage.key}'"
                 }
-                zoomableCore.setContentOriginSize(IntSizeCompat.Zero)
+                zoomableBridge.setContentOriginSize(IntSizeCompat.Zero)
                 return@launch
             }
 
@@ -421,10 +421,10 @@ class SubsamplingCore(
     }
 
     private fun refreshTiles(
-        contentVisibleRect: IntRectCompat = zoomableCore.contentVisibleRect.round(),
-        scale: Float = zoomableCore.transform.scaleX,
-        rotation: Int = zoomableCore.transform.rotation.roundToInt(),
-        @ContinuousTransformType continuousTransformType: Int = zoomableCore.continuousTransformType,
+        contentVisibleRect: IntRectCompat = zoomableBridge.contentVisibleRect.round(),
+        scale: Float = zoomableBridge.transform.scaleX,
+        rotation: Int = zoomableBridge.transform.rotation.roundToInt(),
+        @ContinuousTransformType continuousTransformType: Int = zoomableBridge.continuousTransformType,
         caller: String,
     ) {
         val tileManager = tileManager ?: return
@@ -442,10 +442,22 @@ class SubsamplingCore(
     }
 
     private fun refreshReadyState(caller: String) {
-        val newReady = imageInfo != null && tileManager != null && tileDecoder != null && !stopped
-        // Duplicate callbacks cannot be intercepted by validating 'this@SubsamplingCore.ready != newReady',
+        val imageInfoReady = imageInfo != null
+        val tileManagerReady = tileManager != null
+        val tileDecoderReady = tileDecoder != null
+        val stoppedReady = !stopped
+        val newReady = imageInfoReady && tileManagerReady && tileDecoderReady && stoppedReady
+        logger.d {
+            "$module. refreshReadyState:$caller. " +
+                    "ready=$newReady, " +
+                    "imageInfoReady=$imageInfoReady, " +
+                    "tileManagerReady=$tileManagerReady, " +
+                    "tileDecoderReady=$tileDecoderReady, " +
+                    "stoppedReady=$stoppedReady. " +
+                    "'$logKey'"
+        }
+        // Duplicate callbacks cannot be intercepted by validating if('this@SubsamplingCore.ready != newReady)',
         // because SubsamplingState and SubsamplingEngine need to rely on this callback to update properties such as stopped, imageInfo, tileGridSizeMap, etc
-        logger.d { "$module. refreshReadyState:$caller. ready=$newReady. '$logKey'" }
         this@SubsamplingCore.ready = newReady
         onReadyChanged(this@SubsamplingCore)
         coroutineScope?.launch {
@@ -487,7 +499,7 @@ class SubsamplingCore(
 
         @Suppress("OPT_IN_USAGE")
         GlobalScope.launch(Dispatchers.Main) {
-            zoomableCore.setContentOriginSize(IntSizeCompat.Zero)
+            zoomableBridge.setContentOriginSize(IntSizeCompat.Zero)
         }
     }
 

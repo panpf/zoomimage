@@ -411,6 +411,7 @@ class ZoomableCore constructor(
     suspend fun setContainerSize(containerSize: IntSizeCompat) {
         if (this.containerSize != containerSize) {
             this.containerSize = containerSize
+            logger.d { "$module. containerSize=$containerSize" }
             reset("containerSizeChanged")
         }
     }
@@ -418,6 +419,7 @@ class ZoomableCore constructor(
     suspend fun setContentSize(contentSize: IntSizeCompat) {
         if (this.contentSize != contentSize) {
             this.contentSize = contentSize
+            logger.d { "$module. contentSize=$contentSize" }
             reset("contentSizeChanged")
         }
     }
@@ -432,6 +434,7 @@ class ZoomableCore constructor(
     suspend fun setContentScale(contentScale: ContentScaleCompat) {
         if (this.contentScale != contentScale) {
             this.contentScale = contentScale
+            logger.d { "$module. contentScale=${contentScale.name}" }
             reset("contentScaleChanged")
         }
     }
@@ -439,6 +442,7 @@ class ZoomableCore constructor(
     suspend fun setAlignment(alignment: AlignmentCompat) {
         if (this.alignment != alignment) {
             this.alignment = alignment
+            logger.d { "$module. alignment=${alignment.name}" }
             reset("alignmentChanged")
         }
     }
@@ -446,6 +450,7 @@ class ZoomableCore constructor(
     suspend fun setRtlLayoutDirection(rtlLayoutDirection: Boolean) {
         if (this.rtlLayoutDirection != rtlLayoutDirection) {
             this.rtlLayoutDirection = rtlLayoutDirection
+            logger.d { "$module. rtlLayoutDirection=$rtlLayoutDirection" }
             reset("rtlLayoutDirectionChanged")
         }
     }
@@ -453,6 +458,7 @@ class ZoomableCore constructor(
     suspend fun setReadMode(readMode: ReadMode?) {
         if (this.readMode != readMode) {
             this.readMode = readMode
+            logger.d { "$module. readMode=$readMode" }
             reset("readModeChanged")
         }
     }
@@ -460,29 +466,43 @@ class ZoomableCore constructor(
     suspend fun setScalesCalculator(scalesCalculator: ScalesCalculator) {
         if (this.scalesCalculator != scalesCalculator) {
             this.scalesCalculator = scalesCalculator
+            logger.d { "$module. scalesCalculator=$scalesCalculator" }
             reset("scalesCalculatorChanged")
         }
     }
 
     fun setThreeStepScale(threeStepScale: Boolean) {
-        this.threeStepScale = threeStepScale
+        if (this.threeStepScale != threeStepScale) {
+            this.threeStepScale = threeStepScale
+            logger.d { "$module. threeStepScale=$threeStepScale" }
+        }
     }
 
     fun setRubberBandScale(rubberBandScale: Boolean) {
-        this.rubberBandScale = rubberBandScale
+        if (this.rubberBandScale != rubberBandScale) {
+            this.rubberBandScale = rubberBandScale
+            logger.d { "$module. rubberBandScale=$rubberBandScale" }
+        }
     }
 
     fun setOneFingerScaleSpec(oneFingerScaleSpec: OneFingerScaleSpec) {
-        this.oneFingerScaleSpec = oneFingerScaleSpec
+        if (this.oneFingerScaleSpec != oneFingerScaleSpec) {
+            this.oneFingerScaleSpec = oneFingerScaleSpec
+            logger.d { "$module. oneFingerScaleSpec=$oneFingerScaleSpec" }
+        }
     }
 
     fun setAnimationSpec(animationSpec: BaseZoomAnimationSpec) {
-        this.animationSpec = animationSpec
+        if (this.animationSpec != animationSpec) {
+            this.animationSpec = animationSpec
+            logger.d { "$module. animationSpec=$animationSpec" }
+        }
     }
 
     suspend fun setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect: Boolean) {
         if (this.limitOffsetWithinBaseVisibleRect != limitOffsetWithinBaseVisibleRect) {
             this.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+            logger.d { "$module. limitOffsetWithinBaseVisibleRect=$limitOffsetWithinBaseVisibleRect" }
             reset("limitOffsetWithinBaseVisibleRectChanged")
         }
     }
@@ -490,6 +510,7 @@ class ZoomableCore constructor(
     suspend fun setContainerWhitespaceMultiple(containerWhitespaceMultiple: Float) {
         if (this.containerWhitespaceMultiple != containerWhitespaceMultiple) {
             this.containerWhitespaceMultiple = containerWhitespaceMultiple
+            logger.d { "$module. containerWhitespaceMultiple=$containerWhitespaceMultiple" }
             reset("containerWhitespaceMultipleChanged")
         }
     }
@@ -497,12 +518,16 @@ class ZoomableCore constructor(
     suspend fun setContainerWhitespace(containerWhitespace: ContainerWhitespace) {
         if (this.containerWhitespace != containerWhitespace) {
             this.containerWhitespace = containerWhitespace
+            logger.d { "$module. containerWhitespace=$containerWhitespace" }
             reset("containerWhitespaceChanged")
         }
     }
 
     fun setKeepTransformWhenSameAspectRatioContentSizeChanged(keep: Boolean) {
-        this.keepTransformWhenSameAspectRatioContentSizeChanged = keep
+        if (this.keepTransformWhenSameAspectRatioContentSizeChanged != keepTransformWhenSameAspectRatioContentSizeChanged) {
+            this.keepTransformWhenSameAspectRatioContentSizeChanged = keep
+            logger.d { "$module. keepTransformWhenSameAspectRatioContentSizeChanged=$keepTransformWhenSameAspectRatioContentSizeChanged" }
+        }
     }
 
     suspend fun reset(caller: String, force: Boolean = false) {

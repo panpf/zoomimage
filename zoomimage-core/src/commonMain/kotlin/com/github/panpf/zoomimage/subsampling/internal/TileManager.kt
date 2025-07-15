@@ -32,6 +32,7 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.util.toShortString2
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -140,12 +141,32 @@ class TileManager(
         private set
 
     init {
-        val maxSampleSize =
-            findSampleSize(imageSize = imageInfo.size, thumbnailSize = contentSize, scale = 1f)
+        val maxSampleSize = findSampleSize(
+            imageSize = imageInfo.size,
+            thumbnailSize = contentSize,
+            scale = 1f
+        )
         sortedTileGridMap = calculateTileGridMap(
             imageSize = imageInfo.size,
             preferredTileSize = preferredTileSize,
         ).filter { it.sampleSize <= maxSampleSize }
+        logger.v {
+            "TileManager. init. " +
+                    "imageSize=${imageInfo.size.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "preferredTileSize=${preferredTileSize.toShortString()}, " +
+                    "maxSampleSize=$maxSampleSize, " +
+                    "sortedTileGridMap=${sortedTileGridMap.toIntroString()}. " +
+                    "'${subsamplingImage.key}'"
+        }
+        for (tiles in sortedTileGridMap) {
+            logger.v {
+                val tilesString = tiles.tiles.joinToString(prefix = "[", postfix = "]") {
+                    it.srcRect.toShortString2()
+                }
+                "TileManager. init. sortedTileGridMap. ${tiles.sampleSize}:$tilesString. '${subsamplingImage.key}'"
+            }
+        }
     }
 
     /**

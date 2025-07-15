@@ -10,6 +10,7 @@ import com.github.panpf.zoomimage.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.util.toShortString2
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -21,6 +22,12 @@ class IntRectCompatTest {
     fun testToShortString() {
         assertEquals("[10x9,600x500]", IntRectCompat(10, 9, 600, 500).toShortString())
         assertEquals("[9x10,500x600]", IntRectCompat(9, 10, 500, 600).toShortString())
+    }
+
+    @Test
+    fun testToShortString2() {
+        assertEquals("(10x9,600x500)", IntRectCompat(10, 9, 600, 500).toShortString2())
+        assertEquals("(9x10,500x600)", IntRectCompat(9, 10, 500, 600).toShortString2())
     }
 
     @Test

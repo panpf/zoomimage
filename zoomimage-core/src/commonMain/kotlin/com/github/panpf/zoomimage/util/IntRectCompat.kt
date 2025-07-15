@@ -326,6 +326,13 @@ fun RectCompat.roundToIntRect(): IntRectCompat = IntRectCompat(
 fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 /**
+ * Return short string descriptions, for example: '(0x0,500x400)'
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testToShortString2
+ */
+fun IntRectCompat.toShortString2(): String = "(${left}x${top},${right}x${bottom})"
+
+/**
  * Returns an IntRectCompat scaled by multiplying [scale]
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testTimes
