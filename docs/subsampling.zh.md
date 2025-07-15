@@ -42,11 +42,11 @@
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
-LaunchedEffect(zoomState.subsampling) {
+val imageSource = remember {
     val resUri = Res.getUri("files/huge_world.jpeg")
-    val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.setSubsamplingImage(imageSource)
+  ImageSource.fromComposeResource(resUri)
 }
+zoomState.setSubsamplingImage(imageSource)
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
@@ -324,7 +324,7 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.tileImageCache = MyTileImageCache()
+zoomState.subsampling.tileImageCache = remember { MyTileImageCache() }
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

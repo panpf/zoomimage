@@ -164,11 +164,11 @@ Compose multiplatform:
 ```kotlin
 // Use basic ZoomImage components
 val zoomState: ZoomState by rememberZoomState()
-LaunchedEffect(zoomState.subsampling) {
+val imageSource = remember {
     val resUri = Res.getUri("files/huge_world.jpeg")
-    val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.setSubsamplingImage(imageSource)
+  ImageSource.fromComposeResource(resUri)
 }
+zoomState.setSubsamplingImage(imageSource)
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
