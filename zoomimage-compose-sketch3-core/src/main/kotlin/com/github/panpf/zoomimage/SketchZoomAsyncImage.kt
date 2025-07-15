@@ -18,8 +18,8 @@ package com.github.panpf.zoomimage
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -367,9 +367,7 @@ fun SketchZoomAsyncImage(
     zoomState.zoomable.alignment = alignment
     zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
 
-    LaunchedEffect(zoomState.subsampling) {
-        zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
-    }
+    zoomState.subsampling.tileImageCache = remember(sketch) { SketchTileImageCache(sketch) }
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {

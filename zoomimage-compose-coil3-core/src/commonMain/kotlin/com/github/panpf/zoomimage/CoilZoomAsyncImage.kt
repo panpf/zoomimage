@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.mutableStateOf
@@ -248,8 +247,8 @@ private fun CoilZoomAsyncImage(
     zoomState.zoomable.alignment = alignment
     zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
 
-    LaunchedEffect(zoomState.subsampling) {
-        zoomState.subsampling.tileImageCache = CoilTileImageCache(state.imageLoader)
+    zoomState.subsampling.tileImageCache = remember(state.imageLoader) {
+        CoilTileImageCache(state.imageLoader)
     }
 
     val loadingPainterState: MutableState<Painter?> = remember { mutableStateOf(null) }

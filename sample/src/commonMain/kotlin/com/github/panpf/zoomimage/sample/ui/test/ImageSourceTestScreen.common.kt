@@ -111,9 +111,7 @@ class ImageSourceTestScreen : BaseScreen() {
         ) {
             val context = LocalPlatformContext.current
             val sketch: Sketch = koinInject()
-            LaunchedEffect(Unit) {
-                zoomState.subsampling.tileImageCache = SketchTileImageCache(sketch)
-            }
+            zoomState.subsampling.tileImageCache = remember(sketch) { SketchTileImageCache(sketch) }
 
             var pageState by remember { mutableStateOf<PageState?>(null) }
             var imagePainter: Painter? by remember { mutableStateOf(null) }

@@ -18,7 +18,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,10 +69,8 @@ class ZoomImageSwitchTestScreen : BaseScreen() {
     override fun DrawContent() {
         ToolbarScaffold("ZoomImage (Switch)") {
             val zoomState = rememberSketchZoomState()
-            LaunchedEffect(zoomState) {
-                zoomState.zoomable.readMode = ReadMode.Default
-                zoomState.logger.level = Logger.Level.Debug
-            }
+            zoomState.zoomable.readMode = ReadMode.Default
+            zoomState.logger.level = Logger.Level.Debug
             Column(Modifier.fillMaxSize().background(Color.Black)) {
                 val imageUris = remember { imageSwitchTestResources.map { it.uri } }
                 var currentImageUri by remember { mutableStateOf(imageUris.first()) }

@@ -21,7 +21,6 @@ import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -153,9 +152,7 @@ fun GlideZoomAsyncImage(
 
     val context = LocalContext.current
     val glide = Glide.get(context)
-    LaunchedEffect(zoomState.subsampling) {
-        zoomState.subsampling.tileImageCache = GlideTileImageCache(glide)
-    }
+    zoomState.subsampling.tileImageCache = remember(glide) { GlideTileImageCache(glide) }
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
