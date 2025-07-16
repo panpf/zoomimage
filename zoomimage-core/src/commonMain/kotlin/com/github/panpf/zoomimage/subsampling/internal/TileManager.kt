@@ -420,8 +420,9 @@ class TileManager(
 
         logger.v("TileManager. loadTile. started. $tile. '${subsamplingImage.key}'")
         tile.loadJob = coroutineScope.async {
+            // The tileKey must start with 'tile_' to avoid being hit by other functions when used as a cache key.
             val tileKey =
-                "${subsamplingImage.imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
+                "tile_${subsamplingImage.imageSource.key}_rect=${tile.srcRect.toShortString()}_sampleSize=${tile.sampleSize}"
             val cachedValue = tileImageCacheHelper.get(tileKey)
             if (cachedValue != null) {
                 val convertedTileImage: TileImage =

@@ -6,6 +6,8 @@
 
 * fix: 修复所有 ZoomImageView 在 detached 之后再次 attached 时不会恢复子采样的
   bug。[#99](https://github.com/panpf/zoomimage/issues/99)
+* fix: 修复 Sketch 的 ThumbnailMemoryCacheStateImage 会因为子采样的 tile 缓存而崩溃的
+  bug。[#100](https://github.com/panpf/zoomimage/issues/100)
 
 # 1.4.0-beta03
 

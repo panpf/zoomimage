@@ -6,6 +6,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 * fix: Fixed all bugs in which ZoomImageView does not restore subsampling when attached again after
   detached. [#99](https://github.com/panpf/zoomimage/issues/99)
+* fix: Fixed a bug where Sketch's ThumbnailMemoryCacheStateImage crashed due to subsampling tile
+  cache. [#100](https://github.com/panpf/zoomimage/issues/100)
 
 # 1.4.0-beta03
 
