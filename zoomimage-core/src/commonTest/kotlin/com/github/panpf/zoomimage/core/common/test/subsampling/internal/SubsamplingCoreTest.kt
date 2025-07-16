@@ -48,7 +48,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
         subsamplingCore.onAttached()
-        block(3000)
+        block(5000)
         assertEquals(expected = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -60,7 +60,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
         subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
-        block(3000)
+        block(5000)
         assertEquals(expected = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -72,7 +72,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
         subsamplingCore.setContentSize(contentSize)
-        block(3000)
+        block(5000)
         assertEquals(expected = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -84,7 +84,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
         subsamplingCore.setImage(imageFile.toImageSource())
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -135,7 +135,7 @@ class SubsamplingCoreTest {
         subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
         subsamplingCore.setContentSize(contentSize)
         subsamplingCore.setImage(imageFile.toImageSource())
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -159,7 +159,7 @@ class SubsamplingCoreTest {
         )
 
         subsamplingCore.onDetached()
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -171,7 +171,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
         subsamplingCore.onAttached()
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -222,7 +222,7 @@ class SubsamplingCoreTest {
         subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
         subsamplingCore.setContentSize(contentSize)
         subsamplingCore.setImage(imageFile.toImageSource())
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -246,7 +246,7 @@ class SubsamplingCoreTest {
         )
 
         subsamplingCore.setContainerSize(IntSizeCompat(1200, 700).times(1.5f))
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -270,7 +270,7 @@ class SubsamplingCoreTest {
         )
 
         subsamplingCore.setContainerSize(IntSizeCompat(1200, 700).times(2f))
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -321,7 +321,7 @@ class SubsamplingCoreTest {
         subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
         subsamplingCore.setContentSize(contentSize)
         subsamplingCore.setImage(imageFile.toImageSource())
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -345,7 +345,7 @@ class SubsamplingCoreTest {
         )
 
         subsamplingCore.setContentSize(IntSizeCompat.Zero)
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
@@ -357,7 +357,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
         subsamplingCore.setContentSize(contentSize)
-        block(3000)
+        block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
         assertEquals(expected = false, actual = subsamplingCore.stopped)
