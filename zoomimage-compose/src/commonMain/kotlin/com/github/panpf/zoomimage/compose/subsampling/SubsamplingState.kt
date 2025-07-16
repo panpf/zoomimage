@@ -286,7 +286,7 @@ class SubsamplingState(
         this.coroutineScope = coroutineScope
 
         bindProperties(coroutineScope)
-        subsamplingCore.setCoroutineScope(coroutineScope)
+        subsamplingCore.onAttached()
     }
 
     override fun onAbandoned() = onForgotten()
@@ -299,7 +299,7 @@ class SubsamplingState(
 
         val coroutineScope = this.coroutineScope ?: return
 
-        subsamplingCore.setCoroutineScope(null)
+        subsamplingCore.onDetached()
         coroutineScope.cancel("onForgotten")
         this.coroutineScope = null
     }

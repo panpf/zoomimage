@@ -48,8 +48,13 @@ import kotlin.math.roundToInt
 
 /**
  * Core that control subsampling
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingCoreTest
+ * @see com.github.panpf.zoomimage.compose.common.test.subsampling.SubsamplingStateTest
+ * @see com.github.panpf.zoomimage.view.test.subsampling.SubsamplingEngineTest
  */
-class SubsamplingCore(
+@Suppress("RedundantConstructorKeyword")
+class SubsamplingCore constructor(
     val module: String,
     val logger: Logger,
     val tileImageConvertor: TileImageConvertor?,
@@ -265,36 +270,38 @@ class SubsamplingCore(
         }
     }
 
-    fun setCoroutineScope(coroutineScope: CoroutineScope?) {
-        val lastCoroutineScope = this.coroutineScope
-        if (coroutineScope != null) {
-            this.coroutineScope = coroutineScope
-            if (lastCoroutineScope == null) {
-                lifecycle?.addObserver(stoppedLifecycleObserver)
+    fun onAttached() {
+        if (this.coroutineScope != null) return
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.coroutineScope = coroutineScope
 
-                coroutineScope.launch {
-                    zoomableBridge.transformFlow.collect {
-                        refreshTiles(caller = "transformChanged")
-                    }
-                }
-                coroutineScope.launch {
-                    zoomableBridge.continuousTransformTypeFlow.collect {
-                        refreshTiles(caller = "continuousTransformTypeChanged")
-                    }
-                }
-                coroutineScope.launch {
-                    refreshTilesFlow.collect {
-                        refreshTiles(caller = it)
-                    }
-                }
+        coroutineScope.launch {
+            zoomableBridge.transformFlow.collect {
+                refreshTiles(caller = "transformChanged")
             }
-        } else {
-            if (lastCoroutineScope != null) {
-                lifecycle?.removeObserver(stoppedLifecycleObserver)
-                clean("setCoroutineScope")
-            }
-            this.coroutineScope = coroutineScope
         }
+        coroutineScope.launch {
+            zoomableBridge.continuousTransformTypeFlow.collect {
+                refreshTiles(caller = "continuousTransformTypeChanged")
+            }
+        }
+        coroutineScope.launch {
+            refreshTilesFlow.collect {
+                refreshTiles(caller = it)
+            }
+        }
+        lifecycle?.addObserver(stoppedLifecycleObserver)
+        if (subsamplingImage != null) {
+            resetTileDecoder("setImage")
+        }
+    }
+
+    fun onDetached() {
+        val coroutineScope = this.coroutineScope ?: return
+        lifecycle?.removeObserver(stoppedLifecycleObserver)
+        clean("setCoroutineScope")
+        coroutineScope.cancel()
+        this.coroutineScope = null
     }
 
     private fun resetTileDecoder(caller: String) {

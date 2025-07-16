@@ -105,6 +105,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
             if (horizontalLayout) {
                 HorizontalPager(
                     state = pagerState,
+                    beyondViewportPageCount = 1,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
                     val pageSelected by remember {
@@ -122,6 +123,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
             } else {
                 VerticalPager(
                     state = pagerState,
+                    beyondViewportPageCount = 1,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
                     val pageSelected by remember {

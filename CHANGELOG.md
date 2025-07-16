@@ -2,6 +2,11 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+* fix: Fixed all bugs in which ZoomImageView does not restore subsampling when attached again after
+  detached. [#99](https://github.com/panpf/zoomimage/issues/99)
+
 # 1.4.0-beta03
 
 * fix: Fixed the problem that the content size is incorrect when CoilZoomAsyncImage is turned on

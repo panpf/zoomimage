@@ -2,6 +2,11 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+* fix: 修复所有 ZoomImageView 在 detached 之后再次 attached 时不会恢复子采样的
+  bug。[#99](https://github.com/panpf/zoomimage/issues/99)
+
 # 1.4.0-beta03
 
 * fix: 修复 CoilZoomAsyncImage 开启 crossfade

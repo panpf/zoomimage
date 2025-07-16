@@ -281,20 +281,19 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     /* *************************************** Internal ***************************************** */
 
     fun onAttachToWindow() {
-        val coroutineScope = this.coroutineScope
-        if (coroutineScope != null) return
+        if (this.coroutineScope != null) return
 
-        val newCoroutineScope = CoroutineScope(Dispatchers.Main)
-        this.coroutineScope = newCoroutineScope
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.coroutineScope = coroutineScope
 
-        bindProperties(newCoroutineScope)
-        subsamplingCore.setCoroutineScope(newCoroutineScope)
+        bindProperties(coroutineScope)
+        subsamplingCore.onAttached()
     }
 
     fun onDetachFromWindow() {
         val coroutineScope = this.coroutineScope ?: return
 
-        subsamplingCore.setCoroutineScope(null)
+        subsamplingCore.onDetached()
         coroutineScope.cancel("onDetachFromWindow")
         this.coroutineScope = null
     }
