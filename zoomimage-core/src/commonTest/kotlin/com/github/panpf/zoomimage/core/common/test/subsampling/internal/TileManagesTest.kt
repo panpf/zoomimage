@@ -170,12 +170,12 @@ class TileManagesTest {
                 assertEquals(expected = 0, actual = tile.srcRect.top, message = "tile=$tile")
             } else if (index == tileList.lastIndex) {
                 assertEquals(
-                    expected = imageSize.width - 1,
+                    expected = imageSize.width,
                     actual = tile.srcRect.right,
                     message = "index=$index, tile=$tile",
                 )
                 assertEquals(
-                    expected = imageSize.height - 1,
+                    expected = imageSize.height,
                     actual = tile.srcRect.bottom,
                     message = "index=$index, tile=$tile",
                 )
@@ -191,7 +191,7 @@ class TileManagesTest {
                 actual = tile.srcRect.top,
                 message = "index=$index, tile=$tile"
             )
-            if (tile.srcRect.right >= imageSize.width - 1) {
+            if (tile.srcRect.right >= imageSize.width) {
                 lastTop = tile.srcRect.bottom
                 lastRight = 0
             } else {
@@ -205,8 +205,8 @@ class TileManagesTest {
         }
         assertEquals(0, minLeft)
         assertEquals(0, minTop)
-        assertEquals(imageSize.width - 1, maxRight)
-        assertEquals(imageSize.height - 1, maxBottom)
+        assertEquals(imageSize.width, maxRight)
+        assertEquals(imageSize.height, maxBottom)
     }
 
     @Test

@@ -24,6 +24,7 @@ import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.compareVersions
+import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.toSkiaRect
 import okio.buffer
 import okio.use
@@ -58,6 +59,11 @@ class SkiaRegionDecoder(
 
     override val imageInfo: ImageInfo by lazy { imageInfo ?: decodeImageInfo() }
 
+    private val regionRectBounds by lazy {
+        val imageInfo = this.imageInfo
+        IntRectCompat(0, 0, imageInfo.width, imageInfo.height)
+    }
+
     private fun decodeImageInfo(): ImageInfo {
         val data = Data.makeFromBytes(bytes)
         val encodedImageFormat = Codec.makeFromData(data).use { it.encodedImageFormat }
@@ -79,8 +85,9 @@ class SkiaRegionDecoder(
         sampleSize: Int
     ): BitmapTileImage {
         // Image will parse exif orientation and does not support closing
-        val widthValue = region.width / sampleSize.toDouble()
-        val heightValue = region.height / sampleSize.toDouble()
+        val finalRegionRect = region.limitTo(regionRectBounds)
+        val widthValue = finalRegionRect.width / sampleSize.toDouble()
+        val heightValue = finalRegionRect.height / sampleSize.toDouble()
         val bitmapWidth: Int = ceil(widthValue).toInt()
         val bitmapHeight: Int = ceil(heightValue).toInt()
         val bitmap = Bitmap().apply {
@@ -89,7 +96,7 @@ class SkiaRegionDecoder(
         val canvas = Canvas(bitmap)
         canvas.drawImageRect(
             image = image,
-            src = region.toSkiaRect(),
+            src = finalRegionRect.toSkiaRect(),
             dst = Rect.makeWH(bitmapWidth.toFloat(), bitmapHeight.toFloat())
         )
         return BitmapTileImage(bitmap, key, fromCache = false)

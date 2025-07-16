@@ -8,6 +8,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
   detached. [#99](https://github.com/panpf/zoomimage/issues/99)
 * fix: Fixed a bug where Sketch's ThumbnailMemoryCacheStateImage crashed due to subsampling tile
   cache. [#100](https://github.com/panpf/zoomimage/issues/100)
+* fix: Fixed a bug where subsampling never decodes pixels in the last column and the last
+  row. [#101](https://github.com/panpf/zoomimage/issues/101)
 
 # 1.4.0-beta03
 

@@ -131,20 +131,20 @@ internal fun calculateTiles(
     gridSize: IntOffsetCompat,
     sampleSize: Int
 ): List<Tile> {
-    val tileWidth = imageSize.width / gridSize.x.toFloat()
-    val tileWidthInt: Int = ceil(tileWidth).toInt().coerceAtLeast(1)
-    val tileHeight = imageSize.height / gridSize.y.toFloat()
-    val tileHeightInt: Int = ceil(tileHeight).toInt().coerceAtLeast(1)
+    val tileWidth: Int =
+        ceil(imageSize.width.toFloat() / gridSize.x).toInt().coerceIn(1, imageSize.width)
+    val tileHeight: Int =
+        ceil(imageSize.height.toFloat() / gridSize.y).toInt().coerceIn(1, imageSize.height)
     val tileList = ArrayList<Tile>(gridSize.x * gridSize.y)
     for (y in 0 until gridSize.y) {
         for (x in 0 until gridSize.x) {
-            val left = x * tileWidthInt
-            val top = y * tileHeightInt
+            val left = x * tileWidth
+            val top = y * tileHeight
             val srcRect = IntRectCompat(
                 left = left,
                 top = top,
-                right = (left + tileWidthInt).coerceAtMost(imageSize.width - 1),
-                bottom = (top + tileHeightInt).coerceAtMost(imageSize.height - 1)
+                right = (left + tileWidth).coerceAtMost(imageSize.width),
+                bottom = (top + tileHeight).coerceAtMost(imageSize.height)
             )
             val coordinate = IntOffsetCompat(x, y)
             tileList.add(Tile(coordinate, srcRect, sampleSize))

@@ -8,6 +8,8 @@
   bug。[#99](https://github.com/panpf/zoomimage/issues/99)
 * fix: 修复 Sketch 的 ThumbnailMemoryCacheStateImage 会因为子采样的 tile 缓存而崩溃的
   bug。[#100](https://github.com/panpf/zoomimage/issues/100)
+* fix: 修复子采样始终不会解码最后一列和最后一行的像素的
+  bug。[#101](https://github.com/panpf/zoomimage/issues/101)
 
 # 1.4.0-beta03
 
