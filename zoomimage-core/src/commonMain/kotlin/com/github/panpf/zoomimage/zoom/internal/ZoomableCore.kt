@@ -524,9 +524,9 @@ class ZoomableCore constructor(
     }
 
     fun setKeepTransformWhenSameAspectRatioContentSizeChanged(keep: Boolean) {
-        if (this.keepTransformWhenSameAspectRatioContentSizeChanged != keepTransformWhenSameAspectRatioContentSizeChanged) {
+        if (this.keepTransformWhenSameAspectRatioContentSizeChanged != keep) {
             this.keepTransformWhenSameAspectRatioContentSizeChanged = keep
-            logger.d { "$module. keepTransformWhenSameAspectRatioContentSizeChanged=$keepTransformWhenSameAspectRatioContentSizeChanged" }
+            logger.d { "$module. keepTransformWhenSameAspectRatioContentSizeChanged=$keep" }
         }
     }
 
