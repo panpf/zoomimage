@@ -205,6 +205,8 @@ class ViewPlatformUtilsTest {
         )
     }
 
+    // TODO test applyScaleByContentSize
+
     @Test
     fun testRtlFlipped() {
         assertEquals(

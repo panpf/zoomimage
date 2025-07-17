@@ -24,6 +24,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
@@ -219,4 +220,16 @@ fun checkNewPreferredTileSize(
     }
 
     return false
+}
+
+/**
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCalculateScaleByContentSize
+ */
+fun calculateScaleByContentSize(
+    imageSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+): ScaleFactorCompat {
+    val widthScale = contentSize.width.toFloat() / imageSize.width
+    val heightScale = contentSize.height.toFloat() / imageSize.height
+    return ScaleFactorCompat(scaleX = widthScale, scaleY = heightScale)
 }

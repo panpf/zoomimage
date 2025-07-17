@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.compose.subsampling
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
@@ -30,16 +29,12 @@ import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
-import com.github.panpf.zoomimage.compose.util.isEmpty
 import com.github.panpf.zoomimage.compose.util.toCompat
+import com.github.panpf.zoomimage.compose.util.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.tileColor
-import kotlin.math.round
-import kotlin.math.roundToInt
 
 /**
  * Whether to turn off anti-aliasing when drawing Tiles
@@ -103,9 +98,6 @@ internal class SubsamplingDrawTilesNode(
         drawContent()
 
         val canvas = drawContext.canvas
-        val imageInfo = subsampling.imageInfo ?: return
-        val contentSize = zoomable.contentSize
-            .takeIf { !it.isEmpty() } ?: return
         val foregroundTiles = subsampling.foregroundTiles
             .takeIf { it.isNotEmpty() } ?: return
         val backgroundTiles = subsampling.backgroundTiles
@@ -118,7 +110,7 @@ internal class SubsamplingDrawTilesNode(
         var realDrawCount = 0
         backgroundTiles.forEach { tileSnapshot ->
             if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
-                if (drawTile(canvas, imageInfo, contentSize, tileSnapshot, tilePaint)) {
+                if (drawTile(canvas, tileSnapshot, tilePaint)) {
                     backgroundCount++
                 }
             }
@@ -129,11 +121,11 @@ internal class SubsamplingDrawTilesNode(
         foregroundTiles.forEach { tileSnapshot ->
             if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
                 insideLoadCount++
-                if (drawTile(canvas, imageInfo, contentSize, tileSnapshot, tilePaint)) {
+                if (drawTile(canvas, tileSnapshot, tilePaint)) {
                     realDrawCount++
                 }
                 if (subsampling.showTileBounds) {
-                    drawTileBounds(canvas, imageInfo, contentSize, tileSnapshot, boundsPaint)
+                    drawTileBounds(canvas, tileSnapshot, boundsPaint)
                 }
             } else {
                 outsideLoadCount++
@@ -152,28 +144,17 @@ internal class SubsamplingDrawTilesNode(
 
     private fun drawTile(
         canvas: Canvas,
-        imageInfo: ImageInfo,
-        contentSize: IntSize,
         tileSnapshot: TileSnapshot,
         tilePaint: Paint
     ): Boolean {
         val tileImage = tileSnapshot.tileImage?.takeIf { !it.isRecycled } ?: return false
         val imageBitmap = (tileImage as ComposeTileImage).bitmap
 
-        val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
-        val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
-        val tileDrawRect = IntRect(
-            left = (tileSnapshot.srcRect.left / widthScale).roundToInt(),
-            top = (tileSnapshot.srcRect.top / heightScale).roundToInt(),
-            right = (tileSnapshot.srcRect.right / widthScale).roundToInt(),
-            bottom = (tileSnapshot.srcRect.bottom / heightScale).roundToInt()
-        )
-
         tilePaint.alpha = tileSnapshot.alpha / 255f
 
         val srcSize = IntSize(imageBitmap.width, imageBitmap.height)
-        val dstOffset = tileDrawRect.topLeft
-        val dstSize = tileDrawRect.size
+        val dstOffset = tileSnapshot.srcRect.topLeft.toPlatform()
+        val dstSize = tileSnapshot.srcRect.size.toPlatform()
         canvas.drawImageRect(
             image = imageBitmap,
             srcOffset = IntOffset.Zero,
@@ -187,19 +168,10 @@ internal class SubsamplingDrawTilesNode(
 
     private fun drawTileBounds(
         canvas: Canvas,
-        imageInfo: ImageInfo,
-        contentSize: IntSize,
         tileSnapshot: TileSnapshot,
         boundsPaint: Paint
     ) {
-        val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
-        val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
-        val tileDrawRect = Rect(
-            left = round(tileSnapshot.srcRect.left / widthScale),
-            top = round(tileSnapshot.srcRect.top / heightScale),
-            right = round(tileSnapshot.srcRect.right / widthScale),
-            bottom = round(tileSnapshot.srcRect.bottom / heightScale)
-        )
+        val tileDrawRect = tileSnapshot.srcRect.toPlatform()
 
         val boundsColor = tileColor(
             state = tileSnapshot.state,
@@ -208,6 +180,12 @@ internal class SubsamplingDrawTilesNode(
         )
         boundsPaint.color = Color(boundsColor)
 
-        canvas.drawRect(rect = tileDrawRect, paint = boundsPaint)
+        canvas.drawRect(
+            left = tileDrawRect.left.toFloat(),
+            top = tileDrawRect.top.toFloat(),
+            right = tileDrawRect.right.toFloat(),
+            bottom = tileDrawRect.bottom.toFloat(),
+            paint = boundsPaint
+        )
     }
 }

@@ -303,7 +303,7 @@ private fun CoilZoomAsyncImage(
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(zoomable = zoomState.zoomable)
+                .zooming(zoomable = zoomState.zoomable, firstScaleByContentSize = true)
                 .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 

@@ -138,15 +138,13 @@ internal fun calculateTiles(
     val tileList = ArrayList<Tile>(gridSize.x * gridSize.y)
     for (y in 0 until gridSize.y) {
         for (x in 0 until gridSize.x) {
-            val left = x * tileWidth
-            val top = y * tileHeight
-            val srcRect = IntRectCompat(
-                left = left,
-                top = top,
-                right = (left + tileWidth).coerceAtMost(imageSize.width),
-                bottom = (top + tileHeight).coerceAtMost(imageSize.height)
-            )
             val coordinate = IntOffsetCompat(x, y)
+            val srcRect = IntRectCompat(
+                left = x * tileWidth,
+                top = y * tileHeight,
+                right = ((x + 1) * tileWidth).coerceAtMost(imageSize.width),
+                bottom = ((y + 1) * tileHeight).coerceAtMost(imageSize.height)
+            )
             tileList.add(Tile(coordinate, srcRect, sampleSize))
         }
     }

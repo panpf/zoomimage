@@ -21,6 +21,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
@@ -31,8 +32,14 @@ import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.util.format
+import com.github.panpf.zoomimage.compose.util.ifLet
+import com.github.panpf.zoomimage.compose.util.isNotEmpty
+import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
+import com.github.panpf.zoomimage.subsampling.internal.calculateScaleByContentSize
+import com.github.panpf.zoomimage.util.Origin
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
@@ -84,23 +91,47 @@ fun Modifier.zoomable(
 /**
  * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
  */
-fun Modifier.zooming(zoomable: ZoomableState): Modifier = this
-    .clipToBounds()
-    .graphicsLayer {
-        val transform = zoomable.transform
-        zoomable.logger.v { "ZoomableState. graphicsLayer. transform=$transform" }
-        scaleX = transform.scaleX
-        scaleY = transform.scaleY
-        translationX = transform.offsetX
-        translationY = transform.offsetY
-        transformOrigin = transform.scaleOrigin
-    }
-    // Because rotationOrigin and rotationOrigin are different, they must be set separately.
-    .graphicsLayer {
-        val transform = zoomable.transform
-        rotationZ = transform.rotation
-        transformOrigin = transform.rotationOrigin
-    }
+fun Modifier.zooming(zoomable: ZoomableState, firstScaleByContentSize: Boolean = false): Modifier =
+    this
+        .clipToBounds()
+        .graphicsLayer {
+            val transform = zoomable.transform
+            zoomable.logger.v { "ZoomableState. graphicsLayer. transform=$transform" }
+            scaleX = transform.scaleX
+            scaleY = transform.scaleY
+            translationX = transform.offsetX
+            translationY = transform.offsetY
+            transformOrigin = transform.scaleOrigin
+        }
+        // Because rotationOrigin and rotationOrigin are different, they must be set separately.
+        .graphicsLayer {
+            val transform = zoomable.transform
+            rotationZ = transform.rotation
+            transformOrigin = transform.rotationOrigin
+        }
+        .ifLet(firstScaleByContentSize) {
+            it.graphicsLayer {
+                val contentOriginSize = zoomable.contentOriginSize
+                val contentSize = zoomable.contentSize
+                val scaleFactor = if (contentOriginSize.isNotEmpty() && contentSize.isNotEmpty()) {
+                    calculateScaleByContentSize(
+                        imageSize = contentOriginSize.toCompat(),
+                        contentSize = contentSize.toCompat()
+                    )
+                } else {
+                    ScaleFactorCompat.Origin
+                }
+                scaleX = scaleFactor.scaleX
+                scaleY = scaleFactor.scaleY
+                transformOrigin = TransformOrigin(0f, 0f)
+            }
+        }
+
+/**
+ * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
+ */
+fun Modifier.zooming(zoomable: ZoomableState): Modifier =
+    this.zooming(zoomable, firstScaleByContentSize = false)
 
 ///**
 // * A Modifier that restores the content base transform of the [ZoomableState] to the component.

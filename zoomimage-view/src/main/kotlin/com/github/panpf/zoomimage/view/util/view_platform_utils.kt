@@ -26,6 +26,7 @@ import android.view.View
 import android.widget.ImageView.ScaleType
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.github.panpf.zoomimage.subsampling.internal.calculateScaleByContentSize
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -231,7 +232,7 @@ fun AlignmentCompat.rtlFlipped(layoutDirection: Int? = null): AlignmentCompat {
  */
 internal fun Matrix.applyTransform(
     transform: TransformCompat,
-    containerSize: IntSizeCompat
+    containerSize: IntSizeCompat,
 ): Matrix {
     reset()
     postRotate(
@@ -241,6 +242,22 @@ internal fun Matrix.applyTransform(
     )
     postScale(transform.scale.scaleX, transform.scale.scaleY)
     postTranslate(transform.offset.x, transform.offset.y)
+    return this
+}
+
+/**
+ * @see com.github.panpf.zoomimage.view.test.util.ViewPlatformUtilsTest.testMatrixApplyTransform
+ */
+internal fun Matrix.applyScaleByContentSize(
+    imageSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+): Matrix {
+    reset()
+    val scaleFactor = calculateScaleByContentSize(
+        imageSize = imageSize,
+        contentSize = contentSize
+    )
+    postScale(scaleFactor.scaleY, scaleFactor.scaleY, 0f, 0f)
     return this
 }
 
