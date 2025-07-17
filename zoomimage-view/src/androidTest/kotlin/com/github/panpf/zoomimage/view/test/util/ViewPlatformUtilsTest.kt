@@ -200,12 +200,12 @@ class ViewPlatformUtilsTest {
                         rotationOrigin = TransformOriginCompat(333f, 555f),
                         offset = OffsetCompat(453f, 987f)
                     ),
-                    containerSize = containerSize
+                    containerSize = containerSize,
                 ).toShortString()
         )
     }
 
-    // TODO test applyScaleByContentSize
+    // TODO test applyOriginToThumbnailScale
 
     @Test
     fun testRtlFlipped() {

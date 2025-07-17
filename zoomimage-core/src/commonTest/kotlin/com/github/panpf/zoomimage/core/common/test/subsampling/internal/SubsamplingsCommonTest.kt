@@ -462,5 +462,5 @@ class SubsamplingsCommonTest {
         )
     }
 
-    // TODO test calculateScaleByContentSize
+    // TODO test calculateThumbnailToOriginScaleFactor, calculateThumbnailToOriginScaleFactor
 }

@@ -29,7 +29,7 @@ import com.github.panpf.zoomimage.subsampling.tileColor
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
-import com.github.panpf.zoomimage.view.util.applyScaleByContentSize
+import com.github.panpf.zoomimage.view.util.applyOriginToThumbnailScale
 import com.github.panpf.zoomimage.view.util.applyTransform
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlinx.coroutines.CoroutineScope
@@ -91,7 +91,10 @@ class TileDrawHelper(
         ) {
             val imageSize = imageInfo.size
             canvas.withMatrix(
-                matrix = cacheDisplayMatrix.applyScaleByContentSize(imageSize, contentSize)
+                matrix = cacheDisplayMatrix.applyOriginToThumbnailScale(
+                    originImageSize = imageSize,
+                    thumbnailImageSize = contentSize,
+                )
             ) {
                 backgroundTiles.forEach { tileSnapshot ->
                     if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {

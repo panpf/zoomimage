@@ -223,13 +223,25 @@ fun checkNewPreferredTileSize(
 }
 
 /**
- * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCalculateScaleByContentSize
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCalculateOriginToThumbnailScaleFactor
  */
-fun calculateScaleByContentSize(
-    imageSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
+fun calculateOriginToThumbnailScaleFactor(
+    originImageSize: IntSizeCompat,
+    thumbnailImageSize: IntSizeCompat,
 ): ScaleFactorCompat {
-    val widthScale = contentSize.width.toFloat() / imageSize.width
-    val heightScale = contentSize.height.toFloat() / imageSize.height
+    val widthScale = thumbnailImageSize.width.toFloat() / originImageSize.width
+    val heightScale = thumbnailImageSize.height.toFloat() / originImageSize.height
+    return ScaleFactorCompat(scaleX = widthScale, scaleY = heightScale)
+}
+
+/**
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCalculateThumbnailToOriginScaleFactor
+ */
+fun calculateThumbnailToOriginScaleFactor(
+    originImageSize: IntSizeCompat,
+    thumbnailImageSize: IntSizeCompat,
+): ScaleFactorCompat {
+    val widthScale = originImageSize.width.toFloat() / thumbnailImageSize.width
+    val heightScale = originImageSize.height.toFloat() / thumbnailImageSize.height
     return ScaleFactorCompat(scaleX = widthScale, scaleY = heightScale)
 }

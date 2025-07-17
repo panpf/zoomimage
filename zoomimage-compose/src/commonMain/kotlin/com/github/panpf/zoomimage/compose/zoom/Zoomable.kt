@@ -37,7 +37,7 @@ import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
-import com.github.panpf.zoomimage.subsampling.internal.calculateScaleByContentSize
+import com.github.panpf.zoomimage.subsampling.internal.calculateOriginToThumbnailScaleFactor
 import com.github.panpf.zoomimage.util.Origin
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -114,9 +114,9 @@ fun Modifier.zooming(zoomable: ZoomableState, firstScaleByContentSize: Boolean =
                 val contentOriginSize = zoomable.contentOriginSize
                 val contentSize = zoomable.contentSize
                 val scaleFactor = if (contentOriginSize.isNotEmpty() && contentSize.isNotEmpty()) {
-                    calculateScaleByContentSize(
-                        imageSize = contentOriginSize.toCompat(),
-                        contentSize = contentSize.toCompat()
+                    calculateOriginToThumbnailScaleFactor(
+                        originImageSize = contentOriginSize.toCompat(),
+                        thumbnailImageSize = contentSize.toCompat()
                     )
                 } else {
                     ScaleFactorCompat.Origin

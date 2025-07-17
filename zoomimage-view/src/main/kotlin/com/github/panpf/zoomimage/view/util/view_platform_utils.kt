@@ -26,7 +26,7 @@ import android.view.View
 import android.widget.ImageView.ScaleType
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.github.panpf.zoomimage.subsampling.internal.calculateScaleByContentSize
+import com.github.panpf.zoomimage.subsampling.internal.calculateOriginToThumbnailScaleFactor
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -230,32 +230,46 @@ fun AlignmentCompat.rtlFlipped(layoutDirection: Int? = null): AlignmentCompat {
  *
  * @see com.github.panpf.zoomimage.view.test.util.ViewPlatformUtilsTest.testMatrixApplyTransform
  */
-internal fun Matrix.applyTransform(
+fun Matrix.applyTransform(
     transform: TransformCompat,
     containerSize: IntSizeCompat,
+    reset: Boolean = true,
 ): Matrix {
-    reset()
+    if (reset) {
+        reset()
+    }
     postRotate(
         /* degrees = */ transform.rotation,
         /* px = */ transform.rotationOriginX * containerSize.width,
         /* py = */ transform.rotationOriginY * containerSize.height
     )
-    postScale(transform.scale.scaleX, transform.scale.scaleY)
-    postTranslate(transform.offset.x, transform.offset.y)
+    postScale(
+        /* sx = */ transform.scale.scaleX,
+        /* sy = */ transform.scale.scaleY,
+        /* px = */ transform.scaleOriginX * containerSize.width,
+        /* py = */ transform.scaleOriginY * containerSize.height,
+    )
+    postTranslate(
+        /* dx = */ transform.offset.x,
+        /* dy = */ transform.offset.y
+    )
     return this
 }
 
 /**
- * @see com.github.panpf.zoomimage.view.test.util.ViewPlatformUtilsTest.testMatrixApplyTransform
+ * @see com.github.panpf.zoomimage.view.test.util.ViewPlatformUtilsTest.testMatrixApplyOriginToThumbnailScale
  */
-internal fun Matrix.applyScaleByContentSize(
-    imageSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
+fun Matrix.applyOriginToThumbnailScale(
+    originImageSize: IntSizeCompat,
+    thumbnailImageSize: IntSizeCompat,
+    reset: Boolean = true,
 ): Matrix {
-    reset()
-    val scaleFactor = calculateScaleByContentSize(
-        imageSize = imageSize,
-        contentSize = contentSize
+    if (reset) {
+        reset()
+    }
+    val scaleFactor = calculateOriginToThumbnailScaleFactor(
+        originImageSize = originImageSize,
+        thumbnailImageSize = thumbnailImageSize
     )
     postScale(scaleFactor.scaleY, scaleFactor.scaleY, 0f, 0f)
     return this
