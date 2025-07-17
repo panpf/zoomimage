@@ -25,7 +25,8 @@ import com.github.panpf.zoomimage.subsampling.TileImage
  *
  * @see com.github.panpf.zoomimage.compose.common.test.subsampling.ComposeTileImageTest
  */
-class ComposeTileImage(
+@Suppress("RedundantConstructorKeyword")
+class ComposeTileImage constructor(
     private val tileImage: BitmapTileImage,
 ) : TileImage by tileImage {
 

@@ -18,7 +18,7 @@ class TileImageCacheHelperTest {
         assertEquals(null, helper.tileImageCache)
 
         val key1 = "key1"
-        val tileImage1 = TestTileImage(key1)
+        val tileImage1 = TestTileImage()
         val imageInfo1 = ImageInfo(tileImage1.width, tileImage1.height, "image/jpeg")
         val imageUrl1 = "url1"
 
@@ -38,7 +38,7 @@ class TileImageCacheHelperTest {
         assertEquals(null, helper.get(key1))
 
         val key2 = "key2"
-        val tileImage2 = TestTileImage(key2, bitmapWidth = 200, bitmapHeight = 200)
+        val tileImage2 = TestTileImage(width = 200, height = 200)
         val imageInfo2 = ImageInfo(tileImage2.width, tileImage2.height, "image/jpeg")
         val imageUrl2 = "url2"
 

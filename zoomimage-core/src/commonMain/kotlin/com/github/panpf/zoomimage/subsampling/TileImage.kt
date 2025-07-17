@@ -22,11 +22,6 @@ package com.github.panpf.zoomimage.subsampling
 interface TileImage {
 
     /**
-     * The unique identifier of Tile, usually composed of url+srcRect
-     */
-    val key: String
-
-    /**
      * Tile width
      */
     val width: Int
@@ -45,11 +40,6 @@ interface TileImage {
      * Whether the tile has been recycled
      */
     val isRecycled: Boolean
-
-    /**
-     * Whether it comes from cache
-     */
-    val fromCache: Boolean
 
     /**
      * Set whether to display

@@ -26,37 +26,27 @@ import com.github.panpf.zoomimage.subsampling.toLogString
  *
  * @see com.github.panpf.zoomimage.core.sketch3.test.SketchBitmapTileImageTest
  */
-class SketchBitmapTileImage(
+@Suppress("RedundantConstructorKeyword")
+class SketchBitmapTileImage constructor(
     private val cacheValue: MemoryCache.Value,
-    key: String,
-    fromCache: Boolean,
-    private val caller: String,
-) : BitmapTileImage(cacheValue.countBitmap.bitmap!!, key, fromCache) {
+) : BitmapTileImage(cacheValue.countBitmap.bitmap!!) {
 
     override fun setIsDisplayed(displayed: Boolean) {
-        cacheValue.countBitmap.setIsDisplayed(displayed, caller)
+        cacheValue.countBitmap.setIsDisplayed(displayed, "SketchTileImageCache")
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as SketchBitmapTileImage
-        if (cacheValue.countBitmap.bitmap != other.cacheValue.countBitmap.bitmap) return false
-        if (key != other.key) return false
-        if (fromCache != other.fromCache) return false
-        if (caller != other.caller) return false
-        return true
+        return cacheValue.countBitmap.bitmap == other.cacheValue.countBitmap.bitmap
     }
 
     override fun hashCode(): Int {
-        var result = cacheValue.countBitmap.bitmap.hashCode()
-        result = 31 * result + key.hashCode()
-        result = 31 * result + fromCache.hashCode()
-        result = 31 * result + caller.hashCode()
-        return result
+        return cacheValue.countBitmap.bitmap.hashCode()
     }
 
     override fun toString(): String {
-        return "SketchBitmapTileImage(bitmap=${bitmap.toLogString()}, key='$key', fromCache=$fromCache, caller='$caller')"
+        return "SketchBitmapTileImage(bitmap=${bitmap.toLogString()})"
     }
 }

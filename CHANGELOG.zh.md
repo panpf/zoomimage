@@ -10,6 +10,8 @@
   bug。[#100](https://github.com/panpf/zoomimage/issues/100)
 * fix: 修复子采样始终不会解码最后一列和最后一行的像素的
   bug。[#101](https://github.com/panpf/zoomimage/issues/101)
+* break: RegionDecoder.decodeRegion() 的返回结果从 TileImage 改为 TileBitmap
+* break: 移除 TileImage 的 key 和 fromCache 属性
 
 # 1.4.0-beta03
 

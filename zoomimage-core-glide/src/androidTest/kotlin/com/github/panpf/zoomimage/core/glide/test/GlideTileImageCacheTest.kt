@@ -29,8 +29,7 @@ class GlideTileImageCacheTest {
 
         val key1 = "key1"
         val bitmap1 = Bitmap.createBitmap(100, 100, ARGB_8888)
-        val tileImage1 =
-            BitmapTileImage(bitmap1, key1, fromCache = false)
+        val tileImage1 = BitmapTileImage(bitmap1)
         val imageInfo1 = ImageInfo(tileImage1.width, tileImage1.height, "image/jpeg")
         val imageUrl1 = "url1"
 
@@ -44,16 +43,13 @@ class GlideTileImageCacheTest {
                         newEngineKey(key1)
                     )
                 ),
-                key = key1,
-                fromCache = true
             ),
             actual = tileImageCache.get(key1)
         )
 
         val key2 = "key2"
         val bitmap2 = Bitmap.createBitmap(200, 200, ARGB_8888)
-        val tileImage2 =
-            BitmapTileImage(bitmap2, key2, fromCache = false)
+        val tileImage2 = BitmapTileImage(bitmap2)
         val imageInfo2 = ImageInfo(tileImage2.width, tileImage2.height, "image/jpeg")
         val imageUrl2 = "url2"
 
@@ -67,8 +63,6 @@ class GlideTileImageCacheTest {
                         newEngineKey(key2)
                     )
                 ),
-                key = key2,
-                fromCache = true
             ),
             actual = tileImageCache.get(key2)
         )

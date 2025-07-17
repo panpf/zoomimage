@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
-import com.github.panpf.zoomimage.subsampling.TileImage
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoder
 import com.github.panpf.zoomimage.subsampling.toFactory
@@ -37,11 +37,11 @@ class TileDecoderTest {
             assertEquals(1, tileDecoder.decoderPoolSize)
 
             val results = runBlocking {
-                val jobs = mutableListOf<Deferred<TileImage?>>()
+                val jobs = mutableListOf<Deferred<TileBitmap?>>()
                 repeat(20) {
                     val job = scope.async {
                         withContext(dispatcher) {
-                            tileDecoder.decode("test", IntRectCompat(100, 100, 300, 300), 1)
+                            tileDecoder.decode(IntRectCompat(100, 100, 300, 300), 1)
                         }
                     }
                     jobs.add(job)
@@ -54,7 +54,7 @@ class TileDecoderTest {
         }
 
         assertFailsWith(IllegalStateException::class) {
-            tileDecoder.decode("test", IntRectCompat(100, 100, 300, 300), 1)
+            tileDecoder.decode(IntRectCompat(100, 100, 300, 300), 1)
         }
 
         tileDecoder.close()

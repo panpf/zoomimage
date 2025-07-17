@@ -19,32 +19,28 @@ package com.github.panpf.zoomimage.subsampling
 import androidx.annotation.IntDef
 
 /**
- * Tile state
+ * TileImage where from
  *
- * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileImageFromTest
  */
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
-    TileState.STATE_NONE,
-    TileState.STATE_LOADING,
-    TileState.STATE_LOADED,
-    TileState.STATE_ERROR
+    TileImageFrom.UNKNOWN,
+    TileImageFrom.LOCAL,
+    TileImageFrom.MEMORY_CACHE,
 )
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
-annotation class TileState {
+annotation class TileImageFrom {
 
     companion object {
 
-        const val STATE_NONE = 0
-        const val STATE_LOADING = 1
-        const val STATE_LOADED = 2
-        const val STATE_ERROR = 3
+        const val UNKNOWN = 0
+        const val MEMORY_CACHE = 1
+        const val LOCAL = 2
 
-        fun name(state: Int): String = when (state) {
-            STATE_NONE -> "NONE"
-            STATE_LOADING -> "LOADING"
-            STATE_LOADED -> "LOADED"
-            STATE_ERROR -> "ERROR"
+        fun name(from: Int): String = when (from) {
+            MEMORY_CACHE -> "MEMORY_CACHE"
+            LOCAL -> "LOCAL"
             else -> "UNKNOWN"
         }
     }

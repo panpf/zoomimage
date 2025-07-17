@@ -20,17 +20,8 @@ class BitmapTileImageTest {
     @Test
     fun testConstructor() {
         val bitmap1 = createBitmap(1101, 703)
-        val bitmap2 = createBitmap(507, 1305)
-
-        BitmapTileImage(bitmap1, "bitmap1", fromCache = false).apply {
+        BitmapTileImage(bitmap1).apply {
             assertSame(bitmap1, bitmap)
-            assertEquals("bitmap1", key)
-            assertEquals(fromCache, false)
-        }
-        BitmapTileImage(bitmap2, "bitmap2", fromCache = true).apply {
-            assertSame(bitmap2, bitmap)
-            assertEquals("bitmap2", key)
-            assertEquals(fromCache, true)
         }
     }
 
@@ -40,17 +31,17 @@ class BitmapTileImageTest {
         val bitmap12 = createRGB565Bitmap(1101, 703)
         val bitmap2 = createBitmap(507, 1305)
 
-        val bitmapTileImage1 = BitmapTileImage(bitmap1, "bitmap1", fromCache = false).apply {
+        val bitmapTileImage1 = BitmapTileImage(bitmap1).apply {
             assertEquals(bitmap1.width, width)
             assertEquals(bitmap1.height, height)
             assertEquals(bitmap1.byteCount, byteCount)
         }
-        val bitmapTileImage12 = BitmapTileImage(bitmap12, "bitmap12", fromCache = false).apply {
+        val bitmapTileImage12 = BitmapTileImage(bitmap12).apply {
             assertEquals(bitmap12.width, width)
             assertEquals(bitmap12.height, height)
             assertEquals(bitmap12.byteCount, byteCount)
         }
-        val bitmapTileImage2 = BitmapTileImage(bitmap2, "bitmap2", fromCache = false).apply {
+        val bitmapTileImage2 = BitmapTileImage(bitmap2).apply {
             assertEquals(bitmap2.width, width)
             assertEquals(bitmap2.height, height)
             assertEquals(bitmap2.byteCount, byteCount)
@@ -72,7 +63,7 @@ class BitmapTileImageTest {
     @Test
     fun testRecycle() {
         val bitmap = createBitmap(1101, 703)
-        val bitmapTileImage = BitmapTileImage(bitmap, "bitmap1", fromCache = false)
+        val bitmapTileImage = BitmapTileImage(bitmap)
         assertEquals(false, bitmapTileImage.isRecycled)
         bitmapTileImage.recycle()
         assertEquals(Platform.current == Platform.Android, bitmapTileImage.isRecycled)
@@ -83,47 +74,27 @@ class BitmapTileImageTest {
         val bitmap1 = createBitmap(1101, 703)
         val bitmap2 = createBitmap(507, 1305)
 
-        val tileImage1 = BitmapTileImage(bitmap1, "bitmap1", fromCache = false)
-        val tileImage12 = BitmapTileImage(bitmap1, "bitmap1", fromCache = false)
-        val tileImage2 = BitmapTileImage(bitmap2, "bitmap2", fromCache = false)
-        val tileImage3 = BitmapTileImage(bitmap1, "bitmap3", fromCache = false)
-        val tileImage4 = BitmapTileImage(bitmap1, "bitmap1", fromCache = true)
+        val tileImage1 = BitmapTileImage(bitmap1)
+        val tileImage12 = BitmapTileImage(bitmap1)
+        val tileImage2 = BitmapTileImage(bitmap2)
 
         assertEquals(expected = tileImage1, actual = tileImage1)
         assertEquals(expected = tileImage1, actual = tileImage12)
         assertNotEquals(illegal = tileImage1, actual = null as Any?)
         assertNotEquals(illegal = tileImage1, actual = Any())
         assertNotEquals(illegal = tileImage1, actual = tileImage2)
-        assertNotEquals(illegal = tileImage1, actual = tileImage3)
-        assertNotEquals(illegal = tileImage1, actual = tileImage4)
-        assertNotEquals(illegal = tileImage2, actual = tileImage3)
-        assertNotEquals(illegal = tileImage2, actual = tileImage4)
-        assertNotEquals(illegal = tileImage3, actual = tileImage4)
 
         assertEquals(expected = tileImage1.hashCode(), actual = tileImage12.hashCode())
         assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage2.hashCode())
-        assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage3.hashCode())
-        assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage4.hashCode())
-        assertNotEquals(illegal = tileImage2.hashCode(), actual = tileImage3.hashCode())
-        assertNotEquals(illegal = tileImage2.hashCode(), actual = tileImage4.hashCode())
-        assertNotEquals(illegal = tileImage3.hashCode(), actual = tileImage4.hashCode())
     }
 
     @Test
     fun testToString() = runTest {
-        val bitmap1 = createBitmap(1101, 703)
-        val bitmap2 = createBitmap(507, 1305)
-
-        val tileImage1 = BitmapTileImage(bitmap1, "bitmap1", fromCache = false)
-        val tileImage2 = BitmapTileImage(bitmap2, "bitmap2", fromCache = true)
-
+        val bitmap = createBitmap(1101, 703)
+        val tileImage = BitmapTileImage(bitmap)
         assertEquals(
-            expected = "BitmapTileImage(bitmap=${bitmap1.toLogString()}, key='bitmap1', fromCache=false)",
-            actual = tileImage1.toString()
-        )
-        assertEquals(
-            expected = "BitmapTileImage(bitmap=${bitmap2.toLogString()}, key='bitmap2', fromCache=true)",
-            actual = tileImage2.toString()
+            expected = "BitmapTileImage(bitmap=${bitmap.toLogString()})",
+            actual = tileImage.toString()
         )
     }
 }

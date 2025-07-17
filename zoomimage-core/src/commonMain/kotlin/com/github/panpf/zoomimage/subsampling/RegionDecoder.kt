@@ -44,7 +44,7 @@ interface RegionDecoder : AutoCloseable {
      * Decode the specified region of the image
      */
     @WorkerThread
-    fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileImage
+    fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap
 
     /**
      * Copy a new [RegionDecoder] object

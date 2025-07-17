@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling
 
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileImageFrom
 import com.github.panpf.zoomimage.test.TestTileImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -23,16 +24,18 @@ class TileTest {
         )
         tile.apply {
             assertNull(tileImage)
+            assertEquals(TileImageFrom.UNKNOWN, actual = this.from)
             assertFalse(animationState.running)
             assertEquals(expected = 255, actual = animationState.alpha)
         }
 
-        val tileImage = TestTileImage("key")
+        val tileImage = TestTileImage()
         assertFalse(tileImage.displayed)
-        tile.setTileImage(tileImage, allowAnimate = true)
+        tile.setTileImage(tileImage, from = TileImageFrom.LOCAL, allowAnimate = true)
         assertTrue(tileImage.displayed)
         tile.apply {
             assertNotNull(this.tileImage)
+            assertEquals(TileImageFrom.LOCAL, actual = this.from)
             assertTrue(animationState.running)
             assertEquals(expected = 0, actual = animationState.alpha)
         }
@@ -74,7 +77,7 @@ class TileTest {
         }
         assertTrue(result, message = "alphas=$alphas")
 
-        tile.setTileImage(tileImage, allowAnimate = true)
+        tile.setTileImage(tileImage, from = TileImageFrom.LOCAL, allowAnimate = true)
         assertTrue(tileImage.displayed)
         tile.apply {
             assertNotNull(this.tileImage)
@@ -82,30 +85,41 @@ class TileTest {
             assertEquals(expected = 255, actual = animationState.alpha)
         }
 
-        val tileImage2 = TestTileImage("key")
+        val tileImage2 = TestTileImage()
         assertTrue(tileImage.displayed)
         assertFalse(tileImage2.displayed)
-        tile.setTileImage(tileImage2, allowAnimate = false)
+        tile.setTileImage(tileImage2, from = TileImageFrom.LOCAL, allowAnimate = false)
         assertFalse(tileImage.displayed)
         assertTrue(tileImage2.displayed)
         tile.apply {
             assertNotNull(this.tileImage)
+            assertEquals(TileImageFrom.LOCAL, actual = this.from)
             assertFalse(animationState.running)
             assertEquals(expected = 255, actual = animationState.alpha)
         }
 
-        val tileImage3 = TestTileImage("key")
-        tile.setTileImage(tileImage3, allowAnimate = true)
+        val tileImage3 = TestTileImage()
+        tile.setTileImage(tileImage3, from = TileImageFrom.LOCAL, allowAnimate = true)
         tile.apply {
             assertNotNull(this.tileImage)
+            assertEquals(TileImageFrom.LOCAL, actual = this.from)
             assertTrue(animationState.running)
             assertEquals(expected = 0, actual = animationState.alpha)
         }
 
-        val tileImage4 = TestTileImage("key")
-        tile.setTileImage(tileImage4, allowAnimate = false)
+        val tileImage4 = TestTileImage()
+        tile.setTileImage(tileImage4, from = TileImageFrom.MEMORY_CACHE, allowAnimate = false)
         tile.apply {
             assertNotNull(this.tileImage)
+            assertEquals(TileImageFrom.MEMORY_CACHE, actual = this.from)
+            assertFalse(animationState.running)
+            assertEquals(expected = 255, actual = animationState.alpha)
+        }
+
+        tile.cleanTileImage()
+        tile.apply {
+            assertNull(this.tileImage)
+            assertEquals(TileImageFrom.UNKNOWN, actual = this.from)
             assertFalse(animationState.running)
             assertEquals(expected = 255, actual = animationState.alpha)
         }

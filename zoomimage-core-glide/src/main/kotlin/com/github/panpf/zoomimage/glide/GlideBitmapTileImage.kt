@@ -26,11 +26,10 @@ import com.github.panpf.zoomimage.subsampling.toLogString
  *
  * @see com.github.panpf.zoomimage.core.glide.test.GlideBitmapTileImageTest
  */
-internal class GlideBitmapTileImage(
+@Suppress("RedundantConstructorKeyword")
+internal class GlideBitmapTileImage constructor(
     private val resource: EngineResourceWrapper,
-    key: String,
-    fromCache: Boolean
-) : BitmapTileImage(resource.bitmap, key, fromCache) {
+) : BitmapTileImage(resource.bitmap) {
 
     override fun setIsDisplayed(displayed: Boolean) {
         resource.setIsDisplayed(displayed)
@@ -40,20 +39,14 @@ internal class GlideBitmapTileImage(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as GlideBitmapTileImage
-        if (resource.bitmap != other.resource.bitmap) return false
-        if (key != other.key) return false
-        if (fromCache != other.fromCache) return false
-        return true
+        return resource.bitmap == other.resource.bitmap
     }
 
     override fun hashCode(): Int {
-        var result = resource.bitmap.hashCode()
-        result = 31 * result + key.hashCode()
-        result = 31 * result + fromCache.hashCode()
-        return result
+        return resource.bitmap.hashCode()
     }
 
     override fun toString(): String {
-        return "GlideBitmapTileImage(bitmap=${bitmap.toLogString()}, key='$key', fromCache=$fromCache)"
+        return "GlideBitmapTileImage(bitmap=${bitmap.toLogString()})"
     }
 }

@@ -42,7 +42,7 @@ class GlideTileImageCache(private val glide: Glide) : TileImageCache {
         val engineKey = newEngineKey(key)
         val resource =
             glideEngine?.loadFromMemory(key = engineKey, isMemoryCacheable = true) ?: return null
-        return GlideBitmapTileImage(resource = resource, key = key, fromCache = true)
+        return GlideBitmapTileImage(resource = resource)
     }
 
     @Suppress("INACCESSIBLE_TYPE")
@@ -57,10 +57,6 @@ class GlideTileImageCache(private val glide: Glide) : TileImageCache {
         val bitmap = tileImage.bitmap
         val engineKey = newEngineKey(key)
         val resource = glideEngine.put(bitmap, engineKey)
-        return GlideBitmapTileImage(
-            resource = EngineResourceWrapper(resource),
-            key = tileImage.key,
-            fromCache = tileImage.fromCache
-        )
+        return GlideBitmapTileImage(resource = EngineResourceWrapper(resource))
     }
 }

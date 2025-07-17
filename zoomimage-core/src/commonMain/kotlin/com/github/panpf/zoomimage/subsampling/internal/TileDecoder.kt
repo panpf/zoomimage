@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
-import com.github.panpf.zoomimage.subsampling.TileImage
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.closeQuietly
@@ -53,16 +53,16 @@ class TileDecoder(
     }
 
     @WorkerThread
-    fun decode(key: String, srcRect: IntRectCompat, sampleSize: Int): TileImage? {
+    fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
         val closed = synchronized(poolSyncLock) { closed }
         check(!closed) { "TileDecoder is closed. $regionDecoder" }
-        return useDecoder { decoder -> decoder.decodeRegion(key, srcRect, sampleSize) }
+        return useDecoder { decoder -> decoder.decodeRegion(srcRect, sampleSize) }
     }
 
     @WorkerThread
     private fun useDecoder(
-        block: (decoder: RegionDecoder) -> TileImage?
-    ): TileImage? {
+        block: (decoder: RegionDecoder) -> TileBitmap?
+    ): TileBitmap? {
         var regionDecoder: RegionDecoder? = synchronized(poolSyncLock) {
             if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }

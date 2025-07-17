@@ -32,15 +32,11 @@ class GlideBitmapTileImageTest {
         val resource2 =
             EngineResourceWrapper(glideEngine.newEngineResource(bitmap2, newEngineKey("key1")))
 
-        GlideBitmapTileImage(resource1, "resource1", fromCache = false).apply {
+        GlideBitmapTileImage(resource1).apply {
             assertSame(bitmap1, bitmap)
-            assertEquals("resource1", key)
-            assertEquals(fromCache, false)
         }
-        GlideBitmapTileImage(resource2, "resource2", fromCache = true).apply {
+        GlideBitmapTileImage(resource2).apply {
             assertSame(bitmap2, bitmap)
-            assertEquals("resource2", key)
-            assertEquals(fromCache, true)
         }
     }
 
@@ -62,18 +58,17 @@ class GlideBitmapTileImageTest {
         val resource2 =
             EngineResourceWrapper(glideEngine.newEngineResource(bitmap2, newEngineKey("key1")))
 
-        val tileImage1 = GlideBitmapTileImage(resource1, "resource1", fromCache = false).apply {
+        val tileImage1 = GlideBitmapTileImage(resource1).apply {
             assertEquals(resource1.bitmap.width, width)
             assertEquals(resource1.bitmap.height, height)
             assertEquals(resource1.bitmap.byteCount.toLong(), byteCount)
         }
-        val tileImage12 =
-            GlideBitmapTileImage(resource12, "resource12", fromCache = false).apply {
-                assertEquals(resource12.bitmap.width, width)
-                assertEquals(resource12.bitmap.height, height)
-                assertEquals(resource12.bitmap.byteCount.toLong(), byteCount)
-            }
-        val tileImage2 = GlideBitmapTileImage(resource2, "resource2", fromCache = false).apply {
+        val tileImage12 = GlideBitmapTileImage(resource12).apply {
+            assertEquals(resource12.bitmap.width, width)
+            assertEquals(resource12.bitmap.height, height)
+            assertEquals(resource12.bitmap.byteCount.toLong(), byteCount)
+        }
+        val tileImage2 = GlideBitmapTileImage(resource2).apply {
             assertEquals(resource2.bitmap.width, width)
             assertEquals(resource2.bitmap.height, height)
             assertEquals(resource2.bitmap.byteCount.toLong(), byteCount)
@@ -103,7 +98,7 @@ class GlideBitmapTileImageTest {
         val bitmap1 = Bitmap.createBitmap(1101, 703, Bitmap.Config.ARGB_8888)
         val resource =
             EngineResourceWrapper(glideEngine.newEngineResource(bitmap1, newEngineKey("key1")))
-        val tileImage = GlideBitmapTileImage(resource, "resource1", fromCache = false)
+        val tileImage = GlideBitmapTileImage(resource)
         assertEquals(false, tileImage.isRecycled)
         tileImage.recycle()
         assertEquals(true, tileImage.isRecycled)
@@ -124,30 +119,18 @@ class GlideBitmapTileImageTest {
         val resource2 =
             EngineResourceWrapper(glideEngine.newEngineResource(bitmap2, newEngineKey("key1")))
 
-        val tileImage1 = GlideBitmapTileImage(resource1, "resource1", fromCache = false)
-        val tileImage12 = GlideBitmapTileImage(resource1, "resource1", fromCache = false)
-        val tileImage2 = GlideBitmapTileImage(resource2, "resource2", fromCache = false)
-        val tileImage3 = GlideBitmapTileImage(resource1, "bitmap3", fromCache = false)
-        val tileImage4 = GlideBitmapTileImage(resource1, "resource1", fromCache = true)
+        val tileImage1 = GlideBitmapTileImage(resource1)
+        val tileImage12 = GlideBitmapTileImage(resource1)
+        val tileImage2 = GlideBitmapTileImage(resource2)
 
         assertEquals(expected = tileImage1, actual = tileImage1)
         assertEquals(expected = tileImage1, actual = tileImage12)
         assertNotEquals(illegal = tileImage1, actual = null as Any?)
         assertNotEquals(illegal = tileImage1, actual = Any())
         assertNotEquals(illegal = tileImage1, actual = tileImage2)
-        assertNotEquals(illegal = tileImage1, actual = tileImage3)
-        assertNotEquals(illegal = tileImage1, actual = tileImage4)
-        assertNotEquals(illegal = tileImage2, actual = tileImage3)
-        assertNotEquals(illegal = tileImage2, actual = tileImage4)
-        assertNotEquals(illegal = tileImage3, actual = tileImage4)
 
         assertEquals(expected = tileImage1.hashCode(), actual = tileImage12.hashCode())
         assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage2.hashCode())
-        assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage3.hashCode())
-        assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage4.hashCode())
-        assertNotEquals(illegal = tileImage2.hashCode(), actual = tileImage3.hashCode())
-        assertNotEquals(illegal = tileImage2.hashCode(), actual = tileImage4.hashCode())
-        assertNotEquals(illegal = tileImage3.hashCode(), actual = tileImage4.hashCode())
     }
 
     @Test
@@ -165,15 +148,15 @@ class GlideBitmapTileImageTest {
         val resource2 =
             EngineResourceWrapper(glideEngine.newEngineResource(bitmap2, newEngineKey("key1")))
 
-        val tileImage1 = GlideBitmapTileImage(resource1, "resource1", fromCache = false)
-        val tileImage2 = GlideBitmapTileImage(resource2, "resource2", fromCache = true)
+        val tileImage1 = GlideBitmapTileImage(resource1)
+        val tileImage2 = GlideBitmapTileImage(resource2)
 
         assertEquals(
-            expected = "GlideBitmapTileImage(bitmap=${resource1.bitmap.toLogString()}, key='resource1', fromCache=false)",
+            expected = "GlideBitmapTileImage(bitmap=${resource1.bitmap.toLogString()})",
             actual = tileImage1.toString()
         )
         assertEquals(
-            expected = "GlideBitmapTileImage(bitmap=${resource2.bitmap.toLogString()}, key='resource2', fromCache=true)",
+            expected = "GlideBitmapTileImage(bitmap=${resource2.bitmap.toLogString()})",
             actual = tileImage2.toString()
         )
     }

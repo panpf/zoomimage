@@ -180,8 +180,8 @@ class TileDrawHelper(
         val tileBoundsPaint = boundsPaint
         val boundsColor = tileColor(
             state = tileSnapshot.state,
+            from = tileSnapshot.from,
             withinLoadArea = true,
-            fromCache = tileSnapshot.tileImage?.fromCache ?: false,
         )
         tileBoundsPaint.color = boundsColor
 

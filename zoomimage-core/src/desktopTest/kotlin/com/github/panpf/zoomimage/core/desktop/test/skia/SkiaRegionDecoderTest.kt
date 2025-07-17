@@ -28,7 +28,7 @@ class SkiaRegionDecoderTest {
                 right = imageSize.width,
                 bottom = imageSize.height
             )
-            val bitmap = decoder.decodeRegion("", srcRect, 1).bitmap
+            val bitmap = decoder.decodeRegion(srcRect, 1)
             val color = bitmap.getColor(bitmap.width - 1, bitmap.height - 1)
             assertEquals(tileSize.width, bitmap.width)
             assertEquals(tileSize.height, bitmap.height)
@@ -55,7 +55,7 @@ class SkiaRegionDecoderTest {
                 right = imageSize.width + 1,
                 bottom = imageSize.height + 1
             )
-            val bitmap = decoder.decodeRegion("", srcRect, 1).bitmap
+            val bitmap = decoder.decodeRegion(srcRect, 1)
             val color = bitmap.getColor(bitmap.width - 1, bitmap.height - 1)
             assertEquals(tileSize.width, bitmap.width)
             assertEquals(tileSize.height, bitmap.height)
@@ -82,7 +82,7 @@ class SkiaRegionDecoderTest {
                 imageSize.width + 2,
                 imageSize.height + 2
             )
-            val bitmap = decoder.decodeRegion("", srcRect, 1).bitmap
+            val bitmap = decoder.decodeRegion(srcRect, 1)
             val color1 = bitmap.getColor(bitmap.width - 1, bitmap.height - 1)
             val color2 = bitmap.getColor(bitmap.width - 2, bitmap.height - 2)
             assertEquals(tileSize.width, bitmap.width)

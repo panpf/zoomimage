@@ -173,8 +173,8 @@ private fun ContentDrawScope.drawTilesBounds(
         )
         val boundsColor = tileColor(
             state = tileSnapshot.state,
+            from = tileSnapshot.from,
             withinLoadArea = load,
-            fromCache = tileSnapshot.tileImage?.fromCache ?: false,
         )
         drawRect(
             color = Color(boundsColor),

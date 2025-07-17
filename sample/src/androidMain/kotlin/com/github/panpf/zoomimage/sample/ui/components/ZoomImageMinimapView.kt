@@ -98,8 +98,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 }
                 val boundsColor = tileColor(
                     state = tileSnapshot.state,
+                    from = tileSnapshot.from,
                     withinLoadArea = load,
-                    fromCache = tileSnapshot.tileImage?.fromCache ?: false,
                 )
                 tileBoundsPaint.color = boundsColor
                 canvas.drawRect(tileDrawRect, tileBoundsPaint)

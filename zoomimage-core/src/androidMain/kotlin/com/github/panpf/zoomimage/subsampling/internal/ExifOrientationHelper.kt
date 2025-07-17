@@ -119,16 +119,14 @@ class ExifOrientationHelper(val exifOrientation: Int) {
         }
     }
 
-    fun applyToTileImage(
-        tileImage: BitmapTileImage,
+    fun applyToBitmap(
+        bitmap: Bitmap,
         reverse: Boolean = false,
-    ): BitmapTileImage {
+    ): Bitmap {
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!isFlipped && !isRotated) {
-            return tileImage
+            return bitmap
         }
-
-        val bitmap = tileImage.bitmap
 
         val matrix = Matrix().apply {
             if (!reverse) {
@@ -159,8 +157,13 @@ class ExifOrientationHelper(val exifOrientation: Int) {
         val canvas = Canvas(outBitmap)
         val paint = Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG)
         canvas.drawBitmap(bitmap, matrix, paint)
-        return BitmapTileImage(outBitmap, tileImage.key, tileImage.fromCache)
+        return outBitmap
     }
+
+    fun applyToTileImage(
+        tileImage: BitmapTileImage,
+        reverse: Boolean = false,
+    ): BitmapTileImage = BitmapTileImage(applyToBitmap(tileImage.bitmap, reverse))
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

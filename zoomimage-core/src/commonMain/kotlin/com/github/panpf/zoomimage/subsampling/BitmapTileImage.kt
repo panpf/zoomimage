@@ -21,11 +21,8 @@ package com.github.panpf.zoomimage.subsampling
  *
  * @see com.github.panpf.zoomimage.core.common.test.subsampling.BitmapTileImageTest
  */
-open class BitmapTileImage(
-    val bitmap: TileBitmap,
-    override val key: String,
-    override val fromCache: Boolean,
-) : TileImage {
+@Suppress("RedundantConstructorKeyword")
+open class BitmapTileImage constructor(val bitmap: TileBitmap) : TileImage {
 
     override val width: Int = bitmap.width
 
@@ -42,20 +39,14 @@ open class BitmapTileImage(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as BitmapTileImage
-        if (bitmap != other.bitmap) return false
-        if (key != other.key) return false
-        if (fromCache != other.fromCache) return false
-        return true
+        return bitmap == other.bitmap
     }
 
     override fun hashCode(): Int {
-        var result = bitmap.hashCode()
-        result = 31 * result + key.hashCode()
-        result = 31 * result + fromCache.hashCode()
-        return result
+        return bitmap.hashCode()
     }
 
     override fun toString(): String {
-        return "BitmapTileImage(bitmap=${bitmap.toLogString()}, key='$key', fromCache=$fromCache)"
+        return "BitmapTileImage(bitmap=${bitmap.toLogString()})"
     }
 }

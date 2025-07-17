@@ -79,15 +79,11 @@ class SketchBitmapTileImageTest {
             transformedList = null,
             extras = null,
         )
-        SketchBitmapTileImage(cacheValue1, "key1", fromCache = false, "caller1").apply {
+        SketchBitmapTileImage(cacheValue1).apply {
             assertSame(bitmap1, bitmap)
-            assertEquals("key1", key)
-            assertEquals(fromCache, false)
         }
-        SketchBitmapTileImage(cacheValue2, "key2", fromCache = true, "caller1").apply {
+        SketchBitmapTileImage(cacheValue2).apply {
             assertSame(bitmap2, bitmap)
-            assertEquals("key2", key)
-            assertEquals(fromCache, true)
         }
     }
 
@@ -160,24 +156,21 @@ class SketchBitmapTileImageTest {
             extras = null,
         )
 
-        val tileImage1 =
-            SketchBitmapTileImage(cacheValue1, "key1", fromCache = false, "caller1").apply {
-                assertEquals(bitmap1.width, width)
-                assertEquals(bitmap1.height, height)
-                assertEquals(bitmap1.byteCount.toLong(), byteCount)
-            }
-        val tileImage2 =
-            SketchBitmapTileImage(cacheValue2, "key2", fromCache = false, "caller2").apply {
-                assertEquals(bitmap2.width, width)
-                assertEquals(bitmap2.height, height)
-                assertEquals(bitmap2.byteCount.toLong(), byteCount)
-            }
-        val tileImage3 =
-            SketchBitmapTileImage(cacheValue3, "key3", fromCache = false, "caller3").apply {
-                assertEquals(bitmap3.width, width)
-                assertEquals(bitmap3.height, height)
-                assertEquals(bitmap3.byteCount.toLong(), byteCount)
-            }
+        val tileImage1 = SketchBitmapTileImage(cacheValue1).apply {
+            assertEquals(bitmap1.width, width)
+            assertEquals(bitmap1.height, height)
+            assertEquals(bitmap1.byteCount.toLong(), byteCount)
+        }
+        val tileImage2 = SketchBitmapTileImage(cacheValue2).apply {
+            assertEquals(bitmap2.width, width)
+            assertEquals(bitmap2.height, height)
+            assertEquals(bitmap2.byteCount.toLong(), byteCount)
+        }
+        val tileImage3 = SketchBitmapTileImage(cacheValue3).apply {
+            assertEquals(bitmap3.width, width)
+            assertEquals(bitmap3.height, height)
+            assertEquals(bitmap3.byteCount.toLong(), byteCount)
+        }
 
         assertEquals(tileImage1.width, tileImage3.width)
         assertEquals(tileImage1.height, tileImage3.height)
@@ -218,7 +211,7 @@ class SketchBitmapTileImageTest {
             transformedList = null,
             extras = null,
         )
-        val tileImage = SketchBitmapTileImage(cacheValue, "key", fromCache = false, "caller")
+        val tileImage = SketchBitmapTileImage(cacheValue)
         assertEquals(false, tileImage.isRecycled)
         tileImage.recycle()
         Thread.sleep(100)
@@ -273,30 +266,18 @@ class SketchBitmapTileImageTest {
             extras = null,
         )
 
-        val tileImage1 = SketchBitmapTileImage(cacheValue1, "key1", fromCache = false, "caller1")
-        val tileImage12 = SketchBitmapTileImage(cacheValue1, "key1", fromCache = false, "caller1")
-        val tileImage2 = SketchBitmapTileImage(cacheValue2, "key2", fromCache = false, "caller2")
-        val tileImage3 = SketchBitmapTileImage(cacheValue1, "key3", fromCache = false, "caller3")
-        val tileImage4 = SketchBitmapTileImage(cacheValue1, "key4", fromCache = true, "caller4")
+        val tileImage1 = SketchBitmapTileImage(cacheValue1)
+        val tileImage12 = SketchBitmapTileImage(cacheValue1)
+        val tileImage2 = SketchBitmapTileImage(cacheValue2)
 
         assertEquals(expected = tileImage1, actual = tileImage1)
         assertEquals(expected = tileImage1, actual = tileImage12)
         assertNotEquals(illegal = tileImage1, actual = null as Any?)
         assertNotEquals(illegal = tileImage1, actual = Any())
         assertNotEquals(illegal = tileImage1, actual = tileImage2)
-        assertNotEquals(illegal = tileImage1, actual = tileImage3)
-        assertNotEquals(illegal = tileImage1, actual = tileImage4)
-        assertNotEquals(illegal = tileImage2, actual = tileImage3)
-        assertNotEquals(illegal = tileImage2, actual = tileImage4)
-        assertNotEquals(illegal = tileImage3, actual = tileImage4)
 
         assertEquals(expected = tileImage1.hashCode(), actual = tileImage12.hashCode())
         assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage2.hashCode())
-        assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage3.hashCode())
-        assertNotEquals(illegal = tileImage1.hashCode(), actual = tileImage4.hashCode())
-        assertNotEquals(illegal = tileImage2.hashCode(), actual = tileImage3.hashCode())
-        assertNotEquals(illegal = tileImage2.hashCode(), actual = tileImage4.hashCode())
-        assertNotEquals(illegal = tileImage3.hashCode(), actual = tileImage4.hashCode())
     }
 
     @Test
@@ -347,15 +328,15 @@ class SketchBitmapTileImageTest {
             extras = null,
         )
 
-        val tileImage1 = SketchBitmapTileImage(cacheValue1, "key1", fromCache = false, "caller1")
-        val tileImage2 = SketchBitmapTileImage(cacheValue2, "key2", fromCache = true, "caller2")
+        val tileImage1 = SketchBitmapTileImage(cacheValue1)
+        val tileImage2 = SketchBitmapTileImage(cacheValue2)
 
         assertEquals(
-            expected = "SketchBitmapTileImage(bitmap=${bitmap1.toLogString()}, key='key1', fromCache=false, caller='caller1')",
+            expected = "SketchBitmapTileImage(bitmap=${bitmap1.toLogString()})",
             actual = tileImage1.toString()
         )
         assertEquals(
-            expected = "SketchBitmapTileImage(bitmap=${bitmap2.toLogString()}, key='key2', fromCache=true, caller='caller2')",
+            expected = "SketchBitmapTileImage(bitmap=${bitmap2.toLogString()})",
             actual = tileImage2.toString()
         )
     }

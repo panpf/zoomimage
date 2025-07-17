@@ -203,8 +203,8 @@ internal class SubsamplingDrawTilesNode(
 
         val boundsColor = tileColor(
             state = tileSnapshot.state,
+            from = tileSnapshot.from,
             withinLoadArea = true,
-            fromCache = tileSnapshot.tileImage?.fromCache ?: false,
         )
         boundsPaint.color = Color(boundsColor)
 

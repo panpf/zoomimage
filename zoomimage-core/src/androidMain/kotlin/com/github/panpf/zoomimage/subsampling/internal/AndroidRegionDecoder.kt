@@ -16,12 +16,12 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.BitmapRegionDecoder
 import android.graphics.Rect
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
@@ -80,11 +80,7 @@ class AndroidRegionDecoder(
         }.getOrThrow()
     }
 
-    override fun decodeRegion(
-        key: String,
-        region: IntRectCompat,
-        sampleSize: Int
-    ): BitmapTileImage {
+    override fun decodeRegion(region: IntRectCompat, sampleSize: Int): Bitmap {
         prepare()
         val options = BitmapFactory.Options().apply {
             inSampleSize = sampleSize
@@ -93,9 +89,8 @@ class AndroidRegionDecoder(
             .applyToRect(region, imageInfo.size, reverse = true)
         val bitmap = bitmapRegionDecoder!!.decodeRegion(originalRegion.toAndroidRect(), options)
             ?: throw Exception("Invalid image. region decode return null")
-        val tileImage = BitmapTileImage(bitmap, key, fromCache = false)
-        val correctedImage = exifOrientationHelper.applyToTileImage(tileImage)
-        return correctedImage
+        val correctedBitmap = exifOrientationHelper.applyToBitmap(bitmap)
+        return correctedBitmap
     }
 
     override fun close() {

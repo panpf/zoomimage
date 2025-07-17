@@ -30,6 +30,7 @@ data class TileSnapshot(
     val sampleSize: Int,
     val tileImage: TileImage?,
     @TileState val state: Int,
+    @TileImageFrom val from: Int,
     val alpha: Int,
 )
 
@@ -44,5 +45,6 @@ fun Tile.toSnapshot(): TileSnapshot = TileSnapshot(
     sampleSize = sampleSize,
     tileImage = tileImage,
     state = state,
+    from = from,
     alpha = animationState.alpha
 )

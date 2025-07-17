@@ -4,7 +4,7 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
-import com.github.panpf.zoomimage.subsampling.TileImage
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 
 class TestRegionDecoder(
@@ -20,7 +20,7 @@ class TestRegionDecoder(
 
     }
 
-    override fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileImage {
+    override fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap {
         throw UnsupportedOperationException()
     }
 

@@ -33,12 +33,7 @@ class SketchTileImageCache(private val sketch: Sketch) : TileImageCache {
 
     override fun get(key: String): TileImage? {
         val cache = sketch.memoryCache[key] ?: return null
-        return SketchBitmapTileImage(
-            cacheValue = cache,
-            key = key,
-            fromCache = true,
-            caller = "SketchTileImageCache",
-        )
+        return SketchBitmapTileImage(cacheValue = cache)
     }
 
     override fun put(
@@ -71,11 +66,6 @@ class SketchTileImageCache(private val sketch: Sketch) : TileImageCache {
         if (!sketch.memoryCache.put(key, newCacheValue)) {
             return null
         }
-        return SketchBitmapTileImage(
-            cacheValue = newCacheValue,
-            key = tileImage.key,
-            fromCache = tileImage.fromCache,
-            caller = "SketchTileImageCache"
-        )
+        return SketchBitmapTileImage(cacheValue = newCacheValue)
     }
 }

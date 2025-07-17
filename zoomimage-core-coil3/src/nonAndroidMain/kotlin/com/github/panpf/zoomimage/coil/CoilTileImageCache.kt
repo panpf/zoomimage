@@ -39,7 +39,7 @@ actual class CoilTileImageCache actual constructor(
         val cacheValue = imageLoader.memoryCache?.get(MemoryCache.Key(key)) ?: return null
         val image = cacheValue.image as BitmapImage
         val bitmap = image.bitmap
-        return BitmapTileImage(bitmap, key, fromCache = true)
+        return BitmapTileImage(bitmap)
     }
 
     actual override fun put(

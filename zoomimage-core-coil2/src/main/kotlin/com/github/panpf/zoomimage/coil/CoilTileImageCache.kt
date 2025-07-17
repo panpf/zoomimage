@@ -33,7 +33,7 @@ class CoilTileImageCache(private val imageLoader: ImageLoader) : TileImageCache 
     override fun get(key: String): TileImage? {
         val cacheValue = imageLoader.memoryCache?.get(MemoryCache.Key(key)) ?: return null
         val bitmap = cacheValue.bitmap
-        return BitmapTileImage(bitmap, key, fromCache = true)
+        return BitmapTileImage(bitmap)
     }
 
     override fun put(

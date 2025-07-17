@@ -50,6 +50,14 @@ class Tile(
      * The bitmap of the tile
      */
     var tileImage: TileImage? = null
+        private set
+
+    /**
+     * TileImage where from
+     */
+    @TileImageFrom
+    var from: Int = TileImageFrom.UNKNOWN
+        private set
 
     /**
      * The state of the tile
@@ -59,11 +67,12 @@ class Tile(
 
     val animationState = AnimationState()
 
-    fun setTileImage(tileImage: TileImage?, allowAnimate: Boolean) {
+    fun setTileImage(tileImage: TileImage?, @TileImageFrom from: Int, allowAnimate: Boolean) {
         val oldTileImage = this.tileImage
         if (tileImage == oldTileImage) return
         oldTileImage?.setIsDisplayed(false)
         this.tileImage = tileImage
+        this.from = from
         tileImage?.setIsDisplayed(true)
         if (tileImage != null && allowAnimate) {
             animationState.restart()
@@ -73,7 +82,7 @@ class Tile(
     }
 
     fun cleanTileImage() {
-        setTileImage(null, allowAnimate = false)
+        setTileImage(tileImage = null, from = TileImageFrom.UNKNOWN, allowAnimate = false)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -99,6 +108,7 @@ class Tile(
                 "srcRect=${srcRect.toShortString()}," +
                 "srcSize=${srcRect.width}x${srcRect.height}," +
                 "state=${TileState.name(state)}," +
+                "from=${TileImageFrom.name(from)}," +
                 "sampleSize=$sampleSize," +
                 "bitmap=${tileImage})"
     }

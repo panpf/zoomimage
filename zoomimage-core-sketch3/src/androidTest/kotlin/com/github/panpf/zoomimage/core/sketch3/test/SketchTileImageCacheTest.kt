@@ -60,19 +60,14 @@ class SketchTileImageCacheTest {
             transformedList = null,
             extras = null,
         )
-        val tileImage1 = BitmapTileImage(bitmap1, key1, fromCache = false)
+        val tileImage1 = BitmapTileImage(bitmap1)
         val imageInfo1 = ImageInfo(tileImage1.width, tileImage1.height, "image/jpeg")
         val imageUrl1 = "url1"
 
         assertEquals(null, tileImageCache.get(key1))
         tileImageCache.put(key1, tileImage1, imageUrl1, imageInfo1)
         assertEquals(
-            expected = SketchBitmapTileImage(
-                cacheValue1,
-                key1,
-                fromCache = true,
-                "SketchTileImageCache"
-            ),
+            expected = SketchBitmapTileImage(cacheValue1),
             actual = tileImageCache.get(key1)
         )
 
@@ -98,19 +93,14 @@ class SketchTileImageCacheTest {
             transformedList = null,
             extras = null,
         )
-        val tileImage2 = BitmapTileImage(bitmap2, key2, fromCache = false)
+        val tileImage2 = BitmapTileImage(bitmap2)
         val imageInfo2 = ImageInfo(tileImage2.width, tileImage2.height, "image/jpeg")
         val imageUrl2 = "url2"
 
         assertEquals(null, tileImageCache.get(key2))
         tileImageCache.put(key2, tileImage2, imageUrl2, imageInfo2)
         assertEquals(
-            expected = SketchBitmapTileImage(
-                cacheValue2,
-                key2,
-                fromCache = true,
-                "SketchTileImageCache"
-            ),
+            expected = SketchBitmapTileImage(cacheValue2),
             actual = tileImageCache.get(key2)
         )
 

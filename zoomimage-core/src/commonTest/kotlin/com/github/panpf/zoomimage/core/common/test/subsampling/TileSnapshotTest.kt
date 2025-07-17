@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling
 
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileImageFrom
 import com.github.panpf.zoomimage.subsampling.toSnapshot
 import com.github.panpf.zoomimage.test.TestTileImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -15,27 +16,28 @@ class TileSnapshotTest {
 
     @Test
     fun testToSnapshot() {
-        val tileImage1 = TestTileImage("111")
-        val tileImage2 = TestTileImage("222")
+        val tileImage1 = TestTileImage()
+        val tileImage2 = TestTileImage()
         val tile1 = Tile(
             coordinate = IntOffsetCompat(3, 5),
             srcRect = IntRectCompat(1, 5, 99, 57),
             sampleSize = 4
         ).apply {
-            setTileImage(tileImage1, allowAnimate = false)
+            setTileImage(tileImage1, from = TileImageFrom.LOCAL, allowAnimate = false)
         }
         val tile2 = Tile(
             coordinate = IntOffsetCompat(7, 1),
             srcRect = IntRectCompat(135, 589, 555, 779),
             sampleSize = 8
         ).apply {
-            setTileImage(tileImage2, allowAnimate = false)
+            setTileImage(tileImage2, from = TileImageFrom.MEMORY_CACHE, allowAnimate = false)
         }
 
         assertNotEquals(illegal = tile1.coordinate, actual = tile2.coordinate)
         assertNotEquals(illegal = tile1.srcRect, actual = tile2.srcRect)
         assertNotEquals(illegal = tile1.sampleSize, actual = tile2.sampleSize)
         assertNotEquals(illegal = tile1.tileImage, actual = tile2.tileImage)
+        assertNotEquals(illegal = tile1.from, actual = tile2.from)
         assertEquals(expected = tile1.state, actual = tile2.state)
         assertEquals(expected = tile1.animationState.alpha, actual = tile2.animationState.alpha)
 
@@ -45,6 +47,7 @@ class TileSnapshotTest {
             assertEquals(expected = tile1.sampleSize, actual = sampleSize)
             assertSame(expected = tile1.tileImage, actual = tileImage)
             assertEquals(expected = tile1.state, actual = state)
+            assertEquals(expected = tile1.from, actual = from)
             assertEquals(expected = tile1.animationState.alpha, actual = alpha)
         }
         val tileSnapshot12 = tileSnapshot1.copy()
@@ -54,6 +57,7 @@ class TileSnapshotTest {
             assertEquals(expected = tile2.sampleSize, actual = sampleSize)
             assertSame(expected = tile2.tileImage, actual = tileImage)
             assertEquals(expected = tile2.state, actual = state)
+            assertEquals(expected = tile2.from, actual = from)
             assertEquals(expected = tile2.animationState.alpha, actual = alpha)
         }
 

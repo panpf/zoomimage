@@ -32,7 +32,7 @@ class PicassoTileImageCache(private val picasso: Picasso) : TileImageCache {
 
     override fun get(key: String): TileImage? {
         val bitmap = picasso.internalCache[key] ?: return null
-        return BitmapTileImage(bitmap, key, fromCache = true)
+        return BitmapTileImage(bitmap)
     }
 
     override fun put(

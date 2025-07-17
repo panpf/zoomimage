@@ -16,11 +16,11 @@ class ComposeTileImageConvertorTest {
     fun test() = runTest {
         val convertor = ComposeTileImageConvertor()
         val bitmap = createBitmap(1101, 703)
-        val tileImage = BitmapTileImage(bitmap, "bitmap1", fromCache = false)
+        val tileImage = BitmapTileImage(bitmap)
         val newTileImage = convertor.convert(tileImage)
         assertEquals(true, newTileImage is ComposeTileImage)
 
-        val testTileImage = TestTileImage("Test1")
+        val testTileImage = TestTileImage()
         assertFailsWith(ClassCastException::class) {
             convertor.convert(testTileImage)
         }

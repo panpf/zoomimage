@@ -17,15 +17,20 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import androidx.annotation.MainThread
+import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileImage
+import com.github.panpf.zoomimage.subsampling.TileImageFrom
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
+import com.github.panpf.zoomimage.subsampling.height
+import com.github.panpf.zoomimage.subsampling.recycle
 import com.github.panpf.zoomimage.subsampling.toSnapshot
+import com.github.panpf.zoomimage.subsampling.width
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -427,7 +432,11 @@ class TileManager(
             if (cachedValue != null) {
                 val convertedTileImage: TileImage =
                     tileImageConvertor?.convert(cachedValue) ?: cachedValue
-                tile.setTileImage(convertedTileImage, allowAnimate = true)
+                tile.setTileImage(
+                    tileImage = convertedTileImage,
+                    from = TileImageFrom.MEMORY_CACHE,
+                    allowAnimate = true
+                )
                 tile.state = TileState.STATE_LOADED
                 logger.v { "TileManager. loadTile. successful, fromMemory. $tile. '${subsamplingImage.key}'" }
                 updateTileSnapshotList("loadTile:fromMemory")
@@ -438,11 +447,11 @@ class TileManager(
 
                 val decodeResult = withContext(decodeDispatcher) {
                     kotlin.runCatching {
-                        tileDecoder.decode(tileKey, tile.srcRect, tile.sampleSize)
+                        tileDecoder.decode(tile.srcRect, tile.sampleSize)
                     }
                 }
 
-                val tileImage = decodeResult.getOrNull()
+                val tileBitmap = decodeResult.getOrNull()
                 when {
                     decodeResult.isFailure -> {
                         tile.cleanTileImage()
@@ -451,22 +460,23 @@ class TileManager(
                         updateTileSnapshotList("loadTile:failed")
                     }
 
-                    tileImage == null -> {
+                    tileBitmap == null -> {
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
                         logger.e("TileManager. loadTile. failed, bitmap null. $tile. '${subsamplingImage.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
-                    tile.sampleSize == 1 && (tile.srcRect.width != tileImage.width || tile.srcRect.height != tileImage.height) -> {
+                    tile.sampleSize == 1 && (tile.srcRect.width != tileBitmap.width || tile.srcRect.height != tileBitmap.height) -> {
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileImage. '${subsamplingImage.key}'")
-                        tileImage.recycle()
+                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileBitmap. '${subsamplingImage.key}'")
+                        tileBitmap.recycle()
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     isActive -> {
+                        val tileImage = BitmapTileImage(tileBitmap)
                         val cacheTileImage: TileImage = tileImageCacheHelper.put(
                             key = tileKey,
                             tileImage = tileImage,
@@ -475,7 +485,11 @@ class TileManager(
                         ) ?: tileImage
                         val convertedTileImage: TileImage =
                             tileImageConvertor?.convert(cacheTileImage) ?: cacheTileImage
-                        tile.setTileImage(convertedTileImage, allowAnimate = true)
+                        tile.setTileImage(
+                            tileImage = convertedTileImage,
+                            from = TileImageFrom.LOCAL,
+                            allowAnimate = true
+                        )
                         tile.state = TileState.STATE_LOADED
                         logger.v { "TileManager. loadTile. successful. $tile. '${subsamplingImage.key}'" }
                         updateTileSnapshotList("loadTile:successful")
@@ -483,11 +497,11 @@ class TileManager(
 
                     else -> {
                         logger.d {
-                            "TileManager. loadTile. canceled. image=${tileImage}, $tile. '${subsamplingImage.key}'"
+                            "TileManager. loadTile. canceled. bitmap=${tileBitmap}, $tile. '${subsamplingImage.key}'"
                         }
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        tileImage.recycle()
+                        tileBitmap.recycle()
                         updateTileSnapshotList("loadTile:canceled")
                     }
                 }

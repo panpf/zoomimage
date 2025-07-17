@@ -155,20 +155,18 @@ class AndroidRegionDecoderTest {
             .create(SubsamplingImage(imageSource1), imageSource1)
             .use { decodeHelper1 ->
                 bitmap1 = decodeHelper1.decodeRegion(
-                    key = "",
                     region = IntRectCompat(100, 200, 300, 300),
                     sampleSize = 1
-                ).bitmap
+                )
                 bitmap1.apply {
                     assertEquals(200, width)
                     assertEquals(100, height)
                 }
 
                 val bitmap12 = decodeHelper1.decodeRegion(
-                    key = "",
                     region = IntRectCompat(100, 200, 300, 300),
                     sampleSize = 4
-                ).bitmap
+                )
                 bitmap12.apply {
                     assertEquals(50, width)
                     assertEquals(25, height)
@@ -182,10 +180,9 @@ class AndroidRegionDecoderTest {
             .use { tileDecoder2 ->
                 bitmap2 = tileDecoder2
                     .decodeRegion(
-                        key = "",
                         region = IntRectCompat(100, 200, 300, 300),
                         sampleSize = 1
-                    ).bitmap
+                    )
                 bitmap2.apply {
                     assertEquals(200, width)
                     assertEquals(100, height)

@@ -10,6 +10,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
   cache. [#100](https://github.com/panpf/zoomimage/issues/100)
 * fix: Fixed a bug where subsampling never decodes pixels in the last column and the last
   row. [#101](https://github.com/panpf/zoomimage/issues/101)
+* break: The return result of RegionDecoder.decodeRegion() is changed from TileImage to TileBitmap
+* break: Remove the key and fromCache properties of TileImage
 
 # 1.4.0-beta03
 

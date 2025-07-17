@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.core.BuildKonfig
-import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
@@ -79,11 +78,7 @@ class SkiaRegionDecoder(
 
     }
 
-    override fun decodeRegion(
-        key: String,
-        region: IntRectCompat,
-        sampleSize: Int
-    ): BitmapTileImage {
+    override fun decodeRegion(region: IntRectCompat, sampleSize: Int): Bitmap {
         // Image will parse exif orientation and does not support closing
         val finalRegionRect = region.limitTo(regionRectBounds)
         val widthValue = finalRegionRect.width / sampleSize.toDouble()
@@ -99,7 +94,7 @@ class SkiaRegionDecoder(
             src = finalRegionRect.toSkiaRect(),
             dst = Rect.makeWH(bitmapWidth.toFloat(), bitmapHeight.toFloat())
         )
-        return BitmapTileImage(bitmap, key, fromCache = false)
+        return bitmap
     }
 
     override fun close() {
