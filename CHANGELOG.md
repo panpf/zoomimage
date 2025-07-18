@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.4.0-beta04
 
 * fix: Fixed all bugs in which ZoomImageView does not restore subsampling when attached again after
   detached. [#99](https://github.com/panpf/zoomimage/issues/99)
