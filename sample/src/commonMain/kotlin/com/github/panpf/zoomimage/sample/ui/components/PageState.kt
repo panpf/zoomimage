@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_error_baseline
+import com.github.panpf.zoomimage.sample.util.ifLet
 import org.jetbrains.compose.resources.painterResource
 
 @Stable
@@ -42,16 +43,22 @@ sealed interface PageState {
 }
 
 @Composable
-fun PageState(pageState: PageState?, modifier: Modifier = Modifier.fillMaxSize()) {
+fun PageState(
+    pageState: PageState?,
+    modifier: Modifier = Modifier.fillMaxSize(),
+    loadingInterceptClick: Boolean = true
+) {
     val colorScheme = MaterialTheme.colorScheme
     when (pageState) {
         is PageState.Loading -> {
             Box(
-                modifier.clickable(
-                    onClick = {},
-                    indication = null,  // Remove ripple effect on click
-                    interactionSource = remember { MutableInteractionSource() }
-                )
+                modifier.ifLet(loadingInterceptClick) {
+                    it.clickable(
+                        onClick = {},
+                        indication = null,  // Remove ripple effect on click
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+                }
             ) {
                 CircularProgressIndicator(Modifier.size(30.dp).align(Alignment.Center))
             }

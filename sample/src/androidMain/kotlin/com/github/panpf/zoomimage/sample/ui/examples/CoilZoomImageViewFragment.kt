@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.sample.ui.examples
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import coil3.SingletonImageLoader
 import coil3.load
 import coil3.request.crossfade
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
@@ -28,6 +29,7 @@ import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.util.findPlaceholderFromMemoryCache
 
 class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>() {
 
@@ -46,9 +48,14 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
         val model = sketchUri2CoilModel(requireContext(), args.imageUri)
         zoomView.load(model) {
             precision(coil3.size.Precision.INEXACT)
+
+            val placeholderImage = args.placeholderImageUri?.let {
+                findPlaceholderFromMemoryCache(SingletonImageLoader.get(zoomView.context), it)
+            }
+            placeholder(placeholderImage)
             crossfade(true)
             listener(
-                onStart = { stateView.loading() },
+                onStart = { stateView.loading(interceptClick = false) },
                 onSuccess = { _, _ -> stateView.gone() },
                 onError = { _, result ->
                     stateView.error {
@@ -78,7 +85,10 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
             absoluteAdapterPosition: Int,
             data: Photo
         ): Fragment = CoilZoomImageViewFragment().apply {
-            arguments = CoilZoomImageViewFragmentArgs(data.originalUrl).toBundle()
+            arguments = CoilZoomImageViewFragmentArgs(
+                imageUri = data.originalUrl,
+                placeholderImageUri = data.listThumbnailUrl
+            ).toBundle()
         }
     }
 }

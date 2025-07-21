@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.request.ErrorResult
+import coil3.request.ImageRequest
 import coil3.request.SuccessResult
+import coil3.request.crossfade
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.InfoItems
 import com.github.panpf.zoomimage.sample.ui.components.MyDialog
@@ -43,7 +45,10 @@ fun CoilPhotoGridItem(
     var result by remember { mutableStateOf<coil3.request.ImageResult?>(null) }
     val sketchImageUri = photo.listThumbnailUrl
     val coilModel = remember(sketchImageUri) {
-        sketchUri2CoilModel(context, sketchImageUri)
+        ImageRequest.Builder(context).apply {
+            data(sketchUri2CoilModel(context, sketchImageUri))
+            crossfade(true)
+        }.build()
     }
     coil3.compose.AsyncImage(
         model = coilModel,

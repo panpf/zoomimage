@@ -46,8 +46,9 @@ class StateView @JvmOverloads constructor(
         }
     }
 
-    fun loading() {
+    fun loading(interceptClick: Boolean = true) {
         binding.loadingLayout.isVisible = true
+        binding.loadingLayout.isClickable = interceptClick
         binding.emptyLayout.isVisible = false
         binding.errorLayout.isVisible = false
         isVisible = true

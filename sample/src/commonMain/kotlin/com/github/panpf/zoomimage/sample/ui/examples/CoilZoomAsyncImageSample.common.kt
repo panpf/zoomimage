@@ -8,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
+import coil3.compose.asPainter
 import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
 import coil3.size.Precision
@@ -21,6 +23,7 @@ import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.capturable
+import com.github.panpf.zoomimage.sample.ui.util.findPlaceholderFromMemoryCache
 import kotlinx.collections.immutable.toImmutableList
 
 expect fun platformCoilComposeSubsamplingImageGenerator(): List<CoilComposeSubsamplingImageGenerator>?
@@ -65,11 +68,18 @@ fun CoilZoomAsyncImageSample(
                 )
             }.build()
         }
+        val placeholderPainter = remember {
+            findPlaceholderFromMemoryCache(
+                SingletonImageLoader.get(context),
+                photo.listThumbnailUrl
+            )?.asPainter(context)
+        }
         CoilZoomAsyncImage(
             model = request,
             contentDescription = "view image",
             contentScale = contentScale,
             alignment = alignment,
+            placeholder = placeholderPainter,
             modifier = Modifier
                 .fillMaxSize()
                 .capturable(capturableState),
@@ -78,6 +88,6 @@ fun CoilZoomAsyncImageSample(
             onLongPress = { onLongClick.invoke() },
         )
 
-        PageState(pageState = pageState)
+        PageState(pageState = pageState, loadingInterceptClick = false)
     }
 }

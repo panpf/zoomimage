@@ -18,8 +18,11 @@ package com.github.panpf.zoomimage.sample.ui.examples
 
 import android.content.Context
 import android.widget.ImageView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.FragmentManager
 import coil3.load
+import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
 import coil3.result
@@ -51,9 +54,21 @@ class CoilPhotoGridItemFactory(val fragmentManager: FragmentManager) : BasePhoto
 
     override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         imageView.load(sketchUri2CoilModel(imageView.context, sketchImageUri)) {
-            placeholder(R.drawable.im_placeholder)
-            error(R.drawable.im_error)
-            // Cannot use crossfade, there is a bug
+            placeholder(
+                drawable = ResourcesCompat.getColor(
+                    /* res = */ imageView.context.resources,
+                    /* id = */ R.color.md_theme_primaryContainer,
+                    /* theme = */ null
+                ).toDrawable()
+            )
+            error(
+                drawable = ResourcesCompat.getColor(
+                    /* res = */ imageView.context.resources,
+                    /* id = */ R.color.md_theme_errorContainer,
+                    /* theme = */ null
+                ).toDrawable()
+            )
+            crossfade(true)
         }
     }
 }
