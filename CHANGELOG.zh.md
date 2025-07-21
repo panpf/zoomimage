@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+* depend: 更新 sketch 4.3.1
+
 # 1.4.0-beta04
 
 * fix: 修复所有 ZoomImageView 在 detached 之后再次 attached 时不会恢复子采样的

@@ -2,6 +2,10 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+* depend: Update sketch to 4.3.1
+
 # 1.4.0-beta04
 
 * fix: Fixed all bugs in which ZoomImageView does not restore subsampling when attached again after
