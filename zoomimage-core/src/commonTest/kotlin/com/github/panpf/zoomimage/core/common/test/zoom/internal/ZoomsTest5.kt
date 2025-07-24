@@ -486,4 +486,7 @@ class ZoomsTest5 {
             )
         )
     }
+
+    // TODO test rubberBandWithDistance
+    // TODO test limitOffsetWithRubberBand
 }

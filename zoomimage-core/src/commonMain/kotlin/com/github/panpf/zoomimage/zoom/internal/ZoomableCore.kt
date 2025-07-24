@@ -745,11 +745,14 @@ class ZoomableCore constructor(
         val limitedTargetUserOffset = limitUserOffset(
             newUserOffset = targetUserOffset,
             newUserScale = limitedTargetUserScale,
+//            rubberBandMode = true,
+//            currentUserOffset = currentUserOffset,
         )
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactorCompat(limitedTargetUserScale),
             offset = limitedTargetUserOffset
         )
+        // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
         logger.d {
             val targetAddUserScale = targetUserScale - currentUserScale
             val limitedAddUserScale = limitedTargetUserScale - currentUserScale
@@ -757,15 +760,18 @@ class ZoomableCore constructor(
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "$module. gestureTransform. " +
                     "centroid=${centroid.toShortString()}, " +
-                    "panChange=${panChange.toShortString()}, " +
                     "zoomChange=${zoomChange.format(4)}, " +
+                    "userScale=${currentUserScale.format(4)} " +
+                    "-> ${targetUserScale.format(4)}(${targetAddUserScale.format(4)}) " +
+                    "-> ${limitedTargetUserScale.format(4)}(${limitedAddUserScale.format(4)}), " +
+                    "panChange=${panChange.toShortString()}, " +
+                    "userOffset=${currentUserOffset.toShortString()} " +
+                    "-> ${targetUserOffset.toShortString()}(${targetAddUserOffset.toShortString()}) " +
+                    "-> ${limitedTargetUserOffset.toShortString()}(${limitedTargetAddOffset.toShortString()}), " +
                     "rotationChange=${rotationChange.format(4)}. " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "targetUserScale=${targetUserScale.format(4)}, " +
-                    "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
-                    "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
         }
+        // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
         updateUserTransform(limitedTargetUserTransform)
     }
@@ -933,6 +939,8 @@ class ZoomableCore constructor(
     private fun limitUserOffset(
         newUserOffset: OffsetCompat,
         newUserScale: Float,
+        rubberBandMode: Boolean = false,
+        currentUserOffset: OffsetCompat? = null,
     ): OffsetCompat {
         val userOffsetBoundsRect = calculateUserOffsetBounds(
             containerSize = containerSize,
@@ -945,7 +953,19 @@ class ZoomableCore constructor(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
         ).round().toRect()      // round() makes sense
-        return newUserOffset.limitTo(userOffsetBoundsRect)
+        return if (rubberBandMode && currentUserOffset != null) {
+            limitOffsetWithRubberBand(
+                currentUserOffset = currentUserOffset,
+                newUserOffset = newUserOffset,
+                userOffsetBoundsRect = userOffsetBoundsRect,
+                maxDistance = OffsetCompat(
+                    x = containerSize.width * 0.25f,
+                    y = containerSize.height * 0.25f
+                )
+            )
+        } else {
+            newUserOffset.limitTo(userOffsetBoundsRect)
+        }
     }
 
     private suspend fun animatedUpdateUserTransform(

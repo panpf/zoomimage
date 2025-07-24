@@ -1100,7 +1100,7 @@ fun limitScaleWithRubberBand(
         if (targetScale < rubberBandMaxScale) {
             val overScale = targetScale - maxScale
             val overMaxScale = rubberBandMaxScale - maxScale
-            val progress = overScale / overMaxScale
+            val progress = overScale / overMaxScale   // TODO progress adds interpolation
             // Multiplying by 0.5f is to be a little slower
             val limitedAddScale = addScale * (1 - progress) * 0.5f
             currentScale + limitedAddScale
@@ -1115,7 +1115,7 @@ fun limitScaleWithRubberBand(
         if (targetScale > rubberBandMinScale) {
             val overScale = targetScale - minScale
             val overMinScale = rubberBandMinScale - minScale
-            val progress = overScale / overMinScale
+            val progress = overScale / overMinScale   // TODO progress adds interpolation
             // Multiplying by 0.5f is to be a little slower
             val limitedAddScale = addScale * (1 - progress) * 0.5f
             currentScale + limitedAddScale
@@ -1399,3 +1399,58 @@ fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
             && one.offsetX.aboutEquals(two.offsetX, delta = 1f, scale = 2)
             && one.offsetY.aboutEquals(two.offsetY, delta = 1f, scale = 2)
 }
+
+fun rubberBandWithDistance(
+    currentValue: Float,
+    newValue: Float,
+    minValue: Float,
+    maxValue: Float,
+    maxDistance: Float,
+): Float {
+    if (maxDistance == 0f) {
+        return newValue.coerceIn(minValue, maxValue)
+    }
+    if (newValue < minValue) {
+        val add = newValue - currentValue
+        val overflow = minValue - newValue
+        val progress = overflow / maxDistance   // TODO progress adds interpolation
+        return currentValue + add * (1f - progress)
+    }
+    if (newValue > maxValue) {
+        val add = newValue - currentValue
+        val overflow = newValue - maxValue
+        val progress = overflow / maxDistance   // TODO progress adds interpolation
+        return currentValue + add * (1f - progress)
+    }
+    return newValue
+}
+
+fun limitOffsetWithRubberBand(
+    currentUserOffset: OffsetCompat,
+    newUserOffset: OffsetCompat,
+    userOffsetBoundsRect: RectCompat,
+    maxDistance: OffsetCompat,
+): OffsetCompat = OffsetCompat(
+    x = if (userOffsetBoundsRect.left != userOffsetBoundsRect.right) {
+        rubberBandWithDistance(
+            currentValue = currentUserOffset.x,
+            newValue = newUserOffset.x,
+            minValue = userOffsetBoundsRect.left,
+            maxValue = userOffsetBoundsRect.right,
+            maxDistance = maxDistance.x
+        )
+    } else {
+        newUserOffset.x.coerceIn(userOffsetBoundsRect.left, userOffsetBoundsRect.right)
+    },
+    y = if (userOffsetBoundsRect.top != userOffsetBoundsRect.bottom) {
+        rubberBandWithDistance(
+            currentValue = currentUserOffset.y,
+            newValue = newUserOffset.y,
+            minValue = userOffsetBoundsRect.top,
+            maxValue = userOffsetBoundsRect.bottom,
+            maxDistance = maxDistance.y
+        )
+    } else {
+        newUserOffset.y.coerceIn(userOffsetBoundsRect.top, userOffsetBoundsRect.bottom)
+    },
+)
