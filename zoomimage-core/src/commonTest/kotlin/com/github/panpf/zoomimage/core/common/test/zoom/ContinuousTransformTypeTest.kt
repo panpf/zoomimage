@@ -13,13 +13,15 @@ class ContinuousTransformTypeTest {
         assertEquals(4, ContinuousTransformType.LOCATE)
         assertEquals(8, ContinuousTransformType.GESTURE)
         assertEquals(16, ContinuousTransformType.FLING)
+        assertEquals(32, ContinuousTransformType.ROLLBACK)
     }
 
     @Test
     fun testValues() {
-        assertEquals(listOf(1, 2, 4, 8, 16), ContinuousTransformType.values)
+        assertEquals(listOf(1, 2, 4, 8, 16, 32), ContinuousTransformType.values)
     }
 
+    @Suppress("WrongConstant")
     @Test
     fun testName() {
         assertEquals("SCALE", ContinuousTransformType.name(ContinuousTransformType.SCALE))
@@ -27,9 +29,10 @@ class ContinuousTransformTypeTest {
         assertEquals("LOCATE", ContinuousTransformType.name(ContinuousTransformType.LOCATE))
         assertEquals("GESTURE", ContinuousTransformType.name(ContinuousTransformType.GESTURE))
         assertEquals("FLING", ContinuousTransformType.name(ContinuousTransformType.FLING))
+        assertEquals("ROLLBACK", ContinuousTransformType.name(ContinuousTransformType.ROLLBACK))
         assertEquals("UNKNOWN", ContinuousTransformType.name(ContinuousTransformType.NONE))
         assertEquals("UNKNOWN", ContinuousTransformType.name(-1))
-        assertEquals("UNKNOWN", ContinuousTransformType.name(ContinuousTransformType.FLING * 2))
+        assertEquals("UNKNOWN", ContinuousTransformType.name(ContinuousTransformType.ROLLBACK * 2))
     }
 
     @Test
@@ -65,6 +68,11 @@ class ContinuousTransformTypeTest {
             actual = ContinuousTransformType.parse(ContinuousTransformType.FLING)
                 .map { ContinuousTransformType.name(it) }
         )
+        assertEquals(
+            expected = listOf("ROLLBACK"),
+            actual = ContinuousTransformType.parse(ContinuousTransformType.ROLLBACK)
+                .map { ContinuousTransformType.name(it) }
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET"),
@@ -90,6 +98,12 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.FLING
             ).map { ContinuousTransformType.name(it) }
         )
+        assertEquals(
+            expected = listOf("SCALE", "ROLLBACK"),
+            actual = ContinuousTransformType.parse(
+                ContinuousTransformType.SCALE or ContinuousTransformType.ROLLBACK
+            ).map { ContinuousTransformType.name(it) }
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET", "LOCATE"),
@@ -109,6 +123,12 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.FLING
             ).map { ContinuousTransformType.name(it) }
         )
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "ROLLBACK"),
+            actual = ContinuousTransformType.parse(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.ROLLBACK
+            ).map { ContinuousTransformType.name(it) }
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE"),
@@ -122,6 +142,12 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.FLING
             ).map { ContinuousTransformType.name(it) }
         )
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "ROLLBACK"),
+            actual = ContinuousTransformType.parse(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.ROLLBACK
+            ).map { ContinuousTransformType.name(it) }
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING"),
@@ -129,11 +155,24 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
             ).map { ContinuousTransformType.name(it) }
         )
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "ROLLBACK"),
+            actual = ContinuousTransformType.parse(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.ROLLBACK
+            ).map { ContinuousTransformType.name(it) }
+        )
 
         assertEquals(
-            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING"),
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING", "ROLLBACK"),
             actual = ContinuousTransformType.parse(
-                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING or ContinuousTransformType.FLING * 2
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING or ContinuousTransformType.ROLLBACK
+            ).map { ContinuousTransformType.name(it) }
+        )
+
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING", "ROLLBACK"),
+            actual = ContinuousTransformType.parse(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING or ContinuousTransformType.ROLLBACK or ContinuousTransformType.ROLLBACK * 2
             ).map { ContinuousTransformType.name(it) }
         )
     }
@@ -165,6 +204,10 @@ class ContinuousTransformTypeTest {
             expected = listOf("FLING"),
             actual = ContinuousTransformType.names(ContinuousTransformType.FLING)
         )
+        assertEquals(
+            expected = listOf("ROLLBACK"),
+            actual = ContinuousTransformType.names(ContinuousTransformType.ROLLBACK)
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET"),
@@ -190,6 +233,12 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.FLING
             )
         )
+        assertEquals(
+            expected = listOf("SCALE", "ROLLBACK"),
+            actual = ContinuousTransformType.names(
+                ContinuousTransformType.SCALE or ContinuousTransformType.ROLLBACK
+            )
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET", "LOCATE"),
@@ -209,6 +258,12 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.FLING
             )
         )
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "ROLLBACK"),
+            actual = ContinuousTransformType.names(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.ROLLBACK
+            )
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE"),
@@ -222,6 +277,12 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.FLING
             )
         )
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "ROLLBACK"),
+            actual = ContinuousTransformType.names(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.ROLLBACK
+            )
+        )
 
         assertEquals(
             expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING"),
@@ -229,11 +290,24 @@ class ContinuousTransformTypeTest {
                 ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
             )
         )
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "ROLLBACK"),
+            actual = ContinuousTransformType.names(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.ROLLBACK
+            )
+        )
 
         assertEquals(
-            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING"),
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING", "ROLLBACK"),
             actual = ContinuousTransformType.names(
-                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING or ContinuousTransformType.FLING * 2
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING or ContinuousTransformType.ROLLBACK
+            )
+        )
+
+        assertEquals(
+            expected = listOf("SCALE", "OFFSET", "LOCATE", "GESTURE", "FLING", "ROLLBACK"),
+            actual = ContinuousTransformType.names(
+                ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING or ContinuousTransformType.ROLLBACK or ContinuousTransformType.ROLLBACK * 2
             )
         )
     }

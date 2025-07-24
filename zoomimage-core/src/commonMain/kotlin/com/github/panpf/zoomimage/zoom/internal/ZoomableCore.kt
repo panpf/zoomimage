@@ -713,39 +713,6 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun rollbackScale(focus: OffsetCompat? = null): Boolean = coroutineScope {
-        val containerSize =
-            containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
-        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
-
-        val currentScale = transform.scaleX
-        val minScale = minScale
-        val maxScale = maxScale
-        val targetScale = when {
-            currentScale.format(2) > maxScale.format(2) -> maxScale
-            currentScale.format(2) < minScale.format(2) -> minScale
-            else -> null
-        }
-        if (targetScale != null) {
-            val startScale = currentScale
-            val endScale = targetScale
-            val finalFocus = focus ?: containerSize.toSize().center
-            val centroidContentPoint = touchPointToContentPoint(finalFocus)
-            logger.d {
-                "$module. rollbackScale. " +
-                        "focus=${focus?.toShortString()}. " +
-                        "startScale=${startScale.format(4)}, " +
-                        "endScale=${endScale.format(4)}"
-            }
-            scale(
-                targetScale = endScale,
-                centroidContentPoint = centroidContentPoint,
-                animated = true
-            )
-        }
-        targetScale != null
-    }
-
     suspend fun gestureTransform(
         centroid: OffsetCompat,
         panChange: OffsetCompat,
@@ -800,6 +767,84 @@ class ZoomableCore constructor(
 
         updateUserTransform(limitedTargetUserTransform)
     }
+
+    suspend fun rollback(focus: OffsetCompat? = null): Boolean = coroutineScope {
+        val containerSize =
+            containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
+        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
+        val currentScale = transform.scaleX
+        val currentBaseTransform = baseTransform
+        val currentUserTransform = userTransform
+        val currentUserOffset = currentUserTransform.offset
+        val currentUserScale = currentUserTransform.scale.scaleX
+        val userOffsetBoundsRect = userOffsetBoundsRect
+        val minScale = minScale
+        val maxScale = maxScale
+
+        val scaleOutOfRange = currentScale.format(2) > maxScale.format(2)
+                || currentScale.format(2) < minScale.format(2)
+        // userOffsetBoundsRect.left == userOffsetBoundsRect.right Indicates that offset is not allowed in the horizontal direction
+        val offsetXOutOfRange = userOffsetBoundsRect.left != userOffsetBoundsRect.right
+                && (currentUserOffset.x < userOffsetBoundsRect.left || currentUserOffset.x > userOffsetBoundsRect.right)
+        // userOffsetBoundsRect.top == userOffsetBoundsRect.bottom Indicates that offset is not allowed in the vertical direction
+        val offsetYOutOfRange = userOffsetBoundsRect.top != userOffsetBoundsRect.bottom
+                && (currentUserOffset.y < userOffsetBoundsRect.top || currentUserOffset.y > userOffsetBoundsRect.bottom)
+        val offsetOutOfRange = offsetXOutOfRange || offsetYOutOfRange
+        if (!scaleOutOfRange && !offsetOutOfRange) {
+            return@coroutineScope false
+        }
+
+        val finalFocus = focus ?: containerSize.toSize().center
+        val centroidContentPoint = touchPointToContentPoint(finalFocus)
+        val targetScale = currentScale.coerceIn(minScale, maxScale)
+        val targetUserScale = targetScale / currentBaseTransform.scaleX
+        val limitedTargetUserScale = limitUserScale(targetUserScale)
+        val touchPoint = contentPointToTouchPoint(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
+            rotation = rotation,
+            userScale = currentUserScale,
+            userOffset = currentUserOffset,
+            contentPoint = centroidContentPoint,
+        )
+        val targetUserOffset = calculateScaleUserOffset(
+            currentUserScale = currentUserTransform.scaleX,
+            currentUserOffset = currentUserTransform.offset,
+            targetUserScale = limitedTargetUserScale,
+            centroid = touchPoint,
+        )
+        val limitedTargetUserOffset = limitUserOffset(
+            newUserOffset = targetUserOffset,
+            userScale = limitedTargetUserScale,
+        )
+        val newUserTransform = currentUserTransform.copy(
+            scale = ScaleFactorCompat(limitedTargetUserScale),
+            offset = limitedTargetUserOffset
+        )
+
+        logger.d {
+            "$module. rollback. " +
+                    "focus=${focus?.toShortString()}. " +
+                    "currentScale=${currentScale.format(4)}, " +
+                    "minScale=${minScale.format(4)}, " +
+                    "maxScale=${maxScale.format(4)}, " +
+                    "userOffsetBoundsRect=${userOffsetBoundsRect.toShortString()}, " +
+                    "currentUserOffset=${currentUserOffset.toShortString()}"
+        }
+        animatedUpdateUserTransform(
+            targetUserTransform = newUserTransform,
+            newContinuousTransformType = ContinuousTransformType.ROLLBACK,
+            animationSpec = animationSpec,
+            caller = "rollback"
+        )
+        return@coroutineScope true
+    }
+
+    @Deprecated(message = "Use `rollback()` instead", replaceWith = ReplaceWith("rollback(focus)"))
+    suspend fun rollbackScale(focus: OffsetCompat? = null): Boolean = rollback(focus)
 
     suspend fun fling(velocity: OffsetCompat, extras: Map<String, Any>): Boolean = coroutineScope {
         val containerSize = containerSize.takeIf { it.isNotEmpty() }

@@ -4,6 +4,7 @@
 
 # new
 
+* new: ContinuousTransformType 新增 ROLLBACK 类型
 * depend: 更新 sketch 4.3.1
 
 # 1.4.0-beta04

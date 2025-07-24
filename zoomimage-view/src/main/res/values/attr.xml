@@ -42,6 +42,7 @@
             <flag name="locate" value="4" />
             <flag name="gesture" value="8" />
             <flag name="fling" value="16" />
+            <flag name="rollback" value="32" />
         </attr>
 
         <attr name="disabledScrollBar" format="boolean" />

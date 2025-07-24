@@ -655,8 +655,8 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
 
     internal suspend fun stopAllAnimation(caller: String) = zoomableCore.stopAllAnimation(caller)
 
-    internal suspend fun rollbackScale(centroid: Offset? = null): Boolean =
-        zoomableCore.rollbackScale(centroid?.toCompat())
+    internal suspend fun rollback(centroid: Offset? = null): Boolean =
+        zoomableCore.rollback(centroid?.toCompat())
 
     internal suspend fun gestureTransform(
         centroid: Offset,

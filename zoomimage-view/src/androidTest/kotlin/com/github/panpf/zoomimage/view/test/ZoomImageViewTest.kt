@@ -1143,6 +1143,13 @@ class ZoomImageViewTest {
                     .subsampling.pausedContinuousTransformTypesState.value
             )
             assertEquals(
+                expected = ContinuousTransformType.ROLLBACK,
+                actual = LayoutInflater.from(context)
+                    .inflate(R.layout.zoom_image_paused_continuous_transform_types_rollback, null)
+                    .let { it as ZoomImageView }
+                    .subsampling.pausedContinuousTransformTypesState.value
+            )
+            assertEquals(
                 expected = ContinuousTransformType.values.fold(0) { last, curr -> last or curr },
                 actual = LayoutInflater.from(context)
                     .inflate(R.layout.zoom_image_paused_continuous_transform_types_all, null)

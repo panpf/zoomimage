@@ -72,7 +72,10 @@ class TileManager(
 
     companion object {
         const val DefaultPausedContinuousTransformTypes =
-            ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE
+            ContinuousTransformType.SCALE or
+                    ContinuousTransformType.OFFSET or
+                    ContinuousTransformType.LOCATE or
+                    ContinuousTransformType.ROLLBACK
     }
 
     private val decodeDispatcher: CoroutineDispatcher =

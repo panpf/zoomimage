@@ -3429,7 +3429,7 @@ class ZoomableCoreTest {
     }
 
     @Test
-    fun testRollbackScale() = runTest {
+    fun testRollback() = runTest {
         val continuousTransformTypes = mutableListOf<Int>()
         val zoomableCore = ZoomableCore(
             logger = Logger(tag = "Test"),
@@ -3451,19 +3451,19 @@ class ZoomableCoreTest {
         }
 
         assertEquals(0.22f, zoomableCore.transform.scaleX.format(2))
-        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollbackScale() })
+        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollback() })
 
         withContext(Dispatchers.Main) {
             zoomableCore.scale(zoomableCore.mediumScale)
         }
         assertEquals(6.4f, zoomableCore.transform.scaleX.format(2))
-        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollbackScale() })
+        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollback() })
 
         withContext(Dispatchers.Main) {
             zoomableCore.scale(zoomableCore.maxScale)
         }
         assertEquals(19.2f, zoomableCore.transform.scaleX.format(2))
-        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollbackScale() })
+        assertFalse(withContext(Dispatchers.Main) { zoomableCore.rollback() })
 
         withContext(Dispatchers.Main) {
             zoomableCore.gestureTransform(
@@ -3479,7 +3479,7 @@ class ZoomableCoreTest {
         var result: Boolean
         val duration = measureTime {
             withContext(Dispatchers.Main) {
-                result = zoomableCore.rollbackScale()
+                result = zoomableCore.rollback()
             }
         }
         assertTrue(result)
@@ -3491,7 +3491,7 @@ class ZoomableCoreTest {
         )
         assertEquals(
             expected = continuousTransformTypes.size - 1,
-            actual = continuousTransformTypes.count { it == ContinuousTransformType.SCALE },
+            actual = continuousTransformTypes.count { it == ContinuousTransformType.ROLLBACK },
             message = continuousTransformTypes.joinToString()
         )
         assertTrue(
@@ -3518,7 +3518,7 @@ class ZoomableCoreTest {
         val duration2 = measureTime {
             withContext(Dispatchers.Main) {
                 zoomableCore.setAnimationSpec(TestZoomAnimationSpec(500))
-                result2 = zoomableCore.rollbackScale()
+                result2 = zoomableCore.rollback()
             }
         }
         assertTrue(result2)

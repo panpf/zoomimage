@@ -189,21 +189,18 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                                 "supportDrag=$supportDrag"
                     }
                     if (longPressExecuted || doubleTapExecuted) return@launch
-                    if (supportOneFingerScale && oneFingerScaleExecuted) {
-                        if (!zoomable.rollbackScale(doubleTapPressPoint!!)) {
-                            zoomable.setContinuousTransformType(ContinuousTransformType.NONE)
-                        }
+
+                    val focus = when {
+                        supportOneFingerScale && oneFingerScaleExecuted -> doubleTapPressPoint
+                        supportTwoFingerScale && twoFingerScaleCentroid != null -> twoFingerScaleCentroid
+                        else -> null
+                    }
+                    if (zoomable.rollback(focus)) {
+                        // If the rollback is successfully executed, nothing needs to be done
+                    } else if (supportDrag && zoomable.fling(velocity)) {
+                        // If the fling is successfully executed, nothing needs to be done
                     } else {
-                        val rollbackScaleExecuted = supportTwoFingerScale
-                                && twoFingerScaleCentroid != null
-                                && zoomable.rollbackScale(twoFingerScaleCentroid)
-                        var flingExecuted = false
-                        if (!rollbackScaleExecuted) {
-                            flingExecuted = supportDrag && zoomable.fling(velocity)
-                        }
-                        if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
-                            zoomable.setContinuousTransformType(ContinuousTransformType.NONE)
-                        }
+                        zoomable.setContinuousTransformType(ContinuousTransformType.NONE)
                     }
                 }
             },

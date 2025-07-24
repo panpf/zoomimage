@@ -325,22 +325,19 @@ internal class ZoomableNode(
                                 "supportDrag=$supportDrag"
                     }
                     if (longPressExecuted || doubleTapExecuted) return@launch
-                    if (supportOneFingerScale && oneFingerScaleExecuted) {
-                        if (!zoomable.rollbackScale(doubleTapPressPoint!!)) {
-                            zoomable.setContinuousTransformType(ContinuousTransformType.NONE)
-                        }
+
+                    val density = currentValueOf(LocalDensity)
+                    val centroid = when {
+                        supportOneFingerScale && oneFingerScaleExecuted -> doubleTapPressPoint
+                        supportTwoFingerScale && twoFingerScaleCentroid != null -> twoFingerScaleCentroid
+                        else -> null
+                    }
+                    if (zoomable.rollback(centroid)) {
+                        // If the rollback is successfully executed, nothing needs to be done
+                    } else if (supportDrag && zoomable.fling(velocity, density)) {
+                        // If the fling is successfully executed, nothing needs to be done
                     } else {
-                        val rollbackScaleExecuted = supportTwoFingerScale
-                                && twoFingerScaleCentroid != null
-                                && zoomable.rollbackScale(twoFingerScaleCentroid)
-                        var flingExecuted = false
-                        if (!rollbackScaleExecuted) {
-                            val density = currentValueOf(LocalDensity)
-                            flingExecuted = supportDrag && zoomable.fling(velocity, density)
-                        }
-                        if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
-                            zoomable.setContinuousTransformType(ContinuousTransformType.NONE)
-                        }
+                        zoomable.setContinuousTransformType(ContinuousTransformType.NONE)
                     }
                 }
             }

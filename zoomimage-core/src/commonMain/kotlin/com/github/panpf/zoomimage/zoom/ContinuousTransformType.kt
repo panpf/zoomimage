@@ -22,6 +22,7 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.GESTURE
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.LOCATE
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.NONE
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.OFFSET
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.ROLLBACK
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.SCALE
 
 /**
@@ -30,7 +31,7 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.SCALE
  * @see com.github.panpf.zoomimage.core.common.test.zoom.ContinuousTransformTypeTest
  */
 @Retention(AnnotationRetention.SOURCE)
-@IntDef(NONE, SCALE, OFFSET, LOCATE, GESTURE, FLING)
+@IntDef(NONE, SCALE, OFFSET, LOCATE, GESTURE, FLING, ROLLBACK)
 @Target(
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FIELD,
@@ -71,7 +72,12 @@ annotation class ContinuousTransformType {
          */
         const val FLING = 16
 
-        val values = listOf(SCALE, OFFSET, LOCATE, GESTURE, FLING)
+        /**
+         * Roll back scale and offset after the user gesture is released
+         */
+        const val ROLLBACK = 32
+
+        val values: List<Int> = listOf(SCALE, OFFSET, LOCATE, GESTURE, FLING, ROLLBACK)
 
         fun name(@ContinuousTransformType type: Int): String = when (type) {
             SCALE -> "SCALE"
@@ -79,6 +85,7 @@ annotation class ContinuousTransformType {
             LOCATE -> "LOCATE"
             GESTURE -> "GESTURE"
             FLING -> "FLING"
+            ROLLBACK -> "ROLLBACK"
             else -> "UNKNOWN"
         }
 

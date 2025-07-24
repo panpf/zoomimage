@@ -644,8 +644,8 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
 
     internal suspend fun stopAllAnimation(caller: String) = zoomableCore.stopAllAnimation(caller)
 
-    internal suspend fun rollbackScale(focus: OffsetCompat? = null): Boolean =
-        zoomableCore.rollbackScale(focus)
+    internal suspend fun rollback(focus: OffsetCompat? = null): Boolean =
+        zoomableCore.rollback(focus)
 
     internal suspend fun gestureTransform(
         centroid: OffsetCompat,

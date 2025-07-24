@@ -4,6 +4,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 # new
 
+* new: ContinuousTransformType Added ROLLBACK type
 * depend: Update sketch to 4.3.1
 
 # 1.4.0-beta04

@@ -38,7 +38,7 @@ class TileManagerTest {
     @Test
     fun testDefaultPausedContinuousTransformTypes() {
         assertEquals(
-            ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE,
+            ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE or ContinuousTransformType.ROLLBACK,
             TileManager.DefaultPausedContinuousTransformTypes
         )
     }
