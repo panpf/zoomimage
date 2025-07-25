@@ -72,7 +72,8 @@ class OverlayTestScreen : BaseScreen() {
         val originToThumbnailScaleFactor by remember {
             derivedStateOf {
                 calculateOriginToThumbnailScaleFactor(
-                    originImageSize = contentOriginSize.toCompat(),
+                    originImageSize = (contentOriginSize.takeIf { it.isNotEmpty() }
+                        ?: contentSize).toCompat(),
                     thumbnailImageSize = contentSize.toCompat(),
                 )
             }

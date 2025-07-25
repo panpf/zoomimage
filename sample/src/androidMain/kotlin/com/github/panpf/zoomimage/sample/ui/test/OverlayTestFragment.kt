@@ -127,7 +127,7 @@ class OverlayView(
         val containerSize = zoomableEngine.containerSizeState.value
             .takeIf { it.isNotEmpty() } ?: return
         val contentOriginSize = zoomableEngine.contentOriginSizeState.value
-            .takeIf { it.isNotEmpty() } ?: return
+            .takeIf { it.isNotEmpty() } ?: contentSize
         val transform = zoomableEngine.transformState.value
         val contentVisibleRect = zoomableEngine.contentVisibleRectState.value
 
