@@ -174,6 +174,12 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         MutableStateFlow(zoomableCore.rubberBandOffset)
 
     /**
+     * Is it always allowed to continue dragging when offset to the edge.
+     * If you allow dragging on the edge, the ViewPager component cannot slide to switch pages
+     */
+    var alwaysCanDragAtEdgeState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    /**
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
     val limitOffsetWithinBaseVisibleRectState: MutableStateFlow<Boolean> =
@@ -629,6 +635,11 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         coroutineScope.launch(Dispatchers.Main.immediate) {
             rubberBandOffsetState.collect {
                 zoomableCore.setRubberBandOffset(it)
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            alwaysCanDragAtEdgeState.collect {
+                zoomableCore.setAlwaysCanDragAtEdge(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {

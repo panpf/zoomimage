@@ -95,6 +95,10 @@ class ZoomableCore constructor(
         private set
     var animationSpec: BaseZoomAnimationSpec? = null
         private set
+    var rubberBandOffset: Boolean = false
+        private set
+    var alwaysCanDragAtEdge: Boolean = false
+        private set
     var limitOffsetWithinBaseVisibleRect: Boolean = false
         private set
     var containerWhitespaceMultiple: Float = 0f
@@ -102,8 +106,6 @@ class ZoomableCore constructor(
     var containerWhitespace: ContainerWhitespace = ContainerWhitespace.Zero
         private set
     var keepTransformWhenSameAspectRatioContentSizeChanged: Boolean = false
-        private set
-    var rubberBandOffset: Boolean = false
         private set
 
     var baseTransform: TransformCompat = TransformCompat.Origin
@@ -507,6 +509,13 @@ class ZoomableCore constructor(
         if (this.rubberBandOffset != rubberBandOffset) {
             this.rubberBandOffset = rubberBandOffset
             logger.d { "$module. rubberBandOffset=$rubberBandOffset" }
+        }
+    }
+
+    fun setAlwaysCanDragAtEdge(alwaysCanDragAtEdge: Boolean) {
+        if (this.alwaysCanDragAtEdge != alwaysCanDragAtEdge) {
+            this.alwaysCanDragAtEdge = alwaysCanDragAtEdge
+            logger.d { "$module. alwaysCanDragAtEdge=$alwaysCanDragAtEdge" }
         }
     }
 
@@ -969,7 +978,8 @@ class ZoomableCore constructor(
                 maxDistance = OffsetCompat(
                     x = containerSize.width * 0.25f,
                     y = containerSize.height * 0.25f
-                )
+                ),
+                alwaysCanDragAtEdge = alwaysCanDragAtEdge,
             )
         } else {
             newUserOffset.limitTo(userOffsetBoundsRect)

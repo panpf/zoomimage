@@ -195,9 +195,38 @@ val zoomState: ZoomState by rememberSketchZoomState()
 zoomState.zoomable.rubberBandOffset = true
 
 SketchZoomAsyncImage(
-  uri = "https://sample.com/sample.jpeg",
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+At this time, when the image is fully visible on the desktop and web platforms, you can still drag
+the image, but not on Android and iOS platforms.
+
+Because ZoomImage is usually nested in HorizontalPager, HorizontalPager relies on gestures to handle
+page turnover on Android and iOS platforms, so when the image is completely visible, the gesture
+cannot be blocked. The gesture needs to be handed over to HorizontalPager to handle page turnover.
+
+HorizontalPager cannot turn pages through gestures on desktop and web platforms, so you can still
+drag pictures by default
+
+This feature is controlled via the `alwaysCanDragAtEdge` property, you can force it to turn on or
+off according to your needs
+
+Example:
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+zoomState.zoomable.rubberBandOffset = true
+zoomState.zoomable.alwaysCanDragAtEdge = true
+
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
 )
 ```

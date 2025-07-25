@@ -1400,6 +1400,11 @@ fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
             && one.offsetY.aboutEquals(two.offsetY, delta = 1f, scale = 2)
 }
 
+/**
+ * Calculate elastic effects based on the longest distance
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testRubberBandWithDistance
+ */
 fun rubberBandWithDistance(
     currentValue: Float,
     newValue: Float,
@@ -1425,32 +1430,63 @@ fun rubberBandWithDistance(
     return newValue
 }
 
+/**
+ * Limits the user offset within the specified bounds, with an elastic effect when exceeding the bounds.
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testLimitOffsetWithRubberBand
+ */
 fun limitOffsetWithRubberBand(
     currentUserOffset: OffsetCompat,
     newUserOffset: OffsetCompat,
     userOffsetBoundsRect: RectCompat,
     maxDistance: OffsetCompat,
-): OffsetCompat = OffsetCompat(
-    x = if (userOffsetBoundsRect.left != userOffsetBoundsRect.right) {
-        rubberBandWithDistance(
-            currentValue = currentUserOffset.x,
-            newValue = newUserOffset.x,
-            minValue = userOffsetBoundsRect.left,
-            maxValue = userOffsetBoundsRect.right,
-            maxDistance = maxDistance.x
+    alwaysCanDragAtEdge: Boolean,
+): OffsetCompat {
+    return if (
+        alwaysCanDragAtEdge
+        && userOffsetBoundsRect.left == userOffsetBoundsRect.right
+        && userOffsetBoundsRect.top == userOffsetBoundsRect.bottom
+    ) {
+        OffsetCompat(
+            x = rubberBandWithDistance(
+                currentValue = currentUserOffset.x,
+                newValue = newUserOffset.x,
+                minValue = userOffsetBoundsRect.left,
+                maxValue = userOffsetBoundsRect.right,
+                maxDistance = maxDistance.x
+            ),
+            y = rubberBandWithDistance(
+                currentValue = currentUserOffset.y,
+                newValue = newUserOffset.y,
+                minValue = userOffsetBoundsRect.top,
+                maxValue = userOffsetBoundsRect.bottom,
+                maxDistance = maxDistance.y
+            ),
         )
     } else {
-        newUserOffset.x.coerceIn(userOffsetBoundsRect.left, userOffsetBoundsRect.right)
-    },
-    y = if (userOffsetBoundsRect.top != userOffsetBoundsRect.bottom) {
-        rubberBandWithDistance(
-            currentValue = currentUserOffset.y,
-            newValue = newUserOffset.y,
-            minValue = userOffsetBoundsRect.top,
-            maxValue = userOffsetBoundsRect.bottom,
-            maxDistance = maxDistance.y
+        OffsetCompat(
+            x = if (userOffsetBoundsRect.left != userOffsetBoundsRect.right) {
+                rubberBandWithDistance(
+                    currentValue = currentUserOffset.x,
+                    newValue = newUserOffset.x,
+                    minValue = userOffsetBoundsRect.left,
+                    maxValue = userOffsetBoundsRect.right,
+                    maxDistance = maxDistance.x
+                )
+            } else {
+                newUserOffset.x.coerceIn(userOffsetBoundsRect.left, userOffsetBoundsRect.right)
+            },
+            y = if (userOffsetBoundsRect.top != userOffsetBoundsRect.bottom) {
+                rubberBandWithDistance(
+                    currentValue = currentUserOffset.y,
+                    newValue = newUserOffset.y,
+                    minValue = userOffsetBoundsRect.top,
+                    maxValue = userOffsetBoundsRect.bottom,
+                    maxDistance = maxDistance.y
+                )
+            } else {
+                newUserOffset.y.coerceIn(userOffsetBoundsRect.top, userOffsetBoundsRect.bottom)
+            },
         )
-    } else {
-        newUserOffset.y.coerceIn(userOffsetBoundsRect.top, userOffsetBoundsRect.bottom)
-    },
-)
+    }
+}

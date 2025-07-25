@@ -244,11 +244,12 @@ internal class ZoomableNode(
             panZoomLock = true,
             canDrag = { horizontal: Boolean, direction: Int ->
                 val supportDrag = zoomable.checkSupportGestureType(GestureType.ONE_FINGER_DRAG)
+                val alwaysCanDragAtEdge = zoomable.alwaysCanDragAtEdge
                 val canScroll = zoomable.canScroll(horizontal, direction)
                 val supportOneFingerScale =
                     zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
                 val doubleTapPressPoint = doubleTapPressPoint
-                (supportDrag && canScroll) || (supportOneFingerScale && doubleTapPressPoint != null)
+                (supportDrag && (alwaysCanDragAtEdge || canScroll)) || (supportOneFingerScale && doubleTapPressPoint != null)
             },
             onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float, pointCount ->
                 coroutineScope.launch {

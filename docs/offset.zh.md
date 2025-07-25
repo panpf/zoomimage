@@ -191,6 +191,31 @@ SketchZoomAsyncImage(
 )
 ```
 
+此时在桌面平台和 web 平台上当图片完全可见时，你依然可以拖动图片，但在 Android 和 ios 平台上却不可以
+
+因为通常会将 ZoomImage 嵌套在 HorizontalPager 中使用，在 Android 和 iOS 平台上 HorizontalPager
+依赖手势处理翻页，所以当图片完全可见时不可以再拦截手势，需要将手势交给 HorizontalPager 来处理翻页
+
+在桌面平台上和 web 平台上 HorizontalPager 不可以通过手势翻页，所以默认依然可以拖动图片
+
+此功能通过 `alwaysCanDragAtEdge` 属性控制，你可以根据你的需求强制开启或关闭它
+
+示例：
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+zoomState.zoomable.rubberBandOffset = true
+zoomState.zoomable.alwaysCanDragAtEdge = true
+
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
 ### 可访问属性
 
 ```kotlin

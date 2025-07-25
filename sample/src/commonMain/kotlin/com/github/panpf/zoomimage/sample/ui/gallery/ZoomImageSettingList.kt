@@ -221,6 +221,12 @@ fun ZoomImageSettingList() {
         )
 
         SwitchSettingItem(
+            title = "Always Can Drag At Edge",
+            desc = null,
+            state = appSettings.alwaysCanDragAtEdgeEnabled,
+        )
+
+        SwitchSettingItem(
             title = "Limit Offset Within Base Visible Rect",
             desc = null,
             state = appSettings.limitOffsetWithinBaseVisibleRect,

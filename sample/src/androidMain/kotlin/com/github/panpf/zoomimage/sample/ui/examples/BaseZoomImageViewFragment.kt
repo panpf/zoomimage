@@ -155,6 +155,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     .collectWithLifecycle(viewLifecycleOwner) {
                         rubberBandOffsetState.value = it
                     }
+                appSettings.alwaysCanDragAtEdgeEnabled
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        alwaysCanDragAtEdgeState.value = it
+                    }
                 appSettings.limitOffsetWithinBaseVisibleRect
                     .collectWithLifecycle(viewLifecycleOwner) {
                         limitOffsetWithinBaseVisibleRectState.value = it

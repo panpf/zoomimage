@@ -107,11 +107,12 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
             },
             canDrag = { horizontal: Boolean, direction: Int ->
                 val supportDrag = zoomable.checkSupportGestureType(GestureType.ONE_FINGER_DRAG)
+                val alwaysCanDragAtEdge = zoomable.alwaysCanDragAtEdgeState.value
                 val canScroll = zoomable.canScroll(horizontal, direction)
                 val supportOneFingerScale =
                     zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
                 val doubleTapPressPoint = doubleTapPressPoint
-                (supportDrag && canScroll) || (supportOneFingerScale && doubleTapPressPoint != null)
+                (supportDrag && (alwaysCanDragAtEdge || canScroll)) || (supportOneFingerScale && doubleTapPressPoint != null)
             },
             onGestureCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int ->
                 coroutineScope.launch {

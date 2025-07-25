@@ -241,6 +241,14 @@ class ZoomImageSettingsViewModel(
 
         add(
             SwitchMenuFlow(
+                title = "Always Can Drag At Edge",
+                desc = null,
+                data = appSettings.alwaysCanDragAtEdgeEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
                 title = "Limit Offset Within Base Visible Rect",
                 desc = null,
                 data = appSettings.limitOffsetWithinBaseVisibleRect,
