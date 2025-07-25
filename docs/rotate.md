@@ -15,7 +15,7 @@ one parameter:
 * `targetRotation: Int`: Target rotation angle, which can only be a multiple of 90, such as 0, 90,
   180, 270, 360, etc
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()

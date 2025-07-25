@@ -87,7 +87,7 @@ two parameters:
   the component
 * `animated: Boolean = false`: Whether to use animation, the default is false
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -134,7 +134,7 @@ If you want the image to be moved only within the area restricted
 by [ContentScale] and [Alignment], and not the entire content, you can modify the
 `limitOffsetWithinBaseVisibleRect parameter` to true to achieve this
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -156,7 +156,7 @@ dragging the image, and there will be no white space between them (except in the
 the image). When you need to leave a white space between the image and the container, you can pass
 To achieve this, set the `containerWhitespace` or `containerWhitespaceMultiple` parameter to
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()

@@ -138,7 +138,7 @@ scaling and subsampling or obtain related information through them, as follows:
 * compose versions are [ZoomableState] and [SubsamplingState]
 * view versions are [ZoomableEngine] and [SubsamplingEngine]
 
-example：
+Example:
 
 ```kotlin
 // compose

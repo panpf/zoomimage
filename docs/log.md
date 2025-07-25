@@ -20,7 +20,7 @@ The [Logger] class encapsulates the print, level control, and output pipelines o
 The [Logger].level property controls the print level of the log, the default is INFO, you can modify
 it to expand the output range of the log
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -41,7 +41,7 @@ The [Logger].pipeline property controls the output pipeline of the log, and the 
 AndroidLogPipeline to output to Android
 console, you can modify it to output logs elsewhere
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()

@@ -19,7 +19,7 @@ parameters:
   magnification
 * animated: Boolean = false: Whether to use animation, the default is false
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()

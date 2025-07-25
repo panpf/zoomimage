@@ -18,7 +18,7 @@ double-click scale, mouse wheel scale, keyboard scale, scale(), etc.
   the [scale()](#scale), [scaleBy()](#scaleBy), [scaleByPlus()](#scaleByPlus) method
 * [Supports rubber band effect](#rubber-band-scale).
   When the gesture is continuously zoomed (one-finger/two-finger scale) exceeds the maximum or
-  minimum range, zooming can continue, but there is a damping effect, and it will spring back to the
+  minimum range, zooming can continue, but there is a damping effect, and it will rollback to the
   maximum or minimum scale multiplier when released
 * [Dynamic scaling range](#minscale-mediumscale-maxscale). Default based on
   containerSize, contentSize, contentOriginSize dynamically calculate mediumScale and maxScale
@@ -42,7 +42,7 @@ ZoomImage supports all [ContentScale] and [Alignment], and because the compose v
 version use the same algorithm, view The version of the component supports [ContentScale]
 and [Alignment] in addition to [ScaleType]
 
-example：
+Example:
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
@@ -101,7 +101,7 @@ built-in [ScalesCalculator]:
 scalesCalculator defaults to [ScalesCalculator]. Dynamic, which you can modify into a Fixed or
 custom implementation
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -175,7 +175,7 @@ needed The method toggles the scale factor, which has two parameters:
 > [!TIP]
 > Note: centroidContentPoint must be a point on content
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -203,7 +203,7 @@ Button(
 
 You can also call the `getNextStepScale()` method to get the next scale multiplier
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -367,7 +367,7 @@ parameters:
 > [!TIP]
 > Note: centroidContentPoint must be a point on content
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -415,7 +415,7 @@ multiple by multiplication. It has three parameters:
 > [!TIP]
 > Note: centroidContentPoint must be a point on content
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -463,7 +463,7 @@ addition, and it has three parameters:
 > [!TIP]
 > Note: centroidContentPoint must be a point on content
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -504,7 +504,7 @@ range with one or two fingers, you can still zoom, but there will be a damping e
 rubber band, and it will rebound to `minScale` or `maxScale` after releasing the finger. This
 feature is enabled by default, and you can turn it off with the `rubberBandScale` property
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
@@ -524,7 +524,7 @@ SketchZoomAsyncImage(
 ZoomImage provides `animationSpec` parameters to modify the duration, Ease, and initial speed of the
 scale animation
 
-example：
+Example:
 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()

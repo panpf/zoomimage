@@ -171,7 +171,7 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
     /**
      * If true, when the user zooms to the minimum or maximum zoom factor through a gesture,
      * continuing to zoom will have a rubber band effect, and when the hand is released,
-     * it will spring back to the minimum or maximum zoom factor
+     * it will rollback to the minimum or maximum zoom factor
      */
     var rubberBandScale: Boolean by mutableStateOf(zoomableCore.rubberBandScale)
 
