@@ -72,7 +72,7 @@ fun getViewImageLoaderIcon(context: Context, viewImageLoader: String): Drawable 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class AppSettings actual constructor(val context: PlatformContext) {
 
-    // ---------------------------------------- ZoomImage ------------------------------------------
+    /* ------------------------------------------ Content Arrange -------------------------------------------- */
 
     actual val contentScaleName: SettingsStateFlow<String> by lazy {
         stringSettingsStateFlow(context, "contentScale", ContentScale.Fit.name)
@@ -90,54 +90,15 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         booleanSettingsStateFlow(context, "rtlLayoutDirectionEnabled", false)
     }
 
-    actual val animateScale: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "animateScale", true)
+
+    /* ------------------------------------------ Zoom Common -------------------------------------------- */
+
+    actual val zoomAnimateEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "zoomAnimateEnabled", true)
     }
 
-    actual val rubberBandScale: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "rubberBandScale", true)
-    }
-
-    actual val threeStepScale: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "threeStepScale", false)
-    }
-
-    actual val slowerScaleAnimation: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "slowerScaleAnimation", false)
-    }
-
-    actual val reverseMouseWheelScale: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "reverseMouseWheelScale", false)
-    }
-
-    actual val scalesCalculatorName: SettingsStateFlow<String> by lazy {
-        stringSettingsStateFlow(context, "scalesCalculator", "Dynamic")
-    }
-    actual val scalesMultiple: SettingsStateFlow<String> by lazy {
-        stringSettingsStateFlow(context, "scalesMultiple", ScalesCalculator.MULTIPLE.toString())
-    }
-    // stateCombine will cause UI lag
-//    actual val scalesCalculator: StateFlow<ScalesCalculator> =
-//        stateCombine(listOf(scalesCalculatorName, scalesMultiple)) {
-//            val scalesCalculatorName: String = it[0]
-//            val scalesMultiple: Float = it[1].toFloat()
-//            buildScalesCalculator(scalesCalculatorName, scalesMultiple)
-//        }
-
-    actual val disabledGestureTypes: SettingsStateFlow<Int> by lazy {
-        intSettingsStateFlow(context, "disabledGestureTypes", 0)
-    }
-
-    actual val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "limitOffsetWithinBaseVisibleRect", false)
-    }
-
-    actual val containerWhitespaceMultiple: SettingsStateFlow<Float> by lazy {
-        floatSettingsStateFlow(context, "containerWhitespaceMultiple1", 0f)
-    }
-
-    actual val containerWhitespaceEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "containerWhitespaceEnabled", false)
+    actual val zoomSlowerAnimationEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "zoomSlowerAnimationEnabled", false)
     }
 
     actual val readModeEnabled: SettingsStateFlow<Boolean> by lazy {
@@ -148,81 +109,138 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
         booleanSettingsStateFlow(context, "readModeAcceptedBoth", true)
     }
 
-    actual val pausedContinuousTransformTypes by lazy {
-        val initialize = TileManager.DefaultPausedContinuousTransformTypes
-        intSettingsStateFlow(context, "pausedContinuousTransformTypes", initialize)
+    actual val scrollBarEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "scrollBarEnabled", true)
     }
 
-    actual val disabledBackgroundTiles: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "disabledBackgroundTiles", false)
+    actual val keepTransformEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "keepTransformEnabled", true)
     }
 
-    actual val showTileBounds: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "showTileBounds", false)
+    actual val disabledGestureTypes: SettingsStateFlow<Int> by lazy {
+        intSettingsStateFlow(context, "disabledGestureTypes", 0)
+    }
+
+
+    /* ------------------------------------------ Zoom Scale -------------------------------------------- */
+
+    actual val rubberBandScaleEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "rubberBandScaleEnabled", true)
+    }
+
+    actual val threeStepScaleEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "threeStepScaleEnabled", false)
+    }
+
+    actual val reverseMouseWheelScaleEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "reverseMouseWheelScaleEnabled", false)
+    }
+
+    actual val scalesCalculatorName: SettingsStateFlow<String> by lazy {
+        stringSettingsStateFlow(context, "scalesCalculator", "Dynamic")
+    }
+    actual val fixedScalesCalculatorMultiple: SettingsStateFlow<String> by lazy {
+        stringSettingsStateFlow(
+            context,
+            "fixedScalesCalculatorMultiple",
+            ScalesCalculator.MULTIPLE.toString()
+        )
+    }
+    // stateCombine will cause UI lag
+//    actual val scalesCalculator: StateFlow<ScalesCalculator> =
+//        stateCombine(listOf(scalesCalculatorName, scalesMultiple)) {
+//            val scalesCalculatorName: String = it[0]
+//            val scalesMultiple: Float = it[1].toFloat()
+//            buildScalesCalculator(scalesCalculatorName, scalesMultiple)
+//        }
+
+
+    /* ------------------------------------------ Zoom Offset -------------------------------------------- */
+
+    actual val rubberBandOffsetEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "rubberBandOffsetEnabled", false)
+    }
+
+    actual val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "limitOffsetWithinBaseVisibleRect", false)
+    }
+
+    actual val containerWhitespaceEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "containerWhitespaceEnabled", false)
+    }
+
+    actual val containerWhitespaceMultiple: SettingsStateFlow<Float> by lazy {
+        floatSettingsStateFlow(context, "containerWhitespaceMultiple1", 0f)
+    }
+
+
+    /* ------------------------------------------ Subsampling -------------------------------------------- */
+
+    actual val subsamplingEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "subsamplingEnabled", true)
     }
 
     actual val tileAnimationEnabled: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "tileAnimationEnabled", true)
     }
 
-    actual val tileMemoryCache: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "tileMemoryCache", true)
+    actual val tileBoundsEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "tileBoundsEnabled", false)
     }
 
-    actual val scrollBarEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "scrollBarEnabled", true)
+    actual val backgroundTilesEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "backgroundTilesEnabled", true)
     }
 
-    actual val keepTransformWhenSameAspectRatioContentSizeChangedEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(
-            context,
-            "keepTransformWhenSameAspectRatioContentSizeChangedEnabled",
-            true
-        )
-    }
-
-    actual val delayImageLoadEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "delayImageLoadEnabled", false)
-    }
-
-    actual val subsamplingEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "subsamplingEnabled", true)
+    actual val tileMemoryCacheEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "tileMemoryCacheEnabled", true)
     }
 
     actual val autoStopWithLifecycleEnabled: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "autoStopWithLifecycleEnabled", true)
     }
 
+    actual val pausedContinuousTransformTypes by lazy {
+        val initialize = TileManager.DefaultPausedContinuousTransformTypes
+        intSettingsStateFlow(context, "pausedContinuousTransformTypes", initialize)
+    }
 
-    // ------------------------------------------ other --------------------------------------------
+
+    /* ------------------------------------------ Other -------------------------------------------- */
 
     val composePage: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "composePage", true)
-    }
-
-    val viewImageLoader: SettingsStateFlow<String> by lazy {
-        stringSettingsStateFlow(context, "viewImageLoader", "Sketch")
-    }
-
-    actual val composeImageLoader: SettingsStateFlow<String> by lazy {
-        stringSettingsStateFlow(context, "composeImageLoader", composeImageLoaders.first().name)
     }
 
     actual val currentPageIndex: SettingsStateFlow<Int> by lazy {
         intSettingsStateFlow(context, "currentPageIndex", 0)
     }
 
+    actual val staggeredGridMode: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "staggeredGridMode", false)
+    }
+
+    actual val composeImageLoader: SettingsStateFlow<String> by lazy {
+        stringSettingsStateFlow(context, "composeImageLoader", composeImageLoaders.first().name)
+    }
+
+    val viewImageLoader: SettingsStateFlow<String> by lazy {
+        stringSettingsStateFlow(context, "viewImageLoader", "Sketch")
+    }
+
+
+    actual val pagerGuideShowed: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "pagerGuideShowed", false)
+    }
+
     actual val horizontalPagerLayout: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "horizontalPagerLayout", true)
     }
 
-    actual val staggeredGridMode: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(
-            context = context,
-            key = "staggeredGridMode",
-            initialize = false,
-        )
+    actual val delayImageLoadEnabled: SettingsStateFlow<Boolean> by lazy {
+        booleanSettingsStateFlow(context, "delayImageLoadEnabled", false)
     }
+
 
     actual val logLevelName: SettingsStateFlow<String> by lazy {
         val initialize = if (isDebugMode()) Logger.Level.Debug.name else Logger.Level.Info.name
@@ -233,9 +251,5 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
 
     actual val debugLog: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "debugLog", isDebugMode())
-    }
-
-    actual val pagerGuideShowed: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "pagerGuideShowed", false)
     }
 }

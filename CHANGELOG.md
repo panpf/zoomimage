@@ -5,6 +5,9 @@ Translations: [简体中文](CHANGELOG.zh.md)
 # new
 
 * new: ContinuousTransformType Added ROLLBACK type
+* new: ZoomableState and ZoomableEngine have added rubberBandOffset properties, allowing boundaries
+  to be exceeded when dragged and dropped after being turned
+  on. [#102](https://github.com/panpf/zoomimage/issues/102)
 * depend: Update sketch to 4.3.1
 
 # 1.4.0-beta04

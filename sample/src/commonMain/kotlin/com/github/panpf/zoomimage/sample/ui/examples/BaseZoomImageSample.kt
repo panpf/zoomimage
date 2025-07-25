@@ -207,14 +207,14 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
     val logLevel by appSettings.logLevel.collectAsState()
     logger.level = logLevel
 
-    val threeStepScale by appSettings.threeStepScale.collectAsState()
+    val threeStepScale by appSettings.threeStepScaleEnabled.collectAsState()
     zoomable.threeStepScale = threeStepScale
 
-    val rubberBandScale by appSettings.rubberBandScale.collectAsState()
+    val rubberBandScale by appSettings.rubberBandScaleEnabled.collectAsState()
     zoomable.rubberBandScale = rubberBandScale
 
-    val animateScale by appSettings.animateScale.collectAsState()
-    val slowerScaleAnimation by appSettings.slowerScaleAnimation.collectAsState()
+    val animateScale by appSettings.zoomAnimateEnabled.collectAsState()
+    val slowerScaleAnimation by appSettings.zoomSlowerAnimationEnabled.collectAsState()
     val zoomAnimationSpec by remember {
         derivedStateOf {
             val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
@@ -223,17 +223,20 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
     }
     zoomable.animationSpec = zoomAnimationSpec
 
-    val reverseMouseWheelScale by appSettings.reverseMouseWheelScale.collectAsState()
+    val reverseMouseWheelScale by appSettings.reverseMouseWheelScaleEnabled.collectAsState()
     zoomable.reverseMouseWheelScale = reverseMouseWheelScale
 
     val scalesCalculatorName by appSettings.scalesCalculatorName.collectAsState()
-    val scalesMultiple by appSettings.scalesMultiple.collectAsState()
+    val scalesMultiple by appSettings.fixedScalesCalculatorMultiple.collectAsState()
     val scalesCalculator by remember {
         derivedStateOf {
             buildScalesCalculator(scalesCalculatorName, scalesMultiple.toFloat())
         }
     }
     zoomable.scalesCalculator = scalesCalculator
+
+    val rubberBandOffsetEnabled by appSettings.rubberBandOffsetEnabled.collectAsState()
+    zoomable.rubberBandOffset = rubberBandOffsetEnabled
 
     val limitOffsetWithinBaseVisibleRect by appSettings.limitOffsetWithinBaseVisibleRect.collectAsState()
     zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
@@ -271,7 +274,7 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
     val disabledGestureTypes by appSettings.disabledGestureTypes.collectAsState()
     zoomable.disabledGestureTypes = disabledGestureTypes
 
-    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectAsState()
+    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by appSettings.keepTransformEnabled.collectAsState()
     zoomable.keepTransformWhenSameAspectRatioContentSizeChanged =
         keepTransformWhenSameAspectRatioContentSizeChangedEnabled
 
@@ -284,11 +287,11 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
     val pausedContinuousTransformTypes by appSettings.pausedContinuousTransformTypes.collectAsState()
     subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
 
-    val disabledBackgroundTiles by appSettings.disabledBackgroundTiles.collectAsState()
-    subsampling.disabledBackgroundTiles = disabledBackgroundTiles
+    val backgroundTilesEnabled by appSettings.backgroundTilesEnabled.collectAsState()
+    subsampling.disabledBackgroundTiles = !backgroundTilesEnabled
 
-    val showTileBounds by appSettings.showTileBounds.collectAsState()
-    subsampling.showTileBounds = showTileBounds
+    val tileBoundsEnabled by appSettings.tileBoundsEnabled.collectAsState()
+    subsampling.showTileBounds = tileBoundsEnabled
 
     val tileAnimationEnabled by appSettings.tileAnimationEnabled.collectAsState()
     val tileAnimationSpec by remember {
@@ -298,7 +301,7 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
     }
     subsampling.tileAnimationSpec = tileAnimationSpec
 
-    val tileMemoryCache by appSettings.tileMemoryCache.collectAsState()
+    val tileMemoryCache by appSettings.tileMemoryCacheEnabled.collectAsState()
     subsampling.disabledTileImageCache = !tileMemoryCache
 }
 

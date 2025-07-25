@@ -127,10 +127,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.alignment.collectWithLifecycle(viewLifecycleOwner) {
                     alignmentState.value = it
                 }
-                appSettings.threeStepScale.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.threeStepScaleEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScaleState.value = it
                 }
-                appSettings.rubberBandScale.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.rubberBandScaleEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it
                 }
 //                appSettings.scalesCalculator
@@ -141,15 +141,19 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     .collectWithLifecycle(viewLifecycleOwner) {
                         scalesCalculatorState.value = buildScalesCalculator(
                             appSettings.scalesCalculatorName.value,
-                            appSettings.scalesMultiple.value.toFloat()
+                            appSettings.fixedScalesCalculatorMultiple.value.toFloat()
                         )
                     }
-                appSettings.scalesMultiple
+                appSettings.fixedScalesCalculatorMultiple
                     .collectWithLifecycle(viewLifecycleOwner) {
                         scalesCalculatorState.value = buildScalesCalculator(
                             appSettings.scalesCalculatorName.value,
-                            appSettings.scalesMultiple.value.toFloat()
+                            appSettings.fixedScalesCalculatorMultiple.value.toFloat()
                         )
+                    }
+                appSettings.rubberBandOffsetEnabled
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        rubberBandOffsetState.value = it
                     }
                 appSettings.limitOffsetWithinBaseVisibleRect
                     .collectWithLifecycle(viewLifecycleOwner) {
@@ -196,20 +200,20 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     readModeState.value =
                         if (appSettings.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
-                appSettings.animateScale.collectWithLifecycle(viewLifecycleOwner) {
-                    val durationMillis = if (appSettings.animateScale.value) {
-                        (if (appSettings.slowerScaleAnimation.value) 3000 else 300)
+                appSettings.zoomAnimateEnabled.collectWithLifecycle(viewLifecycleOwner) {
+                    val durationMillis = if (appSettings.zoomAnimateEnabled.value) {
+                        (if (appSettings.zoomSlowerAnimationEnabled.value) 3000 else 300)
                     } else {
                         0
                     }
                     animationSpecState.value =
                         ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                appSettings.slowerScaleAnimation.collectWithLifecycle(
+                appSettings.zoomSlowerAnimationEnabled.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
-                    val durationMillis = if (appSettings.animateScale.value) {
-                        (if (appSettings.slowerScaleAnimation.value) 3000 else 300)
+                    val durationMillis = if (appSettings.zoomAnimateEnabled.value) {
+                        (if (appSettings.zoomSlowerAnimationEnabled.value) 3000 else 300)
                     } else {
                         0
                     }
@@ -219,28 +223,28 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.disabledGestureTypes.collectWithLifecycle(viewLifecycleOwner) {
                     disabledGestureTypesState.value = it
                 }
-                appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled.collectWithLifecycle(
+                appSettings.keepTransformEnabled.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
                     keepTransformWhenSameAspectRatioContentSizeChangedState.value = it
                 }
             }
             subsampling.apply {
-                appSettings.showTileBounds.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.tileBoundsEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBoundsState.value = it
                 }
                 appSettings.tileAnimationEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     tileAnimationSpecState.value =
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }
-                appSettings.tileMemoryCache.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.tileMemoryCacheEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     disabledTileImageCacheState.value = !it
                 }
                 appSettings.pausedContinuousTransformTypes.collectWithLifecycle(viewLifecycleOwner) {
                     pausedContinuousTransformTypesState.value = it
                 }
-                appSettings.disabledBackgroundTiles.collectWithLifecycle(viewLifecycleOwner) {
-                    disabledBackgroundTilesState.value = it
+                appSettings.backgroundTilesEnabled.collectWithLifecycle(viewLifecycleOwner) {
+                    disabledBackgroundTilesState.value = !it
                 }
                 appSettings.subsamplingEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     disabledState.value = !it

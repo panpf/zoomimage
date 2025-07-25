@@ -63,6 +63,7 @@ class ZoomImageSettingsViewModel(
             ContentScaleCompat.FillBounds,
             ContentScaleCompat.None,
         )
+
         add(
             DropdownMenu(
                 title = "Content Scale",
@@ -97,6 +98,7 @@ class ZoomImageSettingsViewModel(
                 }
             )
         )
+
         add(
             SwitchMenuFlow(
                 title = "RTL Layout Direction",
@@ -105,64 +107,53 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(MenuDivider("Gesture"))
+        add(MenuDivider("Zoom"))
 
         add(
             SwitchMenuFlow(
-                title = "Animate Scale",
+                title = "Animate",
                 desc = null,
-                data = appSettings.animateScale,
+                data = appSettings.zoomAnimateEnabled,
             )
         )
+
         add(
             SwitchMenuFlow(
-                title = "Rubber Band Scale",
+                title = "Slower Animation",
                 desc = null,
-                data = appSettings.rubberBandScale,
+                data = appSettings.zoomSlowerAnimationEnabled,
             )
         )
+
         add(
             SwitchMenuFlow(
-                title = "Three Step Scale",
+                title = "Read Mode",
                 desc = null,
-                data = appSettings.threeStepScale,
+                data = appSettings.readModeEnabled,
             )
         )
+
         add(
             SwitchMenuFlow(
-                title = "Slower Scale Animation",
+                title = "Read Mode - Both",
                 desc = null,
-                data = appSettings.slowerScaleAnimation,
+                data = appSettings.readModeAcceptedBoth,
             )
         )
-        val scalesCalculators = listOf("Dynamic", "Fixed")
+
         add(
-            DropdownMenu(
-                title = "Scales Calculator",
+            SwitchMenuFlow(
+                title = "Scroll Bar",
                 desc = null,
-                values = scalesCalculators,
-                getValue = { appSettings.scalesCalculatorName.value },
-                onSelected = { _, value ->
-                    appSettings.scalesCalculatorName.value = value
-                }
+                data = appSettings.scrollBarEnabled,
             )
         )
-        val scalesMultiples = listOf(
-            2.0f.toString(),
-            2.5f.toString(),
-            3.0f.toString(),
-            3.5f.toString(),
-            4.0f.toString(),
-        )
+
         add(
-            DropdownMenu(
-                title = "Scales Multiple",
-                desc = null,
-                values = scalesMultiples,
-                getValue = { appSettings.scalesMultiple.value },
-                onSelected = { _, value ->
-                    appSettings.scalesMultiple.value = value
-                }
+            SwitchMenuFlow(
+                title = "Keep Transform",
+                desc = "Works only when switching images with the same aspect ratio",
+                data = appSettings.keepTransformEnabled,
             )
         )
 
@@ -188,13 +179,79 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(MenuDivider("Offset Bounds"))
+        add(MenuDivider("Scale"))
+
+        add(
+            SwitchMenuFlow(
+                title = "Rubber Band Scale",
+                desc = null,
+                data = appSettings.rubberBandScaleEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
+                title = "Three Step Scale",
+                desc = null,
+                data = appSettings.threeStepScaleEnabled,
+            )
+        )
+
+        val scalesCalculators = listOf("Dynamic", "Fixed")
+        add(
+            DropdownMenu(
+                title = "Scales Calculator",
+                desc = null,
+                values = scalesCalculators,
+                getValue = { appSettings.scalesCalculatorName.value },
+                onSelected = { _, value ->
+                    appSettings.scalesCalculatorName.value = value
+                }
+            )
+        )
+
+        val scalesMultiples = listOf(
+            2.0f.toString(),
+            2.5f.toString(),
+            3.0f.toString(),
+            3.5f.toString(),
+            4.0f.toString(),
+        )
+        add(
+            DropdownMenu(
+                title = "Fixed Scales Calculator Multiple",
+                desc = null,
+                values = scalesMultiples,
+                getValue = { appSettings.fixedScalesCalculatorMultiple.value },
+                onSelected = { _, value ->
+                    appSettings.fixedScalesCalculatorMultiple.value = value
+                }
+            )
+        )
+
+        add(MenuDivider("Offset"))
+
+        add(
+            SwitchMenuFlow(
+                title = "Rubber Band Offset",
+                desc = null,
+                data = appSettings.rubberBandOffsetEnabled,
+            )
+        )
 
         add(
             SwitchMenuFlow(
                 title = "Limit Offset Within Base Visible Rect",
                 desc = null,
                 data = appSettings.limitOffsetWithinBaseVisibleRect,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
+                title = "Container Whitespace",
+                desc = null,
+                data = appSettings.containerWhitespaceEnabled,
             )
         )
 
@@ -210,31 +267,6 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        add(
-            SwitchMenuFlow(
-                title = "Container Whitespace",
-                desc = null,
-                data = appSettings.containerWhitespaceEnabled,
-            )
-        )
-
-        add(MenuDivider("Read Mode"))
-
-        add(
-            SwitchMenuFlow(
-                title = "Read Mode",
-                desc = null,
-                data = appSettings.readModeEnabled,
-            )
-        )
-        add(
-            SwitchMenuFlow(
-                title = "Read Mode - Both",
-                desc = null,
-                data = appSettings.readModeAcceptedBoth,
-            )
-        )
-
         add(MenuDivider("Subsampling"))
 
         add(
@@ -247,9 +279,25 @@ class ZoomImageSettingsViewModel(
 
         add(
             SwitchMenuFlow(
-                title = "Auto Stop With Lifecycle",
+                title = "Tile Animation",
                 desc = null,
-                data = appSettings.autoStopWithLifecycleEnabled,
+                data = appSettings.tileAnimationEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
+                title = "Tile Bounds",
+                desc = null,
+                data = appSettings.tileBoundsEnabled,
+            )
+        )
+
+        add(
+            SwitchMenuFlow(
+                title = "Background Tiles",
+                desc = null,
+                data = appSettings.backgroundTilesEnabled,
             )
         )
 
@@ -257,9 +305,18 @@ class ZoomImageSettingsViewModel(
             SwitchMenuFlow(
                 title = "Tile Memory Cache",
                 desc = null,
-                data = appSettings.tileMemoryCache,
+                data = appSettings.tileMemoryCacheEnabled,
             )
         )
+
+        add(
+            SwitchMenuFlow(
+                title = "Auto Stop With Lifecycle",
+                desc = null,
+                data = appSettings.autoStopWithLifecycleEnabled,
+            )
+        )
+
         val continuousTransformTypes = ContinuousTransformType.values
         add(
             MultiChooseMenu(
@@ -281,45 +338,8 @@ class ZoomImageSettingsViewModel(
                 }
             )
         )
-        add(
-            SwitchMenuFlow(
-                title = "Disabled Background Tiles",
-                desc = null,
-                data = appSettings.disabledBackgroundTiles,
-            )
-        )
-        add(
-            SwitchMenuFlow(
-                title = "Show Tile Bounds",
-                desc = null,
-                data = appSettings.showTileBounds,
-            )
-        )
-        add(
-            SwitchMenuFlow(
-                title = "Tile Animation",
-                desc = null,
-                data = appSettings.tileAnimationEnabled,
-            )
-        )
 
         add(MenuDivider("Other"))
-
-        add(
-            SwitchMenuFlow(
-                title = "Scroll Bar",
-                desc = null,
-                data = appSettings.scrollBarEnabled,
-            )
-        )
-
-        add(
-            SwitchMenuFlow(
-                title = "Keep Transform",
-                desc = "Works only when switching images with the same aspect ratio",
-                data = appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled,
-            )
-        )
 
         add(
             SwitchMenuFlow(

@@ -35,7 +35,7 @@ expect fun getComposeImageLoaderIcon(composeImageLoader: String): Painter
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class AppSettings(context: PlatformContext) {
 
-    // ---------------------------------------- ZoomImage ------------------------------------------
+    /* ------------------------------------------ Content Arrange -------------------------------------------- */
 
     val contentScaleName: SettingsStateFlow<String>
     val contentScale: StateFlow<ContentScaleCompat>
@@ -45,22 +45,35 @@ expect class AppSettings(context: PlatformContext) {
 
     val rtlLayoutDirectionEnabled: SettingsStateFlow<Boolean>
 
-    val animateScale: SettingsStateFlow<Boolean>
 
-    val rubberBandScale: SettingsStateFlow<Boolean>
+    /* ------------------------------------------ Zoom Common -------------------------------------------- */
 
-    val threeStepScale: SettingsStateFlow<Boolean>
+    val zoomAnimateEnabled: SettingsStateFlow<Boolean>
 
-    val slowerScaleAnimation: SettingsStateFlow<Boolean>
+    val zoomSlowerAnimationEnabled: SettingsStateFlow<Boolean>
 
-    val reverseMouseWheelScale: SettingsStateFlow<Boolean>
+    val disabledGestureTypes: SettingsStateFlow<Int>
+
+    val keepTransformEnabled: SettingsStateFlow<Boolean>
+
+
+    /* ------------------------------------------ Zoom Scale -------------------------------------------- */
+
+    val rubberBandScaleEnabled: SettingsStateFlow<Boolean>
+
+    val threeStepScaleEnabled: SettingsStateFlow<Boolean>
+
+    val reverseMouseWheelScaleEnabled: SettingsStateFlow<Boolean>
 
     val scalesCalculatorName: SettingsStateFlow<String>
-    val scalesMultiple: SettingsStateFlow<String>
+    val fixedScalesCalculatorMultiple: SettingsStateFlow<String>
     // stateCombine will cause UI lag
 //    val scalesCalculator: StateFlow<ScalesCalculator>
 
-    val disabledGestureTypes: SettingsStateFlow<Int>
+
+    /* ------------------------------------------ Zoom Offset -------------------------------------------- */
+
+    val rubberBandOffsetEnabled: SettingsStateFlow<Boolean>
 
     val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean>
 
@@ -68,47 +81,56 @@ expect class AppSettings(context: PlatformContext) {
 
     val containerWhitespaceEnabled: SettingsStateFlow<Boolean>
 
+
+    /* ------------------------------------------ Zoom Read Mode -------------------------------------------- */
+
     val readModeEnabled: SettingsStateFlow<Boolean>
 
     val readModeAcceptedBoth: SettingsStateFlow<Boolean>
 
-    val pausedContinuousTransformTypes: SettingsStateFlow<Int>
 
-    val disabledBackgroundTiles: SettingsStateFlow<Boolean>
-
-    val showTileBounds: SettingsStateFlow<Boolean>
-
-    val tileAnimationEnabled: SettingsStateFlow<Boolean>
-
-    val tileMemoryCache: SettingsStateFlow<Boolean>
-
-    val scrollBarEnabled: SettingsStateFlow<Boolean>
-
-    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled: SettingsStateFlow<Boolean>
-
-    val delayImageLoadEnabled: SettingsStateFlow<Boolean>
+    /* ------------------------------------------ Subsampling -------------------------------------------- */
 
     val subsamplingEnabled: SettingsStateFlow<Boolean>
 
+    val tileAnimationEnabled: SettingsStateFlow<Boolean>
+
+    val tileBoundsEnabled: SettingsStateFlow<Boolean>
+
+    val backgroundTilesEnabled: SettingsStateFlow<Boolean>
+
+    val tileMemoryCacheEnabled: SettingsStateFlow<Boolean>
+
     val autoStopWithLifecycleEnabled: SettingsStateFlow<Boolean>
 
+    val pausedContinuousTransformTypes: SettingsStateFlow<Int>
 
-    // ------------------------------------------ other --------------------------------------------
 
-    val composeImageLoader: SettingsStateFlow<String>
+    /* ------------------------------------------ Scroll Bar -------------------------------------------- */
+
+    val scrollBarEnabled: SettingsStateFlow<Boolean>
+
+
+    /* ------------------------------------------ Other -------------------------------------------- */
 
     val currentPageIndex: SettingsStateFlow<Int>
 
+    val staggeredGridMode: SettingsStateFlow<Boolean>
+
+    val composeImageLoader: SettingsStateFlow<String>
+
+
+    val pagerGuideShowed: SettingsStateFlow<Boolean>
+
     val horizontalPagerLayout: SettingsStateFlow<Boolean>
 
-    val staggeredGridMode: SettingsStateFlow<Boolean>
+    val delayImageLoadEnabled: SettingsStateFlow<Boolean>
+
 
     val logLevelName: SettingsStateFlow<String>
     val logLevel: StateFlow<Logger.Level>
 
     val debugLog: SettingsStateFlow<Boolean>
-
-    val pagerGuideShowed: SettingsStateFlow<Boolean>
 }
 
 fun buildScalesCalculator(scalesCalculatorName: String, scalesMultiple: Float): ScalesCalculator {

@@ -166,6 +166,14 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         MutableStateFlow(ZoomAnimationSpec.Default)
 
     /**
+     * If true, when the user offset to the bounds through a gesture,
+     * continuing to offset will have a rubber band effect, and when the hand is released,
+     * it will rollback to the bounds
+     */
+    var rubberBandOffsetState: MutableStateFlow<Boolean> =
+        MutableStateFlow(zoomableCore.rubberBandOffset)
+
+    /**
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
     val limitOffsetWithinBaseVisibleRectState: MutableStateFlow<Boolean> =
@@ -616,6 +624,11 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         coroutineScope.launch(Dispatchers.Main.immediate) {
             animationSpecState.collect {
                 zoomableCore.setAnimationSpec(it)
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            rubberBandOffsetState.collect {
+                zoomableCore.setRubberBandOffset(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {

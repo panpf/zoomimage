@@ -79,6 +79,7 @@ fun ZoomImageSettingList() {
             values = contentScaleValues,
             state = appSettings.contentScaleName,
         )
+
         val alignmentValues = remember {
             listOf(
                 Alignment.TopStart,
@@ -105,53 +106,42 @@ fun ZoomImageSettingList() {
             state = appSettings.rtlLayoutDirectionEnabled,
         )
 
-        DividerSettingItem("Gesture")
+        DividerSettingItem("Zoom")
 
         SwitchSettingItem(
-            title = "Animate Scale",
+            title = "Animate",
             desc = null,
-            state = appSettings.animateScale,
+            state = appSettings.zoomAnimateEnabled,
         )
+
         SwitchSettingItem(
-            title = "Rubber Band Scale",
+            title = "Slower Animation",
             desc = null,
-            state = appSettings.rubberBandScale,
+            state = appSettings.zoomSlowerAnimationEnabled,
         )
+
         SwitchSettingItem(
-            title = "Three Step Scale",
+            title = "Read Mode",
             desc = null,
-            state = appSettings.threeStepScale,
+            state = appSettings.readModeEnabled,
         )
+
         SwitchSettingItem(
-            title = "Slower Scale Animation",
+            title = "Read Mode - Both",
             desc = null,
-            state = appSettings.slowerScaleAnimation,
+            state = appSettings.readModeAcceptedBoth,
         )
+
         SwitchSettingItem(
-            title = "Reverse Mouse Wheel Scale",
+            title = "Scroll Bar",
             desc = null,
-            state = appSettings.reverseMouseWheelScale,
+            state = appSettings.scrollBarEnabled,
         )
-        DropdownSettingItem(
-            title = "Scales Calculator",
-            desc = null,
-            values = listOf("Dynamic", "Fixed"),
-            state = appSettings.scalesCalculatorName,
-        )
-        val scalesMultipleValues = remember {
-            listOf(
-                2.0f.toString(),
-                2.5f.toString(),
-                3.0f.toString(),
-                3.5f.toString(),
-                4.0f.toString(),
-            )
-        }
-        DropdownSettingItem(
-            title = "Scales Multiple",
-            desc = null,
-            values = scalesMultipleValues,
-            state = appSettings.scalesMultiple,
+
+        SwitchSettingItem(
+            title = "Keep Transform",
+            desc = "Works only when switching images with the same aspect ratio",
+            state = appSettings.keepTransformEnabled,
         )
 
         val gestureTypes = remember { GestureType.values }
@@ -179,12 +169,67 @@ fun ZoomImageSettingList() {
             }
         )
 
-        DividerSettingItem("Offset Bounds")
+        DividerSettingItem("Scale")
+
+        SwitchSettingItem(
+            title = "Rubber Band Scale",
+            desc = null,
+            state = appSettings.rubberBandScaleEnabled,
+        )
+
+        SwitchSettingItem(
+            title = "Three Step Scale",
+            desc = null,
+            state = appSettings.threeStepScaleEnabled,
+        )
+
+        SwitchSettingItem(
+            title = "Reverse Mouse Wheel Scale",
+            desc = null,
+            state = appSettings.reverseMouseWheelScaleEnabled,
+        )
+
+        DropdownSettingItem(
+            title = "Scales Calculator",
+            desc = null,
+            values = listOf("Dynamic", "Fixed"),
+            state = appSettings.scalesCalculatorName,
+        )
+        val scalesMultipleValues = remember {
+            listOf(
+                2.0f.toString(),
+                2.5f.toString(),
+                3.0f.toString(),
+                3.5f.toString(),
+                4.0f.toString(),
+            )
+        }
+
+        DropdownSettingItem(
+            title = "Fixed Scales Calculator Multiple",
+            desc = null,
+            values = scalesMultipleValues,
+            state = appSettings.fixedScalesCalculatorMultiple,
+        )
+
+        DividerSettingItem("Offset")
+
+        SwitchSettingItem(
+            title = "Rubber Band Offset",
+            desc = null,
+            state = appSettings.rubberBandOffsetEnabled,
+        )
 
         SwitchSettingItem(
             title = "Limit Offset Within Base Visible Rect",
             desc = null,
             state = appSettings.limitOffsetWithinBaseVisibleRect,
+        )
+
+        SwitchSettingItem(
+            title = "Container Whitespace",
+            desc = null,
+            state = appSettings.containerWhitespaceEnabled,
         )
 
         val containerWhitespaceMultiples = remember {
@@ -196,25 +241,6 @@ fun ZoomImageSettingList() {
             state = appSettings.containerWhitespaceMultiple
         )
 
-        SwitchSettingItem(
-            title = "Container Whitespace",
-            desc = null,
-            state = appSettings.containerWhitespaceEnabled,
-        )
-
-        DividerSettingItem("Read Mode")
-
-        SwitchSettingItem(
-            title = "Read Mode",
-            desc = null,
-            state = appSettings.readModeEnabled,
-        )
-        SwitchSettingItem(
-            title = "Read Mode - Both",
-            desc = null,
-            state = appSettings.readModeAcceptedBoth,
-        )
-
         DividerSettingItem("Subsampling")
 
         SwitchSettingItem(
@@ -224,15 +250,33 @@ fun ZoomImageSettingList() {
         )
 
         SwitchSettingItem(
-            title = "Auto Stop With Lifecycle",
+            title = "Tile Animation",
             desc = null,
-            state = appSettings.autoStopWithLifecycleEnabled,
+            state = appSettings.tileAnimationEnabled,
+        )
+
+        SwitchSettingItem(
+            title = "Tile Bounds",
+            desc = null,
+            state = appSettings.tileBoundsEnabled,
+        )
+
+        SwitchSettingItem(
+            title = "Background Tiles",
+            desc = null,
+            state = appSettings.backgroundTilesEnabled,
         )
 
         SwitchSettingItem(
             title = "Tile Memory Cache",
             desc = null,
-            state = appSettings.tileMemoryCache,
+            state = appSettings.tileMemoryCacheEnabled,
+        )
+
+        SwitchSettingItem(
+            title = "Auto Stop With Lifecycle",
+            desc = null,
+            state = appSettings.autoStopWithLifecycleEnabled,
         )
 
         val continuousTransformTypes = remember { ContinuousTransformType.values }
@@ -263,35 +307,7 @@ fun ZoomImageSettingList() {
             }
         )
 
-        SwitchSettingItem(
-            title = "Disabled Background Tiles",
-            desc = null,
-            state = appSettings.disabledBackgroundTiles,
-        )
-        SwitchSettingItem(
-            title = "Show Tile Bounds",
-            desc = null,
-            state = appSettings.showTileBounds,
-        )
-        SwitchSettingItem(
-            title = "Tile Animation",
-            desc = null,
-            state = appSettings.tileAnimationEnabled,
-        )
-
         DividerSettingItem("Other")
-
-        SwitchSettingItem(
-            title = "Scroll Bar",
-            desc = null,
-            state = appSettings.scrollBarEnabled,
-        )
-
-        SwitchSettingItem(
-            title = "Keep Transform",
-            desc = "Works only when switching images with the same aspect ratio",
-            state = appSettings.keepTransformWhenSameAspectRatioContentSizeChangedEnabled,
-        )
 
         SwitchSettingItem(
             title = "Delayed loading of images from local",

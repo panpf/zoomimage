@@ -101,6 +101,8 @@ class ZoomableCore constructor(
         private set
     var keepTransformWhenSameAspectRatioContentSizeChanged: Boolean = false
         private set
+    var rubberBandOffset: Boolean = false
+        private set
 
     var baseTransform: TransformCompat = TransformCompat.Origin
         private set
@@ -499,6 +501,13 @@ class ZoomableCore constructor(
         }
     }
 
+    fun setRubberBandOffset(rubberBandOffset: Boolean) {
+        if (this.rubberBandOffset != rubberBandOffset) {
+            this.rubberBandOffset = rubberBandOffset
+            logger.d { "$module. rubberBandOffset=$rubberBandOffset" }
+        }
+    }
+
     suspend fun setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect: Boolean) {
         if (this.limitOffsetWithinBaseVisibleRect != limitOffsetWithinBaseVisibleRect) {
             this.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
@@ -745,8 +754,8 @@ class ZoomableCore constructor(
         val limitedTargetUserOffset = limitUserOffset(
             newUserOffset = targetUserOffset,
             newUserScale = limitedTargetUserScale,
-//            rubberBandMode = true,
-//            currentUserOffset = currentUserOffset,
+            rubberBandMode = rubberBandOffset,
+            currentUserOffset = currentUserOffset,
         )
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactorCompat(limitedTargetUserScale),
@@ -876,12 +885,12 @@ class ZoomableCore constructor(
                 velocity = velocity,
                 extras = extras,
                 onUpdateValue = { newUserOffset ->
-                    val currentUserTransform2 = this@ZoomableCore.userTransform
+                    val nowUserTransform = this@ZoomableCore.userTransform
                     val limitedTargetUserOffset = limitUserOffset(
                         newUserOffset = newUserOffset,
-                        newUserScale = currentUserTransform2.scaleX,
+                        newUserScale = nowUserTransform.scaleX,
                     )
-                    val continue1 = limitedTargetUserOffset != currentUserTransform2.offset
+                    val continue1 = limitedTargetUserOffset != nowUserTransform.offset
                     if (continue1) {
                         val newUserTransform = this@ZoomableCore.userTransform
                             .copy(offset = limitedTargetUserOffset)
@@ -953,9 +962,9 @@ class ZoomableCore constructor(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
         ).round().toRect()      // round() makes sense
-        return if (rubberBandMode && currentUserOffset != null) {
+        return if (rubberBandMode) {
             limitOffsetWithRubberBand(
-                currentUserOffset = currentUserOffset,
+                currentUserOffset = currentUserOffset!!,
                 newUserOffset = newUserOffset,
                 userOffsetBoundsRect = userOffsetBoundsRect,
                 maxDistance = OffsetCompat(

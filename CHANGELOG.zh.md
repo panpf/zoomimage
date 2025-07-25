@@ -5,6 +5,8 @@
 # new
 
 * new: ContinuousTransformType 新增 ROLLBACK 类型
+* new: ZoomableState 和 ZoomableEngine 新增 rubberBandOffset
+  属性，开启后拖拽时允许超出边界。[#102](https://github.com/panpf/zoomimage/issues/102)
 * depend: 更新 sketch 4.3.1
 
 # 1.4.0-beta04

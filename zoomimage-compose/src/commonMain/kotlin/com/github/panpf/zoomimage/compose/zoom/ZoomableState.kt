@@ -186,6 +186,13 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
     var animationSpec: ZoomAnimationSpec by mutableStateOf(ZoomAnimationSpec.Default)
 
     /**
+     * If true, when the user offset to the bounds through a gesture,
+     * continuing to offset will have a rubber band effect, and when the hand is released,
+     * it will rollback to the bounds
+     */
+    var rubberBandOffset: Boolean by mutableStateOf(zoomableCore.rubberBandOffset)
+
+    /**
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
     var limitOffsetWithinBaseVisibleRect: Boolean by mutableStateOf(zoomableCore.limitOffsetWithinBaseVisibleRect)
@@ -627,6 +634,11 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { animationSpec }.collect {
                 zoomableCore.setAnimationSpec(it)
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { rubberBandOffset }.collect {
+                zoomableCore.setRubberBandOffset(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {

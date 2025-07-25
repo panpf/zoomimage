@@ -177,6 +177,27 @@ SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
+  zoomState = zoomState,
+)
+```
+
+### Rubber Band Offset
+
+ZoomImage supports dragging and dropping after the offset exceeds the boundary, but it will have a
+damping effect similar to a rubber band. After letting go, it will rebound to the boundary range.
+This function is turned off by default. You can turn it on through the `rubberBandOffset` property.
+
+Example:
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+zoomState.zoomable.rubberBandOffset = true
+
+SketchZoomAsyncImage(
+  uri = "https://sample.com/sample.jpeg",
+  contentDescription = "view image",
+  modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
 )
 ```

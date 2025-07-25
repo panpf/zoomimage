@@ -31,7 +31,7 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     protected val appSettings: AppSettings by inject()
 
-    protected var dialogWidthRatio: Float = 0.85f
+    protected var dialogWidthRatio: Float = 0.8f
     protected var dialogHeightRatio: Float? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

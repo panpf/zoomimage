@@ -171,6 +171,26 @@ SketchZoomAsyncImage(
 )
 ```
 
+### 橡皮筋效果
+
+ZoomImage 支持在偏移超出边界后可以继续拖拽，但会有类似橡皮筋的阻尼效果，松手后会回弹到边界范围内，此功能默认关闭，你可通过
+`rubberBandOffset` 属性开启它
+
+示例：
+
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+zoomState.zoomable.rubberBandOffset = true
+
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
 ### 可访问属性
 
 ```kotlin
