@@ -97,9 +97,8 @@ data class TransformCompat(
         get() = rotationOrigin.pivotFractionY
 
     init {
-        require(scale.isSpecified && offset.isSpecified) {
-            "ScaleFactorCompat and OffsetCompat must be specified at the same time"
-        }
+        require(scale.isSpecified) { "scale must be specified" }
+        require(offset.isSpecified) { "offset must be specified" }
     }
 
     companion object {

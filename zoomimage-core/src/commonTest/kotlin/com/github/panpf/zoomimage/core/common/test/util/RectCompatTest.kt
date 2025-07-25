@@ -426,4 +426,6 @@ class RectCompatTest {
             rect.flip(spaceSize, vertical = true)
         )
     }
+
+    // TODO test containsWithDelta
 }

@@ -487,3 +487,20 @@ fun RectCompat.flip(spaceSize: SizeCompat, vertical: Boolean = false): RectCompa
         )
     }
 }
+
+/**
+ * Check whether the given [OffsetCompat] is within the rectangle, allowing for a small delta.
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.RectCompatTest.testContainsWithDelta
+ */
+fun RectCompat.containsWithDelta(offset: OffsetCompat, delta: Float = 0f): Boolean {
+    require(delta >= 0f) { "Delta must be greater than or equal to 0, but was $delta" }
+    return if (delta == 0f) {
+        contains(offset)
+    } else {
+        offset.x - this.left >= -delta
+                && offset.x - this.right < delta
+                && offset.y - this.top >= -delta
+                && offset.y - this.bottom < delta
+    }
+}

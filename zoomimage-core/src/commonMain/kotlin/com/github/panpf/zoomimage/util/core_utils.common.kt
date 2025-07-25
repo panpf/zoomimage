@@ -285,3 +285,23 @@ internal fun isThumbnailWithSize(
 //    )
     return pass
 }
+
+/**
+ * First format the current value to the value of the specified decimal places, and then determine whether the current value is within the specified range.
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testIsInRangeWithScale
+ */
+internal fun Float.isInRangeWithScale(min: Float, max: Float, scale: Int? = null): Boolean {
+    val valueFormatted = if (scale != null) this.format(scale) else this
+    val maxFormatted = if (scale != null) max.format(2) else max
+    val minFormatted = if (scale != null) min.format(2) else min
+    return valueFormatted >= minFormatted && valueFormatted <= maxFormatted
+}
+
+/**
+ * First format the current value to the value of the specified decimal places, and then determine whether the current value is within the specified range.
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testIsInRangeWithScale
+ */
+internal fun Float.isInRangeWithScale(range: ClosedRange<Float>, scale: Int? = null): Boolean =
+    isInRangeWithScale(range.start, range.endInclusive, scale)

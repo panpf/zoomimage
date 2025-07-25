@@ -25,7 +25,9 @@ import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.center
+import com.github.panpf.zoomimage.util.containsWithDelta
 import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.isInRangeWithScale
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.isThumbnailWithSize
 import com.github.panpf.zoomimage.util.lerp
@@ -757,6 +759,7 @@ class ZoomableCore constructor(
             rubberBandMode = rubberBandOffset,
             currentUserOffset = currentUserOffset,
         )
+        // TODO Quickly scale after opening robberBandOffset may result in unspecified Offset
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactorCompat(limitedTargetUserScale),
             offset = limitedTargetUserOffset
@@ -786,9 +789,8 @@ class ZoomableCore constructor(
     }
 
     suspend fun rollback(focus: OffsetCompat? = null): Boolean = coroutineScope {
-        val containerSize =
-            containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
-        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val currentScale = transform.scaleX
         val currentBaseTransform = baseTransform
         val currentUserTransform = userTransform
@@ -798,16 +800,11 @@ class ZoomableCore constructor(
         val minScale = minScale
         val maxScale = maxScale
 
-        val scaleOutOfRange = currentScale.format(2) > maxScale.format(2)
-                || currentScale.format(2) < minScale.format(2)
-        // userOffsetBoundsRect.left == userOffsetBoundsRect.right Indicates that offset is not allowed in the horizontal direction
-        val offsetXOutOfRange = userOffsetBoundsRect.left != userOffsetBoundsRect.right
-                && (currentUserOffset.x < userOffsetBoundsRect.left || currentUserOffset.x > userOffsetBoundsRect.right)
-        // userOffsetBoundsRect.top == userOffsetBoundsRect.bottom Indicates that offset is not allowed in the vertical direction
-        val offsetYOutOfRange = userOffsetBoundsRect.top != userOffsetBoundsRect.bottom
-                && (currentUserOffset.y < userOffsetBoundsRect.top || currentUserOffset.y > userOffsetBoundsRect.bottom)
-        val offsetOutOfRange = offsetXOutOfRange || offsetYOutOfRange
-        if (!scaleOutOfRange && !offsetOutOfRange) {
+        val scaleInRange =
+            currentScale.isInRangeWithScale(min = minScale, max = maxScale, scale = 2)
+        val userOffsetInRange =
+            userOffsetBoundsRect.containsWithDelta(offset = currentUserOffset, delta = 1f)
+        if (scaleInRange && userOffsetInRange) {
             return@coroutineScope false
         }
 
@@ -849,7 +846,9 @@ class ZoomableCore constructor(
                     "minScale=${minScale.format(4)}, " +
                     "maxScale=${maxScale.format(4)}, " +
                     "userOffsetBoundsRect=${userOffsetBoundsRect.toShortString()}, " +
-                    "currentUserOffset=${currentUserOffset.toShortString()}"
+                    "currentUserOffset=${currentUserOffset.toShortString()}, " +
+                    "currentUserTransform=${currentUserTransform.toShortString()}, " +
+                    "newUserTransform=${newUserTransform.toShortString()}"
         }
         animatedUpdateUserTransform(
             targetUserTransform = newUserTransform,
