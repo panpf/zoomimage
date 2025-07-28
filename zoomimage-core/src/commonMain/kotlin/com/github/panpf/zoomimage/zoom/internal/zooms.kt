@@ -1440,53 +1440,28 @@ fun limitOffsetWithRubberBand(
     newUserOffset: OffsetCompat,
     userOffsetBoundsRect: RectCompat,
     maxDistance: OffsetCompat,
-    alwaysCanDragAtEdge: Boolean,
-): OffsetCompat {
-    return if (
-        alwaysCanDragAtEdge
-        && userOffsetBoundsRect.left == userOffsetBoundsRect.right
-        && userOffsetBoundsRect.top == userOffsetBoundsRect.bottom
-    ) {
-        OffsetCompat(
-            x = rubberBandWithDistance(
-                currentValue = currentUserOffset.x,
-                newValue = newUserOffset.x,
-                minValue = userOffsetBoundsRect.left,
-                maxValue = userOffsetBoundsRect.right,
-                maxDistance = maxDistance.x
-            ),
-            y = rubberBandWithDistance(
-                currentValue = currentUserOffset.y,
-                newValue = newUserOffset.y,
-                minValue = userOffsetBoundsRect.top,
-                maxValue = userOffsetBoundsRect.bottom,
-                maxDistance = maxDistance.y
-            ),
+    allowRubberBandOffset: OffsetCompat,
+): OffsetCompat = OffsetCompat(
+    x = if (allowRubberBandOffset.x >= 1f) {
+        rubberBandWithDistance(
+            currentValue = currentUserOffset.x,
+            newValue = newUserOffset.x,
+            minValue = userOffsetBoundsRect.left,
+            maxValue = userOffsetBoundsRect.right,
+            maxDistance = maxDistance.x
         )
     } else {
-        OffsetCompat(
-            x = if (userOffsetBoundsRect.left != userOffsetBoundsRect.right) {
-                rubberBandWithDistance(
-                    currentValue = currentUserOffset.x,
-                    newValue = newUserOffset.x,
-                    minValue = userOffsetBoundsRect.left,
-                    maxValue = userOffsetBoundsRect.right,
-                    maxDistance = maxDistance.x
-                )
-            } else {
-                newUserOffset.x.coerceIn(userOffsetBoundsRect.left, userOffsetBoundsRect.right)
-            },
-            y = if (userOffsetBoundsRect.top != userOffsetBoundsRect.bottom) {
-                rubberBandWithDistance(
-                    currentValue = currentUserOffset.y,
-                    newValue = newUserOffset.y,
-                    minValue = userOffsetBoundsRect.top,
-                    maxValue = userOffsetBoundsRect.bottom,
-                    maxDistance = maxDistance.y
-                )
-            } else {
-                newUserOffset.y.coerceIn(userOffsetBoundsRect.top, userOffsetBoundsRect.bottom)
-            },
+        newUserOffset.x.coerceIn(userOffsetBoundsRect.left, userOffsetBoundsRect.right)
+    },
+    y = if (allowRubberBandOffset.y >= 1f) {
+        rubberBandWithDistance(
+            currentValue = currentUserOffset.y,
+            newValue = newUserOffset.y,
+            minValue = userOffsetBoundsRect.top,
+            maxValue = userOffsetBoundsRect.bottom,
+            maxDistance = maxDistance.y
         )
-    }
-}
+    } else {
+        newUserOffset.y.coerceIn(userOffsetBoundsRect.top, userOffsetBoundsRect.bottom)
+    },
+)

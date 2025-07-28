@@ -138,6 +138,7 @@ class ZoomableCore constructor(
         private set
 
     private var resetParams: ResetParams? = null
+    private var allowRubberBandOffset: OffsetCompat? = null
 
 
     suspend fun scale(
@@ -742,6 +743,13 @@ class ZoomableCore constructor(
         containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
 
+        if (rubberBandOffset && allowRubberBandOffset == null) {
+            allowRubberBandOffset = OffsetCompat(
+                x = if ((alwaysCanDragAtEdge && userOffsetBoundsRect.left == userOffsetBoundsRect.right) || userOffsetBoundsRect.left != userOffsetBoundsRect.right) 1f else -1f,
+                y = if ((alwaysCanDragAtEdge && userOffsetBoundsRect.top == userOffsetBoundsRect.bottom) || userOffsetBoundsRect.top != userOffsetBoundsRect.bottom) 1f else -1f,
+            )
+        }
+
         val currentScale = transform.scaleX
         val baseScale = baseTransform.scaleX
         val targetScale = currentScale * zoomChange
@@ -808,6 +816,8 @@ class ZoomableCore constructor(
         val userOffsetBoundsRect = userOffsetBoundsRect
         val minScale = minScale
         val maxScale = maxScale
+
+        allowRubberBandOffset = null
 
         val scaleInRange =
             currentScale.isInRangeWithScale(min = minScale, max = maxScale, scale = 2)
@@ -970,7 +980,8 @@ class ZoomableCore constructor(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
         ).round().toRect()      // round() makes sense
-        return if (rubberBandMode) {
+        val allowRubberBandOffset = allowRubberBandOffset
+        return if (rubberBandMode && allowRubberBandOffset != null) {
             limitOffsetWithRubberBand(
                 currentUserOffset = currentUserOffset!!,
                 newUserOffset = newUserOffset,
@@ -979,7 +990,7 @@ class ZoomableCore constructor(
                     x = containerSize.width * 0.25f,
                     y = containerSize.height * 0.25f
                 ),
-                alwaysCanDragAtEdge = alwaysCanDragAtEdge,
+                allowRubberBandOffset = allowRubberBandOffset,
             )
         } else {
             newUserOffset.limitTo(userOffsetBoundsRect)
