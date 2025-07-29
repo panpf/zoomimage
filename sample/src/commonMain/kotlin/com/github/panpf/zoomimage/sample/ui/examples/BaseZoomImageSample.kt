@@ -235,12 +235,6 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
     }
     zoomable.scalesCalculator = scalesCalculator
 
-    val rubberBandOffsetEnabled by appSettings.rubberBandOffsetEnabled.collectAsState()
-    zoomable.rubberBandOffset = rubberBandOffsetEnabled
-
-    val alwaysCanDragAtEdgeEnabled by appSettings.alwaysCanDragAtEdgeEnabled.collectAsState()
-    zoomable.alwaysCanDragAtEdge = alwaysCanDragAtEdgeEnabled
-
     val limitOffsetWithinBaseVisibleRect by appSettings.limitOffsetWithinBaseVisibleRect.collectAsState()
     zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
 

@@ -151,14 +151,6 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                             appSettings.fixedScalesCalculatorMultiple.value.toFloat()
                         )
                     }
-                appSettings.rubberBandOffsetEnabled
-                    .collectWithLifecycle(viewLifecycleOwner) {
-                        rubberBandOffsetState.value = it
-                    }
-                appSettings.alwaysCanDragAtEdgeEnabled
-                    .collectWithLifecycle(viewLifecycleOwner) {
-                        alwaysCanDragAtEdgeState.value = it
-                    }
                 appSettings.limitOffsetWithinBaseVisibleRect
                     .collectWithLifecycle(viewLifecycleOwner) {
                         limitOffsetWithinBaseVisibleRectState.value = it

@@ -95,10 +95,7 @@ class ZoomableCore constructor(
         private set
     var animationSpec: BaseZoomAnimationSpec? = null
         private set
-    var rubberBandOffset: Boolean = false
-        private set
-    var alwaysCanDragAtEdge: Boolean = false
-        private set
+
     var limitOffsetWithinBaseVisibleRect: Boolean = false
         private set
     var containerWhitespaceMultiple: Float = 0f
@@ -138,7 +135,6 @@ class ZoomableCore constructor(
         private set
 
     private var resetParams: ResetParams? = null
-    private var allowRubberBandOffset: OffsetCompat? = null
 
 
     suspend fun scale(
@@ -506,20 +502,6 @@ class ZoomableCore constructor(
         }
     }
 
-    fun setRubberBandOffset(rubberBandOffset: Boolean) {
-        if (this.rubberBandOffset != rubberBandOffset) {
-            this.rubberBandOffset = rubberBandOffset
-            logger.d { "$module. rubberBandOffset=$rubberBandOffset" }
-        }
-    }
-
-    fun setAlwaysCanDragAtEdge(alwaysCanDragAtEdge: Boolean) {
-        if (this.alwaysCanDragAtEdge != alwaysCanDragAtEdge) {
-            this.alwaysCanDragAtEdge = alwaysCanDragAtEdge
-            logger.d { "$module. alwaysCanDragAtEdge=$alwaysCanDragAtEdge" }
-        }
-    }
-
     suspend fun setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect: Boolean) {
         if (this.limitOffsetWithinBaseVisibleRect != limitOffsetWithinBaseVisibleRect) {
             this.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
@@ -743,13 +725,6 @@ class ZoomableCore constructor(
         containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
 
-        if (rubberBandOffset && allowRubberBandOffset == null) {
-            allowRubberBandOffset = OffsetCompat(
-                x = if ((alwaysCanDragAtEdge && userOffsetBoundsRect.left == userOffsetBoundsRect.right) || userOffsetBoundsRect.left != userOffsetBoundsRect.right) 1f else -1f,
-                y = if ((alwaysCanDragAtEdge && userOffsetBoundsRect.top == userOffsetBoundsRect.bottom) || userOffsetBoundsRect.top != userOffsetBoundsRect.bottom) 1f else -1f,
-            )
-        }
-
         val currentScale = transform.scaleX
         val baseScale = baseTransform.scaleX
         val targetScale = currentScale * zoomChange
@@ -773,10 +748,7 @@ class ZoomableCore constructor(
         val limitedTargetUserOffset = limitUserOffset(
             newUserOffset = targetUserOffset,
             newUserScale = limitedTargetUserScale,
-            rubberBandMode = rubberBandOffset,
-            currentUserOffset = currentUserOffset,
         )
-        // TODO Quickly scale after opening robberBandOffset may result in unspecified Offset
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactorCompat(limitedTargetUserScale),
             offset = limitedTargetUserOffset
@@ -816,8 +788,6 @@ class ZoomableCore constructor(
         val userOffsetBoundsRect = userOffsetBoundsRect
         val minScale = minScale
         val maxScale = maxScale
-
-        allowRubberBandOffset = null
 
         val scaleInRange =
             currentScale.isInRangeWithScale(min = minScale, max = maxScale, scale = 2)
@@ -966,8 +936,6 @@ class ZoomableCore constructor(
     private fun limitUserOffset(
         newUserOffset: OffsetCompat,
         newUserScale: Float,
-        rubberBandMode: Boolean = false,
-        currentUserOffset: OffsetCompat? = null,
     ): OffsetCompat {
         val userOffsetBoundsRect = calculateUserOffsetBounds(
             containerSize = containerSize,
@@ -980,21 +948,7 @@ class ZoomableCore constructor(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
             containerWhitespace = calculateContainerWhitespace().rtlFlipped(rtlLayoutDirection),
         ).round().toRect()      // round() makes sense
-        val allowRubberBandOffset = allowRubberBandOffset
-        return if (rubberBandMode && allowRubberBandOffset != null) {
-            limitOffsetWithRubberBand(
-                currentUserOffset = currentUserOffset!!,
-                newUserOffset = newUserOffset,
-                userOffsetBoundsRect = userOffsetBoundsRect,
-                maxDistance = OffsetCompat(
-                    x = containerSize.width * 0.25f,
-                    y = containerSize.height * 0.25f
-                ),
-                allowRubberBandOffset = allowRubberBandOffset,
-            )
-        } else {
-            newUserOffset.limitTo(userOffsetBoundsRect)
-        }
+        return newUserOffset.limitTo(userOffsetBoundsRect)
     }
 
     private suspend fun animatedUpdateUserTransform(

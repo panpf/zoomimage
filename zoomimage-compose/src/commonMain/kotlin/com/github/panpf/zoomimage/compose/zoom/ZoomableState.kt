@@ -49,7 +49,6 @@ import com.github.panpf.zoomimage.compose.util.toCompatOffset
 import com.github.panpf.zoomimage.compose.util.toPlatform
 import com.github.panpf.zoomimage.compose.util.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.ComposeAnimationAdapter
-import com.github.panpf.zoomimage.compose.zoom.internal.defaultCanDragOnEdge
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
@@ -185,19 +184,6 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
      * The animation configuration for the zoom animation
      */
     var animationSpec: ZoomAnimationSpec by mutableStateOf(ZoomAnimationSpec.Default)
-
-    /**
-     * If true, when the user offset to the bounds through a gesture,
-     * continuing to offset will have a rubber band effect, and when the hand is released,
-     * it will rollback to the bounds
-     */
-    var rubberBandOffset: Boolean by mutableStateOf(zoomableCore.rubberBandOffset)
-
-    /**
-     * Is it always allowed to continue dragging when offset to the edge.
-     * If you allow dragging on the edge, the ViewPager component cannot slide to switch pages
-     */
-    var alwaysCanDragAtEdge: Boolean by mutableStateOf(defaultCanDragOnEdge)
 
     /**
      * Whether to limit the offset of the user's pan to within the base visible rect
@@ -641,16 +627,6 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { animationSpec }.collect {
                 zoomableCore.setAnimationSpec(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { rubberBandOffset }.collect {
-                zoomableCore.setRubberBandOffset(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { alwaysCanDragAtEdge }.collect {
-                zoomableCore.setAlwaysCanDragAtEdge(it)
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {

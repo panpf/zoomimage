@@ -233,22 +233,6 @@ class ZoomImageSettingsViewModel(
 
         add(
             SwitchMenuFlow(
-                title = "Rubber Band Offset",
-                desc = null,
-                data = appSettings.rubberBandOffsetEnabled,
-            )
-        )
-
-        add(
-            SwitchMenuFlow(
-                title = "Always Can Drag At Edge",
-                desc = null,
-                data = appSettings.alwaysCanDragAtEdgeEnabled,
-            )
-        )
-
-        add(
-            SwitchMenuFlow(
                 title = "Limit Offset Within Base Visible Rect",
                 desc = null,
                 data = appSettings.limitOffsetWithinBaseVisibleRect,

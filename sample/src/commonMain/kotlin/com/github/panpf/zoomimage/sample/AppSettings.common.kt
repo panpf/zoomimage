@@ -73,10 +73,6 @@ expect class AppSettings(context: PlatformContext) {
 
     /* ------------------------------------------ Zoom Offset -------------------------------------------- */
 
-    val rubberBandOffsetEnabled: SettingsStateFlow<Boolean>
-
-    val alwaysCanDragAtEdgeEnabled: SettingsStateFlow<Boolean>
-
     val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean>
 
     val containerWhitespaceMultiple: SettingsStateFlow<Float>

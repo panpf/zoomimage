@@ -215,18 +215,6 @@ fun ZoomImageSettingList() {
         DividerSettingItem("Offset")
 
         SwitchSettingItem(
-            title = "Rubber Band Offset",
-            desc = null,
-            state = appSettings.rubberBandOffsetEnabled,
-        )
-
-        SwitchSettingItem(
-            title = "Always Can Drag At Edge",
-            desc = null,
-            state = appSettings.alwaysCanDragAtEdgeEnabled,
-        )
-
-        SwitchSettingItem(
             title = "Limit Offset Within Base Visible Rect",
             desc = null,
             state = appSettings.limitOffsetWithinBaseVisibleRect,

@@ -5,7 +5,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.zoomimage.compose.zoom.internal.defaultCanDragOnEdge
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.logo_basic
 import com.github.panpf.zoomimage.sample.resources.logo_coil
@@ -131,14 +130,6 @@ actual class AppSettings actual constructor(val context: PlatformContext) {
 
 
     /* ------------------------------------------ Zoom Offset -------------------------------------------- */
-
-    actual val rubberBandOffsetEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "rubberBandOffsetEnabled", false)
-    }
-
-    actual val alwaysCanDragAtEdgeEnabled: SettingsStateFlow<Boolean> by lazy {
-        booleanSettingsStateFlow(context, "alwaysCanDragAtEdgeEnabled", defaultCanDragOnEdge)
-    }
 
     actual val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean> by lazy {
         booleanSettingsStateFlow(context, "limitOffsetWithinBaseVisibleRect", false)
