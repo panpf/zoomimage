@@ -27,7 +27,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
 
-// TODO Refer to detectPowerfulTransformGestures to implement a unified drag-and-zoom gesture detector
 internal class ScaleDragGestureDetector(
     val view: View,
     val canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
@@ -46,75 +45,45 @@ internal class ScaleDragGestureDetector(
     private var velocityTracker: VelocityTracker? = null
     private var activePointerId: Int = INVALID_POINTER_ID
     private var activePointerIndex: Int = 0
-
     private var isDragging = false
     private var canDragged = true
     private var lastGestureFocus: OffsetCompat? = null
-    private var multiPointLastFocus: OffsetCompat? = null
-    private var multiPointCount = 0
     private var pointCount = 0
+    private var scaleFactor: Float? = null
 
     init {
         val configuration = ViewConfiguration.get(view.context)
-        minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
         touchSlop = configuration.scaledTouchSlop.toFloat()
+        minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
         scaleDetector = FasterScaleGestureDetector(
-            view.context,
-            object : FasterScaleGestureDetector.OnScaleGestureListener {
-                override fun onScale(detector: FasterScaleGestureDetector): Boolean {
-                    val scaleFactor = detector.scaleFactor
+            mContext = view.context,
+            mListener = FasterScaleGestureDetector.SimpleOnScaleGestureListener2(
+                onScale = { detector ->
+                    this@ScaleDragGestureDetector.scaleFactor = detector.scaleFactor
                         .takeIf { !isNaN(it) && !isInfinite(it) }
-                        ?: return false
-                    if (pointCount > 1 && scaleFactor >= 0) {
-                        val focus = OffsetCompat(detector.focusX, detector.focusY)
-                        val multiPointLastFocus = this@ScaleDragGestureDetector.multiPointLastFocus
-                            ?.takeIf { multiPointCount == pointCount }
-                            ?: focus
-                        val panChange = OffsetCompat(
-                            detector.focusX - multiPointLastFocus.x,
-                            detector.focusY - multiPointLastFocus.y
-                        )
-                        onGestureListener.onGesture(
-                            scaleFactor = scaleFactor,
-                            focus = focus,
-                            panChange = panChange,
-                            pointCount = pointCount
-                        )
-                        this@ScaleDragGestureDetector.lastGestureFocus = focus
-                        this@ScaleDragGestureDetector.multiPointLastFocus = focus
-                        this@ScaleDragGestureDetector.multiPointCount = pointCount
-                    }
-                    return true
+                        ?: 1f
+                    true
                 }
-
-                override fun onScaleBegin(detector: FasterScaleGestureDetector): Boolean {
-                    view.parent.requestDisallowInterceptTouchEvent(true)
-                    return true
-                }
-
-                override fun onScaleEnd(detector: FasterScaleGestureDetector) {
-
-                }
-            })
+            )
+        )
     }
 
     private fun getActiveX(ev: MotionEvent): Float = try {
         ev.getX(activePointerIndex)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         ev.x
     }
 
     private fun getActiveY(ev: MotionEvent): Float = try {
         ev.getY(activePointerIndex)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         ev.y
     }
 
     fun onTouchEvent(ev: MotionEvent): Boolean {
         try {
             processTouchEvent(ev)
-            scaleDetector.onTouchEvent(ev)
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             // Fix for support lib bug, happening when onDestroy is
         }
         return true
@@ -133,13 +102,26 @@ internal class ScaleDragGestureDetector(
                 // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
                 firstTouch = null
                 lastGestureFocus = null
-                multiPointLastFocus = null
-                multiPointCount = 0
+                scaleFactor = null
+                scaleDetector.onTouchEvent(ev)
             }
 
             MotionEvent.ACTION_MOVE -> {
-                // Disable multi-finger drag, which can prevent the ViewPager from accidentally triggering left and right swipe when the minimum zoom ratio is zoomed in
-                if (ev.pointerCount == 1) {
+                scaleDetector.onTouchEvent(ev)
+                if (pointCount > 1) {
+                    val scaleFactor = this@ScaleDragGestureDetector.scaleFactor ?: 1f
+                    val scaleFocus = OffsetCompat(scaleDetector.focusX, scaleDetector.focusY)
+                    val lastGestureFocus = lastGestureFocus
+                    val panChange = if (lastGestureFocus != null)
+                        scaleFocus - lastGestureFocus else OffsetCompat.Zero
+                    onGestureListener.onGesture(
+                        scaleFactor = scaleFactor,
+                        focus = scaleFocus,
+                        panChange = panChange,
+                        pointCount
+                    )
+                    this@ScaleDragGestureDetector.lastGestureFocus = scaleFocus
+                } else {
                     val touch = OffsetCompat(getActiveX(ev), getActiveY(ev))
                     // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
                     val firstTouch = firstTouch
@@ -157,7 +139,7 @@ internal class ScaleDragGestureDetector(
                                 } else {
                                     dy != 0f && canDrag(false, if (dy > 0f) -1 else 1)
                                 }
-                                if (!canDragged) {
+                                if (pointCount == 1 && !canDragged) {
                                     view.parent.requestDisallowInterceptTouchEvent(false)
                                     isDragging = false
                                 }
@@ -178,12 +160,11 @@ internal class ScaleDragGestureDetector(
                         this@ScaleDragGestureDetector.firstTouch = touch
                     }
                     this@ScaleDragGestureDetector.lastTouch = touch
-                } else {
-                    firstTouch = null
                 }
             }
 
             MotionEvent.ACTION_POINTER_UP -> {
+                scaleDetector.onTouchEvent(ev)
                 // Ignore deprecation, ACTION_POINTER_ID_MASK and
                 // ACTION_POINTER_ID_SHIFT has same value and are deprecated
                 // You can have either deprecation or lint target api warning
@@ -199,6 +180,7 @@ internal class ScaleDragGestureDetector(
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                scaleDetector.onTouchEvent(ev)
                 activePointerId = INVALID_POINTER_ID
                 // Recycle Velocity Tracker
                 velocityTracker?.recycle()
@@ -210,6 +192,7 @@ internal class ScaleDragGestureDetector(
             }
 
             MotionEvent.ACTION_UP -> {
+                scaleDetector.onTouchEvent(ev)
                 activePointerId = INVALID_POINTER_ID
 
                 val velocity = velocityTracker?.takeIf { isDragging }?.let { velocityTracker ->
@@ -232,6 +215,11 @@ internal class ScaleDragGestureDetector(
                 if (gestureFocus != null) {
                     onGestureListener.onEnd(velocity)
                 }
+            }
+
+            else -> {
+                // Ignore all other events
+                scaleDetector.onTouchEvent(ev)
             }
         }
 

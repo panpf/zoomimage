@@ -4,6 +4,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 # new
 
+* improve: ZoomImageView supports two-finger drag
+  gestures. [#102](https://github.com/panpf/zoomimage/issues/102)
 * new: ContinuousTransformType Added ROLLBACK type
 * depend: Update sketch to 4.3.1
 

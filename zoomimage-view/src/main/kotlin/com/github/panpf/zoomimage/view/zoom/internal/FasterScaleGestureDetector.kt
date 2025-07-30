@@ -22,7 +22,6 @@ import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.ViewConfiguration
-import com.github.panpf.zoomimage.view.zoom.internal.FasterScaleGestureDetector.OnScaleGestureListener
 import kotlin.math.abs
 import kotlin.math.hypot
 
@@ -138,6 +137,34 @@ class FasterScaleGestureDetector @JvmOverloads constructor(
 
         override fun onScaleEnd(detector: FasterScaleGestureDetector) {
             // Intentionally empty
+        }
+    }
+
+    /**
+     * A convenience class to extend when you only want to listen for a subset
+     * of scaling-related events. This implements all methods in
+     * [OnScaleGestureListener] but does nothing.
+     * [OnScaleGestureListener.onScale] returns
+     * `false` so that a subclass can retrieve the accumulated scale
+     * factor in an overridden onScaleEnd.
+     * [OnScaleGestureListener.onScaleBegin] returns
+     * `true`.
+     */
+    class SimpleOnScaleGestureListener2(
+        val onScale: ((detector: FasterScaleGestureDetector) -> Boolean)? = null,
+        val onScaleBegin: ((detector: FasterScaleGestureDetector) -> Boolean)? = null,
+        val onScaleEnd: ((detector: FasterScaleGestureDetector) -> Unit)? = null
+    ) : OnScaleGestureListener {
+        override fun onScale(detector: FasterScaleGestureDetector): Boolean {
+            return onScale?.invoke(detector) ?: false
+        }
+
+        override fun onScaleBegin(detector: FasterScaleGestureDetector): Boolean {
+            return onScaleBegin?.invoke(detector) ?: true
+        }
+
+        override fun onScaleEnd(detector: FasterScaleGestureDetector) {
+            onScaleEnd?.invoke(detector)
         }
     }
 
