@@ -38,6 +38,19 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
+        android:id="@+id/photoDetailFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.gallery.PhotoDetailFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="placeholderImageUri"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
         android:id="@+id/zoomImageViewFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.BasicZoomImageViewFragment">
         <argument

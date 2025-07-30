@@ -28,7 +28,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
-import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.loadImage
@@ -38,7 +37,6 @@ import com.github.panpf.sketch.resize.Precision.LESS_PIXELS
 import com.github.panpf.sketch.transform.BlurTransformation
 import com.github.panpf.tools4a.display.ktx.getScreenSize
 import com.github.panpf.tools4k.lang.asOrThrow
-import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
@@ -48,11 +46,6 @@ import com.github.panpf.zoomimage.sample.image.simplePalette
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
 import com.github.panpf.zoomimage.sample.ui.ZoomImageSettingsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.examples.BasicZoomImageViewFragment
-import com.github.panpf.zoomimage.sample.ui.examples.CoilZoomImageViewFragment
-import com.github.panpf.zoomimage.sample.ui.examples.GlideZoomImageViewFragment
-import com.github.panpf.zoomimage.sample.ui.examples.PicassoZoomImageViewFragment
-import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
@@ -139,15 +132,11 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
                     if (it) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
             }
 
-            viewLifecycleOwner.lifecycleScope.launch {
-                appSettings.viewImageLoader.collect {
-                    adapter = AssemblyFragmentStateAdapter(
-                        fragment = this@PhotoPagerFragment,
-                        itemFactoryList = listOf(newPhotoDetailItemFactory(appSettings)),
-                        initDataList = photoList
-                    )
-                }
-            }
+            adapter = AssemblyFragmentStateAdapter(
+                fragment = this@PhotoPagerFragment,
+                itemFactoryList = listOf(PhotoDetailFragment.ItemFactory()),
+                initDataList = photoList
+            )
 
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -230,16 +219,5 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
                 addDecodeInterceptor(PaletteDecodeInterceptor())
             }
         }
-    }
-}
-
-fun newPhotoDetailItemFactory(appSettings: AppSettings): FragmentItemFactory<Photo> {
-    return when (val imageLoaderName = appSettings.viewImageLoader.value) {
-        "Sketch" -> SketchZoomImageViewFragment.ItemFactory()
-        "Coil" -> CoilZoomImageViewFragment.ItemFactory()
-        "Glide" -> GlideZoomImageViewFragment.ItemFactory()
-        "Picasso" -> PicassoZoomImageViewFragment.ItemFactory()
-        "Basic" -> BasicZoomImageViewFragment.ItemFactory()
-        else -> throw IllegalArgumentException("Unknown imageLoaderName: $imageLoaderName")
     }
 }
