@@ -271,7 +271,12 @@ fun Matrix.applyOriginToThumbnailScale(
         originImageSize = originImageSize,
         thumbnailImageSize = thumbnailImageSize
     )
-    postScale(scaleFactor.scaleY, scaleFactor.scaleY, 0f, 0f)
+    postScale(
+        /* sx = */ scaleFactor.scaleX,
+        /* sy = */ scaleFactor.scaleY,
+        /* px = */ 0f,
+        /* py = */ 0f
+    )
     return this
 }
 

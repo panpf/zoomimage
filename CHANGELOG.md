@@ -4,6 +4,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 # new
 
+* fix: Fixed a bug that only existed in version 1.4.0-beta04 for tile mapping misalignment of
+  ZoomImageView
 * improve: ZoomImageView supports two-finger drag
   gestures. [#102](https://github.com/panpf/zoomimage/issues/102)
 * new: ContinuousTransformType Added ROLLBACK type

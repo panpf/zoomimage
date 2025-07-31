@@ -22,7 +22,6 @@ import android.graphics.Paint
 import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import android.view.View
-import androidx.core.graphics.withMatrix
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.tileColor
@@ -86,37 +85,37 @@ class TileDrawHelper(
         var outsideLoadCount = 0
         var realDrawCount = 0
 
-        canvas.withMatrix(
-            matrix = cacheDisplayMatrix.applyTransform(transform, containerSize)
-        ) {
-            val imageSize = imageInfo.size
-            canvas.withMatrix(
-                matrix = cacheDisplayMatrix.applyOriginToThumbnailScale(
-                    originImageSize = imageSize,
-                    thumbnailImageSize = contentSize,
-                )
-            ) {
-                backgroundTiles.forEach { tileSnapshot ->
-                    if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
-                        if (drawTile(canvas = this, tileSnapshot = tileSnapshot)) {
-                            backgroundCount++
-                        }
-                    }
-                }
-                foregroundTiles.forEach { tileSnapshot ->
-                    if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
-                        insideLoadCount++
-                        if (drawTile(canvas = this, tileSnapshot = tileSnapshot)) {
-                            realDrawCount++
-                        }
-                        if (subsamplingEngine.showTileBoundsState.value) {
-                            drawTileBounds(canvas = this, tileSnapshot = tileSnapshot)
-                        }
-                    } else {
-                        outsideLoadCount++
+        val checkpoint: Int = canvas.save()
+        canvas.concat(/* matrix = */ cacheDisplayMatrix.applyTransform(transform, containerSize))
+        canvas.concat(
+            /* matrix = */ cacheDisplayMatrix.applyOriginToThumbnailScale(
+                originImageSize = imageInfo.size,
+                thumbnailImageSize = contentSize
+            )
+        )
+        try {
+            backgroundTiles.forEach { tileSnapshot ->
+                if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
+                    if (drawTile(canvas = canvas, tileSnapshot = tileSnapshot)) {
+                        backgroundCount++
                     }
                 }
             }
+            foregroundTiles.forEach { tileSnapshot ->
+                if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
+                    insideLoadCount++
+                    if (drawTile(canvas = canvas, tileSnapshot = tileSnapshot)) {
+                        realDrawCount++
+                    }
+                    if (subsamplingEngine.showTileBoundsState.value) {
+                        drawTileBounds(canvas = canvas, tileSnapshot = tileSnapshot)
+                    }
+                } else {
+                    outsideLoadCount++
+                }
+            }
+        } finally {
+            canvas.restoreToCount(checkpoint)
         }
 
         logger.v {
