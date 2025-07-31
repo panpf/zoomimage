@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
@@ -24,7 +25,6 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.widget.Toolbar
-import androidx.core.graphics.withMatrix
 import androidx.lifecycle.coroutineScope
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.loadImage
@@ -118,7 +118,7 @@ class OverlayView(
         }
     }
 
-    override fun onDraw(canvas: android.graphics.Canvas) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val zoomableEngine = zoomableEngine ?: return
         val markList = this.markList?.takeIf { it.isNotEmpty() } ?: return
@@ -137,34 +137,35 @@ class OverlayView(
         )
         val originVisibleRect = contentVisibleRect.times(thumbnailToOriginScaleFactor)
 
-        canvas.withMatrix(
-            matrix = reusableMatrix.applyTransform(transform, containerSize)
-        ) {
-            canvas.withMatrix(
-                matrix = reusableMatrix2.applyOriginToThumbnailScale(
-                    originImageSize = contentOriginSize,
-                    thumbnailImageSize = contentSize,
-                )
-            ) {
-                markList.forEach { mark ->
-                    val left = mark.radiusPx - mark.cxPx
-                    val top = mark.radiusPx - mark.cyPx
-                    val right = mark.radiusPx + mark.cxPx
-                    val bottom = mark.radiusPx + mark.cyPx
-                    if (left < originVisibleRect.right
-                        && top < originVisibleRect.bottom
-                        && right > originVisibleRect.left
-                        && bottom > originVisibleRect.top
-                    ) {
-                        canvas.drawCircle(
-                            /* cx = */ mark.cxPx,
-                            /* cy = */ mark.cyPx,
-                            /* radius = */ mark.radiusPx,
-                            /* paint = */ paint
-                        )
-                    }
+        val checkpoint: Int = canvas.save()
+        canvas.concat(/* matrix = */ reusableMatrix.applyTransform(transform, containerSize))
+        canvas.concat(
+            /* matrix = */ reusableMatrix.applyOriginToThumbnailScale(
+                originImageSize = contentOriginSize,
+                thumbnailImageSize = contentSize,
+            )
+        )
+        try {
+            markList.forEach { mark ->
+                val left = mark.radiusPx - mark.cxPx
+                val top = mark.radiusPx - mark.cyPx
+                val right = mark.radiusPx + mark.cxPx
+                val bottom = mark.radiusPx + mark.cyPx
+                if (left < originVisibleRect.right
+                    && top < originVisibleRect.bottom
+                    && right > originVisibleRect.left
+                    && bottom > originVisibleRect.top
+                ) {
+                    canvas.drawCircle(
+                        /* cx = */ mark.cxPx,
+                        /* cy = */ mark.cyPx,
+                        /* radius = */ mark.radiusPx,
+                        /* paint = */ paint
+                    )
                 }
             }
+        } finally {
+            canvas.restoreToCount(checkpoint)
         }
     }
 }
