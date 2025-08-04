@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -108,6 +109,9 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
             contentDisplayRect = it.contentDisplayRect.roundToPlatform()
             contentVisibleRectF = it.contentVisibleRect.toPlatform()
             contentVisibleRect = it.contentVisibleRect.roundToPlatform()
+            sourceScaleFactor = it.sourceScaleFactor.toPlatform()
+            sourceVisibleRectF = it.sourceVisibleRect.toPlatform()
+            sourceVisibleRect = it.sourceVisibleRect.roundToPlatform()
             userOffsetBoundsRectF = it.userOffsetBoundsRect.toPlatform()
             userOffsetBoundsRect = it.userOffsetBoundsRect.roundToPlatform()
             userOffsetBoundsRect = it.userOffsetBoundsRect.roundToPlatform()
@@ -232,6 +236,13 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
     /* *********************************** Properties readable by the user ******************************* */
 
     /**
+     * Final transformation, include the final scale, offset, rotation,
+     * which is the sum of [baseTransform] and [userTransform]
+     */
+    var transform: Transform by mutableStateOf(zoomableCore.transform.toPlatform())
+        private set
+
+    /**
      * Base transformation, include the base scale, offset, rotation,
      * which is affected by [contentScale], [alignment] properties and [rotate] method
      */
@@ -243,13 +254,6 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
      * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [locate] method
      */
     var userTransform: Transform by mutableStateOf(zoomableCore.userTransform.toPlatform())
-        private set
-
-    /**
-     * Final transformation, include the final scale, offset, rotation,
-     * which is the sum of [baseTransform] and [userTransform]
-     */
-    var transform: Transform by mutableStateOf(zoomableCore.transform.toPlatform())
         private set
 
     /**
@@ -316,6 +320,24 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
      * The content is visible region to the user after the final transform transformation
      */
     var contentVisibleRect: IntRect by mutableStateOf(zoomableCore.contentVisibleRect.roundToPlatform())
+        private set
+
+    /**
+     * The current scaling ratio of the original image
+     */
+    var sourceScaleFactor: ScaleFactor by mutableStateOf(zoomableCore.sourceScaleFactor.toPlatform())
+        private set
+
+    /**
+     * The the current visible region of the original image
+     */
+    var sourceVisibleRectF: Rect by mutableStateOf(zoomableCore.sourceVisibleRect.toPlatform())
+        private set
+
+    /**
+     * The the current visible region of the original image
+     */
+    var sourceVisibleRect: IntRect by mutableStateOf(zoomableCore.sourceVisibleRect.roundToPlatform())
         private set
 
     /**
@@ -521,6 +543,18 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
      */
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset =
         touchPointToContentPointF(touchPoint = touchPoint).round()
+
+    /**
+     * Convert point of the original image into the current drawing coordinate system
+     */
+    fun sourceToDraw(point: Offset): Offset =
+        zoomableCore.sourceToDraw(point.toCompat()).toPlatform()
+
+    /**
+     * Convert the rect of the original image to the current drawing coordinate system
+     */
+    fun sourceToDraw(rect: Rect): Rect =
+        zoomableCore.sourceToDraw(rect.toCompat()).toPlatform()
 
     /**
      * If true is returned, scrolling can continue on the specified axis and direction

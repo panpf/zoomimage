@@ -49,7 +49,7 @@ Compose multiplatform：
 val zoomState: ZoomState by rememberZoomState()
 val imageSource = remember {
     val resUri = Res.getUri("files/huge_world.jpeg")
-  ImageSource.fromComposeResource(resUri)
+    ImageSource.fromComposeResource(resUri)
 }
 zoomState.setSubsamplingImage(imageSource)
 ZoomImage(
@@ -131,7 +131,7 @@ picassoZoomImageViewImage.loadImage("https://sample.com/sample.jpeg")
 // compose
 val zoomState: ZoomState by rememberSketchZoomState()
 SketchZoomAsyncImage(
-  uri = "https://sample.com/sample.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -145,39 +145,103 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 ```
 
-### 可访问属性
+### 可访问属性和方法
 
 > [!TIP] 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
+> 可以读取也可以设置的属性:
 
-* `zoomable.baseTransform: Transform`: 基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment
-  属性以及 rotate() 方法的影响
-* `zoomable.userTransform: Transform`: 用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及
-  scale()、offset()、locate()
-  方法的影响
-* `zoomable.transform: Transform`:
-  最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform + userTransform`
+* `zoomable.contentScale: ContentScale`: content 的缩放方式，默认是 ContentScale.Fit
+* `zoomable.alignment: Alignment`: content 在 container 中的对齐方式，默认是 Alignment.TopStart
+* `zoomable.layoutDirection: LayoutDirection`: container 的布局方向，默认是 LayoutDirection.Ltr
+* `zoomable.readMode: ReadMode?`: 阅读模式配置，默认是 null
+* `zoomable.scalesCalculator: ScalesCalculator`: minScale、mediumScale 和 maxScale 计算器，默认是
+  ScalesCalculator.Dynamic
+* `zoomable.threeStepScale: Boolean`: 双击缩放时是否在 minScale、mediumScale 和 maxScale 之间循环缩放，默认是
+  false
+* `zoomable.rubberBandScale: Boolean`: 是否开启橡皮筋效果，默认是 true
+* `zoomable.oneFingerScaleSpec: OneFingerScaleSpec`: 单指缩放配置，默认是 OneFingerScaleSpec.Default
+* `zoomable.animationSpec: ZoomAnimationSpec`: 缩放、偏移等动画配置，默认是 ZoomAnimationSpec.Default
+* `zoomable.limitOffsetWithinBaseVisibleRect: Boolean`: 是否将偏移限制在 contentBaseVisibleRect
+  内，默认是 false
+* `zoomable.containerWhitespaceMultiple: Float`: 基于容器尺寸的倍数为容器四周添加空白区域，默认是 0f
+* `zoomable.containerWhitespace: ContainerWhitespace`: 容器四周空白区域的配置，优先级高于
+  containerWhitespaceMultiple，默认是 ContainerWhitespace.Zero
+* `zoomable.keepTransformWhenSameAspectRatioContentSizeChanged: Boolean`: 是否在相同宽高比的
+  contentSize 改变时保持 transform 不变，默认是 false
+* `zoomable.disabledGestureTypes: Int`: 配置禁用的手势类型，默认是 0（不禁用任何手势），可以使用
+  GestureType 的位或操作来组合多个手势类型
+* `zoomable.reverseMouseWheelScale: Boolean`: 是否反转鼠标滚轮的方向，默认是 false
+* `zoomable.mouseWheelScaleCalculator: MouseWheelScaleCalculator`: 鼠标滚轮缩放计算器，默认是
+  MouseWheelScaleCalculator.Default
+* `subsampling.disabled: Boolean`: 是否禁用子采样功能
+* `subsampling.tileImageCache: TileImageCache?`: Tile 图块的内存缓存，默认为 null，集成图片加载器的组件会自动设置它
+* `subsampling.disabledTileImageCache: Boolean`: 是否禁用 Tile 图块的内存缓存，默认为 false
+* `subsampling.tileAnimationSpec: TileAnimationSpec`: 图块动画的配置，默认为
+  TileAnimationSpec.Default
+* `subsampling.pausedContinuousTransformTypes: Int`: 暂停加载图块的连续变换类型的配置，可以通过位或运算符组合多个类型，默认为
+  TileManager.DefaultPausedContinuousTransformType
+* `subsampling.disabledBackgroundTiles: Boolean`: 是否禁用背景图块，默认为 false
+* `subsampling.stopped: Boolean`: 是否停止加载图块，默认为 false
+* `subsampling.disabledAutoStopWithLifecycle: Boolean`: 是否禁用根据 Lifecycle 自动停止加载图块，默认为
+  false
+* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: 添加自定义的 RegionDecoder，默认为空列表
+* `subsampling.showTileBounds: Boolean`: 是否显示 Tile 的边界，默认为 false
+
+只能读取的属性：
+
+* `zoomable.containerSize: IntSize`: 当前 container 的大小
+* `zoomable.contentSize: IntSize`: 当前 content 的大小
+* `zoomable.contentOriginSize: IntSize`: 当前 content 的原始大小
+* `zoomable.transform.scale: ScaleFactor`: 当前缩放比例（baseTransform.scale * userTransform.scale）
+* `zoomable.baseTransform.scale: ScaleFactor`: 当前基础缩放比例，受 contentScale 和 alignment 参数影响
+* `zoomable.userTransform.scale: ScaleFactor`: 当前用户缩放比例，受 scale()、locate() 以及用户手势缩放、双击等操作影响
 * `zoomable.minScale: Float`: 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
 * `zoomable.mediumScale: Float`: 中间缩放比例，用于双击缩放时的一个循环缩放比例
 * `zoomable.maxScale: Float`: 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
 * `zoomable.continuousTransformType: Int`: 当前正在进行的连续变换的类型
+* `zoomable.contentBaseDisplayRectF: Rect`: content 经过 baseTransform 变换后在 container 中的区域
 * `zoomable.contentBaseDisplayRect: IntRect`: content 经过 baseTransform 变换后在 container 中的区域
+* `zoomable.contentBaseVisibleRectF: Rect`: content 经过 baseTransform 变换后自身对用户可见的区域
 * `zoomable.contentBaseVisibleRect: IntRect`: content 经过 baseTransform 变换后自身对用户可见的区域
+* `zoomable.contentDisplayRectF: Rect`: content 经过 transform 变换后在 container 中的区域
 * `zoomable.contentDisplayRect: IntRect`: content 经过 transform 变换后在 container 中的区域
+* `zoomable.contentVisibleRectF: Rect`: content 经过 transform 变换后自身对用户可见的区域
 * `zoomable.contentVisibleRect: IntRect`: content 经过 transform 变换后自身对用户可见的区域
+* `zoomable.sourceScaleFactor: ScaleFactor`: 以原图为基准的缩放比例
+* `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect 映射到原图上的区域
+* `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect 映射到原图上的区域
 * `zoomable.scrollEdge: ScrollEdge`: 当前偏移的边界状态
-* `zoomable.containerSize: IntSize`: 当前 container 的大小
-* `zoomable.contentSize: IntSize`: 当前 content 的大小
-* `zoomable.contentOriginSize: IntSize`: 当前 content 的原始大小
 * `subsampling.ready: Boolean`: 是否已经准备好了
 * `subsampling.imageInfo: ImageInfo`: 图片的尺寸、格式信息
-* `subsampling.exifOrientation: ExifOrientation`: 图片的 exif 信息
-* `subsampling.foregroundTiles: List<TileSnapshot>`: 当前前景图块列表
-* `subsampling.backgroundTiles: List<TileSnapshot>`: 当前背景图块列表
+* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: 磁贴网格大小映射表
 * `subsampling.sampleSize: Int`: 当前采样大小
 * `subsampling.imageLoadRect: IntRect`: 原图上当前实际加载的区域
-* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: 磁贴网格大小映射表
+* `subsampling.foregroundTiles: List<TileSnapshot>`: 当前前景图块列表
+* `subsampling.backgroundTiles: List<TileSnapshot>`: 当前背景图块列表
 
-### 监听属性变化
+可交互的方法：
+
+* `zoomable.scale()`: 缩放 content 到指定的倍数
+* `zoomable.scaleBy()`: 以乘法的方式增量缩放 content 指定的倍数
+* `zoomable.scaleByPlus()`: 以加法的方式增量缩放 content 指定的倍数
+* `zoomable.switchScale()`: 切换 content 的缩放倍数，默认在 minScale 和 mediumScale 之间循环， 如果
+  threeStepScale 为 true 则在 minScale、mediumScale 和 maxScale 之间循环
+* `zoomable.offset()`: 偏移 content 到指定的位置
+* `zoomable.offsetBy()`: 以增量的方式偏移 content 指定的偏移量
+* `zoomable.locate()`: 定位到 content 上的指定位置，也可以用时缩放到指定倍数
+* `zoomable.rotate()`: 旋转 content 到指定的角度，角度只能是 90 的倍数
+* `zoomable.rotateBy()`: 以增量的方式旋转 content 指定的角度，角度只能是 90 的倍数
+* `zoomable.getNextStepScale(): Float`: 获取下一个缩放倍数，默认在 minScale 和 mediumScale 之间循环，
+  如果 threeStepScale 为 true 则在 minScale、mediumScale 和 maxScale 之间循环
+* `zoomable.touchPointToContentPoint(): IntOffset`: 将触摸点转换为 content 上的点，原点是 content
+  的左上角
+* `zoomable.touchPointToContentPointF(): Offset`: 将触摸点转换为 content 上的点，原点是 content 的左上角
+* `zoomable.sourceToDraw(Offset): Offset`: 将原图上的点转换为绘制时的点，原点是 container 的左上角
+* `zoomable.sourceToDraw(Rect): Rect`: 将原图上的矩形转换为绘制时的矩形，原点是 container 的左上角
+* `zoomable.canScroll(): Boolean`: 判断当前 content 在指定方向上是否可以滚动
+* `subsampling.setImage(): Boolean`: 设置子采样图片，返回是否成功，集成图片加载器的组件会自动设置设置子采样图片
+
+#### 监听属性变化
 
 * compose 版本的相关属性是用 State 包装的，在 Composable 函数中直接读取它即可实现监听
 * view 的相关属性是用 StateFlow 包装，调用其 collect 函数即可实现监听

@@ -163,49 +163,136 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 > [!TIP] Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
 > suffixed with State compared to the compose version
 
-* `zoomable.baseTransform: Transform`: Base transformation, include the base scale, offset,
-  rotation, which is affected by
-  contentScale, alignment properties and rotate method
-* `zoomable.userTransform: Transform`: User transformation, include the user scale, offset,
-  rotation, which is affected by the user's
-  gesture, readMode properties and scale, offset, locate method
-* `zoomable.transform: Transform`: Final transformation, include the final scale, offset, rotation,
-  is equivalent
-  to `baseTransform + userTransform`
-* `zoomable.minScale: Float`: Minimum scale factor, for limits the final scale factor, and as a
-  target value for one of when
-  switch scale
-* `zoomable.mediumScale: Float`: Medium scale factor, only as a target value for one of when switch
-  scale
-* `zoomable.maxScale: Float`: Maximum scale factor, for limits the final scale factor, and as a
-  target value for one of when
-  switch scale
-* `zoomable.continuousTransformType: Int`: If true, a transformation is currently in progress,
-  possibly in a continuous gesture
-  operation, or an animation is in progress
-* `zoomable.contentBaseDisplayRect: IntRect`: The content region in the container after the
-  baseTransform transformation
-* `zoomable.contentBaseVisibleRect: IntRect`: The content is visible region to the user after the
-  baseTransform transformation
-* `zoomable.contentDisplayRect: IntRect`: The content region in the container after the final
-  transform transformation
-* `zoomable.contentVisibleRect: IntRect`: The content is visible region to the user after the final
-  transform transformation
-* `zoomable.scrollEdge: ScrollEdge`: Edge state for the current offset
+Properties that can be read or set:
+
+* `zoomable.contentScale: ContentScale`: The default scaling method of content is ContentScale.Fit
+* `zoomable.alignment: Alignment`: The alignment of content in container is Alignment.TopStart by
+  default
+* `zoomable.layoutDirection: LayoutDirection`: The layout direction of container, the default is
+  LayoutDirection.Ltr
+* `zoomable.readMode: ReadMode?`: Reading mode configuration, default is null
+* `zoomable.scalesCalculator: ScalesCalculator`: The minScale, mediumScale, and maxScale
+  calculators, the default is ScalesCalculator.Dynamic
+* `zoomable.threeStepScale: Boolean`: Whether to zoom in between minScale, mediumScale and maxScale
+  when double-clicking to zoom, default is false
+* `zoomable.rubberBandScale: Boolean`: Whether to enable the rubber band effect, the default is true
+* `zoomable.oneFingerScaleSpec: OneFingerScaleSpec`: Single-referential scaling configuration,
+  default is OneFingerScaleSpec.Default
+* `zoomable.animationSpec: ZoomAnimationSpec`: Animation configurations such as zoom, offset, etc.,
+  default is ZoomAnimationSpec.Default
+* `zoomable.limitOffsetWithinBaseVisibleRect: Boolean`: Whether to limit the offset to
+  contentBaseVisibleRect, the default is false
+* `zoomable.containerWhitespaceMultiple: Float`: Add blank space around the container based on
+  multiples of the container size, the default is 0f
+* `zoomable.containerWhitespace: ContainerWhitespace`: The configuration of blank areas around the
+  container has higher priority than containerWhitespaceMultiple, and the default is
+  ContainerWhitespace.Zero
+* `zoomable.keepTransformWhenSameAspectRatioContentSizeChanged: Boolean`: Whether to keep transform
+  unchanged when the contentSize of the same aspect ratio is changed, the default is false
+* `zoomable.disabledGestureTypes: Int`: Configure the disabled gesture type, the default is 0 (no
+  gesture is disabled), and multiple gesture types can be combined using the bits or actions of
+  GestureType
+* `zoomable.reverseMouseWheelScale: Boolean`: Whether to reverse the direction of the mouse wheel,
+  the default is false
+* `zoomable.mouseWheelScaleCalculator: MouseWheelScaleCalculator`: Mouse wheel zoom calculator, the
+  default is MouseWheelScaleCalculator.Default
+* `subsampling.disabled: Boolean`: Whether to disable subsampling function
+* `subsampling.tileImageCache: TileImageCache?`: The memory cache of Tile tile is null by default.
+  The components that integrate the image loader will automatically set it.
+* `subsampling.disabledTileImageCache: Boolean`: Whether to disable the memory cache of Tile tile,
+  default to false
+* `subsampling.tileAnimationSpec: TileAnimationSpec`: The configuration of tile animation is default
+  to TileAnimationSpec.Default
+* `subsampling.pausedContinuousTransformTypes: Int`: Pauses the configuration of continuous
+  transformation types for loading tiles. Multiple types can be combined by bits or operators. The
+  default is TileManager.DefaultPausedContinuousTransformType
+* `subsampling.disabledBackgroundTiles: Boolean`: Whether to disable background tile, default to
+  false
+* `subsampling.stopped: Boolean`: Whether to stop loading tiles, default to false
+* `subsampling.disabledAutoStopWithLifecycle: Boolean`: Whether to disable automatic stop loading of
+  tiles based on Lifecycle, default to false
+* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: Add a custom RegionDecoder, default to
+  an empty list
+* `subsampling.showTileBounds: Boolean`: Whether to display the boundary of Tile, default to false
+
+Readable properties:
+
 * `zoomable.containerSize: IntSize`: The size of the container that holds the content
 * `zoomable.contentSize: IntSize`: The size of the content, usually Painter.intrinsicSize.round()
 * `zoomable.contentOriginSize: IntSize`: The original size of the content
+* `zoomable.transform.scale: ScaleFactor`: Current scaling (baseTransform.scale *
+  userTransform.scale)
+* `zoomable.baseTransform.scale: ScaleFactor`: The current underlying scale, affected by the
+  contentScale and alignment parameter
+* `zoomable.userTransform.scale: ScaleFactor`: The current user scaling factor is affected by
+  scale(), locate(), user gesture scale, double-click and other operations
+* `zoomable.minScale: Float`: Minimum scale factor, for limits the final scale factor, and as a
+  target value for one of when switch scale
+* `zoomable.mediumScale: Float`: Medium scale factor, only as a target value for one of when switch
+  scale
+* `zoomable.maxScale: Float`: Maximum scale factor, for limits the final scale factor, and as a
+  target value for one of when switch scale
+* `zoomable.continuousTransformType: Int`: If true, a transformation is currently in progress,
+  possibly in a continuous gesture operation, or an animation is in progress
+* `zoomable.contentBaseDisplayRectF: Rect`: The content region in the container after the
+  baseTransform transformation
+* `zoomable.contentBaseDisplayRect: IntRect`: The content region in the container after the
+  baseTransform transformation
+* `zoomable.contentBaseVisibleRectF: Rect`: The content is visible region to the user after the
+  baseTransform transformation
+* `zoomable.contentBaseVisibleRect: IntRect`: The content is visible region to the user after the
+  baseTransform transformation
+* `zoomable.contentDisplayRectF: Rect`: The content region in the container after the final
+  transform transformation
+* `zoomable.contentDisplayRect: IntRect`: The content region in the container after the final
+  transform transformation
+* `zoomable.contentVisibleRectF: Rect`: The content is visible region to the user after the final
+  transform transformation
+* `zoomable.contentVisibleRect: IntRect`: The content is visible region to the user after the final
+  transform transformation
+* `zoomable.sourceScaleFactor: ScaleFactor`: Scaling ratio based on the original image
+* `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect maps to the area on the original image
+* `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect maps to the area on the original image
+* `zoomable.scrollEdge: ScrollEdge`: Edge state for the current offset
 * `subsampling.ready: Boolean`: Whether the image is ready for subsampling
 * `subsampling.imageInfo: ImageInfo`: The information of the image, including width, height, format,
   exif information, etc
-* `subsampling.exifOrientation: ExifOrientation`: The exif information of the image
-* `subsampling.foregroundTiles: List<TileSnapshot>`: List of current foreground tiles
-* `subsampling.backgroundTiles: List<TileSnapshot>`: List of current background tiles
+* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: Tile grid size map
 * `subsampling.sampleSize: Int`: The sample size of the image
 * `subsampling.imageLoadRect: IntRect`: The image load rect
-* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: Tile grid size map
+* `subsampling.foregroundTiles: List<TileSnapshot>`: List of current foreground tiles
+* `subsampling.backgroundTiles: List<TileSnapshot>`: List of current background tiles
 
-### Listen property changed
+Interactive methods:
+
+* `zoomable.scale()`: Scaling content to the specified multiple
+* `zoomable.scaleBy()`: Incrementally scale the multiple specified by content by multiplication
+* `zoomable.scaleByPlus()`: Incrementally scale content specified multiples by addition
+* `zoomable.switchScale()`: Switch the scaling multiple of the content, loop between minScale and
+  mediumScale by default, if threeStepScale is true, loop between minScale, mediumScale and maxScale
+* `zoomable.offset()`: Offset content to the specified location
+* `zoomable.offsetBy()`: Offset as incremental content specified offset
+* `zoomable.locate()`: Position to a specified position on the content, or scale to a specified
+  multiple when used.
+* `zoomable.rotate()`: Rotate content to the specified angle, the angle can only be multiples of 90
+* `zoomable.rotateBy()`: Rotate the angle specified by content in incremental manner, the angle can
+  only be multiples of 90.
+* `zoomable.getNextStepScale(): Float`: Get the next scaling multiple, loop between minScale and
+  mediumScale by default, if threeStepScale is true, loop between minScale, mediumScale and maxScale
+* `zoomable.touchPointToContentPoint(): IntOffset`: Convert the touch point to a point on the
+  content, the origin is the upper left corner of the content
+* `zoomable.touchPointToContentPointF(): Offset`: Convert the touch point to a point on the content,
+  the origin is the upper left corner of the content
+* `zoomable.sourceToDraw(Offset): Offset`: Convert the points on the original image to the points at
+  the time of drawing, the origin is the upper left corner of the container
+* `zoomable.sourceToDraw(Rect): Rect`: Convert the rectangle on the original image to the rectangle
+  when drawing, the origin is the upper left corner of the container
+* `zoomable.canScroll(): Boolean`: Determine whether the current content can scroll in the specified
+  direction
+* `subsampling.setImage(): Boolean`: Set the subsampling image, return whether it is successful, the
+  components that integrate the image loader will automatically set the subsampling image
+
+#### Listen property changed
 
 * The relevant properties of the compose version are wrapped in State and can be read directly in
   the Composable function to implement listening

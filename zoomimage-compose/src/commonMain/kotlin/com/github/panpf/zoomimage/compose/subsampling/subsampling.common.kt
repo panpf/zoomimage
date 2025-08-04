@@ -30,11 +30,13 @@ import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.zoomimage.compose.util.isEmpty
 import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.util.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.tileColor
+import com.github.panpf.zoomimage.util.IntRectCompat
 
 /**
  * Whether to turn off anti-aliasing when drawing Tiles
@@ -97,13 +99,15 @@ internal class SubsamplingDrawTilesNode(
     override fun ContentDrawScope.draw() {
         drawContent()
 
-        val canvas = drawContext.canvas
-        val foregroundTiles = subsampling.foregroundTiles
+        if (zoomable.containerSize.isEmpty()) return
+        if (zoomable.contentSize.isEmpty()) return
+        val foregroundTiles: List<TileSnapshot> = subsampling.foregroundTiles
             .takeIf { it.isNotEmpty() } ?: return
-        val backgroundTiles = subsampling.backgroundTiles
-        val imageLoadRect = subsampling.imageLoadRect
+        val imageLoadRect: IntRectCompat = subsampling.imageLoadRect
             .takeIf { !it.isEmpty }?.toCompat() ?: return
+        val backgroundTiles: List<TileSnapshot> = subsampling.backgroundTiles
 
+        val canvas = drawContext.canvas
         var backgroundCount = 0
         var insideLoadCount = 0
         var outsideLoadCount = 0

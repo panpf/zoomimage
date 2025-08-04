@@ -13,7 +13,7 @@ then the size of the image will become smaller, but the content of the image wil
 
 Therefore, it is necessary that ZoomImage can support subsampling when zooming, and the user can
 subsampling wherever he slides, and then display the clear original image fragments on the screen,
-so that it can display a clear picture when zooming without crashing the app
+so that it can display a clear image when zooming without crashing the app
 
 ### Features
 
@@ -21,14 +21,14 @@ so that it can display a clear picture when zooming without crashing the app
   image and then rotating the image
 * [Tile Animation](#tile-animation). Support transparency animation when displaying Tile, making
   the transition more natural
-* [Background tiles](#background-tiles). When switching sampleSize, the picture
+* [Background tiles](#background-tiles). When switching sampleSize, the image
   clarity changes step by step, making the transition more natural.
 * [Pause load tiles](#pause-load-tiles). Pause loading of tiles
   during continuous transformations to improve performance
 * [Stop load tiles](#stop-load-tiles). Listen to Lifecycle, stop loading tiles and release loaded
   tiles at stop to improve performance
 * [Memory cache](#memory-cache). Avoid repeated decoding and improve performance
-* [Public Properties](#public-properties). Can read sampling size, picture
+* [Public Properties](#public-properties). Can read sampling size, image
   information, tile list and other information
 
 ### Prefix
@@ -55,7 +55,7 @@ example:
 val zoomState: ZoomState by rememberZoomState()
 val imageSource = remember {
     val resUri = Res.getUri("files/huge_world.jpeg")
-  ImageSource.fromComposeResource(resUri)
+    ImageSource.fromComposeResource(resUri)
 }
 zoomState.setSubsamplingImage(imageSource)
 ZoomImage(
@@ -257,7 +257,7 @@ zoomState.subsampling.pausedContinuousTransformTypes = 0
 
 // All continuous transform types pause loading of tiles
 zoomState.subsampling.pausedContinuousTransformTypes =
-  TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+    TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -318,7 +318,7 @@ SketchZoomAsyncImage(
 ### Background tiles
 
 ZoomImage uses background tiles to change sampleSize when switching sampleSize
-The change in the clarity of the picture also changes step by step, and the basemap will not be
+The change in the clarity of the image also changes step by step, and the basemap will not be
 exposed during the process of loading new tiles, which ensures the continuity of the clarity change
 and the user experience is better
 
@@ -434,7 +434,7 @@ SketchZoomAsyncImage(
 )
 ```
 
-### Public Properties
+### Public Properties and Methods
 
 ```kotlin
 // compose
@@ -451,15 +451,42 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 > * Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
     suffixed with State compared to the compose version
 
+Properties that can be read or set:
+
+* `subsampling.disabled: Boolean`: Whether to disable subsampling function
+* `subsampling.tileImageCache: TileImageCache?`: The memory cache of Tile tile is null by default.
+  The components that integrate the image loader will automatically set it.
+* `subsampling.disabledTileImageCache: Boolean`: Whether to disable the memory cache of Tile tile,
+  default to false
+* `subsampling.tileAnimationSpec: TileAnimationSpec`: The configuration of tile animation is default
+  to TileAnimationSpec.Default
+* `subsampling.pausedContinuousTransformTypes: Int`: Pauses the configuration of continuous
+  transformation types for loading tiles. Multiple types can be combined by bits or operators. The
+  default is TileManager.DefaultPausedContinuousTransformType
+* `subsampling.disabledBackgroundTiles: Boolean`: Whether to disable background tile, default to
+  false
+* `subsampling.stopped: Boolean`: Whether to stop loading tiles, default to false
+* `subsampling.disabledAutoStopWithLifecycle: Boolean`: Whether to disable automatic stop loading of
+  tiles based on Lifecycle, default to false
+* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: Add a custom RegionDecoder, default to
+  an empty list
+* `subsampling.showTileBounds: Boolean`: Whether to display the boundary of Tile, default to false
+
+Readable properties:
+
 * `subsampling.ready: Boolean`: Whether the image is ready for subsampling
 * `subsampling.imageInfo: ImageInfo`: The information of the image, including width, height, format,
   exif information, etc
-* `subsampling.exifOrientation: ExifOrientation`: The exif information of the image
-* `subsampling.foregroundTiles: List<TileSnapshot>`: List of current foreground tiles
-* `subsampling.backgroundTiles: List<TileSnapshot>`: List of current background tiles
+* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: Tile grid size map
 * `subsampling.sampleSize: Int`: The sample size of the image
 * `subsampling.imageLoadRect: IntRect`: The image load rect
-* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: Tile grid size map
+* `subsampling.foregroundTiles: List<TileSnapshot>`: List of current foreground tiles
+* `subsampling.backgroundTiles: List<TileSnapshot>`: List of current background tiles
+
+Interactive methods:
+
+* `subsampling.setImage(): Boolean`: Set the subsampling image, return whether it is successful, the
+  components that integrate the image loader will automatically set the subsampling image
 
 #### Listen property changed
 

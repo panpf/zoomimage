@@ -163,12 +163,12 @@ class SubsamplingState(
     /**
      * If true, subsampling stops and free loaded tiles, which are reloaded after restart
      */
-    var stopped by mutableStateOf(subsamplingCore.stopped)
+    var stopped: Boolean by mutableStateOf(subsamplingCore.stopped)
 
     /**
      * If true, the automatic stop function based on lifecycle is disabled
      */
-    var disabledAutoStopWithLifecycle by mutableStateOf(subsamplingCore.disabledAutoStopWithLifecycle)
+    var disabledAutoStopWithLifecycle: Boolean by mutableStateOf(subsamplingCore.disabledAutoStopWithLifecycle)
 
     /**
      * User-defined RegionDecoder
@@ -185,6 +185,12 @@ class SubsamplingState(
     /* *********************************** Information properties ******************************* */
 
     /**
+     * Whether the image is ready for subsampling
+     */
+    var ready: Boolean by mutableStateOf(subsamplingCore.ready)
+        private set
+
+    /**
      * The information of the image, including width, height, format, etc
      */
     var imageInfo: ImageInfo? by mutableStateOf(subsamplingCore.imageInfo)
@@ -194,12 +200,6 @@ class SubsamplingState(
      * Tile grid size map, key is sample size, value is tile grid size
      */
     var tileGridSizeMap: Map<Int, IntOffset> by mutableStateOf(subsamplingCore.tileGridSizeMap.mapValues { entry -> entry.value.toPlatform() })
-        private set
-
-    /**
-     * Whether the image is ready for subsampling
-     */
-    var ready: Boolean by mutableStateOf(subsamplingCore.ready)
         private set
 
     /**

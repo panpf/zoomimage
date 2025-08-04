@@ -44,7 +44,7 @@
 val zoomState: ZoomState by rememberZoomState()
 val imageSource = remember {
     val resUri = Res.getUri("files/huge_world.jpeg")
-  ImageSource.fromComposeResource(resUri)
+    ImageSource.fromComposeResource(resUri)
 }
 zoomState.setSubsamplingImage(imageSource)
 ZoomImage(
@@ -414,14 +414,35 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 > [!TIP]
 > * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
+可以读取也可以设置的属性:
+
+* `subsampling.disabled: Boolean`: 是否禁用子采样功能
+* `subsampling.tileImageCache: TileImageCache?`: Tile 图块的内存缓存，默认为 null，集成图片加载器的组件会自动设置它
+* `subsampling.disabledTileImageCache: Boolean`: 是否禁用 Tile 图块的内存缓存，默认为 false
+* `subsampling.tileAnimationSpec: TileAnimationSpec`: 图块动画的配置，默认为
+  TileAnimationSpec.Default
+* `subsampling.pausedContinuousTransformTypes: Int`: 暂停加载图块的连续变换类型的配置，可以通过位或运算符组合多个类型，默认为
+  TileManager.DefaultPausedContinuousTransformType
+* `subsampling.disabledBackgroundTiles: Boolean`: 是否禁用背景图块，默认为 false
+* `subsampling.stopped: Boolean`: 是否停止加载图块，默认为 false
+* `subsampling.disabledAutoStopWithLifecycle: Boolean`: 是否禁用根据 Lifecycle 自动停止加载图块，默认为
+  false
+* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: 添加自定义的 RegionDecoder，默认为空列表
+* `subsampling.showTileBounds: Boolean`: 是否显示 Tile 的边界，默认为 false
+
+只能读取的属性：
+
 * `subsampling.ready: Boolean`: 是否已经准备好了
 * `subsampling.imageInfo: ImageInfo`: 图片的尺寸、格式信息
-* `subsampling.exifOrientation: ExifOrientation`: 图片的 exif 信息
-* `subsampling.foregroundTiles: List<TileSnapshot>`: 当前前景图块列表
-* `subsampling.backgroundTiles: List<TileSnapshot>`: 当前背景图块列表
+* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: 磁贴网格大小映射表
 * `subsampling.sampleSize: Int`: 当前采样大小
 * `subsampling.imageLoadRect: IntRect`: 原图上当前实际加载的区域
-* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: 磁贴网格大小映射表
+* `subsampling.foregroundTiles: List<TileSnapshot>`: 当前前景图块列表
+* `subsampling.backgroundTiles: List<TileSnapshot>`: 当前背景图块列表
+
+可交互的方法：
+
+* `subsampling.setImage(): Boolean`: 设置子采样图片，返回是否成功，集成图片加载器的组件会自动设置设置子采样图片
 
 #### 监听属性变化
 

@@ -31,16 +31,16 @@ import com.github.panpf.sketch.loadImage
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.sample.databinding.FragmentOverlayTestBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
-import com.github.panpf.zoomimage.subsampling.internal.calculateThumbnailToOriginScaleFactor
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.util.isNotEmpty
-import com.github.panpf.zoomimage.util.times
-import com.github.panpf.zoomimage.view.util.applyOriginToThumbnailScale
-import com.github.panpf.zoomimage.view.util.applyTransform
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
+import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.view.subsampling.internal.withZooming
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -61,10 +61,38 @@ class OverlayTestFragment : BaseToolbarBindingFragment<FragmentOverlayTestBindin
         }
         binding.overlayView.setZoomableEngine(binding.sketchZoomImageView.zoomable)
 
+        binding.rotate.setOnClickListener {
+            viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                binding.sketchZoomImageView.zoomable.rotateBy(90)
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            overlayTestViewModel.rectMode.collect { rectMode ->
+                binding.rectModeSwitch.isChecked = rectMode
+                binding.overlayView.setRectMode(rectMode)
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            overlayTestViewModel.partitionMode.collect { rectMode ->
+                binding.partitionModeSwitch.isChecked = rectMode
+                binding.overlayView.setPartitionMode(rectMode)
+            }
+        }
+
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             overlayTestViewModel.marks.collect {
                 binding.overlayView.setMarkList(it)
             }
+        }
+
+        binding.rectModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            overlayTestViewModel.setRectMode(isChecked)
+        }
+
+        binding.partitionModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            overlayTestViewModel.setPartitionMode(isChecked)
         }
     }
 }
@@ -73,18 +101,18 @@ class OverlayView(
     context: Context,
     attrs: AttributeSet? = null,
 ) : View(context, attrs) {
-    private val reusableMatrix = Matrix()
-    private val reusableMatrix2 = Matrix()
+    private val cacheMatrix = Matrix()
     private var zoomableEngine: ZoomableEngine? = null
     private var coroutineScope: CoroutineScope? = null
     private val paint = Paint().apply {
         color = Color.RED
         style = Paint.Style.STROKE
-        this.strokeWidth = 2.dp2pxF
         isAntiAlias = true
         alpha = 125
     }
     private var markList: List<Mark>? = null
+    private var rectMode: Boolean = false
+    private var partitionMode: Boolean = false
 
     fun setZoomableEngine(zoomableEngine: ZoomableEngine) {
         this.zoomableEngine = zoomableEngine
@@ -93,6 +121,16 @@ class OverlayView(
 
     fun setMarkList(markList: List<Mark>?) {
         this.markList = markList
+        invalidate()
+    }
+
+    fun setRectMode(rectMode: Boolean) {
+        this.rectMode = rectMode
+        invalidate()
+    }
+
+    fun setPartitionMode(partitionMode: Boolean) {
+        this.partitionMode = partitionMode
         invalidate()
     }
 
@@ -112,7 +150,13 @@ class OverlayView(
         val coroutineScope = coroutineScope ?: return
         val zoomableEngine = zoomableEngine ?: return
         coroutineScope.launch {
-            zoomableEngine.transformState.collect { transform ->
+            combine(
+                flows = listOf(
+                    zoomableEngine.transformState,
+                    zoomableEngine.contentOriginSizeState
+                ),
+                transform = { it }
+            ).collect {
                 invalidate()
             }
         }
@@ -121,51 +165,102 @@ class OverlayView(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val zoomableEngine = zoomableEngine ?: return
+        if (zoomableEngine.containerSizeState.value.isEmpty()) return
+        if (zoomableEngine.contentSizeState.value.isEmpty()) return
+        if (zoomableEngine.contentOriginSizeState.value.isEmpty()) return
         val markList = this.markList?.takeIf { it.isNotEmpty() } ?: return
-        val contentSize = zoomableEngine.contentSizeState.value
-            .takeIf { it.isNotEmpty() } ?: return
-        val containerSize = zoomableEngine.containerSizeState.value
-            .takeIf { it.isNotEmpty() } ?: return
-        val contentOriginSize = zoomableEngine.contentOriginSizeState.value
-            .takeIf { it.isNotEmpty() } ?: contentSize
-        val transform = zoomableEngine.transformState.value
-        val contentVisibleRect = zoomableEngine.contentVisibleRectState.value
 
-        val thumbnailToOriginScaleFactor = calculateThumbnailToOriginScaleFactor(
-            originImageSize = contentOriginSize,
-            thumbnailImageSize = contentSize
-        )
-        val originVisibleRect = contentVisibleRect.times(thumbnailToOriginScaleFactor)
+        if (partitionMode) {
+            drawMarksWithPartitionMapping(canvas, zoomableEngine, markList)
+        } else {
+            drawMarksWithOverallMapping(canvas, zoomableEngine, markList)
+        }
+    }
 
-        val checkpoint: Int = canvas.save()
-        canvas.concat(/* matrix = */ reusableMatrix.applyTransform(transform, containerSize))
-        canvas.concat(
-            /* matrix = */ reusableMatrix.applyOriginToThumbnailScale(
-                originImageSize = contentOriginSize,
-                thumbnailImageSize = contentSize,
-            )
-        )
-        try {
+    fun drawMarksWithOverallMapping(
+        canvas: Canvas,
+        zoomableEngine: ZoomableEngine,
+        markList: List<Mark>
+    ) {
+        val sourceVisibleRect = zoomableEngine.sourceVisibleRectFState.value
+            .takeIf { !it.isEmpty } ?: return
+        canvas.withZooming(
+            zoomableEngine = zoomableEngine,
+            cacheMatrix = cacheMatrix,
+            firstScaleByContentSize = true,
+        ) {
+            // Always keep the border looking width 2dp
+            paint.strokeWidth = 2.dp2pxF / zoomableEngine.sourceScaleFactorState.value.scaleX
             markList.forEach { mark ->
-                val left = mark.radiusPx - mark.cxPx
-                val top = mark.radiusPx - mark.cyPx
-                val right = mark.radiusPx + mark.cxPx
-                val bottom = mark.radiusPx + mark.cyPx
-                if (left < originVisibleRect.right
-                    && top < originVisibleRect.bottom
-                    && right > originVisibleRect.left
-                    && bottom > originVisibleRect.top
-                ) {
+                if (rectMode) {
+                    val markRect = RectCompat(
+                        center = OffsetCompat(x = mark.cxPx, y = mark.cyPx),
+                        radius = mark.radiusPx
+                    )
+                    if (sourceVisibleRect.overlaps(other = markRect)) {
+                        drawRect(
+                            /* left = */ markRect.left,
+                            /* top = */ markRect.top,
+                            /* right = */ markRect.right,
+                            /* bottom = */ markRect.bottom,
+                            /* paint = */ paint,
+                        )
+                    }
+                } else {
+                    val markRect = RectCompat(
+                        center = OffsetCompat(x = mark.cxPx, y = mark.cyPx),
+                        radius = mark.radiusPx
+                    )
+                    if (sourceVisibleRect.overlaps(other = markRect)) {
+                        drawCircle(
+                            /* cx = */ mark.cxPx,
+                            /* cy = */ mark.cyPx,
+                            /* radius = */ mark.radiusPx,
+                            /* paint = */ paint
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun drawMarksWithPartitionMapping(
+        canvas: Canvas,
+        zoomableEngine: ZoomableEngine,
+        markList: List<Mark>
+    ) {
+        val sourceVisibleRect = zoomableEngine.sourceVisibleRectFState.value
+            .takeIf { !it.isEmpty } ?: return
+        val sourceScaleFactor = zoomableEngine.sourceScaleFactorState.value
+        paint.strokeWidth = 2.dp2pxF
+        markList.forEach { mark ->
+            val markRect = RectCompat(
+                center = OffsetCompat(x = mark.cxPx, y = mark.cyPx),
+                radius = mark.radiusPx
+            )
+            if (sourceVisibleRect.overlaps(other = markRect)) {
+                if (rectMode) {
+                    val drawRect: RectCompat = zoomableEngine.sourceToDraw(markRect)
+                    canvas.drawRect(
+                        /* left = */ drawRect.left,
+                        /* top = */ drawRect.top,
+                        /* right = */ drawRect.right,
+                        /* bottom = */ drawRect.bottom,
+                        /* paint = */ paint,
+                    )
+                } else {
+                    val drawPoint: OffsetCompat = zoomableEngine.sourceToDraw(
+                        point = OffsetCompat(x = mark.cxPx, y = mark.cyPx)
+                    )
+                    val drawRadius: Float = mark.radiusPx * sourceScaleFactor.scaleX
                     canvas.drawCircle(
-                        /* cx = */ mark.cxPx,
-                        /* cy = */ mark.cyPx,
-                        /* radius = */ mark.radiusPx,
+                        /* cx = */ drawPoint.x,
+                        /* cy = */ drawPoint.y,
+                        /* radius = */ drawRadius,
                         /* paint = */ paint
                     )
                 }
             }
-        } finally {
-            canvas.restoreToCount(checkpoint)
         }
     }
 }

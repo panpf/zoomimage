@@ -2,11 +2,15 @@ package com.github.panpf.zoomimage.core.common.test.zoom.internal
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.Origin
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.plus
+import com.github.panpf.zoomimage.util.times
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
@@ -17,9 +21,13 @@ import com.github.panpf.zoomimage.zoom.internal.calculateInitialZoom
 import com.github.panpf.zoomimage.zoom.internal.calculateRestoreContentVisibleCenterUserTransform
 import com.github.panpf.zoomimage.zoom.internal.calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged
 import com.github.panpf.zoomimage.zoom.internal.calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged
+import com.github.panpf.zoomimage.zoom.internal.calculateSourceScaleFactor
+import com.github.panpf.zoomimage.zoom.internal.calculateSourceVisibleRect
+import com.github.panpf.zoomimage.zoom.internal.sourceToDraw
 import com.github.panpf.zoomimage.zoom.internal.transformAboutEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -485,5 +493,582 @@ class ZoomsTest5 {
                 two = transform.copy(offset = transform.offset.copy(y = transform.offsetY - 1.1f))
             )
         )
+    }
+
+    @Test
+    fun testCalculateSourceScaleFactor() {
+        assertEquals(
+            expected = ScaleFactorCompat.Origin,
+            actual = calculateSourceScaleFactor(
+                contentSize = IntSizeCompat(0, 1000),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                scale = ScaleFactorCompat.Origin
+            )
+        )
+        assertEquals(
+            expected = ScaleFactorCompat.Origin,
+            actual = calculateSourceScaleFactor(
+                contentSize = IntSizeCompat(1000, 0),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                scale = ScaleFactorCompat.Origin
+            )
+        )
+        assertEquals(
+            expected = ScaleFactorCompat.Origin,
+            actual = calculateSourceScaleFactor(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(0, 1000),
+                scale = ScaleFactorCompat.Origin
+            )
+        )
+        assertEquals(
+            expected = ScaleFactorCompat.Origin,
+            actual = calculateSourceScaleFactor(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1000, 0),
+                scale = ScaleFactorCompat.Origin
+            )
+        )
+
+        assertEquals(
+            expected = ScaleFactorCompat.Origin,
+            actual = calculateSourceScaleFactor(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                scale = ScaleFactorCompat.Origin
+            )
+        )
+
+        assertEquals(
+            expected = ScaleFactorCompat(0.75f, 0.5f),
+            actual = calculateSourceScaleFactor(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                scale = ScaleFactorCompat.Origin
+            )
+        )
+
+        assertEquals(
+            expected = ScaleFactorCompat(0.375f, 0.25f),
+            actual = calculateSourceScaleFactor(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                scale = ScaleFactorCompat(0.5f, 0.5f)
+            )
+        )
+    }
+
+    @Test
+    fun testCalculateSourceVisibleRect() {
+        assertEquals(
+            expected = RectCompat.Zero,
+            actual = calculateSourceVisibleRect(
+                contentSize = IntSizeCompat(0, 1000),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                contentVisibleRect = RectCompat(21f, 33f, 45f, 67f)
+            )
+        )
+        assertEquals(
+            expected = RectCompat.Zero,
+            actual = calculateSourceVisibleRect(
+                contentSize = IntSizeCompat(1000, 0),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                contentVisibleRect = RectCompat(21f, 33f, 45f, 67f)
+            )
+        )
+        assertEquals(
+            expected = RectCompat.Zero,
+            actual = calculateSourceVisibleRect(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(0, 1000),
+                contentVisibleRect = RectCompat(21f, 33f, 45f, 67f)
+            )
+        )
+        assertEquals(
+            expected = RectCompat.Zero,
+            actual = calculateSourceVisibleRect(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1000, 0),
+                contentVisibleRect = RectCompat(21f, 33f, 45f, 67f)
+            )
+        )
+
+        assertEquals(
+            expected = RectCompat(21f, 33f, 45f, 67f),
+            actual = calculateSourceVisibleRect(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                contentVisibleRect = RectCompat(21f, 33f, 45f, 67f)
+            )
+        )
+
+        assertEquals(
+            expected = RectCompat(28f, 66f, 60f, 134f),
+            actual = calculateSourceVisibleRect(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                contentVisibleRect = RectCompat(21f, 33f, 45f, 67f)
+            )
+        )
+    }
+
+    @Test
+    fun testPointSourceToDraw() {
+        assertEquals(
+            expected = "505.0x333.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(0, 1000),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "505.0x333.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1000, 0),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "505.0x333.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(0, 1000),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "505.0x333.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1000, 0),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+
+        // rotation 0
+        assertEquals(
+            expected = "505.0x333.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "378.75x166.5",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "189.38x83.25",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "289.38x283.25",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat(100f, 200f),
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+
+        // rotation 90
+        assertEquals(
+            expected = "1167.0x925.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "718.5x453.75",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "359.25x226.88",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "459.25x426.88",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat(100f, 200f),
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+
+        // rotation 180
+        assertEquals(
+            expected = "575.0x1587.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 180,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+
+        // rotation 270
+        assertEquals(
+            expected = "-87.0x995.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 270,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+
+        // rotation 360
+        assertEquals(
+            expected = "505.0x333.0",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 360,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            ).toShortString()
+        )
+
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 1,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 89,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 91,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 269,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 271,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                point = OffsetCompat(505f, 333f)
+            )
+        }
+    }
+
+    @Test
+    fun testRectSourceToDraw() {
+        assertEquals(
+            expected = "[505.0x333.0,707.0x444.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(0, 1000),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[505.0x333.0,707.0x444.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1000, 0),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[505.0x333.0,707.0x444.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(0, 1000),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[505.0x333.0,707.0x444.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1000, 0),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+
+        // rotation 0
+        assertEquals(
+            expected = "[505.0x333.0,707.0x444.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[378.75x166.5,530.25x222.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[189.38x83.25,265.12x111.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[289.38x283.25,365.12x311.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 0,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat(100f, 200f),
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+
+        // rotation 90
+        assertEquals(
+            expected = "[1167.0x925.0,1056.0x1127.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[718.5x453.75,663.0x605.25]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[359.25x226.88,331.5x302.62]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+        assertEquals(
+            expected = "[459.25x426.88,431.5x502.62]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920).times(ScaleFactorCompat(0.75f, 0.5f)),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 90,
+                scale = ScaleFactorCompat(0.5f, 0.5f),
+                offset = OffsetCompat(100f, 200f),
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+
+        // rotation 180
+        assertEquals(
+            expected = "[575.0x1587.0,373.0x1476.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 180,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+
+        // rotation 270
+        assertEquals(
+            expected = "[-87.0x995.0,24.0x793.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 270,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+
+        // rotation 360
+        assertEquals(
+            expected = "[505.0x333.0,707.0x444.0]",
+            actual = sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 360,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            ).toShortString()
+        )
+
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 1,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 89,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 91,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 269,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            )
+        }
+        assertFailsWith(IllegalArgumentException::class) {
+            sourceToDraw(
+                contentSize = IntSizeCompat(1080, 1920),
+                contentOriginSize = IntSizeCompat(1080, 1920),
+                rotation = 271,
+                scale = ScaleFactorCompat.Origin,
+                offset = OffsetCompat.Zero,
+                rect = RectCompat(505f, 333f, 707f, 444f)
+            )
+        }
     }
 }

@@ -18,10 +18,13 @@
 
 package com.github.panpf.zoomimage.zoom.internal
 
+import com.github.panpf.zoomimage.subsampling.internal.calculateOriginToThumbnailScaleFactor
+import com.github.panpf.zoomimage.subsampling.internal.calculateThumbnailToOriginScaleFactor
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.Origin
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
@@ -32,6 +35,7 @@ import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.filterNegativeZeros
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.plus
@@ -1398,4 +1402,170 @@ fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
             && one.scaleY.aboutEquals(two.scaleY, delta = 0.1f, scale = 2)
             && one.offsetX.aboutEquals(two.offsetX, delta = 1f, scale = 2)
             && one.offsetY.aboutEquals(two.offsetY, delta = 1f, scale = 2)
+}
+
+
+/* ******************************************* Source ***************************************** */
+
+/**
+ * Calculate the current scaling ratio of the original image
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateSourceScaleFactor
+ */
+fun calculateSourceScaleFactor(
+    contentSize: IntSizeCompat,
+    contentOriginSize: IntSizeCompat,
+    scale: ScaleFactorCompat,
+): ScaleFactorCompat {
+    val originImageSize = contentOriginSize.takeIf { it.isNotEmpty() }
+        ?: return ScaleFactorCompat.Origin
+    val thumbnailImageSize = contentSize.takeIf { it.isNotEmpty() }
+        ?: return ScaleFactorCompat.Origin
+    val originToThumbnailScaleFactor = calculateOriginToThumbnailScaleFactor(
+        originImageSize = originImageSize,
+        thumbnailImageSize = thumbnailImageSize
+    )
+    val result = originToThumbnailScaleFactor * scale
+    return result
+}
+
+
+/**
+ * Calculate the current visible rect of the original image
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testCalculateSourceVisibleRect
+ */
+fun calculateSourceVisibleRect(
+    contentSize: IntSizeCompat,
+    contentOriginSize: IntSizeCompat,
+    contentVisibleRect: RectCompat,
+): RectCompat {
+    val originImageSize = contentOriginSize.takeIf { it.isNotEmpty() }
+        ?: return RectCompat.Zero
+    val thumbnailImageSize = contentSize.takeIf { it.isNotEmpty() }
+        ?: return RectCompat.Zero
+    val thumbnailToOriginScaleFactor = calculateThumbnailToOriginScaleFactor(
+        originImageSize = originImageSize,
+        thumbnailImageSize = thumbnailImageSize
+    )
+    val result = contentVisibleRect.times(thumbnailToOriginScaleFactor)
+    return result
+}
+
+/**
+ * Convert point of the original image into the current drawing coordinate system
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testPointSourceToDraw
+ */
+fun sourceToDraw(
+    contentSize: IntSizeCompat,
+    contentOriginSize: IntSizeCompat,
+    rotation: Int,
+    scale: ScaleFactorCompat,
+    offset: OffsetCompat,
+    point: OffsetCompat
+): OffsetCompat {
+    val originImageSize = contentOriginSize.takeIf { it.isNotEmpty() }
+        ?: return point
+    val thumbnailImageSize = contentSize.takeIf { it.isNotEmpty() }
+        ?: return point
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    val originToThumbnailScaleFactor = calculateOriginToThumbnailScaleFactor(
+        originImageSize = originImageSize,
+        thumbnailImageSize = thumbnailImageSize
+    )
+    val scaledPoint = point * originToThumbnailScaleFactor
+
+    val rotatedScaledPoint = scaledPoint.rotateInCoordinate(
+        rect = RectCompat(
+            left = 0f,
+            top = 0f,
+            right = thumbnailImageSize.width.toFloat(),
+            bottom = thumbnailImageSize.height.toFloat()
+        ),
+        rotation = rotation
+    )
+
+    val scaledRotatedScaledPoint = rotatedScaledPoint * scale
+    val result = scaledRotatedScaledPoint + offset
+    return result
+}
+
+/**
+ * Convert the rect of the original image to the current drawing coordinate system
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.internal.ZoomsTest5.testRectSourceToDraw
+ */
+fun sourceToDraw(
+    contentSize: IntSizeCompat,
+    contentOriginSize: IntSizeCompat,
+    rotation: Int,
+    scale: ScaleFactorCompat,
+    offset: OffsetCompat,
+    rect: RectCompat
+): RectCompat {
+    val originImageSize = contentOriginSize.takeIf { it.isNotEmpty() }
+        ?: return rect
+    val thumbnailImageSize = contentSize.takeIf { it.isNotEmpty() }
+        ?: return rect
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    val originToThumbnailScaleFactor = calculateOriginToThumbnailScaleFactor(
+        originImageSize = originImageSize,
+        thumbnailImageSize = thumbnailImageSize
+    )
+    val scaledRect = rect * originToThumbnailScaleFactor
+
+    val rotatedScaledRect = scaledRect.rotateInCoordinate(
+        rect = RectCompat(
+            left = 0f,
+            top = 0f,
+            right = thumbnailImageSize.width.toFloat(),
+            bottom = thumbnailImageSize.height.toFloat()
+        ),
+        rotation = rotation
+    )
+
+    val scaledRotatedScaledRect = rotatedScaledRect * scale
+    val result = scaledRotatedScaledRect.copy(
+        left = scaledRotatedScaledRect.left + offset.x,
+        top = scaledRotatedScaledRect.top + offset.y,
+        right = scaledRotatedScaledRect.right + offset.x,
+        bottom = scaledRotatedScaledRect.bottom + offset.y
+    )
+    return result
+}
+
+fun OffsetCompat.rotateInCoordinate(rect: RectCompat, rotation: Int): OffsetCompat {
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    val center = rect.center
+    return when (rotation) {
+        90 -> OffsetCompat(
+            x = center.x - (this.y - center.y),
+            y = center.y + (this.x - center.x)
+        )
+
+        180 -> OffsetCompat(
+            x = center.x - (this.x - center.x),
+            y = center.y - (this.y - center.y)
+        )
+
+        270 -> OffsetCompat(
+            x = center.x + (this.y - center.y),
+            y = center.y - (this.x - center.x)
+        )
+
+        else -> this
+    }
+}
+
+fun RectCompat.rotateInCoordinate(rect: RectCompat, rotation: Int): RectCompat {
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    val rotatedTopLeft = this.topLeft.rotateInCoordinate(rect, rotation)
+    val rotatedBottomRight = this.bottomRight.rotateInCoordinate(rect, rotation)
+    return RectCompat(
+        left = rotatedTopLeft.x,
+        top = rotatedTopLeft.y,
+        right = rotatedBottomRight.x,
+        bottom = rotatedBottomRight.y
+    )
 }

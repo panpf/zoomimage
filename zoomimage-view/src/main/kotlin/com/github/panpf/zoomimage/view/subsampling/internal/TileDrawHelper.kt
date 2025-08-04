@@ -25,11 +25,10 @@ import android.view.View
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.tileColor
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
-import com.github.panpf.zoomimage.view.util.applyOriginToThumbnailScale
-import com.github.panpf.zoomimage.view.util.applyTransform
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +44,7 @@ class TileDrawHelper(
 
     private val cacheRect1 = Rect()
     private val cacheRect2 = Rect()
-    private val cacheDisplayMatrix: Matrix = Matrix()
+    private val cacheMatrix: Matrix = Matrix()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var tilePaint: Paint = Paint()
     private val boundsPaint: Paint by lazy {
@@ -69,34 +68,28 @@ class TileDrawHelper(
     }
 
     fun drawTiles(canvas: Canvas) {
-        val containerSize =
-            zoomableEngine.containerSizeState.value.takeIf { !it.isEmpty() } ?: return
-        val contentSize = zoomableEngine.contentSizeState.value.takeIf { !it.isEmpty() } ?: return
-        val transform = zoomableEngine.transformState.value
-        val imageInfo = subsamplingEngine.imageInfoState.value ?: return
-        val backgroundTiles = subsamplingEngine.backgroundTilesState.value
-        val foregroundTiles =
-            subsamplingEngine.foregroundTilesState.value.takeIf { it.isNotEmpty() } ?: return
-        val imageLoadRect =
-            subsamplingEngine.imageLoadRectState.value.takeIf { !it.isEmpty } ?: return
+        if (zoomableEngine.containerSizeState.value.isEmpty()) return
+        if (zoomableEngine.contentSizeState.value.isEmpty()) return
+        val foregroundTiles: List<TileSnapshot> = subsamplingEngine.foregroundTilesState.value
+            .takeIf { it.isNotEmpty() } ?: return
+        val imageLoadRect: IntRectCompat = subsamplingEngine.imageLoadRectState.value
+            .takeIf { !it.isEmpty } ?: return
+        val backgroundTiles: List<TileSnapshot> = subsamplingEngine.backgroundTilesState.value
+        val showTileBounds = subsamplingEngine.showTileBoundsState.value
 
         var backgroundCount = 0
         var insideLoadCount = 0
         var outsideLoadCount = 0
         var realDrawCount = 0
 
-        val checkpoint: Int = canvas.save()
-        canvas.concat(/* matrix = */ cacheDisplayMatrix.applyTransform(transform, containerSize))
-        canvas.concat(
-            /* matrix = */ cacheDisplayMatrix.applyOriginToThumbnailScale(
-                originImageSize = imageInfo.size,
-                thumbnailImageSize = contentSize
-            )
-        )
-        try {
+        canvas.withZooming(
+            zoomableEngine = zoomableEngine,
+            cacheMatrix = cacheMatrix,
+            firstScaleByContentSize = true,
+        ) {
             backgroundTiles.forEach { tileSnapshot ->
                 if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
-                    if (drawTile(canvas = canvas, tileSnapshot = tileSnapshot)) {
+                    if (drawTile(canvas, tileSnapshot, drawBounds = false)) {
                         backgroundCount++
                     }
                 }
@@ -104,18 +97,13 @@ class TileDrawHelper(
             foregroundTiles.forEach { tileSnapshot ->
                 if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
                     insideLoadCount++
-                    if (drawTile(canvas = canvas, tileSnapshot = tileSnapshot)) {
+                    if (drawTile(canvas, tileSnapshot, drawBounds = showTileBounds)) {
                         realDrawCount++
-                    }
-                    if (subsamplingEngine.showTileBoundsState.value) {
-                        drawTileBounds(canvas = canvas, tileSnapshot = tileSnapshot)
                     }
                 } else {
                     outsideLoadCount++
                 }
             }
-        } finally {
-            canvas.restoreToCount(checkpoint)
         }
 
         logger.v {
@@ -130,13 +118,15 @@ class TileDrawHelper(
 
     private fun drawTile(
         canvas: Canvas,
-        tileSnapshot: TileSnapshot
+        tileSnapshot: TileSnapshot,
+        drawBounds: Boolean,
     ): Boolean {
-        val tileImage = tileSnapshot.tileImage?.takeIf { !it.isRecycled } ?: return false
-        val bitmap =
-            (tileImage as BitmapTileImage).bitmap.takeIf { !it.isRecycled } ?: return false
+        val tileImage = tileSnapshot.tileImage
+            ?.takeIf { !it.isRecycled } ?: return false
+        val bitmap = (tileImage as BitmapTileImage).bitmap
+            .takeIf { !it.isRecycled } ?: return false
 
-        val tileDrawSrcRect = cacheRect1.apply {
+        val srcRect = cacheRect1.apply {
             set(
                 /* left = */ 0,
                 /* top = */ 0,
@@ -144,7 +134,7 @@ class TileDrawHelper(
                 /* bottom = */ bitmap.height
             )
         }
-        val tileDrawDstRect = cacheRect2.apply {
+        val dstRect = cacheRect2.apply {
             set(
                 /* left = */ tileSnapshot.srcRect.left,
                 /* top = */ tileSnapshot.srcRect.top,
@@ -152,40 +142,24 @@ class TileDrawHelper(
                 /* bottom = */ tileSnapshot.srcRect.bottom
             )
         }
-
         tilePaint.alpha = tileSnapshot.alpha
-
         canvas.drawBitmap(
             /* bitmap = */ bitmap,
-            /* src = */ tileDrawSrcRect,
-            /* dst = */ tileDrawDstRect,
+            /* src = */ srcRect,
+            /* dst = */ dstRect,
             /* paint = */ tilePaint
         )
-        return true
-    }
 
-    private fun drawTileBounds(
-        canvas: Canvas,
-        tileSnapshot: TileSnapshot
-    ) {
-        val tileDrawRect = cacheRect1.apply {
-            set(
-                /* left = */ tileSnapshot.srcRect.left,
-                /* top = */ tileSnapshot.srcRect.top,
-                /* right = */ tileSnapshot.srcRect.right,
-                /* bottom = */ tileSnapshot.srcRect.bottom
+        if (drawBounds) {
+            val boundsColor = tileColor(
+                state = tileSnapshot.state,
+                from = tileSnapshot.from,
+                withinLoadArea = true,
             )
+            boundsPaint.color = boundsColor
+            canvas.drawRect(dstRect, boundsPaint)
         }
 
-        val boundsColor = tileColor(
-            state = tileSnapshot.state,
-            from = tileSnapshot.from,
-            withinLoadArea = true,
-        )
-        val tileBoundsPaint = boundsPaint.apply {
-            color = boundsColor
-        }
-
-        canvas.drawRect(tileDrawRect, tileBoundsPaint)
+        return true
     }
 }

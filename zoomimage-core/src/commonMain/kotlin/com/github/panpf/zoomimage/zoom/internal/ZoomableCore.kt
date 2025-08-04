@@ -21,6 +21,7 @@ package com.github.panpf.zoomimage.zoom.internal
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.Origin
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
@@ -124,6 +125,10 @@ class ZoomableCore constructor(
     var contentDisplayRect: RectCompat = RectCompat.Zero
         private set
     var contentVisibleRect: RectCompat = RectCompat.Zero
+        private set
+    var sourceScaleFactor: ScaleFactorCompat = ScaleFactorCompat.Origin
+        private set
+    var sourceVisibleRect: RectCompat = RectCompat.Zero
         private set
     var scrollEdge: ScrollEdge = ScrollEdge.Default
         private set
@@ -404,6 +409,38 @@ class ZoomableCore constructor(
             touchPoint = touchPoint
         )
         return contentPoint
+    }
+
+    fun sourceToDraw(point: OffsetCompat): OffsetCompat {
+        val contentSize = this@ZoomableCore.contentSize
+        val contentOriginSize =
+            this@ZoomableCore.contentOriginSize.takeIf { it.isNotEmpty() } ?: contentSize
+        val transform = this@ZoomableCore.transform
+        val rotation = rotation
+        return sourceToDraw(
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            rotation = rotation,
+            scale = transform.scale,
+            offset = transform.offset,
+            point = point
+        )
+    }
+
+    fun sourceToDraw(rect: RectCompat): RectCompat {
+        val contentSize = this@ZoomableCore.contentSize
+        val contentOriginSize =
+            this@ZoomableCore.contentOriginSize.takeIf { it.isNotEmpty() } ?: contentSize
+        val transform = this@ZoomableCore.transform
+        val rotation = rotation
+        return sourceToDraw(
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            rotation = rotation,
+            scale = transform.scale,
+            offset = transform.offset,
+            rect = rect
+        )
     }
 
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
@@ -1038,6 +1075,18 @@ class ZoomableCore constructor(
         scrollEdge = calculateScrollEdge(
             userOffsetBounds = userOffsetBounds,
             userOffset = userTransform.offset,
+        )
+
+        sourceScaleFactor = calculateSourceScaleFactor(
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize.takeIf { it.isNotEmpty() } ?: contentSize,
+            scale = transform.scale,
+        )
+
+        sourceVisibleRect = calculateSourceVisibleRect(
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize.takeIf { it.isNotEmpty() } ?: contentSize,
+            contentVisibleRect = contentVisibleRect,
         )
 
         onTransformChanged(this@ZoomableCore)

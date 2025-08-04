@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toOffset
@@ -79,6 +80,9 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
             _contentDisplayRectState.value = it.contentDisplayRect.round()
             _contentVisibleRectFState.value = it.contentVisibleRect
             _contentVisibleRectState.value = it.contentVisibleRect.round()
+            _sourceScaleFactor.value = it.sourceScaleFactor
+            _sourceVisibleRectFState.value = it.sourceVisibleRect
+            _sourceVisibleRectState.value = it.sourceVisibleRect.round()
             _userOffsetBoundsRectFState.value = it.userOffsetBoundsRect
             _userOffsetBoundsRectState.value = it.userOffsetBoundsRect.round()
             _scrollEdgeState.value = it.scrollEdge
@@ -199,12 +203,12 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
 
     /* *********************************** Properties readable by the user ******************************* */
 
+    private val _transformState: MutableStateFlow<TransformCompat> =
+        MutableStateFlow(zoomableCore.transform)
     private val _baseTransformState: MutableStateFlow<TransformCompat> =
         MutableStateFlow(zoomableCore.baseTransform)
     private val _userTransformState: MutableStateFlow<TransformCompat> =
         MutableStateFlow(zoomableCore.userTransform)
-    private val _transformState: MutableStateFlow<TransformCompat> =
-        MutableStateFlow(zoomableCore.transform)
     private val _minScaleState: MutableStateFlow<Float> =
         MutableStateFlow(zoomableCore.minScale)
     private val _mediumScaleState: MutableStateFlow<Float> =
@@ -227,6 +231,12 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         MutableStateFlow(zoomableCore.contentVisibleRect)
     private val _contentVisibleRectState: MutableStateFlow<IntRectCompat> =
         MutableStateFlow(zoomableCore.contentVisibleRect.round())
+    private val _sourceScaleFactor: MutableStateFlow<ScaleFactorCompat> =
+        MutableStateFlow(zoomableCore.sourceScaleFactor)
+    private val _sourceVisibleRectFState: MutableStateFlow<RectCompat> =
+        MutableStateFlow(zoomableCore.sourceVisibleRect)
+    private val _sourceVisibleRectState: MutableStateFlow<IntRectCompat> =
+        MutableStateFlow(zoomableCore.sourceVisibleRect.round())
     private val _userOffsetBoundsRectFState: MutableStateFlow<RectCompat> =
         MutableStateFlow(zoomableCore.userOffsetBoundsRect)
     private val _userOffsetBoundsRectState: MutableStateFlow<IntRectCompat> =
@@ -235,6 +245,12 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         MutableStateFlow(zoomableCore.scrollEdge)
     private val _continuousTransformTypeState: MutableStateFlow<Int> =
         MutableStateFlow(zoomableCore.continuousTransformType)
+
+    /**
+     * Final transformation, include the final scale, offset, rotation,
+     * which is the sum of baseTransform and userTransform
+     */
+    val transformState: StateFlow<TransformCompat> = _transformState
 
     /**
      * Base transformation, include the base scale, offset, rotation,
@@ -247,12 +263,6 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
      * which is affected by the user's gesture, [readModeState] properties and [scale], [offset], [locate] method
      */
     val userTransformState: StateFlow<TransformCompat> = _userTransformState
-
-    /**
-     * Final transformation, include the final scale, offset, rotation,
-     * which is the sum of baseTransform and userTransform
-     */
-    val transformState: StateFlow<TransformCompat> = _transformState
 
     /**
      * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
@@ -308,6 +318,21 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
      * The content is visible region to the user after the final transform transformation
      */
     val contentVisibleRectState: StateFlow<IntRectCompat> = _contentVisibleRectState
+
+    /**
+     * The current scaling ratio of the original image
+     */
+    val sourceScaleFactorState: StateFlow<ScaleFactorCompat> = _sourceScaleFactor
+
+    /**
+     * The the current visible region of the original image
+     */
+    val sourceVisibleRectFState: StateFlow<RectCompat> = _sourceVisibleRectFState
+
+    /**
+     * The the current visible region of the original image
+     */
+    val sourceVisibleRectState: StateFlow<IntRectCompat> = _sourceVisibleRectState
 
     /**
      * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
@@ -519,6 +544,16 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
      */
     fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat =
         touchPointToContentPointF(touchPoint = touchPoint).round()
+
+    /**
+     * Convert point of the original image into the current drawing coordinate system
+     */
+    fun sourceToDraw(point: OffsetCompat): OffsetCompat = zoomableCore.sourceToDraw(point)
+
+    /**
+     * Convert the rect of the original image to the current drawing coordinate system
+     */
+    fun sourceToDraw(rect: RectCompat): RectCompat = zoomableCore.sourceToDraw(rect)
 
     /**
      * If true is returned, scrolling can continue on the specified axis and direction
