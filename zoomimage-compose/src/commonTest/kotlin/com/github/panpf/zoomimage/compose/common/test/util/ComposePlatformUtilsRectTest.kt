@@ -1,9 +1,11 @@
 package com.github.panpf.zoomimage.compose.common.test.util
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.IntRect
+import com.github.panpf.zoomimage.compose.util.containsWithDelta
 import com.github.panpf.zoomimage.compose.util.div
 import com.github.panpf.zoomimage.compose.util.flip
 import com.github.panpf.zoomimage.compose.util.limitTo
@@ -15,7 +17,9 @@ import com.github.panpf.zoomimage.compose.util.toShortString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class ComposePlatformUtilsRectTest {
 
@@ -241,7 +245,12 @@ class ComposePlatformUtilsRectTest {
 
         listOf(0, 0 - 360, 0 + 360, 0 - 360 - 360).forEach { rotation ->
             assertEquals(
-                expected = Rect(left = 100.2f, top = 200.7f, right = 600.9f, bottom = 500.4f).toShortString(),
+                expected = Rect(
+                    left = 100.2f,
+                    top = 200.7f,
+                    right = 600.9f,
+                    bottom = 500.4f
+                ).toShortString(),
                 actual = Rect(100.2f, 200.7f, 600.9f, 500.4f).rotateInSpace(spaceSize, rotation)
                     .toShortString(),
                 message = "rotation: $rotation",
@@ -250,7 +259,12 @@ class ComposePlatformUtilsRectTest {
 
         listOf(90, 90 - 360, 90 + 360, 90 - 360 - 360).forEach { rotation ->
             assertEquals(
-                expected = Rect(left = 199.6f, top = 100.2f, right = 499.3f, bottom = 600.9f).toShortString(),
+                expected = Rect(
+                    left = 199.6f,
+                    top = 100.2f,
+                    right = 499.3f,
+                    bottom = 600.9f
+                ).toShortString(),
                 actual = Rect(100.2f, 200.7f, 600.9f, 500.4f).rotateInSpace(spaceSize, rotation)
                     .toShortString(),
                 message = "rotation: $rotation",
@@ -259,7 +273,12 @@ class ComposePlatformUtilsRectTest {
 
         listOf(180, 180 - 360, 180 + 360, 180 - 360 - 360).forEach { rotation ->
             assertEquals(
-                expected = Rect(left = 399.1f, top = 199.6f, right = 899.8f, bottom = 499.3f).toShortString(),
+                expected = Rect(
+                    left = 399.1f,
+                    top = 199.6f,
+                    right = 899.8f,
+                    bottom = 499.3f
+                ).toShortString(),
                 actual = Rect(100.2f, 200.7f, 600.9f, 500.4f).rotateInSpace(spaceSize, rotation)
                     .toShortString(),
                 message = "rotation: $rotation",
@@ -268,7 +287,12 @@ class ComposePlatformUtilsRectTest {
 
         listOf(270, 270 - 360, 270 + 360, 270 - 360 - 360).forEach { rotation ->
             assertEquals(
-                expected = Rect(left = 200.7f, top = 399.1f, right = 500.4f, bottom = 899.8f).toShortString(),
+                expected = Rect(
+                    left = 200.7f,
+                    top = 399.1f,
+                    right = 500.4f,
+                    bottom = 899.8f
+                ).toShortString(),
                 actual = Rect(100.2f, 200.7f, 600.9f, 500.4f).rotateInSpace(spaceSize, rotation)
                     .toShortString(),
                 message = "rotation: $rotation",
@@ -277,7 +301,12 @@ class ComposePlatformUtilsRectTest {
 
         listOf(360, 360 - 360, 360 + 360, 360 - 360 - 360).forEach { rotation ->
             assertEquals(
-                expected = Rect(left = 100.2f, top = 200.7f, right = 600.9f, bottom = 500.4f).toShortString(),
+                expected = Rect(
+                    left = 100.2f,
+                    top = 200.7f,
+                    right = 600.9f,
+                    bottom = 500.4f
+                ).toShortString(),
                 actual = Rect(100.2f, 200.7f, 600.9f, 500.4f).rotateInSpace(spaceSize, rotation)
                     .toShortString(),
                 message = "rotation: $rotation",
@@ -406,5 +435,34 @@ class ComposePlatformUtilsRectTest {
             Rect(100.2f, 299.6f, 600.9f, 499.3f),
             rect.flip(spaceSize, vertical = true)
         )
+    }
+
+    @Test
+    fun testContainsWithDelta() {
+        val rect = Rect(100f, 200f, 300f, 400f)
+        rect.containsWithDelta(Offset.Zero, 0f)
+        rect.containsWithDelta(Offset.Zero, 1f)
+        assertFailsWith(IllegalArgumentException::class) {
+            rect.containsWithDelta(Offset.Zero, -1f)
+        }
+
+        assertTrue(rect.containsWithDelta(Offset(100f, 200f)))
+        assertTrue(rect.containsWithDelta(Offset(100f, 399.999f)))
+        assertTrue(rect.containsWithDelta(Offset(299.999f, 200f)))
+        assertTrue(rect.containsWithDelta(Offset(299.999f, 399.999f)))
+
+        assertFalse(rect.containsWithDelta(Offset(100f - 0.05f, 200f)))
+        assertFalse(rect.containsWithDelta(Offset(100f, 200f - 0.05f)))
+        assertFalse(rect.containsWithDelta(Offset(100f, 400f)))
+        assertFalse(rect.containsWithDelta(Offset(300f, 200f)))
+        assertFalse(rect.containsWithDelta(Offset(299.999f, 400f)))
+        assertFalse(rect.containsWithDelta(Offset(300f, 399.999f)))
+
+        assertTrue(rect.containsWithDelta(Offset(100f - 0.05f, 200f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(Offset(100f, 200f - 0.05f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(Offset(100f, 400f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(Offset(300f, 200f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(Offset(299.999f, 400f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(Offset(300f, 399.999f), delta = 0.1f))
     }
 }

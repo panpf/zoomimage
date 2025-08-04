@@ -697,7 +697,7 @@ internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
  *
  * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsRectTest.testFlip
  */
-fun Rect.flip(spaceSize: Size, vertical: Boolean = false): Rect {
+internal fun Rect.flip(spaceSize: Size, vertical: Boolean = false): Rect {
     return if (!vertical) {
         Rect(
             left = spaceSize.width - right,
@@ -712,6 +712,23 @@ fun Rect.flip(spaceSize: Size, vertical: Boolean = false): Rect {
             right = right,
             bottom = spaceSize.height - top
         )
+    }
+}
+
+/**
+ * Check whether the given [Offset] is within the rectangle, allowing for a small delta.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsRectTest.testContainsWithDelta
+ */
+internal fun Rect.containsWithDelta(offset: Offset, delta: Float = 0f): Boolean {
+    require(delta >= 0f) { "Delta must be greater than or equal to 0, but was $delta" }
+    return if (delta == 0f) {
+        contains(offset)
+    } else {
+        offset.x - this.left >= -delta
+                && offset.x - this.right < delta
+                && offset.y - this.top >= -delta
+                && offset.y - this.bottom < delta
     }
 }
 
@@ -867,6 +884,8 @@ internal fun IntRect.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): In
 
 /**
  * Flip this rect horizontally or vertically within a given container
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsIntRectTest.testFlip
  */
 fun IntRect.flip(spaceSize: IntSize, vertical: Boolean = false): IntRect {
     return if (!vertical) {

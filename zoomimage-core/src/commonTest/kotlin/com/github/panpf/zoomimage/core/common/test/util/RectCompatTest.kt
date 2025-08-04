@@ -1,9 +1,11 @@
 package com.github.panpf.zoomimage.core.common.test.util
 
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.SizeCompat
+import com.github.panpf.zoomimage.util.containsWithDelta
 import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.flip
 import com.github.panpf.zoomimage.util.limitTo
@@ -15,7 +17,9 @@ import com.github.panpf.zoomimage.util.toShortString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class RectCompatTest {
 
@@ -427,5 +431,32 @@ class RectCompatTest {
         )
     }
 
-    // TODO test containsWithDelta
+    @Test
+    fun testContainsWithDelta() {
+        val rect = RectCompat(100f, 200f, 300f, 400f)
+        rect.containsWithDelta(OffsetCompat.Zero, 0f)
+        rect.containsWithDelta(OffsetCompat.Zero, 1f)
+        assertFailsWith(IllegalArgumentException::class) {
+            rect.containsWithDelta(OffsetCompat.Zero, -1f)
+        }
+
+        assertTrue(rect.containsWithDelta(OffsetCompat(100f, 200f)))
+        assertTrue(rect.containsWithDelta(OffsetCompat(100f, 399.999f)))
+        assertTrue(rect.containsWithDelta(OffsetCompat(299.999f, 200f)))
+        assertTrue(rect.containsWithDelta(OffsetCompat(299.999f, 399.999f)))
+
+        assertFalse(rect.containsWithDelta(OffsetCompat(100f - 0.05f, 200f)))
+        assertFalse(rect.containsWithDelta(OffsetCompat(100f, 200f - 0.05f)))
+        assertFalse(rect.containsWithDelta(OffsetCompat(100f, 400f)))
+        assertFalse(rect.containsWithDelta(OffsetCompat(300f, 200f)))
+        assertFalse(rect.containsWithDelta(OffsetCompat(299.999f, 400f)))
+        assertFalse(rect.containsWithDelta(OffsetCompat(300f, 399.999f)))
+
+        assertTrue(rect.containsWithDelta(OffsetCompat(100f - 0.05f, 200f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(OffsetCompat(100f, 200f - 0.05f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(OffsetCompat(100f, 400f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(OffsetCompat(300f, 200f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(OffsetCompat(299.999f, 400f), delta = 0.1f))
+        assertTrue(rect.containsWithDelta(OffsetCompat(300f, 399.999f), delta = 0.1f))
+    }
 }
