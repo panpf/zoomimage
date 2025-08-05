@@ -546,7 +546,11 @@ fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
         newContentBaseDisplayRect.topLeft + sizeCompat.let { OffsetCompat(it.width, it.height) }
     // The purpose of the user to expand the window is to see more content, so keep the total zoom factor unchanged, and more content can be displayed
 //    val newUserScale = oldUserTransform.scale    // This causes the window to always show the contents of a fixed area and not see more
-    val newUserScale = transform.scale / newBaseTransform.scale
+    val targetScaleFactor = ScaleFactorCompat(
+        scaleX = transform.scale.scaleX.coerceAtLeast(newBaseTransform.scale.scaleX),
+        scaleY = transform.scale.scaleY.coerceAtLeast(newBaseTransform.scale.scaleY)
+    )
+    val newUserScale = targetScaleFactor / newBaseTransform.scale
     val scaledContentVisibleCenterOnBaseDisplay = contentVisibleCenterOnBaseDisplay * newUserScale
     val containerSizeCenter = newContainerSize.center
     val newUserOffset = containerSizeCenter - scaledContentVisibleCenterOnBaseDisplay

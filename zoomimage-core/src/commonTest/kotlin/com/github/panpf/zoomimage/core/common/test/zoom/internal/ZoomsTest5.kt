@@ -223,7 +223,6 @@ class ZoomsTest5 {
             )
         }
     }
-
     @Test
     fun testCalculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChangedWithRTL() {
         val containerSize = IntSizeCompat(800, 572)
@@ -315,6 +314,41 @@ class ZoomsTest5 {
                 message = "newContainerSize: $newContainerSize. assert y",
             )
         }
+    }
+
+    @Test
+    fun testCalculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged3() {
+        val containerSize = IntSizeCompat(800, 572)
+        val contentSize = IntSizeCompat(6799, 4882)
+        val contentScale = ContentScaleCompat.Fit
+        val alignment = AlignmentCompat.Center
+        val rtlLayoutDirection = false
+        val rotation = 0
+        val lastBaseTransform = calculateBaseTransform(
+            containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
+            rotation = rotation,
+        )
+        val lastUserTransform = TransformCompat.Origin
+        val lastTransform = (lastBaseTransform + lastUserTransform)
+
+        val newTransform = calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
+            oldContainerSize = containerSize,
+            newContainerSize = IntSizeCompat(900, 600),
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rtlLayoutDirection = rtlLayoutDirection,
+            rotation = rotation,
+            transform = lastTransform,
+        )
+        assertEquals(
+            expected = "TransformCompat(scale=0.12x0.12, offset=32.2x0.0, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=3.78x4.07)",
+            actual = newTransform.toString()
+        )
     }
 
     @Test

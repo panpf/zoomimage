@@ -8,6 +8,9 @@ Translations: [简体中文](CHANGELOG.zh.md)
   ZoomImageView
 * fix: Fixed a bug where the contentOriginSize change would interrupt the user's operation
   animation. [#105](https://github.com/panpf/zoomimage/issues/105)
+* fix: Fixed a bug where the content zoom multiple suddenly changes to the reading mode multiple
+  when the content zooms to minScale in reading mode and only the containerSize
+  changes. [#106](https://github.com/panpf/zoomimage/issues/106)
 * improve: ZoomImageView supports two-finger drag
   gestures. [#102](https://github.com/panpf/zoomimage/issues/102)
 * new: ContinuousTransformType Added ROLLBACK type
