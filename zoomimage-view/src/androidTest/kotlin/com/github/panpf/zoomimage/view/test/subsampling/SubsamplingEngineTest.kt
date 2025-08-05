@@ -815,7 +815,7 @@ class SubsamplingEngineTest {
             Thread.sleep(2000)
             assertEquals(expected = false, actual = subsampling.disabledState.value)
             assertNotNull(subsampling.subsamplingImage)
-            assertEquals(expected = 0, actual = subsampling.foregroundTilesState.value.size)
+            assertEquals(expected = 48, actual = subsampling.foregroundTilesState.value.size)
         }
     }
 

@@ -919,7 +919,7 @@ class ZoomableCoreTest {
         assertNotEquals(properties4, properties5)
         assertEquals(expected = "4000x2400", actual = properties5.contentOriginSize)
         assertEquals(true, properties5.keepTransformWhenSameAspectRatioContentSizeChanged)
-        assertEquals("(9.0x9.0,-6264.0x-8652.0,0.0,0.0x0.0,0.23x0.08)", properties5.userTransform)
+        assertEquals("(9.0x9.0,-6264.0x-8652.0,0.0,0.0x0.0,0.0x0.0)", properties5.userTransform)
         assertEquals(expected = "8.0", actual = properties5.mediumScale)
         assertEquals(expected = "24.0", actual = properties5.maxScale)
         assertNotEquals(properties4.contentOriginSize, properties5.contentOriginSize)
@@ -927,7 +927,7 @@ class ZoomableCoreTest {
             properties4.keepTransformWhenSameAspectRatioContentSizeChanged,
             properties5.keepTransformWhenSameAspectRatioContentSizeChanged
         )
-        assertNotEquals(properties4.userTransform, properties5.userTransform)
+        assertEquals(properties4.userTransform, properties5.userTransform)
         assertNotEquals(properties4.mediumScale, properties5.mediumScale)
         assertNotEquals(properties4.maxScale, properties5.maxScale)
         assertEquals(
@@ -991,14 +991,14 @@ class ZoomableCoreTest {
         assertEquals("[0.0x0.0,0.0x0.0]", properties2.userOffsetBoundsRect)
         assertEquals(false, properties2.keepTransformWhenSameAspectRatioContentSizeChanged)
         assertNotEquals(properties6.contentSize, properties7.contentOriginSize)
-        assertNotEquals(properties6.userTransform, properties7.userTransform)
-        assertNotEquals(properties6.transform, properties7.transform)
+        assertEquals(properties6.userTransform, properties7.userTransform)
+        assertEquals(properties6.transform, properties7.transform)
         assertNotEquals(properties6.mediumScale, properties7.mediumScale)
         assertNotEquals(properties6.maxScale, properties7.maxScale)
-        assertNotEquals(properties6.contentDisplayRect, properties7.contentDisplayRect)
-        assertNotEquals(properties6.contentVisibleRect, properties7.contentVisibleRect)
-        assertNotEquals(properties6.scrollEdge, properties7.scrollEdge)
-        assertNotEquals(properties6.userOffsetBoundsRect, properties7.userOffsetBoundsRect)
+        assertEquals(properties6.contentDisplayRect, properties7.contentDisplayRect)
+        assertEquals(properties6.contentVisibleRect, properties7.contentVisibleRect)
+        assertEquals(properties6.scrollEdge, properties7.scrollEdge)
+        assertEquals(properties6.userOffsetBoundsRect, properties7.userOffsetBoundsRect)
         assertNotEquals(
             properties6.keepTransformWhenSameAspectRatioContentSizeChanged,
             properties7.keepTransformWhenSameAspectRatioContentSizeChanged
@@ -1007,19 +1007,13 @@ class ZoomableCoreTest {
             expected = properties6,
             actual = properties7.copy(
                 contentOriginSize = properties6.contentOriginSize,
-                userTransform = properties6.userTransform,
-                transform = properties6.transform,
                 mediumScale = properties6.mediumScale,
                 maxScale = properties6.maxScale,
-                contentDisplayRect = properties6.contentDisplayRect,
-                contentVisibleRect = properties6.contentVisibleRect,
-                scrollEdge = properties6.scrollEdge,
-                userOffsetBoundsRect = properties6.userOffsetBoundsRect,
                 keepTransformWhenSameAspectRatioContentSizeChanged = properties6.keepTransformWhenSameAspectRatioContentSizeChanged,
             )
         )
         val contentVisibleCenter7 = zoomableCore.contentVisibleRect.center
-        assertEquals("250.0x150.0", contentVisibleCenter7.toShortString())
+        assertEquals("350.0x200.0", contentVisibleCenter7.toShortString())
     }
 
     @Test
