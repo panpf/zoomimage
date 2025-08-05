@@ -31,6 +31,10 @@ class ViewAnimationAdapter(val view: View) : AnimationAdapter {
     private var lastAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
 
+    override fun isRunning(): Boolean {
+        return lastAnimatable?.running == true
+    }
+
     override suspend fun startAnimation(
         animationSpec: BaseZoomAnimationSpec?,
         onProgress: (progress: Float) -> Unit,
@@ -63,9 +67,13 @@ class ViewAnimationAdapter(val view: View) : AnimationAdapter {
         val lastScaleAnimatable = lastAnimatable
         val result = lastScaleAnimatable?.running == true
         if (result) {
-            lastScaleAnimatable?.stop()
+            lastScaleAnimatable.stop()
         }
         return result
+    }
+
+    override fun isFlingRunning(): Boolean {
+        return lastFlingAnimatable?.running == true
     }
 
     override suspend fun startFlingAnimation(
@@ -98,7 +106,7 @@ class ViewAnimationAdapter(val view: View) : AnimationAdapter {
         val lastFlingAnimatable = lastFlingAnimatable
         val result = lastFlingAnimatable?.running == true
         if (result) {
-            lastFlingAnimatable?.stop()
+            lastFlingAnimatable.stop()
         }
         return result
     }

@@ -5,6 +5,8 @@
 # new
 
 * fix: 修复仅在 1.4.0-beta04 版本存在的 ZoomImageView 的 tile 映射错位的 bug
+* fix: 修复 contentOriginSize 改变会打断用户的操作动画的
+  bug。[#105](https://github.com/panpf/zoomimage/issues/105)
 * improve: ZoomImageView 支持双指拖动手势。[#102](https://github.com/panpf/zoomimage/issues/102)
 * new: ContinuousTransformType 新增 ROLLBACK 类型
 * new: ZoomableState 和 ZoomableEngine 新增 sourceScaleFactor、 sourceVisibleRect 属性和 sourceToDraw

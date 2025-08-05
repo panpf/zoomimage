@@ -22,6 +22,8 @@ import com.github.panpf.zoomimage.zoom.BaseZoomAnimationSpec
 
 interface AnimationAdapter {
 
+    fun isRunning(): Boolean
+
     suspend fun startAnimation(
         animationSpec: BaseZoomAnimationSpec?,
         onProgress: (progress: Float) -> Unit,
@@ -29,6 +31,8 @@ interface AnimationAdapter {
     )
 
     suspend fun stopAnimation(): Boolean
+
+    fun isFlingRunning(): Boolean
 
     suspend fun startFlingAnimation(
         startUserOffset: OffsetCompat,

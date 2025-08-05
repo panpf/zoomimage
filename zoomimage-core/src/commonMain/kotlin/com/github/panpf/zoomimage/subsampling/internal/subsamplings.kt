@@ -45,31 +45,26 @@ suspend fun createTileDecoder(
     subsamplingImage: SubsamplingImage,
     contentSize: IntSizeCompat,
     regionDecoders: List<RegionDecoder.Factory>,
-    onImageInfoPassed: suspend (ImageInfo) -> Unit,
 ): Result<TileDecoder> = runCatching {
     val regionDecoderFactory = regionDecoders
         .plus(defaultRegionDecoder())
         .find { it.accept(subsamplingImage) }!!
 
-    // The contentOriginSize of Zoomable can be set in advance through the external ImageInfo.
-    // Avoid setting contentOriginSize after initialization to reset user transformations generated during initialization
+    // Filter out unsupported images via external imageInfo in advance
     val externalImageInfo = subsamplingImage.imageInfo
     if (externalImageInfo != null) {
         checkImageInfo(externalImageInfo, regionDecoderFactory, contentSize)
-        onImageInfoPassed(externalImageInfo)
     }
 
     val regionDecoder = withContext(ioCoroutineDispatcher()) {
         runCatching {
             val imageSource = subsamplingImage.imageSource.create()
             val regionDecoder = regionDecoderFactory.create(subsamplingImage, imageSource)
-
             try {
-                if (externalImageInfo == null) {
-                    val imageInfo = regionDecoder.imageInfo
+                val imageInfo = regionDecoder.imageInfo
+                if (externalImageInfo == null || externalImageInfo != imageInfo) {
                     checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
                 }
-
                 regionDecoder.prepare()
             } catch (e: Exception) {
                 regionDecoder.closeQuietly()
@@ -80,11 +75,6 @@ suspend fun createTileDecoder(
     }.apply {
         if (isFailure) throw exceptionOrNull()!!
     }.getOrThrow()
-
-    // Although the checkImageInfo check passes, ready may fail, so call onImageInfoPassed after ready
-    if (externalImageInfo == null) {
-        onImageInfoPassed(regionDecoder.imageInfo)
-    }
 
     return Result.success(TileDecoder(logger, regionDecoder))
 }

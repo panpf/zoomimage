@@ -29,6 +29,10 @@ class TestAnimationAdapter : AnimationAdapter {
     private var animationRunning: Boolean = false
     private var flingRunning: Boolean = false
 
+    override fun isRunning(): Boolean {
+        return animationRunning
+    }
+
     override suspend fun startAnimation(
         animationSpec: BaseZoomAnimationSpec?,
         onProgress: (progress: Float) -> Unit,
@@ -64,6 +68,10 @@ class TestAnimationAdapter : AnimationAdapter {
             this.animationRunning = false
         }
         return animationRunning
+    }
+
+    override fun isFlingRunning(): Boolean {
+        return flingRunning
     }
 
     override suspend fun startFlingAnimation(

@@ -35,8 +35,12 @@ import kotlinx.coroutines.launch
 
 class ComposeAnimationAdapter : AnimationAdapter {
 
-    private var lastScaleAnimatable: Animatable<*, *>? = null
+    private var lastAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
+
+    override fun isRunning(): Boolean {
+        return lastAnimatable?.isRunning == true
+    }
 
     override suspend fun startAnimation(
         animationSpec: BaseZoomAnimationSpec?,
@@ -44,7 +48,7 @@ class ComposeAnimationAdapter : AnimationAdapter {
         onEnd: () -> Unit
     ) {
         val updateAnimatable = Animatable(0f)
-        lastScaleAnimatable = updateAnimatable
+        lastAnimatable = updateAnimatable
         val finalAnimationSpec = (animationSpec as? ZoomAnimationSpec) ?: ZoomAnimationSpec.Default
         updateAnimatable.animateTo(
             targetValue = 1f,
@@ -59,12 +63,16 @@ class ComposeAnimationAdapter : AnimationAdapter {
     }
 
     override suspend fun stopAnimation(): Boolean {
-        val lastScaleAnimatable = lastScaleAnimatable
+        val lastScaleAnimatable = lastAnimatable
         val result = lastScaleAnimatable?.isRunning == true
         if (result) {
-            lastScaleAnimatable?.stop()
+            lastScaleAnimatable.stop()
         }
         return result
+    }
+
+    override fun isFlingRunning(): Boolean {
+        return lastFlingAnimatable?.isRunning == true
     }
 
     override suspend fun startFlingAnimation(
@@ -104,7 +112,7 @@ class ComposeAnimationAdapter : AnimationAdapter {
         val lastFlingAnimatable = lastFlingAnimatable
         val result = lastFlingAnimatable?.isRunning == true
         if (result) {
-            lastFlingAnimatable?.stop()
+            lastFlingAnimatable.stop()
         }
         return result
     }

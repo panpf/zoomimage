@@ -6,6 +6,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 * fix: Fixed a bug that only existed in version 1.4.0-beta04 for tile mapping misalignment of
   ZoomImageView
+* fix: Fixed a bug where the contentOriginSize change would interrupt the user's operation
+  animation. [#105](https://github.com/panpf/zoomimage/issues/105)
 * improve: ZoomImageView supports two-finger drag
   gestures. [#102](https://github.com/panpf/zoomimage/issues/102)
 * new: ContinuousTransformType Added ROLLBACK type

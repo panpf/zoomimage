@@ -27,7 +27,6 @@ class SubsamplingDesktopTest {
             subsamplingImage = SubsamplingImage(hugeLongQmshtImageSource),
             contentSize = hugeLongQmshtImageFile.size / 32f,
             regionDecoders = emptyList(),
-            onImageInfoPassed = {}
         ).getOrThrow().apply {
             assertEquals(
                 expected = hugeLongQmshtImageFile.size,
@@ -48,7 +47,6 @@ class SubsamplingDesktopTest {
             ),
             contentSize = hugeLongQmshtImageFile.size / 32f,
             regionDecoders = emptyList(),
-            onImageInfoPassed = {}
         ).exceptionOrNull()!!
         createTileDecoder(
             logger = logger,
@@ -58,7 +56,6 @@ class SubsamplingDesktopTest {
             ),
             contentSize = hugeLongQmshtImageFile.size / 32f,
             regionDecoders = emptyList(),
-            onImageInfoPassed = {}
         ).exceptionOrNull()!!
 
         // error: contentSize >= imageSize
@@ -70,7 +67,6 @@ class SubsamplingDesktopTest {
             ),
             contentSize = hugeLongQmshtImageFile.size,
             regionDecoders = emptyList(),
-            onImageInfoPassed = {}
         ).exceptionOrNull()!!
 
         // error: aspect ratio too different
@@ -85,7 +81,6 @@ class SubsamplingDesktopTest {
                 hugeLongQmshtImageFile.size.height / 35
             ),
             regionDecoders = emptyList(),
-            onImageInfoPassed = {}
         ).exceptionOrNull()!!
 
         // error: unsupported mimeTypes
@@ -102,7 +97,6 @@ class SubsamplingDesktopTest {
                     unsupportedMimeTypes = listOf("image/jpeg")
                 )
             ),
-            onImageInfoPassed = {}
         ).exceptionOrNull()!!
 
         // onImageInfoPassed
@@ -117,9 +111,8 @@ class SubsamplingDesktopTest {
                     actions = actions
                 )
             ),
-            onImageInfoPassed = { actions.add("onImageInfoPassed") }
         ).getOrThrow()
-        assertEquals("[accept, create, checkSupport, onImageInfoPassed]", actions.toString())
+        assertEquals("[accept, create, checkSupport]", actions.toString())
 
         actions.clear()
         createTileDecoder(
@@ -135,9 +128,25 @@ class SubsamplingDesktopTest {
                     actions = actions
                 )
             ),
-            onImageInfoPassed = { actions.add("onImageInfoPassed") }
         ).getOrThrow()
-        assertEquals("[accept, checkSupport, onImageInfoPassed, create]", actions.toString())
+        assertEquals("[accept, checkSupport, create]", actions.toString())
+
+        actions.clear()
+        createTileDecoder(
+            logger = logger,
+            subsamplingImage = SubsamplingImage(
+                imageSource = hugeLongQmshtImageSource,
+                imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/png")
+            ),
+            contentSize = hugeLongQmshtImageFile.size / 32f,
+            regionDecoders = listOf(
+                TestRegionDecoder.Factory(
+                    imageInfo = ImageInfo(hugeLongQmshtImageFile.size, "image/jpeg"),
+                    actions = actions
+                )
+            ),
+        ).getOrThrow()
+        assertEquals("[accept, checkSupport, create, checkSupport]", actions.toString())
 
         // imageInfo
         createTileDecoder(
@@ -145,7 +154,6 @@ class SubsamplingDesktopTest {
             subsamplingImage = SubsamplingImage(hugeLongQmshtImageSource),
             contentSize = hugeLongQmshtImageFile.size / 32f,
             regionDecoders = emptyList(),
-            onImageInfoPassed = { actions.add("onImageInfoPassed") }
         ).getOrThrow().apply {
             assertEquals(hugeLongQmshtImageFile.size, imageInfo.size)
             assertEquals("image/jpeg", imageInfo.mimeType)
@@ -158,7 +166,6 @@ class SubsamplingDesktopTest {
             ),
             contentSize = hugeLongQmshtImageFile.size / 32f,
             regionDecoders = emptyList(),
-            onImageInfoPassed = { actions.add("onImageInfoPassed") }
         ).getOrThrow().apply {
             assertEquals(hugeLongQmshtImageFile.size * 2, imageInfo.size)
             assertEquals("image/png", imageInfo.mimeType)

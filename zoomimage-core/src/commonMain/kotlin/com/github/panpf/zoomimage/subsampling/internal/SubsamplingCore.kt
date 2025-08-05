@@ -328,9 +328,6 @@ class SubsamplingCore constructor(
                 subsamplingImage = subsamplingImage,
                 contentSize = contentSize,
                 regionDecoders = regionDecoders,
-                onImageInfoPassed = {
-                    zoomableBridge.setContentOriginSize(it.size)
-                }
             )
             if (tileDecoderResult.isFailure) {
                 logger.d {
@@ -346,6 +343,7 @@ class SubsamplingCore constructor(
             val imageInfo = subsamplingImage.imageInfo ?: tileDecoder.imageInfo
             this@SubsamplingCore.imageInfo = imageInfo
             this@SubsamplingCore.tileDecoder = tileDecoder
+            this@SubsamplingCore.zoomableBridge.setContentOriginSize(imageInfo.size)
             logger.d {
                 "$module. resetTileDecoder:$caller. success. " +
                         "contentSize=${contentSize.toShortString()}, " +
@@ -504,10 +502,7 @@ class SubsamplingCore constructor(
             refreshReadyState(caller)
         }
 
-        @Suppress("OPT_IN_USAGE")
-        GlobalScope.launch(Dispatchers.Main) {
-            zoomableBridge.setContentOriginSize(IntSizeCompat.Zero)
-        }
+        zoomableBridge.setContentOriginSize(IntSizeCompat.Zero)
     }
 
     private fun cleanTileManager(caller: String) {

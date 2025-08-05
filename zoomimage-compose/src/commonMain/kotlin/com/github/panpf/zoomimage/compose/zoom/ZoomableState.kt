@@ -134,7 +134,8 @@ class ZoomableState constructor(val logger: Logger) : RememberObserver {
     var contentSize: IntSize by mutableStateOf(zoomableCore.contentSize.toPlatform())
 
     /**
-     * The original size of the content, it is usually set by [SubsamplingState] after parsing the original size of the image
+     * The original size of the content, it is usually set by [SubsamplingState] after parsing the original size of the image.
+     * If not empty, it means that the subsampling function has been enabled
      */
     var contentOriginSize: IntSize by mutableStateOf(zoomableCore.contentOriginSize.toPlatform())
 

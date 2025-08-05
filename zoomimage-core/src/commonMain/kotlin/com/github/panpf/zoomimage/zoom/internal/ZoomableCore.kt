@@ -140,6 +140,7 @@ class ZoomableCore constructor(
         private set
 
     private var resetParams: ResetParams? = null
+    private var initialZoom: InitialZoom? = null
 
 
     suspend fun scale(
@@ -573,6 +574,7 @@ class ZoomableCore constructor(
     suspend fun reset(caller: String, force: Boolean = false) {
         requiredMainThread()
 
+        val lastInitialZoom = initialZoom
         val lastResetParams = resetParams
         val newResetParams = ResetParams(
             containerSize = containerSize,
@@ -594,8 +596,6 @@ class ZoomableCore constructor(
             return
         }
 
-        stopAllAnimation(caller)
-
         val newInitialZoom = calculateInitialZoom(
             containerSize = newResetParams.containerSize,
             contentSize = newResetParams.contentSize,
@@ -610,13 +610,12 @@ class ZoomableCore constructor(
 
         val newBaseTransform = newInitialZoom.baseTransform
 
-        val lastUserTransform = userTransform
-        val hasUserActions = !transformAboutEquals(
-            one = lastUserTransform,
-            two = TransformCompat.Origin
+        val currentUserTransform = userTransform
+        val hasUserActions = lastInitialZoom != null && !transformAboutEquals(
+            one = currentUserTransform,
+            two = lastInitialZoom.userTransform
         )
-        val mode: String
-        val newUserTransform = if (
+        val (newUserTransform, mode) = if (
             !force
             && hasUserActions
             && diffResult.isOnlyContainerSizeChanged
@@ -624,7 +623,6 @@ class ZoomableCore constructor(
             && lastResetParams.containerSize.isNotEmpty()
             && newResetParams.containerSize.isNotEmpty()
         ) {
-            mode = "restoreVisibleCenter"
             val restoreTransform =
                 calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged(
                     oldContainerSize = lastResetParams.containerSize,
@@ -641,12 +639,12 @@ class ZoomableCore constructor(
                 newUserOffset = restoreUserTransform.offset,
                 newUserScale = restoreUserTransform.scaleX,
             )
-            restoreUserTransform.copy(offset = limitUserOffset)
+            restoreUserTransform.copy(offset = limitUserOffset) to "restoreVisibleCenter"
         } else if (
             !force
             && hasUserActions
             && keepTransformWhenSameAspectRatioContentSizeChanged
-            && diffResult.isOnlyContentSizeOrContentOriginSizeChanged
+            && diffResult.isOnlyContentSizeChanged
             && lastResetParams != null
             && lastResetParams.contentSize.isNotEmpty()
             && newResetParams.contentSize.isNotEmpty()
@@ -656,7 +654,6 @@ class ZoomableCore constructor(
                 diffResult = diffResult
             )
         ) {
-            mode = "restoreVisibleRect"
             val restoreTransform =
                 calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged(
                     oldContentSize = lastResetParams.contentSize,
@@ -668,15 +665,23 @@ class ZoomableCore constructor(
                 newUserOffset = restoreUserTransform.offset,
                 newUserScale = restoreUserTransform.scaleX,
             )
-            restoreUserTransform.copy(offset = limitUserOffset)
+            restoreUserTransform.copy(offset = limitUserOffset) to "restoreVisibleRect"
         } else {
-            mode = "reset"
-            newInitialZoom.userTransform
+            newInitialZoom.userTransform to "reset"
         }
 
+        // contentOriginSize usually only affects minScale, mediumScale, maxScale,
+        // Therefore, when the user has an operation or is in the animation,
+        // you can skip resetting and only set minScale, mediumScale, maxScale to avoid interrupting the user's operation
+        val skipResetTransform = !force
+                && diffResult.isOnlyContentOriginSizeChanged
+                && lastInitialZoom != null
+                && newInitialZoom.baseTransform == lastInitialZoom.baseTransform
+                && newInitialZoom.userTransform == lastInitialZoom.userTransform
+                && (hasUserActions || animationAdapter.isRunning() || animationAdapter.isFlingRunning())
         logger.d {
             val transform = newBaseTransform + newUserTransform
-            "$module. reset:$caller. $mode. " +
+            "$module. reset:$caller. $mode. ${if (skipResetTransform) "skip. " else ""}" +
                     "containerSize=${newResetParams.containerSize.toShortString()}, " +
                     "contentSize=${newResetParams.contentSize.toShortString()}, " +
                     "contentOriginSize=${newResetParams.contentOriginSize.toShortString()}, " +
@@ -688,7 +693,8 @@ class ZoomableCore constructor(
                     "readMode=${newResetParams.readMode}. " +
                     "keepTransform=${keepTransformWhenSameAspectRatioContentSizeChanged}. " +
                     "hasUserActions=${hasUserActions}. " +
-                    "diffResult=${diffResult}. " +
+                    "diffResult=${diffResult}, " +
+                    "animationRunning=(${animationAdapter.isRunning()},${animationAdapter.isFlingRunning()}). " +
                     "minScale=${newInitialZoom.minScale.format(4)}, " +
                     "mediumScale=${newInitialZoom.mediumScale.format(4)}, " +
                     "maxScale=${newInitialZoom.maxScale.format(4)}, " +
@@ -700,24 +706,30 @@ class ZoomableCore constructor(
         minScale = newInitialZoom.minScale
         mediumScale = newInitialZoom.mediumScale
         maxScale = newInitialZoom.maxScale
-        contentBaseDisplayRect = calculateContentBaseDisplayRect(
-            containerSize = newResetParams.containerSize,
-            contentSize = newResetParams.contentSize,
-            contentScale = newResetParams.contentScale,
-            alignment = newResetParams.alignment,
-            rtlLayoutDirection = newResetParams.rtlLayoutDirection,
-            rotation = newResetParams.rotation,
-        )
-        contentBaseVisibleRect = calculateContentBaseVisibleRect(
-            containerSize = newResetParams.containerSize,
-            contentSize = newResetParams.contentSize,
-            contentScale = newResetParams.contentScale,
-            alignment = newResetParams.alignment,
-            rtlLayoutDirection = newResetParams.rtlLayoutDirection,
-            rotation = newResetParams.rotation,
-        )
-        baseTransform = newBaseTransform
-        updateUserTransform(newUserTransform)
+
+        if (!skipResetTransform) {
+            stopAllAnimation(caller)
+            contentBaseDisplayRect = calculateContentBaseDisplayRect(
+                containerSize = newResetParams.containerSize,
+                contentSize = newResetParams.contentSize,
+                contentScale = newResetParams.contentScale,
+                alignment = newResetParams.alignment,
+                rtlLayoutDirection = newResetParams.rtlLayoutDirection,
+                rotation = newResetParams.rotation,
+            )
+            contentBaseVisibleRect = calculateContentBaseVisibleRect(
+                containerSize = newResetParams.containerSize,
+                contentSize = newResetParams.contentSize,
+                contentScale = newResetParams.contentScale,
+                alignment = newResetParams.alignment,
+                rtlLayoutDirection = newResetParams.rtlLayoutDirection,
+                rotation = newResetParams.rotation,
+            )
+            baseTransform = newBaseTransform
+            updateUserTransform(newUserTransform)
+        }
+
+        initialZoom = newInitialZoom
         resetParams = newResetParams
     }
 
