@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.4.0-rc01
 
 * fix: 修复仅在 1.4.0-beta04 版本存在的 ZoomImageView 的 tile 映射错位的 bug
 * fix: 修复 contentOriginSize 改变会打断用户的操作动画的

@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.4.0-rc01
 
 * fix: Fixed a bug that only existed in version 1.4.0-beta04 for tile mapping misalignment of
   ZoomImageView
