@@ -431,6 +431,12 @@ private fun updateZoom(
     request: DisplayRequest,
     painterState: PainterState,
 ) {
+    val painterSize = painterState.painter
+        ?.intrinsicSize
+        ?.takeIf { it.isSpecified }
+        ?.let { IntSize(it.width.roundToInt(), it.height.roundToInt()) }
+        ?.takeIf { it.width > 0 && it.height > 0 }
+        ?: IntSize.Zero
     zoomState.zoomable.logger.d {
         val stateName = when (painterState) {
             is PainterState.Loading -> "Loading"
@@ -438,14 +444,9 @@ private fun updateZoom(
             is PainterState.Error -> "Error"
             is PainterState.Empty -> "Empty"
         }
-        "SketchZoomAsyncImage. onPainterState. state=$stateName. uri='${request.uriString}'"
+        "SketchZoomAsyncImage. $stateName. contentSize=$painterSize. uri='${request.uriString}'"
     }
-    val painterSize = painterState.painter
-        ?.intrinsicSize
-        ?.takeIf { it.isSpecified }
-        ?.let { IntSize(it.width.roundToInt(), it.height.roundToInt()) }
-        ?.takeIf { it.width > 0 && it.height > 0 }
-    zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
+    zoomState.zoomable.contentSize = painterSize
 
     if (painterState is PainterState.Success) {
         coroutineScope.launch {

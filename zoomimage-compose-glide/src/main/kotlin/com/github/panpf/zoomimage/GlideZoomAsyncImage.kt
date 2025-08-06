@@ -225,8 +225,7 @@ private class ResetListener(
         target: Target<Drawable>,
         isFirstResource: Boolean
     ): Boolean {
-        logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
-        updateZoom(ready = false, resource = null)
+        updateZoom(ready = false, resource = null, model)
         return false
     }
 
@@ -237,16 +236,20 @@ private class ResetListener(
         dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
-        logger.d { "GlideZoomAsyncImage. onResourceReady. resource=$resource. model='$model'" }
-        updateZoom(ready = true, resource = resource)
+        updateZoom(ready = true, resource = resource, model)
         return false
     }
 
-    private fun updateZoom(ready: Boolean, resource: Drawable?) {
+    private fun updateZoom(ready: Boolean, resource: Drawable?, model: Any?) {
         val drawableSize = resource
             ?.let { IntSize(it.intrinsicWidth, it.intrinsicHeight) }
             ?.takeIf { it.isNotEmpty() }
-        zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
+            ?: IntSize.Zero
+        logger.d {
+            val state = if (ready) "Ready" else "Failed"
+            "GlideZoomAsyncImage. $state. contentSize=$drawableSize. model='$model'"
+        }
+        zoomState.zoomable.contentSize = drawableSize
 
         if (ready && model != null && resource != null) {
             coroutineScope.launch {

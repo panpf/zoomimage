@@ -329,6 +329,8 @@ private fun updateZoom(
     loadingPainterState: MutableState<Painter?>,
 ) {
     val finaData = if (model is ImageRequest) model.data else model
+    val contentSize =
+        calculateContentSizeWithCrossfade(model, loadState, loadingPainterState).roundToIntSize()
     zoomState.zoomable.logger.d {
         val stateName = when (loadState) {
             is State.Loading -> "Loading"
@@ -336,11 +338,8 @@ private fun updateZoom(
             is State.Error -> "Error"
             is State.Empty -> "Empty"
         }
-        "CoilZoomAsyncImage. onState. state=$stateName. data='${finaData}'"
+        "CoilZoomAsyncImage. $stateName. contentSize=$contentSize. data='${finaData}'"
     }
-
-    val contentSize =
-        calculateContentSizeWithCrossfade(model, loadState, loadingPainterState).roundToIntSize()
     zoomState.zoomable.contentSize = contentSize
 
     if (loadState is State.Success) {
