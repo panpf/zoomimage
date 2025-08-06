@@ -126,7 +126,6 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
         }
 
         binding.pager.apply {
-            offscreenPageLimit = 1
             appSettings.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
                 orientation =
                     if (it) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
