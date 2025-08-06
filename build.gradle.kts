@@ -74,8 +74,21 @@ allprojects {
             featureFlags.addAll(
                 ComposeFeatureFlag.OptimizeNonSkippingGroups
             )
+            // Copy from https://github.com/coil-kt/coil/blob/main/coil-core/compose_compiler_config.conf
             stabilityConfigurationFiles.add {
-                rootDir.resolve("zoomimage-core/compose_compiler_config.conf")
+                rootDir.resolve("zoomimage-core-coil3/compose_compiler_config.conf")
+            }
+            // Modified based on 'zoomimage-core-coil3/compose_compiler_config.conf'
+            stabilityConfigurationFiles.add {
+                rootDir.resolve("zoomimage-core-coil2/compose_compiler_config.conf")
+            }
+            // Copy from https://github.com/panpf/sketch/blob/main/sketch-core/compose_compiler_config.conf
+            stabilityConfigurationFiles.add {
+                rootDir.resolve("zoomimage-core-sketch4/compose_compiler_config.conf")
+            }
+            // Modified based on 'zoomimage-core-sketch4/compose_compiler_config.conf'
+            stabilityConfigurationFiles.add {
+                rootDir.resolve("zoomimage-core-sketch3/compose_compiler_config.conf")
             }
 
             /**
