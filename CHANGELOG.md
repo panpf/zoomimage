@@ -2,13 +2,15 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.4.0-rc02
 
 * fix: Fixed a bug in the Compose version component that caused the contents to be displayed in the
   upper left corner first and then quickly moved to the middle due to delayed responses of
   contentSize and containerSize. [#107](https://github.com/panpf/zoomimage/issues/105)
 * break: ZoomableState, ZoomableEngine, SubsamplingState, SubsamplingEngine All properties are no
   longer mutable, and they provide a special 'set\*()' method.
+* improve: Compose components for sketch and coil versions add stability configuration at compile
+  time
 
 # 1.4.0-rc01
 

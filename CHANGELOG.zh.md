@@ -2,12 +2,13 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.4.0-rc02
 
 * fix: 修复 Compose 版本组件因为 contentSize 和 containerSize 响应延迟导致内容先显示在左上角再快速移动到中间的
   bug。[#107](https://github.com/panpf/zoomimage/issues/105)
 * break: ZoomableState、ZoomableEngine、SubsamplingState、SubsamplingEngine 所有的属性都不再是 mutable
   的，为它们提供了专门的 'set\*()' 方法
+* improve: sketch 和 coil 版本的 compose 组件在编译时增加稳定性配置
 
 # 1.4.0-rc01
 
