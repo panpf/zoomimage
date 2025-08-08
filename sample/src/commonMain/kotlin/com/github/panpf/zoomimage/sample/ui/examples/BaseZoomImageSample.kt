@@ -111,7 +111,7 @@ fun <T : ZoomState> BaseZoomImageSample(
         val appSettings: AppSettings = koinInject()
         val infoDialogState = rememberMyDialogState()
         val capturableState = rememberCapturableState()
-        val zoomState = createZoomState().apply { bindSettings(appSettings) }
+        val zoomState = createZoomState().apply { BindSettings(appSettings) }
 
         val rtlLayoutDirectionEnabled by appSettings.rtlLayoutDirectionEnabled.collectAsState()
         val layoutDirection =
@@ -203,15 +203,15 @@ fun <T : ZoomState> BaseZoomImageSample(
 }
 
 @Composable
-private fun ZoomState.bindSettings(appSettings: AppSettings) {
+private fun ZoomState.BindSettings(appSettings: AppSettings) {
     val logLevel by appSettings.logLevel.collectAsState()
     logger.level = logLevel
 
     val threeStepScale by appSettings.threeStepScaleEnabled.collectAsState()
-    zoomable.threeStepScale = threeStepScale
+    zoomable.setThreeStepScale(threeStepScale)
 
     val rubberBandScale by appSettings.rubberBandScaleEnabled.collectAsState()
-    zoomable.rubberBandScale = rubberBandScale
+    zoomable.setRubberBandScale(rubberBandScale)
 
     val animateScale by appSettings.zoomAnimateEnabled.collectAsState()
     val slowerScaleAnimation by appSettings.zoomSlowerAnimationEnabled.collectAsState()
@@ -221,10 +221,10 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
             ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
         }
     }
-    zoomable.animationSpec = zoomAnimationSpec
+    zoomable.setAnimationSpec(zoomAnimationSpec)
 
     val reverseMouseWheelScale by appSettings.reverseMouseWheelScaleEnabled.collectAsState()
-    zoomable.reverseMouseWheelScale = reverseMouseWheelScale
+    zoomable.setReverseMouseWheelScale(reverseMouseWheelScale)
 
     val scalesCalculatorName by appSettings.scalesCalculatorName.collectAsState()
     val scalesMultiple by appSettings.fixedScalesCalculatorMultiple.collectAsState()
@@ -233,13 +233,13 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
             buildScalesCalculator(scalesCalculatorName, scalesMultiple.toFloat())
         }
     }
-    zoomable.scalesCalculator = scalesCalculator
+    zoomable.setScalesCalculator(scalesCalculator)
 
     val limitOffsetWithinBaseVisibleRect by appSettings.limitOffsetWithinBaseVisibleRect.collectAsState()
-    zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+    zoomable.setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect)
 
     val containerWhitespaceMultiple by appSettings.containerWhitespaceMultiple.collectAsState()
-    zoomable.containerWhitespaceMultiple = containerWhitespaceMultiple
+    zoomable.setContainerWhitespaceMultiple(containerWhitespaceMultiple)
 
     val containerWhitespaceEnabled by appSettings.containerWhitespaceEnabled.collectAsState()
     val containerWhitespace by remember {
@@ -251,7 +251,7 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
             }
         }
     }
-    zoomable.containerWhitespace = containerWhitespace
+    zoomable.setContainerWhitespace(containerWhitespace)
 
     val readModeEnabled by appSettings.readModeEnabled.collectAsState()
     val readModeAcceptedBoth by appSettings.readModeAcceptedBoth.collectAsState()
@@ -266,29 +266,28 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
             if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
         }
     }
-    zoomable.readMode = readMode
+    zoomable.setReadMode(readMode)
 
     val disabledGestureTypes by appSettings.disabledGestureTypes.collectAsState()
-    zoomable.disabledGestureTypes = disabledGestureTypes
+    zoomable.setDisabledGestureTypes(disabledGestureTypes)
 
-    val keepTransformWhenSameAspectRatioContentSizeChangedEnabled by appSettings.keepTransformEnabled.collectAsState()
-    zoomable.keepTransformWhenSameAspectRatioContentSizeChanged =
-        keepTransformWhenSameAspectRatioContentSizeChangedEnabled
+    val keepTransform by appSettings.keepTransformEnabled.collectAsState()
+    zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(keepTransform)
 
     val subsamplingEnabled by appSettings.subsamplingEnabled.collectAsState()
-    subsampling.disabled = !subsamplingEnabled
+    subsampling.setDisabled(!subsamplingEnabled)
 
     val autoStopWithLifecycleEnabled by appSettings.autoStopWithLifecycleEnabled.collectAsState()
-    subsampling.disabledAutoStopWithLifecycle = !autoStopWithLifecycleEnabled
+    subsampling.setDisabledAutoStopWithLifecycle(!autoStopWithLifecycleEnabled)
 
     val pausedContinuousTransformTypes by appSettings.pausedContinuousTransformTypes.collectAsState()
-    subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
+    subsampling.setPausedContinuousTransformTypes(pausedContinuousTransformTypes)
 
     val backgroundTilesEnabled by appSettings.backgroundTilesEnabled.collectAsState()
-    subsampling.disabledBackgroundTiles = !backgroundTilesEnabled
+    subsampling.setDisabledBackgroundTiles(!backgroundTilesEnabled)
 
     val tileBoundsEnabled by appSettings.tileBoundsEnabled.collectAsState()
-    subsampling.showTileBounds = tileBoundsEnabled
+    subsampling.setShowTileBounds(tileBoundsEnabled)
 
     val tileAnimationEnabled by appSettings.tileAnimationEnabled.collectAsState()
     val tileAnimationSpec by remember {
@@ -296,10 +295,10 @@ private fun ZoomState.bindSettings(appSettings: AppSettings) {
             if (tileAnimationEnabled) TileAnimationSpec.Default else TileAnimationSpec.None
         }
     }
-    subsampling.tileAnimationSpec = tileAnimationSpec
+    subsampling.setTileAnimationSpec(tileAnimationSpec)
 
     val tileMemoryCache by appSettings.tileMemoryCacheEnabled.collectAsState()
-    subsampling.disabledTileImageCache = !tileMemoryCache
+    subsampling.setDisabledTileImageCache(!tileMemoryCache)
 }
 
 @Stable

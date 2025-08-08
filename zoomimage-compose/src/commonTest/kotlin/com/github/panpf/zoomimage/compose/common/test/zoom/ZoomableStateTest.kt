@@ -34,11 +34,17 @@ import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScrollEdge
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalTestApi::class)
+@OptIn(ExperimentalTestApi::class, DelicateCoroutinesApi::class)
 class ZoomableStateTest {
 
     @Test
@@ -69,99 +75,121 @@ class ZoomableStateTest {
     }
 
     @Test
-    fun testContainerSize() {
+    fun testContainerSize() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
 
-        zoomable.containerSize = IntSize(1000, 2000)
+        withContext(Dispatchers.Main) {
+            zoomable.setContainerSize(IntSize(1000, 2000))
+        }
         assertEquals(expected = IntSize(1000, 2000), actual = zoomable.containerSize)
     }
 
     @Test
-    fun testContentSize() {
+    fun testContentSize() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
 
-        zoomable.containerSize = IntSize(1000, 2000)
+        withContext(Dispatchers.Main) {
+            zoomable.setContainerSize(IntSize(1000, 2000))
+        }
         assertEquals(expected = IntSize(1000, 2000), actual = zoomable.containerSize)
         assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
 
-        zoomable.contentSize = IntSize(500, 300)
+        withContext(Dispatchers.Main) {
+            zoomable.setContentSize(IntSize(500, 300))
+        }
         assertEquals(expected = IntSize(1000, 2000), actual = zoomable.containerSize)
         assertEquals(expected = IntSize(500, 300), actual = zoomable.contentSize)
     }
 
     @Test
-    fun testContentOriginSize() {
+    fun testContentOriginSize() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = IntSize.Zero, actual = zoomable.contentOriginSize)
 
-        zoomable.contentOriginSize = IntSize(4000, 2400)
+        withContext(Dispatchers.Main) {
+            zoomable.setContentOriginSize(IntSize(4000, 2400))
+        }
         assertEquals(expected = IntSize(4000, 2400), actual = zoomable.contentOriginSize)
     }
 
     @Test
-    fun testContentScale() {
+    fun testContentScale() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
 
-        zoomable.contentScale = ContentScale.Crop
+        withContext(Dispatchers.Main) {
+            zoomable.setContentScale(ContentScale.Crop)
+        }
         assertEquals(expected = ContentScale.Crop, actual = zoomable.contentScale)
     }
 
     @Test
-    fun testAlignment() {
+    fun testAlignment() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
 
-        zoomable.alignment = Alignment.TopStart
+        withContext(Dispatchers.Main) {
+            zoomable.setAlignment(Alignment.TopStart)
+        }
         assertEquals(expected = Alignment.TopStart, actual = zoomable.alignment)
     }
 
     // TODO test layoutDirection
 
     @Test
-    fun testReadMode() {
+    fun testReadMode() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = null, actual = zoomable.readMode)
 
-        zoomable.readMode = ReadMode.Default
+        withContext(Dispatchers.Main) {
+            zoomable.setReadMode(ReadMode.Default)
+        }
         assertEquals(expected = ReadMode.Default, actual = zoomable.readMode)
     }
 
     @Test
-    fun testScalesCalculator() {
+    fun testScalesCalculator() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = ScalesCalculator.Dynamic, actual = zoomable.scalesCalculator)
 
-        zoomable.scalesCalculator = ScalesCalculator.Fixed
+        withContext(Dispatchers.Main) {
+            zoomable.setScalesCalculator(ScalesCalculator.Fixed)
+        }
         assertEquals(expected = ScalesCalculator.Fixed, actual = zoomable.scalesCalculator)
     }
 
     @Test
-    fun testThreeStepScale() {
+    fun testThreeStepScale() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = false, actual = zoomable.threeStepScale)
 
-        zoomable.threeStepScale = true
+        withContext(Dispatchers.Main) {
+            zoomable.setThreeStepScale(true)
+        }
         assertEquals(expected = true, actual = zoomable.threeStepScale)
     }
 
     @Test
-    fun testRubberBandScale() {
+    fun testRubberBandScale() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = true, actual = zoomable.rubberBandScale)
 
-        zoomable.rubberBandScale = false
+        withContext(Dispatchers.Main) {
+            zoomable.setRubberBandScale(false)
+        }
         assertEquals(expected = false, actual = zoomable.rubberBandScale)
     }
 
     @Test
-    fun testOneFingerScaleSpec() {
+    fun testOneFingerScaleSpec() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = OneFingerScaleSpec.Default, actual = zoomable.oneFingerScaleSpec)
 
-        zoomable.oneFingerScaleSpec = OneFingerScaleSpec(DefaultPanToScaleTransformer(100))
+        withContext(Dispatchers.Main) {
+            zoomable.setOneFingerScaleSpec(OneFingerScaleSpec(DefaultPanToScaleTransformer(100)))
+        }
         assertEquals(
             expected = OneFingerScaleSpec(DefaultPanToScaleTransformer(100)),
             actual = zoomable.oneFingerScaleSpec
@@ -169,11 +197,13 @@ class ZoomableStateTest {
     }
 
     @Test
-    fun testAnimationSpec() {
+    fun testAnimationSpec() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = ZoomAnimationSpec.Default, actual = zoomable.animationSpec)
 
-        zoomable.animationSpec = ZoomAnimationSpec(durationMillis = 4000)
+        withContext(Dispatchers.Main) {
+            zoomable.setAnimationSpec(ZoomAnimationSpec(durationMillis = 4000))
+        }
         assertEquals(
             expected = ZoomAnimationSpec(durationMillis = 4000),
             actual = zoomable.animationSpec
@@ -181,11 +211,13 @@ class ZoomableStateTest {
     }
 
     @Test
-    fun testLimitOffsetWithinBaseVisibleRect() {
+    fun testLimitOffsetWithinBaseVisibleRect() = runTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = false, actual = zoomable.limitOffsetWithinBaseVisibleRect)
 
-        zoomable.limitOffsetWithinBaseVisibleRect = true
+        withContext(Dispatchers.Main) {
+            zoomable.setLimitOffsetWithinBaseVisibleRect(true)
+        }
         assertEquals(expected = true, actual = zoomable.limitOffsetWithinBaseVisibleRect)
     }
 
@@ -199,7 +231,7 @@ class ZoomableStateTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = 0, actual = zoomable.disabledGestureTypes)
 
-        zoomable.disabledGestureTypes = GestureType.ONE_FINGER_SCALE or GestureType.TWO_FINGER_SCALE
+        zoomable.setDisabledGestureTypes(GestureType.ONE_FINGER_SCALE or GestureType.TWO_FINGER_SCALE)
         assertEquals(
             expected = GestureType.ONE_FINGER_SCALE or GestureType.TWO_FINGER_SCALE,
             actual = zoomable.disabledGestureTypes
@@ -211,7 +243,7 @@ class ZoomableStateTest {
         val zoomable = ZoomableState(Logger("Test"))
         assertEquals(expected = false, actual = zoomable.reverseMouseWheelScale)
 
-        zoomable.reverseMouseWheelScale = true
+        zoomable.setReverseMouseWheelScale(true)
         assertEquals(expected = true, actual = zoomable.reverseMouseWheelScale)
     }
 
@@ -257,7 +289,7 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
+                zoomable.setContainerSize(IntSize(516, 516))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -279,8 +311,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -302,9 +334,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -327,10 +359,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.contentScale = ContentScale.Crop
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setContentScale(ContentScale.Crop)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -353,9 +385,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                 }
@@ -381,10 +413,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.readMode = ReadMode.Default
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setReadMode(ReadMode.Default)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -407,10 +439,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.scalesCalculator = ScalesCalculator.Fixed
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setScalesCalculator(ScalesCalculator.Fixed)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -463,7 +495,7 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
+                zoomable.setContainerSize(IntSize(516, 516))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -492,8 +524,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -528,9 +560,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -566,10 +598,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.contentScale = ContentScale.Crop
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setContentScale(ContentScale.Crop)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -605,9 +637,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                 }
@@ -646,10 +678,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.readMode = ReadMode.Default
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setReadMode(ReadMode.Default)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -697,10 +729,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.scalesCalculator = ScalesCalculator.Fixed
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setScalesCalculator(ScalesCalculator.Fixed)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -769,7 +801,7 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
+                zoomable.setContainerSize(IntSize(516, 516))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -801,8 +833,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -834,9 +866,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -869,10 +901,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.contentScale = ContentScale.Crop
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setContentScale(ContentScale.Crop)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -905,10 +937,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.alignment = Alignment.BottomEnd
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setAlignment(Alignment.BottomEnd)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -941,9 +973,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                 }
@@ -1017,7 +1049,7 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
+                zoomable.setContainerSize(IntSize(516, 516))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1054,8 +1086,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1092,9 +1124,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1132,10 +1164,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.contentScale = ContentScale.Crop
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setContentScale(ContentScale.Crop)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1173,10 +1205,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.alignment = Alignment.BottomEnd
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setAlignment(Alignment.BottomEnd)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1214,9 +1246,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                 }
@@ -1257,9 +1289,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                 }
@@ -1300,9 +1332,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                     zoomable.offset(targetOffset = Offset(-180f, -172f), animated = false)
@@ -1370,7 +1402,7 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
+                zoomable.setContainerSize(IntSize(516, 516))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1395,8 +1427,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1421,8 +1453,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1448,9 +1480,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentScale = ContentScale.Crop
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentScale(ContentScale.Crop)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1476,9 +1508,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.alignment = Alignment.BottomEnd
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setAlignment(Alignment.BottomEnd)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1504,8 +1536,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                 }
@@ -1534,8 +1566,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                 }
@@ -1564,11 +1596,11 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
-                    zoomable.contentScale = ContentScale.Crop
-                    zoomable.limitOffsetWithinBaseVisibleRect = true
+                    zoomable.setContentScale(ContentScale.Crop)
+                    zoomable.setLimitOffsetWithinBaseVisibleRect(true)
                 }
             }
             waitMillis(100)
@@ -1597,8 +1629,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1632,8 +1664,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                 }
@@ -1670,8 +1702,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.right + 1f
@@ -1713,8 +1745,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.left - 1f
@@ -1756,8 +1788,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetY = zoomable.userOffsetBoundsRect.bottom + 1f
@@ -1799,8 +1831,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetY = zoomable.userOffsetBoundsRect.top - 1f
@@ -1845,8 +1877,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -1878,8 +1910,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                 }
@@ -1921,8 +1953,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.minScale * 0.9f, animated = false)
                 }
@@ -1964,8 +1996,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.maxScale * 1.1f, animated = false)
                 }
@@ -2007,8 +2039,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(
                         targetScale = 20f,
@@ -2054,8 +2086,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(
                         targetScale = 20f,
@@ -2108,8 +2140,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -2141,8 +2173,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleBy(addScale = 20f, animated = false)
                 }
@@ -2184,8 +2216,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleBy(
                         addScale = (zoomable.minScale * 0.9f) / zoomable.transform.scaleX,
@@ -2230,8 +2262,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleBy(
                         addScale = (zoomable.maxScale * 1.1f) / zoomable.transform.scaleX,
@@ -2276,8 +2308,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleBy(
                         addScale = 20f / zoomable.transform.scaleX,
@@ -2323,8 +2355,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleBy(
                         addScale = 20f / zoomable.transform.scaleX,
@@ -2377,8 +2409,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -2410,10 +2442,13 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
-                    zoomable.scaleByPlus(addScale = (zoomable.transform.scaleX * 20f) - zoomable.transform.scaleX, animated = false)
+                    zoomable.scaleByPlus(
+                        addScale = (zoomable.transform.scaleX * 20f) - zoomable.transform.scaleX,
+                        animated = false
+                    )
                 }
             }
             waitMillis(100)
@@ -2453,8 +2488,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleByPlus(
                         addScale = (zoomable.minScale * 0.9f) - zoomable.transform.scaleX,
@@ -2499,8 +2534,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleByPlus(
                         addScale = (zoomable.maxScale * 1.1f) - zoomable.transform.scaleX,
@@ -2545,8 +2580,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleByPlus(
                         addScale = 20f - zoomable.transform.scaleX,
@@ -2592,8 +2627,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scaleByPlus(
                         addScale = 20f - zoomable.transform.scaleX,
@@ -2646,8 +2681,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -2661,10 +2696,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 6.0f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 6.0f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -2688,8 +2726,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                 }
@@ -2706,10 +2744,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 0.34f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -2740,8 +2781,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                     zoomable.switchScale(animated = false)
@@ -2759,10 +2800,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 6.0f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 6.0f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -2793,9 +2837,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.threeStepScale = true
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setThreeStepScale(true)
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                 }
@@ -2812,10 +2856,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 18.0f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 18.0f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -2846,9 +2893,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.threeStepScale = true
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setThreeStepScale(true)
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                     zoomable.switchScale(animated = false)
@@ -2866,10 +2913,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 0.34f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -2900,9 +2950,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.threeStepScale = true
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setThreeStepScale(true)
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                     zoomable.switchScale(animated = false)
@@ -2921,10 +2971,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 6.0f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 6.0f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -2955,8 +3008,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false, centroidContentPoint = IntOffset.Zero)
                 }
@@ -2973,10 +3026,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 0.34f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -3007,8 +3063,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(
                         animated = false,
@@ -3031,10 +3087,13 @@ class ZoomableStateTest {
                 actual = listOf(zoomable.minScale, zoomable.mediumScale, zoomable.maxScale)
                     .map { it.format(2) }
             )
-            assertEquals(
-                expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = 0.34f,
+                    actual = zoomable.getNextStepScale().format(2)
+                )
+            }
+            waitMillis(100)
             assertEquals(
                 expected = Transform(
                     scale = ScaleFactor(0.34f),
@@ -3069,8 +3128,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -3106,8 +3165,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                 }
@@ -3153,8 +3212,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.right - 1f
@@ -3209,8 +3268,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.right + 1f
@@ -3265,8 +3324,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.left + 1f
@@ -3321,8 +3380,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.left - 1f
@@ -3381,8 +3440,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -3418,8 +3477,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                 }
@@ -3465,8 +3524,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.right - 1f
@@ -3519,8 +3578,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.right + 1f
@@ -3573,8 +3632,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.left + 1f
@@ -3627,8 +3686,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBoundsRect.left - 1f
@@ -3685,8 +3744,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -3717,8 +3776,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center,
@@ -3763,8 +3822,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center,
@@ -3809,8 +3868,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center,
@@ -3855,8 +3914,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center,
@@ -3901,8 +3960,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center / 2f,
@@ -3947,8 +4006,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center / 2f * -1f,
@@ -3993,8 +4052,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center * 1.5f,
@@ -4039,8 +4098,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().center * 2.5f,
@@ -4089,8 +4148,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -4121,8 +4180,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center,
@@ -4167,8 +4226,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center,
@@ -4213,8 +4272,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center,
@@ -4259,8 +4318,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center,
@@ -4305,8 +4364,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center / 2f,
@@ -4351,8 +4410,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center / 2f * -1f,
@@ -4397,8 +4456,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center * 1.5f,
@@ -4443,8 +4502,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.locate(
                         contentPoint = zoomable.contentSize.toIntRect().toRect().center * 2.5f,
@@ -4493,8 +4552,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -4526,8 +4585,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                 }
@@ -4563,8 +4622,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(180)
                 }
@@ -4600,8 +4659,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(270)
                 }
@@ -4637,8 +4696,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                 }
@@ -4680,8 +4739,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                     zoomable.scale(zoomable.mediumScale, animated = false)
@@ -4726,8 +4785,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(180)
                     zoomable.scale(zoomable.mediumScale, animated = false)
@@ -4772,8 +4831,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(270)
                     zoomable.scale(zoomable.mediumScale, animated = false)
@@ -4818,8 +4877,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                     zoomable.rotate(90)
@@ -4856,8 +4915,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                     zoomable.rotate(180)
@@ -4894,8 +4953,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                     zoomable.rotate(270)
@@ -4934,8 +4993,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -4967,8 +5026,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotateBy(90 - zoomable.transform.rotation.roundToInt())
                 }
@@ -5004,8 +5063,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotateBy(180 - zoomable.transform.rotation.roundToInt())
                 }
@@ -5041,8 +5100,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotateBy(270 - zoomable.transform.rotation.roundToInt())
                 }
@@ -5078,8 +5137,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                 }
@@ -5121,8 +5180,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotateBy(90 - zoomable.transform.rotation.roundToInt())
                     zoomable.scale(zoomable.mediumScale, animated = false)
@@ -5167,8 +5226,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotateBy(180 - zoomable.transform.rotation.roundToInt())
                     zoomable.scale(zoomable.mediumScale, animated = false)
@@ -5213,8 +5272,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.rotateBy(270 - zoomable.transform.rotation.roundToInt())
                     zoomable.scale(zoomable.mediumScale, animated = false)
@@ -5259,8 +5318,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                     zoomable.rotateBy(90 - zoomable.transform.rotation.roundToInt())
@@ -5297,8 +5356,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                     zoomable.rotateBy(180 - zoomable.transform.rotation.roundToInt())
@@ -5335,8 +5394,8 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(1100, 733)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(1100, 733))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                     zoomable.rotateBy(270 - zoomable.transform.rotation.roundToInt())
@@ -5388,6 +5447,7 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            GlobalScope.launch(Dispatchers.Main) {
             assertEquals(
                 expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
                 actual = listOf(
@@ -5408,13 +5468,15 @@ class ZoomableStateTest {
                     zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
                 ).joinToString()
             )
+            }
+            waitMillis(100)
         }
 
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
+                zoomable.setContainerSize(IntSize(516, 516))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -5428,34 +5490,37 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0), Offset(0.0, 0.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
 
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -5469,35 +5534,38 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
 
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -5511,26 +5579,29 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
 
         // contentScale
@@ -5538,10 +5609,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.contentScale = ContentScale.Crop
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setContentScale(ContentScale.Crop)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -5555,26 +5626,29 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (22, 381), (43, 761), (65, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 0.0), Offset(21.5, 380.5), Offset(43.0, 761.0), Offset(64.5, 1141.5), Offset(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (22, 381), (43, 761), (65, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 0.0), Offset(21.5, 380.5), Offset(43.0, 761.0), Offset(64.5, 1141.5), Offset(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
 
         // alignment
@@ -5582,10 +5656,10 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
-                zoomable.alignment = Alignment.BottomEnd
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
+                zoomable.setAlignment(Alignment.BottomEnd)
             }
             waitMillis(100)
             val zoomable = zoomableHolder!!
@@ -5599,26 +5673,29 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 0.0), Offset(19.9, 380.5), Offset(41.3, 761.0), Offset(62.7, 1141.5), Offset(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
 
         // rotateBy
@@ -5626,9 +5703,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.rotateBy(90 - zoomable.transform.rotation.roundToInt())
                 }
@@ -5645,26 +5722,29 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 1522), (20, 1142), (41, 761), (63, 381), (86, 0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 1522.0), Offset(19.9, 1141.5), Offset(41.3, 761.0), Offset(62.7, 380.5), Offset(86.0, 0.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 1522), (20, 1142), (41, 761), (63, 381), (86, 0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 1522.0), Offset(19.9, 1141.5), Offset(41.3, 761.0), Offset(62.7, 380.5), Offset(86.0, 0.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
 
         // scale
@@ -5672,9 +5752,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                 }
@@ -5691,26 +5771,29 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 380), (41, 761), (62, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 0.0), Offset(20.2, 380.5), Offset(41.3, 761.0), Offset(62.4, 1141.5), Offset(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 380), (41, 761), (62, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 0.0), Offset(20.2, 380.5), Offset(41.3, 761.0), Offset(62.4, 1141.5), Offset(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
 
         // offset
@@ -5718,9 +5801,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                     zoomable.offset(targetOffset = Offset(-180f, -172f), animated = false)
@@ -5738,26 +5821,29 @@ class ZoomableStateTest {
             val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRect.size
             val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (62, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "Offset(0.0, 0.0), Offset(20.2, 380.5), Offset(41.3, 761.0), Offset(62.4, 1141.5), Offset(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (62, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "Offset(0.0, 0.0), Offset(20.2, 380.5), Offset(41.3, 761.0), Offset(62.4, 1141.5), Offset(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
+            waitMillis(100)
         }
     }
 
@@ -5771,7 +5857,7 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes = GestureType.ONE_FINGER_DRAG
+        zoomableState.setDisabledGestureTypes(GestureType.ONE_FINGER_DRAG)
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -5779,8 +5865,7 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes =
-            GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE
+        zoomableState.setDisabledGestureTypes(GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE)
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -5788,8 +5873,9 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:true, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -5797,8 +5883,9 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -5806,8 +5893,9 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_WHEEL_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:false, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -5815,8 +5903,9 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_WHEEL_SCALE or GestureType.KEYBOARD_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:false, KEYBOARD_SCALE:false, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -5824,8 +5913,9 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_WHEEL_SCALE or GestureType.KEYBOARD_SCALE or GestureType.KEYBOARD_DRAG
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:false, KEYBOARD_SCALE:false, KEYBOARD_DRAG:false]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -5840,9 +5930,9 @@ class ZoomableStateTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
+                zoomable.setContentOriginSize(IntSize(690, 12176))
                 LaunchedEffect(Unit) {
                     zoomable.rotate(90)
                     zoomable.scale(targetScale = 20f, animated = false)

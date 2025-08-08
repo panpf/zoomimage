@@ -16,8 +16,9 @@ ZoomImage 默认开启单指拖动手势，但你可以关闭它，如下：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -63,8 +64,9 @@ LaunchedEffect(Unit) {
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -131,7 +133,7 @@ Center，那么默认只显示图像中间的部分，然后你还可以单指�
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
+zoomState.zoomable.setLimitOffsetWithinBaseVisibleRect(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -152,16 +154,16 @@ ZoomImage 默认在拖动图像时图像的边缘始终和容器的边缘对齐�
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // 通过 containerWhitespace 属性设置具体的大小
-zoomState.zoomable.containerWhitespace = ContainerWhitespace(
-    left = 4f, top = 3f, right = 2f, bottom = 1f
+zoomState.zoomable.setContainerWhitespace(
+    ContainerWhitespace(left = 4f, top = 3f, right = 2f, bottom = 1f)
 )
-// or
-zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
-// or
-zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
+// 或
+zoomState.zoomable.setContainerWhitespace(ContainerWhitespace(horizontal = 2f, vertical = 1f))
+// 或
+zoomState.zoomable.setContainerWhitespace(ContainerWhitespace(size = 1f))
 
 // 在图像边缘和容器边缘之间留有 50% 容器大小的空白区域
-zoomState.zoomable.containerWhitespaceMultiple = 0.5f
+zoomState.zoomable.setContainerWhitespaceMultiple(0.5f)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -187,10 +189,47 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 > [!TIP]
 > * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
+只读属性：
+
+* `zoomable.alignment: Alignment`: content 在 container 中的对齐方式，默认是 Alignment.TopStart
+* `zoomable.limitOffsetWithinBaseVisibleRect: Boolean`: 是否将偏移限制在 contentBaseVisibleRect
+  内，默认是 false
+* `zoomable.containerWhitespaceMultiple: Float`: 基于容器尺寸的倍数为容器四周添加空白区域，默认是 0f
+* `zoomable.containerWhitespace: ContainerWhitespace`: 容器四周空白区域的配置，优先级高于
+  containerWhitespaceMultiple，默认是 ContainerWhitespace.Zero
+* `zoomable.disabledGestureTypes: Int`: 配置禁用的手势类型，默认是 0（不禁用任何手势），可以使用
+  GestureType 的位或操作来组合多个手势类型
 * `zoomable.transform.offset: Offset`: 当前偏移量（baseTransform.offset + userTransform.offset）
 * `zoomable.baseTransform.offset: Offset`: 当前基础偏移量，受 alignment 参数和 rotate 方法影响
 * `zoomable.userTransform.offset: Offset`: 当前用户偏移量，受 offset()、locate() 以及用户手势拖动影响
+* `zoomable.contentBaseDisplayRectF: Rect`: content 经过 baseTransform 变换后在 container 中的区域
+* `zoomable.contentBaseDisplayRect: IntRect`: content 经过 baseTransform 变换后在 container 中的区域
+* `zoomable.contentBaseVisibleRectF: Rect`: content 经过 baseTransform 变换后自身对用户可见的区域
+* `zoomable.contentBaseVisibleRect: IntRect`: content 经过 baseTransform 变换后自身对用户可见的区域
+* `zoomable.contentDisplayRectF: Rect`: content 经过 transform 变换后在 container 中的区域
+* `zoomable.contentDisplayRect: IntRect`: content 经过 transform 变换后在 container 中的区域
+* `zoomable.contentVisibleRectF: Rect`: content 经过 transform 变换后自身对用户可见的区域
+* `zoomable.contentVisibleRect: IntRect`: content 经过 transform 变换后自身对用户可见的区域
+* `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect 映射到原图上的区域
+* `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect 映射到原图上的区域
 * `zoomable.scrollEdge: ScrollEdge`: 当前偏移的边界状态
+
+交互方法：
+
+* `zoomable.setLimitOffsetWithinBaseVisibleRect(Boolean)`: 设置是否将偏移限制在
+  contentBaseVisibleRect 内
+* `zoomable.setContainerWhitespaceMultiple(Float)`: 设置基于容器尺寸的倍数为容器四周添加空白区域
+* `zoomable.setContainerWhitespace(ContainerWhitespace)`: 设置容器四周空白区域的配置，优先级高于
+  containerWhitespaceMultiple
+* `zoomable.setDisabledGestureTypes(Int)`: 设置禁用的手势类型，可以使用 GestureType 的位或操作来组合多个手势类型
+* `zoomable.offset()`: 偏移 content 到指定的位置
+* `zoomable.offsetBy()`: 以增量的方式偏移 content 指定的偏移量
+* `zoomable.touchPointToContentPoint(): IntOffset`: 将触摸点转换为 content 上的点，原点是 content
+  的左上角
+* `zoomable.touchPointToContentPointF(): Offset`: 将触摸点转换为 content 上的点，原点是 content 的左上角
+* `zoomable.sourceToDraw(Offset): Offset`: 将原图上的点转换为绘制时的点，原点是 container 的左上角
+* `zoomable.sourceToDraw(Rect): Rect`: 将原图上的矩形转换为绘制时的矩形，原点是 container 的左上角
+* `zoomable.canScroll(): Boolean`: 判断当前 content 在指定方向上是否可以滚动
 
 #### 监听属性变化
 

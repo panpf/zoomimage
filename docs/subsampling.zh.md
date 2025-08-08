@@ -202,10 +202,10 @@ ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，�
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // 关闭动画
-zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
+zoomState.subsampling.setTileAnimationSpec(TileAnimationSpec.None)
 
 // 修改动画的持续时间和刷新间隔
-zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+zoomState.subsampling.setTileAnimationSpec(TileAnimationSpec(duration = 400, interval = 16))
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -230,11 +230,12 @@ ZoomImage 在兼顾性能和体验的情况默认配置是 `SCALE`, `OFFSET`, `L
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // 所有连续变换类型都实时加载图块
-zoomState.subsampling.pausedContinuousTransformTypes = 0
+zoomState.subsampling.setPausedContinuousTransformTypes(0)
 
 // 所有连续变换类型都暂停加载图块
-zoomState.subsampling.pausedContinuousTransformTypes =
+zoomState.subsampling.setPausedContinuousTransformTypes(
     TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -255,9 +256,9 @@ ZoomImage 支持停止子采样，停止后会释放已加载的图块并不再�
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // stop
-zoomState.subsampling.stopped = true
+zoomState.subsampling.setStopped(true)
 // restart
-zoomState.subsampling.stopped = false
+zoomState.subsampling.setStopped(false)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -279,7 +280,7 @@ LocalLifecycleOwner.current API 获取 Lifecycle
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.disabledAutoStopWithLifecycle = true
+zoomState.subsampling.setDisabledAutoStopWithLifecycle(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -302,7 +303,7 @@ ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.disabledBackgroundTiles = true
+zoomState.subsampling.setDisabledBackgroundTiles(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -324,7 +325,8 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.tileImageCache = remember { MyTileImageCache() }
+val titleImageCache = remember { MyTileImageCache() }
+zoomState.subsampling.setTileImageCache(titleImageCache)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -343,9 +345,9 @@ SketchZoomAsyncImage(
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // 禁用内存缓存
-zoomState.subsampling.disabledTileImageCache = true
+zoomState.subsampling.setDisabledTileImageCache(true)
 // 允许使用内存缓存
-zoomState.subsampling.disabledTileImageCache = false
+zoomState.subsampling.setDisabledTileImageCache(false)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -368,7 +370,7 @@ ZoomImage 在 Android 平台上使用 BitmapRegionDecoder 来解码图片，非 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
+zoomState.subsampling.setRegionDecoders(listOf(MyRegionDecoder.Factory()))
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -378,7 +380,7 @@ SketchZoomAsyncImage(
 )
 
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecoder.Factory())
+sketchZoomImageView.subsampling.setRegionDecoders(listOf(MyRegionDecoder.Factory()))
 ```
 
 ### 禁用子采样
@@ -388,7 +390,7 @@ sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecod
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.disabled = true
+zoomState.subsampling.setDisabled(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -398,7 +400,7 @@ SketchZoomAsyncImage(
 )
 ```
 
-### 可访问属性
+### 可访问属性和方法
 
 ```kotlin
 // compose
@@ -414,24 +416,19 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 > [!TIP]
 > * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
-可以读取也可以设置的属性:
+只读属性：
 
 * `subsampling.disabled: Boolean`: 是否禁用子采样功能
-* `subsampling.tileImageCache: TileImageCache?`: Tile 图块的内存缓存，默认为 null，集成图片加载器的组件会自动设置它
+* `subsampling.tileImageCache: TileImageCache?`: Tile 图块的内存缓存，默认为 null
 * `subsampling.disabledTileImageCache: Boolean`: 是否禁用 Tile 图块的内存缓存，默认为 false
-* `subsampling.tileAnimationSpec: TileAnimationSpec`: 图块动画的配置，默认为
-  TileAnimationSpec.Default
-* `subsampling.pausedContinuousTransformTypes: Int`: 暂停加载图块的连续变换类型的配置，可以通过位或运算符组合多个类型，默认为
-  TileManager.DefaultPausedContinuousTransformType
+* `subsampling.tileAnimationSpec: TileAnimationSpec`: 图块动画配置，默认为 TileAnimationSpec.Default
+* `subsampling.pausedContinuousTransformTypes: Int`: 暂停加载图块的连续变换类型的配置
 * `subsampling.disabledBackgroundTiles: Boolean`: 是否禁用背景图块，默认为 false
 * `subsampling.stopped: Boolean`: 是否停止加载图块，默认为 false
 * `subsampling.disabledAutoStopWithLifecycle: Boolean`: 是否禁用根据 Lifecycle 自动停止加载图块，默认为
   false
 * `subsampling.regionDecoders: List<RegionDecoder.Factory>`: 添加自定义的 RegionDecoder，默认为空列表
 * `subsampling.showTileBounds: Boolean`: 是否显示 Tile 的边界，默认为 false
-
-只能读取的属性：
-
 * `subsampling.ready: Boolean`: 是否已经准备好了
 * `subsampling.imageInfo: ImageInfo`: 图片的尺寸、格式信息
 * `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: 磁贴网格大小映射表
@@ -440,9 +437,20 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * `subsampling.foregroundTiles: List<TileSnapshot>`: 当前前景图块列表
 * `subsampling.backgroundTiles: List<TileSnapshot>`: 当前背景图块列表
 
-可交互的方法：
+交互方法：
 
-* `subsampling.setImage(): Boolean`: 设置子采样图片，返回是否成功，集成图片加载器的组件会自动设置设置子采样图片
+* `subsampling.setImage(SubsamplingImage?): Boolean`: 设置子采样图片，返回是否成功，集成图片加载器的组件会自动设置子采样图片
+* `subsampling.setDisabled(Boolean)`: 设置是否禁用子采样功能
+* `subsampling.setTileImageCache(TileImageCache?)`: 设置 Tile 图块的内存缓存，集成图片加载器的组件会自动设置它
+* `subsampling.setDisabledTileImageCache(Boolean)`: 设置是否禁用 Tile 图块的内存缓存
+* `subsampling.setTileAnimationSpec(TileAnimationSpec)`: 设置图块动画配置
+* `subsampling.setPausedContinuousTransformTypes(Int)`: 设置暂停加载图块的连续变换类型的配置，可以通过位或运算符组合多个类型，默认为
+  TileManager.DefaultPausedContinuousTransformType
+* `subsampling.setDisabledBackgroundTiles(Boolean)`: 设置是否禁用背景图块
+* `subsampling.setStopped(Boolean)`: 设置是否停止加载图块
+* `subsampling.setDisabledAutoStopWithLifecycle(Boolean)`: 设置是否禁用根据 Lifecycle 自动停止加载图块功能
+* `subsampling.setRegionDecoders(List<RegionDecoder.Factory>)`: 设置自定义的 RegionDecoder
+* `subsampling.setShowTileBounds(Boolean)`: 设置是否显示 Tile 的边界
 
 #### 监听属性变化
 

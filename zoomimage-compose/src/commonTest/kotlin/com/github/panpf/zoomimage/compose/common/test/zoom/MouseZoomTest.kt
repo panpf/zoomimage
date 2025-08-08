@@ -9,13 +9,18 @@ import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.MouseZoomNode
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.test.waitMillis
 import com.github.panpf.zoomimage.zoom.DefaultMouseWheelScaleCalculator
 import com.github.panpf.zoomimage.zoom.MouseWheelScaleCalculator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
+@Suppress("OPT_IN_USAGE")
 class MouseZoomTest {
 
     @Test
@@ -25,8 +30,8 @@ class MouseZoomTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                 }
@@ -48,7 +53,7 @@ class MouseZoomTest {
                 actual = newScale1
             )
 
-            zoomable.reverseMouseWheelScale = true
+            zoomable.setReverseMouseWheelScale(true)
             assertEquals(expected = true, actual = zoomable.reverseMouseWheelScale)
             assertNull(zoomable.mouseWheelScaleScrollDeltaConverter)
             assertEquals(MouseWheelScaleCalculator.Default, zoomable.mouseWheelScaleCalculator)
@@ -62,9 +67,9 @@ class MouseZoomTest {
             )
 
             val myMouseWheelScaleScrollDeltaConverter: (Float) -> Float = { it * 0.33f }
-            zoomable.mouseWheelScaleScrollDeltaConverter = myMouseWheelScaleScrollDeltaConverter
+            zoomable.setMouseWheelScaleScrollDeltaConverter(myMouseWheelScaleScrollDeltaConverter)
 
-            zoomable.reverseMouseWheelScale = false
+            zoomable.setReverseMouseWheelScale(false)
             assertEquals(expected = false, actual = zoomable.reverseMouseWheelScale)
             assertEquals(
                 myMouseWheelScaleScrollDeltaConverter,
@@ -79,7 +84,7 @@ class MouseZoomTest {
                 actual = newScale2
             )
 
-            zoomable.reverseMouseWheelScale = true
+            zoomable.setReverseMouseWheelScale(true)
             assertEquals(expected = true, actual = zoomable.reverseMouseWheelScale)
             assertEquals(
                 myMouseWheelScaleScrollDeltaConverter,
@@ -98,9 +103,9 @@ class MouseZoomTest {
                 stepScrollDelta = 0.5f,
                 stepScaleFactor = 0.5f
             )
-            zoomable.mouseWheelScaleCalculator = myMouseWheelScaleCalculator
+            zoomable.setMouseWheelScaleCalculator(myMouseWheelScaleCalculator)
 
-            zoomable.reverseMouseWheelScale = false
+            zoomable.setReverseMouseWheelScale(false)
             assertEquals(expected = false, actual = zoomable.reverseMouseWheelScale)
             assertEquals(
                 myMouseWheelScaleScrollDeltaConverter,
@@ -116,7 +121,7 @@ class MouseZoomTest {
                 actual = newScale3
             )
 
-            zoomable.reverseMouseWheelScale = true
+            zoomable.setReverseMouseWheelScale(true)
             assertEquals(expected = true, actual = zoomable.reverseMouseWheelScale)
             assertEquals(
                 myMouseWheelScaleScrollDeltaConverter,
@@ -154,8 +159,8 @@ class MouseZoomTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                 }
@@ -167,14 +172,17 @@ class MouseZoomTest {
             )
 
             val mouseZoomNode = MouseZoomNode(zoomable)
-            assertEquals(
-                expected = "Offset(33.3, 768.0)",
-                actual = mouseZoomNode.contentPoint(Offset(200f, 300f)).toString()
-            )
-            assertEquals(
-                expected = "Offset(16.6, 784.7)",
-                actual = mouseZoomNode.contentPoint(Offset(100f, 400f)).toString()
-            )
+            GlobalScope.launch(Dispatchers.Main) {
+                assertEquals(
+                    expected = "Offset(33.3, 768.0)",
+                    actual = mouseZoomNode.contentPoint(Offset(200f, 300f)).toString()
+                )
+                assertEquals(
+                    expected = "Offset(16.6, 784.7)",
+                    actual = mouseZoomNode.contentPoint(Offset(100f, 400f)).toString()
+                )
+            }
+            waitMillis(100)
         }
     }
 }

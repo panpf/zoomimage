@@ -61,8 +61,8 @@ class ScaleKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             val zoomable = zoomableHolder!!
             assertEquals(
@@ -99,8 +99,8 @@ class ScaleKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
             }
             val zoomable = zoomableHolder!!
             assertEquals(
@@ -145,8 +145,9 @@ class ScaleKeyHandlerTest {
             )
         )
 
-        zoomableState.disabledGestureTypes =
+        zoomableState.setDisabledGestureTypes(
             zoomableState.disabledGestureTypes or GestureType.KEYBOARD_SCALE
+        )
         assertEquals(
             expected = false,
             actual = zoomableState.checkSupportGestureType(GestureType.KEYBOARD_SCALE)
@@ -171,8 +172,8 @@ class ScaleKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                     scaleInKeyHandler.updateValue(zoomable, animationSpec = null, add = 0.5f)
@@ -188,8 +189,8 @@ class ScaleKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                     scaleInKeyHandler.updateValue(zoomable, animationSpec = null, add = -0.5f)
@@ -208,8 +209,8 @@ class ScaleKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                     scaleOutKeyHandler.updateValue(zoomable, animationSpec = null, add = 0.5f)
@@ -225,8 +226,8 @@ class ScaleKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.switchScale(animated = false)
                     scaleOutKeyHandler.updateValue(zoomable, animationSpec = null, add = -0.5f)

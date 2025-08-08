@@ -76,8 +76,8 @@ class ZoomImageViewTest {
                 actual = zoomImageView.imageMatrix
             )
 
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomImageView.setImageBitmap(Bitmap.createBitmap(86, 1522, Bitmap.Config.ARGB_8888))
             }
             Thread.sleep(100)
@@ -372,8 +372,10 @@ class ZoomImageViewTest {
                 }
             }
             val zoomable = zoomImageView.zoomable
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -426,9 +428,9 @@ class ZoomImageViewTest {
                 }
             }
             val zoomable = zoomImageView.zoomable
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -486,9 +488,9 @@ class ZoomImageViewTest {
                 }
             }
             val zoomable = zoomImageView.zoomable
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -553,9 +555,9 @@ class ZoomImageViewTest {
                 }
             }
             val zoomable = zoomImageView.zoomable
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -620,9 +622,9 @@ class ZoomImageViewTest {
                 }
             }
             val zoomable = zoomImageView.zoomable
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -687,9 +689,9 @@ class ZoomImageViewTest {
                 }
             }
             val zoomable = zoomImageView.zoomable
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false

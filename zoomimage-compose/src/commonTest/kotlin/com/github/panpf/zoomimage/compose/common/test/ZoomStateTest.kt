@@ -90,8 +90,8 @@ class ZoomStateTest {
                         zoomStateHolder = this
                     }
                     LaunchedEffect(Unit) {
-                        zoomState.zoomable.containerSize = IntSize(516, 516)
-                        zoomState.zoomable.contentSize = bitmapSize
+                        zoomState.zoomable.setContainerSize(IntSize(516, 516))
+                        zoomState.zoomable.setContentSize(bitmapSize)
                         zoomState.setSubsamplingImage(ResourceImages.hugeCard.toImageSource())
                     }
                 }
@@ -116,8 +116,8 @@ class ZoomStateTest {
                         zoomStateHolder = this
                     }
                     LaunchedEffect(Unit) {
-                        zoomState.zoomable.containerSize = IntSize(516, 516)
-                        zoomState.zoomable.contentSize = bitmapSize
+                        zoomState.zoomable.setContainerSize(IntSize(516, 516))
+                        zoomState.zoomable.setContentSize(bitmapSize)
                         zoomState.setSubsamplingImage(
                             ResourceImages.hugeCard.toImageSource().toFactory()
                         )
@@ -144,8 +144,8 @@ class ZoomStateTest {
                         zoomStateHolder = this
                     }
                     LaunchedEffect(Unit) {
-                        zoomState.zoomable.containerSize = IntSize(516, 516)
-                        zoomState.zoomable.contentSize = bitmapSize
+                        zoomState.zoomable.setContainerSize(IntSize(516, 516))
+                        zoomState.zoomable.setContentSize(bitmapSize)
                         zoomState.setSubsamplingImage(ResourceImages.hugeCard.toImageSource())
                         zoomState.setSubsamplingImage(null as ImageSource.Factory?)
                     }

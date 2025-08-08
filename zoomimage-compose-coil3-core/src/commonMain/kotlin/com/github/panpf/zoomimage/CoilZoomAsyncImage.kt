@@ -17,6 +17,7 @@
 
 package com.github.panpf.zoomimage
 
+import androidx.annotation.MainThread
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -62,7 +63,7 @@ import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
@@ -243,13 +244,14 @@ private fun CoilZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)?,
     onTap: ((Offset) -> Unit)?,
 ) {
-    zoomState.zoomable.contentScale = contentScale
-    zoomState.zoomable.alignment = alignment
-    zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
+    zoomState.zoomable.setContentScale(contentScale)
+    zoomState.zoomable.setAlignment(alignment)
+    zoomState.zoomable.setLayoutDirection(LocalLayoutDirection.current)
 
-    zoomState.subsampling.tileImageCache = remember(state.imageLoader) {
+    val tileImageCache = remember(state.imageLoader) {
         CoilTileImageCache(state.imageLoader)
     }
+    zoomState.subsampling.setTileImageCache(tileImageCache)
 
     val loadingPainterState: MutableState<Painter?> = remember { mutableStateOf(null) }
 
@@ -268,15 +270,16 @@ private fun CoilZoomAsyncImage(
             contentScale = contentScale,
             filterQuality = filterQuality,
             onState = { loadState ->
-                updateZoom(
-                    context = context,
-                    coroutineScope = coroutineScope,
-                    imageLoader = state.imageLoader,
-                    zoomState = zoomState,
-                    model = state.model,
-                    loadState = loadState,
-                    loadingPainterState = loadingPainterState,
-                )
+                coroutineScope.launch(Dispatchers.Main.immediate) {
+                    updateZoom(
+                        context = context,
+                        imageLoader = state.imageLoader,
+                        zoomState = zoomState,
+                        model = state.model,
+                        loadState = loadState,
+                        loadingPainterState = loadingPainterState,
+                    )
+                }
                 onState?.invoke(loadState)
             },
         )
@@ -317,9 +320,9 @@ private fun CoilZoomAsyncImage(
     }
 }
 
-private fun updateZoom(
+@MainThread
+private suspend fun updateZoom(
     context: PlatformContext,
-    coroutineScope: CoroutineScope,
     imageLoader: ImageLoader,
     zoomState: CoilZoomState,
     model: Any?,
@@ -327,8 +330,8 @@ private fun updateZoom(
     loadingPainterState: MutableState<Painter?>,
 ) {
     val finaData = if (model is ImageRequest) model.data else model
-    val contentSize =
-        calculateContentSizeWithCrossfade(model, loadState, loadingPainterState).roundToIntSize()
+    val painterSize = calculateContentSizeWithCrossfade(model, loadState, loadingPainterState)
+        .roundToIntSize()
     zoomState.zoomable.logger.d {
         val stateName = when (loadState) {
             is State.Loading -> "Loading"
@@ -336,28 +339,26 @@ private fun updateZoom(
             is State.Error -> "Error"
             is State.Empty -> "Empty"
         }
-        "CoilZoomAsyncImage. $stateName. contentSize=$contentSize. data='${finaData}'"
+        "CoilZoomAsyncImage. $stateName. contentSize=$painterSize. data='${finaData}'"
     }
-    zoomState.zoomable.contentSize = contentSize
+    zoomState.zoomable.setContentSize(painterSize)
 
     if (loadState is State.Success) {
-        coroutineScope.launch {
-            val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
-                it.generateImage(context, imageLoader, loadState.result, loadState.painter)
+        val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
+            it.generateImage(context, imageLoader, loadState.result, loadState.painter)
+        }
+        if (generateResult is SubsamplingImageGenerateResult.Success) {
+            zoomState.setSubsamplingImage(generateResult.subsamplingImage)
+        } else {
+            zoomState.subsampling.logger.d {
+                val errorMessage =
+                    if (generateResult is SubsamplingImageGenerateResult.Error)
+                        generateResult.message else "unknown error"
+                "CoilZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
+                        "result=${loadState.result}, painter=${loadState.painter}. " +
+                        "data='${loadState.result.request.data}'"
             }
-            if (generateResult is SubsamplingImageGenerateResult.Success) {
-                zoomState.setSubsamplingImage(generateResult.subsamplingImage)
-            } else {
-                zoomState.subsampling.logger.d {
-                    val errorMessage =
-                        if (generateResult is SubsamplingImageGenerateResult.Error)
-                            generateResult.message else "unknown error"
-                    "CoilZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
-                            "result=${loadState.result}, painter=${loadState.painter}. " +
-                            "data='${loadState.result.request.data}'"
-                }
-                zoomState.setSubsamplingImage(null as SubsamplingImage?)
-            }
+            zoomState.setSubsamplingImage(null as SubsamplingImage?)
         }
     } else {
         zoomState.setSubsamplingImage(null as SubsamplingImage?)

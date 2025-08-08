@@ -25,10 +25,10 @@ visible center unchanged, and the visible range will also change.
 > When the containerSize property changes while the above other properties also change, ZoomImage
 > will directly reset the transformation state
 
-### contentSize or contentOriginSize changed
+### contentSize changed
 
-By default, ZoomImage will reset the transform state directly only when the contentSize or
-contentOriginSize attributes changed.
+By default, ZoomImage will reset the transform state directly only when the contentSize attributes
+changed.
 
 But after you set the `keepTransformWhenSameAspectRatioContentSizeChanged` property to true,
 ZoomImage will restore the transform state, ensuring that the range visible to the user remains
@@ -39,6 +39,19 @@ The `keepTransformWhenSameAspectRatioContentSizeChanged` property only works whe
 with the same aspect ratio, so this feature is only suitable for scenes when switching thumbnails
 and original images, so it is not enabled by default.
 
+```kotlin
+val zoomState: ZoomState by rememberSketchZoomState()
+
+zoomState.zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(true)
+
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
 > [!TIP]
-> When the contentSize or contentOriginSize property changes, the above other properties also
+> When the contentSize property changes, the above other properties also
 > change, ZoomImage will directly reset the transformation state

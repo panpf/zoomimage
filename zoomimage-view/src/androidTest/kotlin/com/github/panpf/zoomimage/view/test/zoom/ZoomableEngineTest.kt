@@ -51,13 +51,15 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testContainerSize() {
+    fun testContainerSize() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.containerSizeState.value)
 
-        zoomable.containerSizeState.value = IntSizeCompat(1000, 2000)
+        withContext(Dispatchers.Main) {
+            zoomable.setContainerSize(IntSizeCompat(1000, 2000))
+        }
         assertEquals(
             expected = IntSizeCompat(1000, 2000),
             actual = zoomable.containerSizeState.value
@@ -65,7 +67,7 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testContentSize() {
+    fun testContentSize() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
@@ -74,7 +76,9 @@ class ZoomableEngineTest {
             actual = zoomable.contentSizeState.value
         )
 
-        zoomable.containerSizeState.value = IntSizeCompat(1000, 2000)
+        withContext(Dispatchers.Main) {
+            zoomable.setContainerSize(IntSizeCompat(1000, 2000))
+        }
         assertEquals(
             expected = IntSizeCompat(1000, 2000),
             actual = zoomable.containerSizeState.value
@@ -84,7 +88,9 @@ class ZoomableEngineTest {
             actual = zoomable.contentSizeState.value
         )
 
-        zoomable.contentSizeState.value = IntSizeCompat(500, 300)
+        withContext(Dispatchers.Main) {
+            zoomable.setContentSize(IntSizeCompat(500, 300))
+        }
         assertEquals(
             expected = IntSizeCompat(1000, 2000),
             actual = zoomable.containerSizeState.value
@@ -96,13 +102,15 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testContentOriginSize() {
+    fun testContentOriginSize() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentOriginSizeState.value)
 
-        zoomable.contentOriginSizeState.value = IntSizeCompat(4000, 2400)
+        withContext(Dispatchers.Main) {
+            zoomable.setContentOriginSize(IntSizeCompat(4000, 2400))
+        }
         assertEquals(
             expected = IntSizeCompat(4000, 2400),
             actual = zoomable.contentOriginSizeState.value
@@ -110,42 +118,48 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testContentScale() {
+    fun testContentScale() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = ContentScaleCompat.Fit, actual = zoomable.contentScaleState.value)
 
-        zoomable.contentScaleState.value = ContentScaleCompat.Crop
+        withContext(Dispatchers.Main) {
+            zoomable.setContentScale(ContentScaleCompat.Crop)
+        }
         assertEquals(expected = ContentScaleCompat.Crop, actual = zoomable.contentScaleState.value)
     }
 
     @Test
-    fun testAlignment() {
+    fun testAlignment() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
 
-        zoomable.alignmentState.value = AlignmentCompat.TopStart
+        withContext(Dispatchers.Main) {
+            zoomable.setAlignment(AlignmentCompat.TopStart)
+        }
         assertEquals(expected = AlignmentCompat.TopStart, actual = zoomable.alignmentState.value)
     }
 
     // TODO test rtlLayoutDirection
 
     @Test
-    fun testReadMode() {
+    fun testReadMode() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = null, actual = zoomable.readModeState.value)
 
-        zoomable.readModeState.value = ReadMode.Default
+        withContext(Dispatchers.Main) {
+            zoomable.setReadMode(ReadMode.Default)
+        }
         assertEquals(expected = ReadMode.Default, actual = zoomable.readModeState.value)
     }
 
     @Test
-    fun testScalesCalculator() {
+    fun testScalesCalculator() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
@@ -154,7 +168,9 @@ class ZoomableEngineTest {
             actual = zoomable.scalesCalculatorState.value
         )
 
-        zoomable.scalesCalculatorState.value = ScalesCalculator.Fixed
+        withContext(Dispatchers.Main) {
+            zoomable.setScalesCalculator(ScalesCalculator.Fixed)
+        }
         assertEquals(
             expected = ScalesCalculator.Fixed,
             actual = zoomable.scalesCalculatorState.value
@@ -162,29 +178,33 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testThreeStepScale() {
+    fun testThreeStepScale() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = false, actual = zoomable.threeStepScaleState.value)
 
-        zoomable.threeStepScaleState.value = true
+        withContext(Dispatchers.Main) {
+            zoomable.setThreeStepScale(true)
+        }
         assertEquals(expected = true, actual = zoomable.threeStepScaleState.value)
     }
 
     @Test
-    fun testRubberBandScale() {
+    fun testRubberBandScale() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = true, actual = zoomable.rubberBandScaleState.value)
 
-        zoomable.rubberBandScaleState.value = false
+        withContext(Dispatchers.Main) {
+            zoomable.setRubberBandScale(false)
+        }
         assertEquals(expected = false, actual = zoomable.rubberBandScaleState.value)
     }
 
     @Test
-    fun testOneFingerScaleSpec() {
+    fun testOneFingerScaleSpec() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
@@ -193,8 +213,11 @@ class ZoomableEngineTest {
             actual = zoomable.oneFingerScaleSpecState.value
         )
 
-        zoomable.oneFingerScaleSpecState.value =
-            OneFingerScaleSpec(DefaultPanToScaleTransformer(100))
+        withContext(Dispatchers.Main) {
+            zoomable.setOneFingerScaleSpec(
+                OneFingerScaleSpec(DefaultPanToScaleTransformer(100))
+            )
+        }
         assertEquals(
             expected = OneFingerScaleSpec(DefaultPanToScaleTransformer(100)),
             actual = zoomable.oneFingerScaleSpecState.value
@@ -202,7 +225,7 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testAnimationSpec() {
+    fun testAnimationSpec() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
@@ -211,7 +234,9 @@ class ZoomableEngineTest {
             actual = zoomable.animationSpecState.value
         )
 
-        zoomable.animationSpecState.value = ZoomAnimationSpec(durationMillis = 4000)
+        withContext(Dispatchers.Main) {
+            zoomable.setAnimationSpec(ZoomAnimationSpec(durationMillis = 4000))
+        }
         assertEquals(
             expected = ZoomAnimationSpec(durationMillis = 4000),
             actual = zoomable.animationSpecState.value
@@ -219,7 +244,7 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testLimitOffsetWithinBaseVisibleRect() {
+    fun testLimitOffsetWithinBaseVisibleRect() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
@@ -228,7 +253,9 @@ class ZoomableEngineTest {
             actual = zoomable.limitOffsetWithinBaseVisibleRectState.value
         )
 
-        zoomable.limitOffsetWithinBaseVisibleRectState.value = true
+        withContext(Dispatchers.Main) {
+            zoomable.setLimitOffsetWithinBaseVisibleRect(true)
+        }
         assertEquals(expected = true, actual = zoomable.limitOffsetWithinBaseVisibleRectState.value)
     }
 
@@ -244,8 +271,9 @@ class ZoomableEngineTest {
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
         assertEquals(expected = 0, actual = zoomable.disabledGestureTypesState.value)
 
-        zoomable.disabledGestureTypesState.value =
+        zoomable.setDisabledGestureTypes(
             GestureType.ONE_FINGER_SCALE or GestureType.TWO_FINGER_SCALE
+        )
         assertEquals(
             expected = GestureType.ONE_FINGER_SCALE or GestureType.TWO_FINGER_SCALE,
             actual = zoomable.disabledGestureTypesState.value
@@ -295,7 +323,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -336,8 +366,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -381,9 +413,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -428,10 +462,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.contentScaleState.value = ContentScaleCompat.Crop
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setContentScale(ContentScaleCompat.Crop)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -476,9 +512,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+            }
             withContext(Dispatchers.Main) {
                 zoomable.rotate(90)
             }
@@ -526,10 +564,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.readModeState.value = ReadMode.Default
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setReadMode(ReadMode.Default)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -574,10 +614,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.scalesCalculatorState.value = ScalesCalculator.Fixed
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setScalesCalculator(ScalesCalculator.Fixed)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -658,7 +700,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -703,8 +747,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -758,9 +804,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -815,10 +863,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.contentScaleState.value = ContentScaleCompat.Crop
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setContentScale(ContentScaleCompat.Crop)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -873,10 +923,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.rotate(90)
             }
             Thread.sleep(100)
@@ -933,10 +983,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.readModeState.value = ReadMode.Default
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setReadMode(ReadMode.Default)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1003,10 +1055,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.scalesCalculatorState.value = ScalesCalculator.Fixed
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setScalesCalculator(ScalesCalculator.Fixed)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1097,7 +1151,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1142,8 +1198,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1191,9 +1249,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1242,10 +1302,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.contentScaleState.value = ContentScaleCompat.Crop
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setContentScale(ContentScaleCompat.Crop)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1294,10 +1356,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.alignmentState.value = AlignmentCompat.BottomEnd
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setAlignment(AlignmentCompat.BottomEnd)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1349,9 +1413,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+            }
             withContext(Dispatchers.Main) {
                 zoomable.rotate(90)
             }
@@ -1447,7 +1513,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1500,8 +1568,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1557,9 +1627,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1616,10 +1688,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.contentScaleState.value = ContentScaleCompat.Crop
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setContentScale(ContentScaleCompat.Crop)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1676,10 +1750,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.alignmentState.value = AlignmentCompat.BottomEnd
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setAlignment(AlignmentCompat.BottomEnd)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -1739,10 +1815,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.rotate(90)
             }
             Thread.sleep(100)
@@ -1801,10 +1877,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 1.5f,
                     animated = false
@@ -1866,10 +1942,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 1.5f,
                     animated = false
@@ -1964,7 +2040,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2005,8 +2083,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2050,8 +2130,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2096,9 +2178,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentScaleState.value = ContentScaleCompat.Crop
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentScale(ContentScaleCompat.Crop)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2143,9 +2227,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.alignmentState.value = AlignmentCompat.BottomEnd
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setAlignment(AlignmentCompat.BottomEnd)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2193,9 +2279,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.rotate(90)
             }
             Thread.sleep(100)
@@ -2242,9 +2328,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 1.5f,
                     animated = false
@@ -2294,10 +2380,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentScaleState.value = ContentScaleCompat.Crop
-            zoomable.limitOffsetWithinBaseVisibleRectState.value = true
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentScale(ContentScaleCompat.Crop)
+                zoomable.setLimitOffsetWithinBaseVisibleRect(true)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2344,8 +2432,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2398,8 +2488,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             withContext(Dispatchers.Main) {
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
@@ -2458,9 +2550,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -2525,9 +2617,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -2592,9 +2684,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -2659,9 +2751,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -2729,8 +2821,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -2775,9 +2869,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 20f,
                     animated = false
@@ -2834,9 +2928,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = zoomable.minScaleState.value * 0.9f, animated = false)
             }
             Thread.sleep(100)
@@ -2890,9 +2984,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = zoomable.maxScaleState.value * 1.1f, animated = false)
             }
             Thread.sleep(100)
@@ -2946,9 +3040,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = 20f,
                     centroidContentPoint = IntOffsetCompat.Zero,
@@ -3006,9 +3100,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(
                     targetScale = 20f,
                     centroidContentPointF = OffsetCompat(
@@ -3073,8 +3167,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -3119,9 +3215,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleBy(
                     addScale = 20f,
                     animated = false
@@ -3178,9 +3274,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleBy(
                     addScale = (zoomable.minScaleState.value * 0.9f) / zoomable.transformState.value.scaleX,
                     animated = false
@@ -3237,9 +3333,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleBy(
                     addScale = (zoomable.maxScaleState.value * 1.1f) / zoomable.transformState.value.scaleX,
                     animated = false
@@ -3296,9 +3392,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleBy(
                     addScale = 20f / zoomable.transformState.value.scaleX,
                     centroidContentPoint = IntOffsetCompat.Zero,
@@ -3356,9 +3452,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleBy(
                     addScale = 20f / zoomable.transformState.value.scaleX,
                     centroidContentPointF = OffsetCompat(
@@ -3423,8 +3519,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -3469,9 +3567,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleByPlus(
                     addScale = (zoomable.transformState.value.scaleX * 20f) - zoomable.transformState.value.scaleX,
                     animated = false
@@ -3528,9 +3626,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleByPlus(
                     addScale = (zoomable.minScaleState.value * 0.9f) - zoomable.transformState.value.scaleX,
                     animated = false
@@ -3587,9 +3685,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleByPlus(
                     addScale = (zoomable.maxScaleState.value * 1.1f) - zoomable.transformState.value.scaleX,
                     animated = false
@@ -3646,9 +3744,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleByPlus(
                     addScale = 20f - zoomable.transformState.value.scaleX,
                     centroidContentPoint = IntOffsetCompat.Zero,
@@ -3706,9 +3804,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scaleByPlus(
                     addScale = 20f - zoomable.transformState.value.scaleX,
                     centroidContentPointF = OffsetCompat(
@@ -3773,8 +3871,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -3801,7 +3901,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 6.0f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3831,9 +3931,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.switchScale(animated = false)
             }
             Thread.sleep(100)
@@ -3862,7 +3962,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3899,9 +3999,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.switchScale(animated = false)
                 zoomable.switchScale(animated = false)
             }
@@ -3931,7 +4031,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 6.0f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -3968,10 +4068,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.threeStepScaleState.value = true
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setThreeStepScale(true)
                 zoomable.switchScale(animated = false)
             }
             Thread.sleep(100)
@@ -4000,7 +4100,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 18.0f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4037,10 +4137,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.threeStepScaleState.value = true
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setThreeStepScale(true)
                 zoomable.switchScale(animated = false)
                 zoomable.switchScale(animated = false)
             }
@@ -4070,7 +4170,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4107,10 +4207,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.threeStepScaleState.value = true
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setThreeStepScale(true)
                 zoomable.switchScale(animated = false)
                 zoomable.switchScale(animated = false)
                 zoomable.switchScale(animated = false)
@@ -4141,7 +4241,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 6.0f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4178,9 +4278,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.switchScale(animated = false, centroidContentPoint = IntOffsetCompat.Zero)
             }
             Thread.sleep(100)
@@ -4209,7 +4309,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4246,9 +4346,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.switchScale(
                     animated = false,
                     centroidContentPointF = OffsetCompat(
@@ -4283,7 +4383,7 @@ class ZoomableEngineTest {
             )
             assertEquals(
                 expected = 0.34f,
-                actual = zoomable.getNextStepScale().format(2)
+                actual = withContext(Dispatchers.Main) { zoomable.getNextStepScale() }.format(2)
             )
             assertEquals(
                 expected = TransformCompat(
@@ -4324,8 +4424,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -4374,9 +4476,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
             }
             Thread.sleep(100)
@@ -4434,9 +4536,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right - 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom - 1f
@@ -4504,9 +4606,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right + 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom + 1f
@@ -4574,9 +4676,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left + 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top + 1f
@@ -4644,9 +4746,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left - 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top - 1f
@@ -4718,8 +4820,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -4768,9 +4872,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
             }
             Thread.sleep(100)
@@ -4828,9 +4932,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right - 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom - 1f
@@ -4895,9 +4999,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.right + 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.bottom + 1f
@@ -4962,9 +5066,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left + 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top + 1f
@@ -5029,9 +5133,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
                 val targetOffsetX = zoomable.userOffsetBoundsRectState.value.left - 1f
                 val targetOffsetY = zoomable.userOffsetBoundsRectState.value.top - 1f
@@ -5100,8 +5204,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -5136,9 +5242,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center,
                     targetScale = zoomable.transformState.value.scaleX,
@@ -5186,9 +5292,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center,
                     targetScale = zoomable.mediumScaleState.value,
@@ -5236,9 +5342,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center,
                     targetScale = zoomable.minScaleState.value - 0.1f,
@@ -5286,9 +5392,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center,
                     targetScale = zoomable.maxScaleState.value + 0.1f,
@@ -5336,9 +5442,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center / 2f,
                     targetScale = zoomable.mediumScaleState.value,
@@ -5386,9 +5492,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center / 2f * -1f,
                     targetScale = zoomable.mediumScaleState.value,
@@ -5436,9 +5542,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center * 1.5f,
                     targetScale = zoomable.mediumScaleState.value,
@@ -5486,9 +5592,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().center * 2.5f,
                     targetScale = zoomable.mediumScaleState.value,
@@ -5540,8 +5646,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -5576,9 +5684,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
                     targetScale = zoomable.transformState.value.scaleX,
@@ -5626,9 +5734,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
                     targetScale = zoomable.mediumScaleState.value,
@@ -5676,9 +5784,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
                     targetScale = zoomable.minScaleState.value - 0.1f,
@@ -5726,9 +5834,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center,
                     targetScale = zoomable.maxScaleState.value + 0.1f,
@@ -5776,9 +5884,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect().toRect().center / 2f,
                     targetScale = zoomable.mediumScaleState.value,
@@ -5826,9 +5934,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect()
                         .toRect().center / 2f * -1f,
@@ -5877,9 +5985,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect()
                         .toRect().center * 1.5f,
@@ -5928,9 +6036,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.locate(
                     contentPoint = zoomable.contentSizeState.value.toIntRect()
                         .toRect().center * 2.5f,
@@ -5983,8 +6091,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
+            }
             Thread.sleep(100)
 
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
@@ -6020,9 +6130,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(90)
             }
             Thread.sleep(100)
@@ -6061,9 +6171,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(180)
             }
             Thread.sleep(100)
@@ -6102,9 +6212,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(270)
             }
             Thread.sleep(100)
@@ -6143,9 +6253,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
             Thread.sleep(100)
@@ -6190,9 +6300,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(90)
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
@@ -6240,9 +6350,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(180)
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
@@ -6290,9 +6400,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(270)
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
@@ -6340,9 +6450,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotate(90)
             }
@@ -6382,9 +6492,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotate(180)
             }
@@ -6424,9 +6534,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotate(270)
             }
@@ -6468,8 +6578,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
+            }
             Thread.sleep(100)
 
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
@@ -6505,9 +6617,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
             }
             Thread.sleep(100)
@@ -6546,9 +6658,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
             }
             Thread.sleep(100)
@@ -6587,9 +6699,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
             }
             Thread.sleep(100)
@@ -6628,9 +6740,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
             Thread.sleep(100)
@@ -6675,9 +6787,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
@@ -6725,9 +6837,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
@@ -6775,9 +6887,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
@@ -6825,9 +6937,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
             }
@@ -6867,9 +6979,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
             }
@@ -6909,9 +7021,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(1100, 733)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
             }
@@ -6967,26 +7079,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
@@ -6998,7 +7112,9 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -7023,26 +7139,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0), OffsetCompat(0.0, 0.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
@@ -7054,8 +7172,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -7083,26 +7203,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
@@ -7114,9 +7236,11 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -7144,26 +7268,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         // contentScaleState.value
@@ -7176,10 +7302,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.contentScaleState.value = ContentScaleCompat.Crop
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setContentScale(ContentScaleCompat.Crop)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -7207,26 +7335,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (22, 381), (43, 761), (65, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(21.5, 380.5), OffsetCompat(43.0, 761.0), OffsetCompat(64.5, 1141.5), OffsetCompat(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (22, 381), (43, 761), (65, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(21.5, 380.5), OffsetCompat(43.0, 761.0), OffsetCompat(64.5, 1141.5), OffsetCompat(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         // alignmentState.value
@@ -7239,10 +7369,12 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
-            zoomable.alignmentState.value = AlignmentCompat.BottomEnd
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
+                zoomable.setAlignment(AlignmentCompat.BottomEnd)
+            }
             Thread.sleep(100)
 
             assertEquals(
@@ -7273,26 +7405,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(19.9, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 1141.5), OffsetCompat(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         // rotation
@@ -7305,10 +7439,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.rotate(90)
             }
             Thread.sleep(100)
@@ -7338,26 +7472,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 1522), (20, 1142), (41, 761), (63, 381), (86, 0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 1522.0), OffsetCompat(19.9, 1141.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 380.5), OffsetCompat(86.0, 0.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 1522), (20, 1142), (41, 761), (63, 381), (86, 0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 1522.0), OffsetCompat(19.9, 1141.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.7, 380.5), OffsetCompat(86.0, 0.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         // scale
@@ -7370,10 +7506,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 1.5f,
                     animated = false
@@ -7406,26 +7542,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 380), (41, 761), (62, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(20.2, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.4, 1141.5), OffsetCompat(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 380), (41, 761), (62, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(20.2, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.4, 1141.5), OffsetCompat(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
 
         // offset
@@ -7438,10 +7576,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.scale(
                     targetScale = zoomable.transformState.value.scaleX * 1.5f,
                     animated = false
@@ -7475,26 +7613,28 @@ class ZoomableEngineTest {
             val contentDisplayCenter = zoomable.contentDisplayRectState.value.center.toOffset()
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
-            assertEquals(
-                expected = "(0, 0), (20, 381), (41, 761), (62, 1142), (86, 1522)",
-                actual = listOf(
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
-            assertEquals(
-                expected = "OffsetCompat(0.0, 0.0), OffsetCompat(20.2, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.4, 1141.5), OffsetCompat(86.0, 1522.0)",
-                actual = listOf(
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter - add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add),
-                    zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
-                ).joinToString()
-            )
+            withContext(Dispatchers.Main) {
+                assertEquals(
+                    expected = "(0, 0), (20, 381), (41, 761), (62, 1142), (86, 1522)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+                assertEquals(
+                    expected = "OffsetCompat(0.0, 0.0), OffsetCompat(20.2, 380.5), OffsetCompat(41.3, 761.0), OffsetCompat(62.4, 1141.5), OffsetCompat(86.0, 1522.0)",
+                    actual = listOf(
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add * 3f),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter - add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add),
+                        zoomable.touchPointToContentPointF(contentDisplayCenter + add * 3f)
+                    ).joinToString()
+                )
+            }
         }
     }
 
@@ -7510,7 +7650,7 @@ class ZoomableEngineTest {
             }
         )
 
-        zoomableState.disabledGestureTypesState.value = GestureType.ONE_FINGER_DRAG
+        zoomableState.setDisabledGestureTypes(GestureType.ONE_FINGER_DRAG)
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -7518,8 +7658,9 @@ class ZoomableEngineTest {
             }
         )
 
-        zoomableState.disabledGestureTypesState.value =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -7527,8 +7668,9 @@ class ZoomableEngineTest {
             }
         )
 
-        zoomableState.disabledGestureTypesState.value =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:true, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -7536,8 +7678,9 @@ class ZoomableEngineTest {
             }
         )
 
-        zoomableState.disabledGestureTypesState.value =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -7545,8 +7688,9 @@ class ZoomableEngineTest {
             }
         )
 
-        zoomableState.disabledGestureTypesState.value =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_WHEEL_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:false, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -7554,8 +7698,9 @@ class ZoomableEngineTest {
             }
         )
 
-        zoomableState.disabledGestureTypesState.value =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_WHEEL_SCALE or GestureType.KEYBOARD_SCALE
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:false, KEYBOARD_SCALE:false, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -7563,8 +7708,9 @@ class ZoomableEngineTest {
             }
         )
 
-        zoomableState.disabledGestureTypesState.value =
+        zoomableState.setDisabledGestureTypes(
             GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_WHEEL_SCALE or GestureType.KEYBOARD_SCALE or GestureType.KEYBOARD_DRAG
+        )
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_WHEEL_SCALE:false, KEYBOARD_SCALE:false, KEYBOARD_DRAG:false]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
@@ -7584,10 +7730,10 @@ class ZoomableEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
             withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+                zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.rotate(90)
                 zoomable.scale(targetScale = 20f, animated = false)
             }

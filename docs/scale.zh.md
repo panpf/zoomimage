@@ -36,8 +36,8 @@ ZoomImage 支持所有的 [ContentScale] 和 [Alignment]，并且得益于 compo
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomable.contentScaleState.value = ContentScaleCompat.None
-sketchZoomImageView.zoomable.alignmentState.value = AlignmentCompat.BottomEnd
+sketchZoomImageView.zoomable.setContentScale(ContentScaleCompat.None)
+sketchZoomImageView.zoomable.setAlignment(AlignmentCompat.BottomEnd)
 ```
 
 ### minScale, mediumScale, maxScale
@@ -86,9 +86,9 @@ scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
+zoomState.zoomable.setScalesCalculator(ScalesCalculator.Fixed)
 // 或
-zoomState.zoomable.scalesCalculator = MyScalesCalculator()
+zoomState.zoomable.setScalesCalculator(MyScalesCalculator())
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -105,8 +105,9 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.TWO_FINGER_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -128,7 +129,7 @@ threeStepScale 属性为 true，如下：
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.threeStepScale = true
+zoomState.zoomable.setThreeStepScale(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -193,8 +194,9 @@ zoomState.zoomable.getNextStepScale()
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.DOUBLE_TAP_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -211,8 +213,9 @@ ZoomImage 支持单指缩放图像，双击后按住屏幕上下滑动即可缩�
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -231,7 +234,7 @@ ZoomImage 支持通过鼠标滚轮缩放图像，ZoomImage 以当前鼠标位置
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.reverseMouseWheelScale = true
+zoomState.zoomable.setReverseMouseWheelScale(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -246,8 +249,9 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -263,10 +267,10 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.mouseWheelScaleCalculator =
-    MouseWheelScaleCalculator { currentScale, scrollDelta ->
-        // return new scale
-    }
+val mouseWheelScaleCalculator = MouseWheelScaleCalculator { currentScale, scrollDelta ->
+    // return new scale
+}
+zoomState.zoomable.setMouseWheelScaleCalculator(mouseWheelScaleCalculator)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -310,8 +314,9 @@ LaunchedEffect(Unit) {
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -470,7 +475,7 @@ ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指�
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.rubberBandScale = false
+zoomState.zoomable.setRubberBandScale(false)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -489,14 +494,15 @@ ZoomImage 提供了 `animationSpec` 参数用来修改缩放动画的时长、Ea
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.animationSpec = ZoomAnimationSpec(
+val animationSpec = ZoomAnimationSpec(
     durationMillis = 500,
     easing = LinearOutSlowInEasing,
     initialVelocity = 10f
 )
+zoomState.setAnimationSpec(animationSpec)
 
 // 或者在默认值的基础上修改部分参数
-zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
+zoomState.setAnimationSpec(ZoomAnimationSpec.Default.copy(durationMillis = 500))
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -506,7 +512,7 @@ SketchZoomAsyncImage(
 )
 ```
 
-### 可访问属性
+### 可访问属性和方法
 
 ```kotlin
 // compose
@@ -522,40 +528,26 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 > [!TIP]
 > * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
-可以读取也可以设置的属性:
+只读属性：
 
 * `zoomable.contentScale: ContentScale`: content 的缩放方式，默认是 ContentScale.Fit
-* `zoomable.alignment: Alignment`: content 在 container 中的对齐方式，默认是 Alignment.TopStart
-* `zoomable.layoutDirection: LayoutDirection`: container 的布局方向，默认是 LayoutDirection.Ltr
 * `zoomable.readMode: ReadMode?`: 阅读模式配置，默认是 null
 * `zoomable.scalesCalculator: ScalesCalculator`: minScale、mediumScale 和 maxScale 计算器，默认是
   ScalesCalculator.Dynamic
 * `zoomable.threeStepScale: Boolean`: 双击缩放时是否在 minScale、mediumScale 和 maxScale 之间循环缩放，默认是
   false
-* `zoomable.rubberBandScale: Boolean`: 是否开启橡皮筋效果，默认是 true
+* `zoomable.rubberBandScale: Boolean`: 缩放超出 minScale 或 maxScale 后是否使用橡皮筋效果，默认是
+  true
 * `zoomable.oneFingerScaleSpec: OneFingerScaleSpec`: 单指缩放配置，默认是 OneFingerScaleSpec.Default
 * `zoomable.animationSpec: ZoomAnimationSpec`: 缩放、偏移等动画配置，默认是 ZoomAnimationSpec.Default
-* `zoomable.limitOffsetWithinBaseVisibleRect: Boolean`: 是否将偏移限制在 contentBaseVisibleRect
-  内，默认是 false
-* `zoomable.containerWhitespaceMultiple: Float`: 基于容器尺寸的倍数为容器四周添加空白区域，默认是 0f
-* `zoomable.containerWhitespace: ContainerWhitespace`: 容器四周空白区域的配置，优先级高于
-  containerWhitespaceMultiple，默认是 ContainerWhitespace.Zero
-* `zoomable.keepTransformWhenSameAspectRatioContentSizeChanged: Boolean`: 是否在相同宽高比的
-  contentSize 改变时保持 transform 不变，默认是 false
 * `zoomable.disabledGestureTypes: Int`: 配置禁用的手势类型，默认是 0（不禁用任何手势），可以使用
   GestureType 的位或操作来组合多个手势类型
 * `zoomable.reverseMouseWheelScale: Boolean`: 是否反转鼠标滚轮的方向，默认是 false
 * `zoomable.mouseWheelScaleCalculator: MouseWheelScaleCalculator`: 鼠标滚轮缩放计算器，默认是
   MouseWheelScaleCalculator.Default
-
-只能读取的属性：
-
-* `zoomable.containerSize: IntSize`: 当前 container 的大小
-* `zoomable.contentSize: IntSize`: 当前 content 的大小
-* `zoomable.contentOriginSize: IntSize`: 当前 content 的原始大小
 * `zoomable.transform.scale: ScaleFactor`: 当前缩放比例（baseTransform.scale * userTransform.scale）
 * `zoomable.baseTransform.scale: ScaleFactor`: 当前基础缩放比例，受 contentScale 和 alignment 参数影响
-* `zoomable.userTransform.scale: ScaleFactor`: 当前用户缩放比例，受 scale()、locate() 以及用户手势缩放、双击等操作影响
+* `zoomable.userTransform.scale: ScaleFactor`: 当前用户缩放比例，受 scale()、用户手势缩放、双击等操作影响
 * `zoomable.minScale: Float`: 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
 * `zoomable.mediumScale: Float`: 中间缩放比例，用于双击缩放时的一个循环缩放比例
 * `zoomable.maxScale: Float`: 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
@@ -568,23 +560,27 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 * `zoomable.contentDisplayRect: IntRect`: content 经过 transform 变换后在 container 中的区域
 * `zoomable.contentVisibleRectF: Rect`: content 经过 transform 变换后自身对用户可见的区域
 * `zoomable.contentVisibleRect: IntRect`: content 经过 transform 变换后自身对用户可见的区域
-* `zoomable.sourceScaleFactor: ScaleFactor`: 以原图为基准的缩放比例
 * `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect 映射到原图上的区域
 * `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect 映射到原图上的区域
-* `zoomable.scrollEdge: ScrollEdge`: 当前偏移的边界状态
+* `zoomable.sourceScaleFactor: ScaleFactor`: 以原图为基准的缩放比例
 
-可交互的方法：
+交互方法：
 
+* `zoomable.setReadMode(ReadMode?)`: 设置阅读模式配置
+* `zoomable.setScalesCalculator(ScalesCalculator)`: 设置 minScale、mediumScale 和 maxScale 的计算器
+* `zoomable.setThreeStepScale(Boolean)`: 设置双击缩放时是否在 minScale、mediumScale 和 maxScale
+  之间循环缩放
+* `zoomable.setRubberBandScale(Boolean)`: 设置缩放超出 minScale 或 maxScale 后是否使用橡皮筋效果
+* `zoomable.setOneFingerScaleSpec(OneFingerScaleSpec)`: 设置单指缩放配置
+* `zoomable.setAnimationSpec(ZoomAnimationSpec)`: 设置缩放、偏移等动画配置
+* `zoomable.setDisabledGestureTypes(Int)`: 设置禁用的手势类型，可以使用 GestureType 的位或操作来组合多个手势类型
+* `zoomable.setReverseMouseWheelScale(Boolean)`: 设置是否反转鼠标滚轮的方向
+* `zoomable.setMouseWheelScaleCalculator(MouseWheelScaleCalculator)`: 设置鼠标滚轮缩放计算器
 * `zoomable.scale()`: 缩放 content 到指定的倍数
 * `zoomable.scaleBy()`: 以乘法的方式增量缩放 content 指定的倍数
 * `zoomable.scaleByPlus()`: 以加法的方式增量缩放 content 指定的倍数
 * `zoomable.switchScale()`: 切换 content 的缩放倍数，默认在 minScale 和 mediumScale 之间循环， 如果
   threeStepScale 为 true 则在 minScale、mediumScale 和 maxScale 之间循环
-* `zoomable.offset()`: 偏移 content 到指定的位置
-* `zoomable.offsetBy()`: 以增量的方式偏移 content 指定的偏移量
-* `zoomable.locate()`: 定位到 content 上的指定位置，也可以用时缩放到指定倍数
-* `zoomable.rotate()`: 旋转 content 到指定的角度，角度只能是 90 的倍数
-* `zoomable.rotateBy()`: 以增量的方式旋转 content 指定的角度，角度只能是 90 的倍数
 * `zoomable.getNextStepScale(): Float`: 获取下一个缩放倍数，默认在 minScale 和 mediumScale 之间循环，
   如果 threeStepScale 为 true 则在 minScale、mediumScale 和 maxScale 之间循环
 * `zoomable.touchPointToContentPoint(): IntOffset`: 将触摸点转换为 content 上的点，原点是 content
@@ -592,7 +588,6 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 * `zoomable.touchPointToContentPointF(): Offset`: 将触摸点转换为 content 上的点，原点是 content 的左上角
 * `zoomable.sourceToDraw(Offset): Offset`: 将原图上的点转换为绘制时的点，原点是 container 的左上角
 * `zoomable.sourceToDraw(Rect): Rect`: 将原图上的矩形转换为绘制时的矩形，原点是 container 的左上角
-* `zoomable.canScroll(): Boolean`: 判断当前 content 在指定方向上是否可以滚动
 
 #### 监听属性变化
 

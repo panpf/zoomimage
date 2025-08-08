@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage
 
+import androidx.annotation.MainThread
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
@@ -54,7 +55,7 @@ import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.sketch.SketchTileImageCache
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -363,11 +364,12 @@ fun SketchZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    zoomState.zoomable.contentScale = contentScale
-    zoomState.zoomable.alignment = alignment
-    zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
+    zoomState.zoomable.setContentScale(contentScale)
+    zoomState.zoomable.setAlignment(alignment)
+    zoomState.zoomable.setLayoutDirection(LocalLayoutDirection.current)
 
-    zoomState.subsampling.tileImageCache = remember(sketch) { SketchTileImageCache(sketch) }
+    val tileImageCache = remember(sketch) { SketchTileImageCache(sketch) }
+    zoomState.subsampling.setTileImageCache(tileImageCache)
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
@@ -380,7 +382,9 @@ fun SketchZoomAsyncImage(
             contentScale = contentScale,
             filterQuality = filterQuality,
             onPainterState = { loadState ->
-                updateZoom(coroutineScope, sketch, zoomState, request, loadState)
+                coroutineScope.launch(Dispatchers.Main.immediate) {
+                    updateZoom(sketch, zoomState, request, loadState)
+                }
                 onPainterState?.invoke(loadState)
             },
         )
@@ -424,8 +428,8 @@ fun SketchZoomAsyncImage(
     }
 }
 
-private fun updateZoom(
-    coroutineScope: CoroutineScope,
+@MainThread
+private suspend fun updateZoom(
     sketch: Sketch,
     zoomState: SketchZoomState,
     request: DisplayRequest,
@@ -446,25 +450,23 @@ private fun updateZoom(
         }
         "SketchZoomAsyncImage. $stateName. contentSize=$painterSize. uri='${request.uriString}'"
     }
-    zoomState.zoomable.contentSize = painterSize
+    zoomState.zoomable.setContentSize(painterSize)
 
     if (painterState is PainterState.Success) {
-        coroutineScope.launch {
-            val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
-                it.generateImage(sketch, painterState.result, painterState.painter)
+        val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
+            it.generateImage(sketch, painterState.result, painterState.painter)
+        }
+        if (generateResult is SubsamplingImageGenerateResult.Success) {
+            zoomState.setSubsamplingImage(generateResult.subsamplingImage)
+        } else {
+            zoomState.subsampling.logger.d {
+                val errorMessage =
+                    if (generateResult is SubsamplingImageGenerateResult.Error)
+                        generateResult.message else "unknown error"
+                "SketchZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
+                        "result=${painterState.result}, painter=${painterState.painter}"
             }
-            if (generateResult is SubsamplingImageGenerateResult.Success) {
-                zoomState.setSubsamplingImage(generateResult.subsamplingImage)
-            } else {
-                zoomState.subsampling.logger.d {
-                    val errorMessage =
-                        if (generateResult is SubsamplingImageGenerateResult.Error)
-                            generateResult.message else "unknown error"
-                    "SketchZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
-                            "result=${painterState.result}, painter=${painterState.painter}"
-                }
-                zoomState.setSubsamplingImage(null as SubsamplingImage?)
-            }
+            zoomState.setSubsamplingImage(null as SubsamplingImage?)
         }
     } else {
         zoomState.setSubsamplingImage(null as SubsamplingImage?)

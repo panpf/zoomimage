@@ -27,5 +27,7 @@ interface ZoomableBridge {
     val continuousTransformType: Int
     val transformFlow: Flow<TransformCompat>
     val continuousTransformTypeFlow: Flow<Int>
+    val containerSizeFlow: Flow<IntSizeCompat>
+    val contentSizeFlow: Flow<IntSizeCompat>
     fun setContentOriginSize(contentOriginSize: IntSizeCompat)
 }

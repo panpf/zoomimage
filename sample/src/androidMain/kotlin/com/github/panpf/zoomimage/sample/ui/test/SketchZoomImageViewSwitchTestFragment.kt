@@ -76,7 +76,7 @@ class SketchZoomImageViewSwitchTestFragment :
             val zoomable = binding.zoomImageView.zoomable
             isChecked = zoomable.keepTransformWhenSameAspectRatioContentSizeChangedState.value
             setOnCheckedChangeListener { _, isChecked ->
-                zoomable.keepTransformWhenSameAspectRatioContentSizeChangedState.value = isChecked
+                zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(isChecked)
                 if (isChecked) {
                     viewLifecycleOwner.lifecycleScope.launch {
                         appEvents.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")

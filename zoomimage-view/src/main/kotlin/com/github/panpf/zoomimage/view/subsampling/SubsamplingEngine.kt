@@ -40,8 +40,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.launch
 
 /**
  * Engines that control subsampling
@@ -71,15 +69,21 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
             override val continuousTransformTypeFlow: Flow<Int>
                 get() = zoomableEngine.continuousTransformTypeState
 
+            override val containerSizeFlow: Flow<IntSizeCompat>
+                get() = zoomableEngine.containerSizeState
+
+            override val contentSizeFlow: Flow<IntSizeCompat>
+                get() = zoomableEngine.contentSizeState
+
             override fun setContentOriginSize(contentOriginSize: IntSizeCompat) {
-                zoomableEngine.contentOriginSizeState.value = contentOriginSize
+                zoomableEngine.setContentOriginSize(contentOriginSize)
             }
         },
         onReadyChanged = {
             _readyState.value = it.ready
             _imageInfoState.value = it.imageInfo
             _tileGridSizeMapState.value = it.tileGridSizeMap
-            stoppedState.value = it.stopped
+            _stoppedState.value = it.stopped
         },
         onTileChanged = {
             _backgroundTilesState.value = it.backgroundTiles
@@ -97,75 +101,82 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
 
     /* *********************************** Configurable properties ****************************** */
 
+    private val _disabledState: MutableStateFlow<Boolean> =
+        MutableStateFlow(subsamplingCore.disabled)
+    private val _tileImageCacheState: MutableStateFlow<TileImageCache?> =
+        MutableStateFlow(subsamplingCore.tileImageCache)
+    private val _disabledTileImageCacheState: MutableStateFlow<Boolean> =
+        MutableStateFlow(subsamplingCore.disabledTileImageCache)
+    private val _tileAnimationSpecState: MutableStateFlow<TileAnimationSpec> =
+        MutableStateFlow(subsamplingCore.tileAnimationSpec)
+    private val _pausedContinuousTransformTypesState: MutableStateFlow<Int> =
+        MutableStateFlow(subsamplingCore.pausedContinuousTransformTypes)
+    private val _disabledBackgroundTilesState: MutableStateFlow<Boolean> =
+        MutableStateFlow(subsamplingCore.disabledBackgroundTiles)
+    private val _stoppedState: MutableStateFlow<Boolean> = MutableStateFlow(subsamplingCore.stopped)
+    private val _disabledAutoStopWithLifecycleState: MutableStateFlow<Boolean> =
+        MutableStateFlow(subsamplingCore.disabledAutoStopWithLifecycle)
+    private val _regionDecodersState: MutableStateFlow<List<RegionDecoder.Factory>> =
+        MutableStateFlow(subsamplingCore.regionDecoders)
+    private val _showTileBoundsState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
     /**
      * If true, disabled subsampling
      */
-    val disabledState: MutableStateFlow<Boolean> =
-        MutableStateFlow(subsamplingCore.disabled)
+    val disabledState: StateFlow<Boolean> = _disabledState
 
     /**
      * Set up the TileImage memory cache container
      */
-    val tileImageCacheState: MutableStateFlow<TileImageCache?> =
-        MutableStateFlow(subsamplingCore.tileImageCache)
+    val tileImageCacheState: StateFlow<TileImageCache?> = _tileImageCacheState
 
     /**
      * If true, disabled TileImage memory cache
      */
-    val disabledTileImageCacheState: MutableStateFlow<Boolean> =
-        MutableStateFlow(subsamplingCore.disabledTileImageCache)
+    val disabledTileImageCacheState: StateFlow<Boolean> = _disabledTileImageCacheState
 
     /**
      * The animation spec for tile animation
      */
-    val tileAnimationSpecState: MutableStateFlow<TileAnimationSpec> =
-        MutableStateFlow(subsamplingCore.tileAnimationSpec)
+    val tileAnimationSpecState: StateFlow<TileAnimationSpec> = _tileAnimationSpecState
 
     /**
      * A continuous transform type that needs to pause loading
      */
-    val pausedContinuousTransformTypesState: MutableStateFlow<Int> =
-        MutableStateFlow(subsamplingCore.pausedContinuousTransformTypes)
+    val pausedContinuousTransformTypesState: StateFlow<Int> = _pausedContinuousTransformTypesState
 
     /**
      * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
      * the basemap will be exposed, the user will be able to perceive a choppy switching process,
      * and the user experience will be reduced
      */
-    val disabledBackgroundTilesState: MutableStateFlow<Boolean> =
-        MutableStateFlow(subsamplingCore.disabledBackgroundTiles)
+    val disabledBackgroundTilesState: StateFlow<Boolean> = _disabledBackgroundTilesState
 
     /**
      * If true, subsampling stops and free loaded tiles, which are reloaded after restart
      */
-    val stoppedState: MutableStateFlow<Boolean> = MutableStateFlow(subsamplingCore.stopped)
+    val stoppedState: StateFlow<Boolean> = _stoppedState
 
     /**
      * If true, the automatic stop function based on lifecycle is disabled
      */
-    val disabledAutoStopWithLifecycleState: MutableStateFlow<Boolean> =
-        MutableStateFlow(subsamplingCore.disabledAutoStopWithLifecycle)
+    val disabledAutoStopWithLifecycleState: StateFlow<Boolean> = _disabledAutoStopWithLifecycleState
 
     /**
      * User-defined RegionDecoder
      */
-    var regionDecodersState: MutableStateFlow<List<RegionDecoder.Factory>> =
-        MutableStateFlow(subsamplingCore.regionDecoders)
-
+    val regionDecodersState: StateFlow<List<RegionDecoder.Factory>> = _regionDecodersState
 
     /**
      * If true, the bounds of each tile is displayed
      */
-    val showTileBoundsState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showTileBoundsState: StateFlow<Boolean> = _showTileBoundsState
 
     /**
      * The stopped property controller, which can automatically stop and restart with the help of Lifecycle
      */
-    var lifecycle: Lifecycle?
+    val lifecycle: Lifecycle?
         get() = subsamplingCore.lifecycle
-        set(value) {
-            subsamplingCore.lifecycle = value
-        }
 
 
     /* *********************************** Information properties ******************************* */
@@ -277,86 +288,108 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
     )
     fun setImageSource(imageSource: ImageSource?): Boolean = subsamplingCore.setImage(imageSource)
 
+    /**
+     * Set whether to disable subsampling
+     */
+    fun setDisabled(disabled: Boolean) {
+        _disabledState.value = disabled
+        subsamplingCore.setDisabled(disabled)
+    }
+
+    /**
+     * Set up the TileImage memory cache
+     */
+    fun setTileImageCache(tileImageCache: TileImageCache?) {
+        _tileImageCacheState.value = tileImageCache
+        subsamplingCore.setTileImageCache(tileImageCache)
+    }
+
+    /**
+     * Set whether to disable TileImage memory cache
+     */
+    fun setDisabledTileImageCache(disabledTileImageCache: Boolean) {
+        _disabledTileImageCacheState.value = disabledTileImageCache
+        subsamplingCore.setDisabledTileImageCache(disabledTileImageCache)
+    }
+
+    /**
+     * Set the animation spec for tile animation
+     */
+    fun setTileAnimationSpec(tileAnimationSpec: TileAnimationSpec) {
+        _tileAnimationSpecState.value = tileAnimationSpec
+        subsamplingCore.setTileAnimationSpec(tileAnimationSpec)
+    }
+
+    /**
+     * Set a continuous transform type that needs to pause loading. Allow multiple types to be combined through the 'and' operator
+     *
+     * @see com.github.panpf.zoomimage.zoom.ContinuousTransformType
+     */
+    fun setPausedContinuousTransformTypes(pausedContinuousTransformTypes: Int) {
+        _pausedContinuousTransformTypesState.value = pausedContinuousTransformTypes
+        subsamplingCore.setPausedContinuousTransformTypes(pausedContinuousTransformTypes)
+    }
+
+    /**
+     * Set whether to disable background tiles, which can save memory and improve performance.
+     */
+    fun setDisabledBackgroundTiles(disabledBackgroundTiles: Boolean) {
+        _disabledBackgroundTilesState.value = disabledBackgroundTiles
+        subsamplingCore.setDisabledBackgroundTiles(disabledBackgroundTiles)
+    }
+
+    /**
+     * Set whether to stop subsampling and free loaded tiles, which are reloaded after restart.
+     */
+    fun setStopped(stopped: Boolean) {
+        _stoppedState.value = stopped
+        subsamplingCore.setStopped(stopped)
+    }
+
+    /**
+     * Set whether to disable the life cycle-based automatic stop function
+     */
+    fun setDisabledAutoStopWithLifecycle(disabledAutoStopWithLifecycle: Boolean) {
+        _disabledAutoStopWithLifecycleState.value = disabledAutoStopWithLifecycle
+        subsamplingCore.setDisabledAutoStopWithLifecycle(disabledAutoStopWithLifecycle)
+    }
+
+    /**
+     * Set user-defined RegionDecoder
+     */
+    fun setRegionDecoders(regionDecoders: List<RegionDecoder.Factory>) {
+        _regionDecodersState.value = regionDecoders
+        subsamplingCore.setRegionDecoders(regionDecoders)
+    }
+
+    /**
+     * Set whether to display the boundary of each tile
+     */
+    fun setShowTileBounds(showTileBounds: Boolean) {
+        _showTileBoundsState.value = showTileBounds
+    }
+
+    /**
+     * Set the lifecycle for automatic stop and restart of subsampling.
+     */
+    fun setLifecycle(lifecycle: Lifecycle?) {
+        subsamplingCore.setLifecycle(lifecycle)
+    }
+
 
     /* *************************************** Internal ***************************************** */
 
     fun onAttachToWindow() {
         if (this.coroutineScope != null) return
-
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         this.coroutineScope = coroutineScope
-
-        bindProperties(coroutineScope)
         subsamplingCore.onAttached()
     }
 
     fun onDetachFromWindow() {
         val coroutineScope = this.coroutineScope ?: return
-
         subsamplingCore.onDetached()
         coroutineScope.cancel("onDetachFromWindow")
         this.coroutineScope = null
-    }
-
-    private fun bindProperties(coroutineScope: CoroutineScope) {
-        coroutineScope.launch {
-            // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
-            // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
-            @Suppress("OPT_IN_USAGE")
-            zoomableEngine.containerSizeState.debounce(80).collect {
-                subsamplingCore.setContainerSize(it)
-            }
-        }
-        coroutineScope.launch {
-            zoomableEngine.contentSizeState.collect {
-                subsamplingCore.setContentSize(it)
-            }
-        }
-
-        coroutineScope.launch {
-            disabledState.collect {
-                subsamplingCore.disabled = it
-            }
-        }
-        coroutineScope.launch {
-            tileImageCacheState.collect {
-                subsamplingCore.tileImageCache = it
-            }
-        }
-        coroutineScope.launch {
-            disabledTileImageCacheState.collect {
-                subsamplingCore.disabledTileImageCache = it
-            }
-        }
-        coroutineScope.launch {
-            tileAnimationSpecState.collect {
-                subsamplingCore.tileAnimationSpec = it
-            }
-        }
-        coroutineScope.launch {
-            pausedContinuousTransformTypesState.collect {
-                subsamplingCore.pausedContinuousTransformTypes = it
-            }
-        }
-        coroutineScope.launch {
-            disabledBackgroundTilesState.collect {
-                subsamplingCore.disabledBackgroundTiles = it
-            }
-        }
-        coroutineScope.launch {
-            stoppedState.collect {
-                subsamplingCore.stopped = it
-            }
-        }
-        coroutineScope.launch {
-            disabledAutoStopWithLifecycleState.collect {
-                subsamplingCore.disabledAutoStopWithLifecycle = it
-            }
-        }
-        coroutineScope.launch {
-            regionDecodersState.collect {
-                subsamplingCore.setRegionDecoders(it)
-            }
-        }
     }
 }

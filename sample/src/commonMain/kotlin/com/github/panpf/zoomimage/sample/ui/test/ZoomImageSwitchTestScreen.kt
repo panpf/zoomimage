@@ -69,7 +69,7 @@ class ZoomImageSwitchTestScreen : BaseScreen() {
     override fun DrawContent() {
         ToolbarScaffold("ZoomImage (Switch)") {
             val zoomState = rememberSketchZoomState()
-            zoomState.zoomable.readMode = ReadMode.Default
+            zoomState.zoomable.setReadMode(ReadMode.Default)
             zoomState.logger.level = Logger.Level.Debug
             Column(Modifier.fillMaxSize().background(Color.Black)) {
                 val imageUris = remember { imageSwitchTestResources.map { it.uri } }
@@ -136,8 +136,9 @@ class ZoomImageSwitchTestScreen : BaseScreen() {
                         Switch(
                             checked = zoomState.zoomable.keepTransformWhenSameAspectRatioContentSizeChanged,
                             onCheckedChange = { isChecked ->
-                                zoomState.zoomable.keepTransformWhenSameAspectRatioContentSizeChanged =
+                                zoomState.zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(
                                     isChecked
+                                )
                                 if (isChecked) {
                                     coroutineScope.launch {
                                         appEvents.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")

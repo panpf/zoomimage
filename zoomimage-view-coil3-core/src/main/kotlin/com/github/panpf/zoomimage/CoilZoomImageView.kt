@@ -101,7 +101,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
             val tileImageCacheState = subsamplingEngine.tileImageCacheState
             val imageLoader = CoilUtils.getImageLoader(this@CoilZoomImageView)
             if (tileImageCacheState.value == null && imageLoader != null) {
-                tileImageCacheState.value = CoilTileImageCache(imageLoader)
+                subsamplingEngine.setTileImageCache(CoilTileImageCache(imageLoader))
             }
 
             val result = CoilUtils.result(this)

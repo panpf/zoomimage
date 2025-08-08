@@ -373,9 +373,9 @@ internal class ZoomableNode(
 
     override fun onRemeasured(size: IntSize) {
         if (previousSize != size) {
-            zoomable.containerSize = size
+            zoomable.setContainerSize(size)
             if (!userSetupContentSize) {
-                zoomable.contentSize = size
+                zoomable.setContentSize(size)
             }
             previousSize = size
         }

@@ -54,7 +54,10 @@ import com.github.panpf.zoomimage.zoom.ScrollEdge
 import com.github.panpf.zoomimage.zoom.isEmpty
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.rtlFlipped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Core that control scale, pan, rotation, ZoomableState and ZoomableEngine are its UI wrappers
@@ -141,6 +144,7 @@ class ZoomableCore constructor(
 
     private var resetParams: ResetParams? = null
     private var initialZoom: InitialZoom? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
 
     suspend fun scale(
@@ -226,6 +230,7 @@ class ZoomableCore constructor(
         animated: Boolean = false,
         animationSpec: BaseZoomAnimationSpec? = null,
     ): Float? {
+        requiredMainThread()
         val nextScale = getNextStepScale()
         val scaleResult = scale(
             targetScale = nextScale,
@@ -375,6 +380,7 @@ class ZoomableCore constructor(
     }
 
     fun getNextStepScale(): Float {
+        requiredMainThread()
         val minScale = minScale
         val mediumScale = mediumScale
         val maxScale = maxScale
@@ -389,6 +395,7 @@ class ZoomableCore constructor(
     }
 
     fun touchPointToContentPoint(touchPoint: OffsetCompat): OffsetCompat {
+        requiredMainThread()
         val containerSize =
             containerSize.takeIf { it.isNotEmpty() } ?: return OffsetCompat.Zero
         val contentSize =
@@ -449,7 +456,8 @@ class ZoomableCore constructor(
     }
 
 
-    suspend fun setContainerSize(containerSize: IntSizeCompat) {
+    fun setContainerSize(containerSize: IntSizeCompat) {
+        requiredMainThread()
         if (this.containerSize != containerSize) {
             this.containerSize = containerSize
             logger.d { "$module. containerSize=$containerSize" }
@@ -457,7 +465,8 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setContentSize(contentSize: IntSizeCompat) {
+    fun setContentSize(contentSize: IntSizeCompat) {
+        requiredMainThread()
         if (this.contentSize != contentSize) {
             this.contentSize = contentSize
             logger.d { "$module. contentSize=$contentSize" }
@@ -465,14 +474,16 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setContentOriginSize(contentOriginSize: IntSizeCompat) {
+    fun setContentOriginSize(contentOriginSize: IntSizeCompat) {
+        requiredMainThread()
         if (this.contentOriginSize != contentOriginSize) {
             this.contentOriginSize = contentOriginSize
             reset("contentOriginSizeChanged")
         }
     }
 
-    suspend fun setContentScale(contentScale: ContentScaleCompat) {
+    fun setContentScale(contentScale: ContentScaleCompat) {
+        requiredMainThread()
         if (this.contentScale != contentScale) {
             this.contentScale = contentScale
             logger.d { "$module. contentScale=${contentScale.name}" }
@@ -480,7 +491,8 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setAlignment(alignment: AlignmentCompat) {
+    fun setAlignment(alignment: AlignmentCompat) {
+        requiredMainThread()
         if (this.alignment != alignment) {
             this.alignment = alignment
             logger.d { "$module. alignment=${alignment.name}" }
@@ -488,7 +500,8 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setRtlLayoutDirection(rtlLayoutDirection: Boolean) {
+    fun setRtlLayoutDirection(rtlLayoutDirection: Boolean) {
+        requiredMainThread()
         if (this.rtlLayoutDirection != rtlLayoutDirection) {
             this.rtlLayoutDirection = rtlLayoutDirection
             logger.d { "$module. rtlLayoutDirection=$rtlLayoutDirection" }
@@ -496,7 +509,8 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setReadMode(readMode: ReadMode?) {
+    fun setReadMode(readMode: ReadMode?) {
+        requiredMainThread()
         if (this.readMode != readMode) {
             this.readMode = readMode
             logger.d { "$module. readMode=$readMode" }
@@ -504,7 +518,8 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setScalesCalculator(scalesCalculator: ScalesCalculator) {
+    fun setScalesCalculator(scalesCalculator: ScalesCalculator) {
+        requiredMainThread()
         if (this.scalesCalculator != scalesCalculator) {
             this.scalesCalculator = scalesCalculator
             logger.d { "$module. scalesCalculator=$scalesCalculator" }
@@ -513,6 +528,7 @@ class ZoomableCore constructor(
     }
 
     fun setThreeStepScale(threeStepScale: Boolean) {
+        requiredMainThread()
         if (this.threeStepScale != threeStepScale) {
             this.threeStepScale = threeStepScale
             logger.d { "$module. threeStepScale=$threeStepScale" }
@@ -520,6 +536,7 @@ class ZoomableCore constructor(
     }
 
     fun setRubberBandScale(rubberBandScale: Boolean) {
+        requiredMainThread()
         if (this.rubberBandScale != rubberBandScale) {
             this.rubberBandScale = rubberBandScale
             logger.d { "$module. rubberBandScale=$rubberBandScale" }
@@ -527,6 +544,7 @@ class ZoomableCore constructor(
     }
 
     fun setOneFingerScaleSpec(oneFingerScaleSpec: OneFingerScaleSpec) {
+        requiredMainThread()
         if (this.oneFingerScaleSpec != oneFingerScaleSpec) {
             this.oneFingerScaleSpec = oneFingerScaleSpec
             logger.d { "$module. oneFingerScaleSpec=$oneFingerScaleSpec" }
@@ -534,13 +552,15 @@ class ZoomableCore constructor(
     }
 
     fun setAnimationSpec(animationSpec: BaseZoomAnimationSpec) {
+        requiredMainThread()
         if (this.animationSpec != animationSpec) {
             this.animationSpec = animationSpec
             logger.d { "$module. animationSpec=$animationSpec" }
         }
     }
 
-    suspend fun setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect: Boolean) {
+    fun setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect: Boolean) {
+        requiredMainThread()
         if (this.limitOffsetWithinBaseVisibleRect != limitOffsetWithinBaseVisibleRect) {
             this.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
             logger.d { "$module. limitOffsetWithinBaseVisibleRect=$limitOffsetWithinBaseVisibleRect" }
@@ -548,7 +568,8 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setContainerWhitespaceMultiple(containerWhitespaceMultiple: Float) {
+    fun setContainerWhitespaceMultiple(containerWhitespaceMultiple: Float) {
+        requiredMainThread()
         if (this.containerWhitespaceMultiple != containerWhitespaceMultiple) {
             this.containerWhitespaceMultiple = containerWhitespaceMultiple
             logger.d { "$module. containerWhitespaceMultiple=$containerWhitespaceMultiple" }
@@ -556,7 +577,8 @@ class ZoomableCore constructor(
         }
     }
 
-    suspend fun setContainerWhitespace(containerWhitespace: ContainerWhitespace) {
+    fun setContainerWhitespace(containerWhitespace: ContainerWhitespace) {
+        requiredMainThread()
         if (this.containerWhitespace != containerWhitespace) {
             this.containerWhitespace = containerWhitespace
             logger.d { "$module. containerWhitespace=$containerWhitespace" }
@@ -564,14 +586,15 @@ class ZoomableCore constructor(
         }
     }
 
-    fun setKeepTransformWhenSameAspectRatioContentSizeChanged(keep: Boolean) {
-        if (this.keepTransformWhenSameAspectRatioContentSizeChanged != keep) {
-            this.keepTransformWhenSameAspectRatioContentSizeChanged = keep
-            logger.d { "$module. keepTransformWhenSameAspectRatioContentSizeChanged=$keep" }
+    fun setKeepTransformWhenSameAspectRatioContentSizeChanged(keepTransform: Boolean) {
+        requiredMainThread()
+        if (this.keepTransformWhenSameAspectRatioContentSizeChanged != keepTransform) {
+            this.keepTransformWhenSameAspectRatioContentSizeChanged = keepTransform
+            logger.d { "$module. keepTransformWhenSameAspectRatioContentSizeChanged=$keepTransform" }
         }
     }
 
-    suspend fun reset(caller: String, force: Boolean = false) {
+    fun reset(caller: String, force: Boolean = false) {
         requiredMainThread()
 
         val lastInitialZoom = initialZoom
@@ -708,7 +731,9 @@ class ZoomableCore constructor(
         maxScale = newInitialZoom.maxScale
 
         if (!skipResetTransform) {
-            stopAllAnimation(caller)
+            coroutineScope.launch(Dispatchers.Main.immediate) {
+                stopAllAnimation(caller)
+            }
             contentBaseDisplayRect = calculateContentBaseDisplayRect(
                 containerSize = newResetParams.containerSize,
                 contentSize = newResetParams.contentSize,
@@ -733,6 +758,9 @@ class ZoomableCore constructor(
         resetParams = newResetParams
     }
 
+
+    /* *************************************** Internal ***************************************** */
+
     private fun shouldRestoreVisibleRect(
         oldContentSize: IntSizeCompat,
         newContentSize: IntSizeCompat,
@@ -751,6 +779,7 @@ class ZoomableCore constructor(
     }
 
     suspend fun stopAllAnimation(caller: String) {
+        requiredMainThread()
         if (animationAdapter.stopAnimation()) {
             logger.d { "$module. stopTransformAnimation:$caller" }
         }
@@ -958,6 +987,7 @@ class ZoomableCore constructor(
     }
 
     fun setContinuousTransformType(@ContinuousTransformType continuousTransformType: Int) {
+        requiredMainThread()
         this.continuousTransformType = continuousTransformType
         onTransformChanged(this@ZoomableCore)
     }

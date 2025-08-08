@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.requiredMainThread
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -43,6 +44,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -88,109 +90,26 @@ class SubsamplingCore constructor(
 
     var subsamplingImage: SubsamplingImage? = null
         private set
-
     var disabled: Boolean = false
-        set(value) {
-            if (field != value) {
-                logger.d { "$module. disabled=$value. '$logKey'" }
-                if (value) {
-                    cachedImage = subsamplingImage
-                    setImage(null as SubsamplingImage?)
-                    field = value
-                } else {
-                    field = value
-                    setImage(cachedImage)
-                    cachedImage = null
-                }
-            }
-        }
-
-    var tileImageCache: TileImageCache?
+        private set
+    val tileImageCache: TileImageCache?
         get() = tileImageCacheHelper.tileImageCache
-        set(value) {
-            tileImageCacheHelper.tileImageCache = value
-        }
-
-    var disabledTileImageCache: Boolean
+    val disabledTileImageCache: Boolean
         get() = tileImageCacheHelper.disabled
-        set(value) {
-            if (tileImageCacheHelper.disabled != value) {
-                logger.d { "$module. disabledTileImageCache=$value. '$logKey'" }
-                tileImageCacheHelper.disabled = value
-            }
-        }
-
-    var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
-        set(value) {
-            if (field != value) {
-                field = value
-                logger.d { "$module. tileAnimationSpec=$value. '$logKey'" }
-                tileManager?.tileAnimationSpec = value
-            }
-        }
-
     var pausedContinuousTransformTypes: Int = DefaultPausedContinuousTransformTypes
-        set(value) {
-            if (field != value) {
-                field = value
-                logger.d {
-                    val namesString = ContinuousTransformType.names(value)
-                        .joinToString(prefix = "[", postfix = "]")
-                    "$module. pausedContinuousTransformTypes=$namesString. '$logKey'"
-                }
-                tileManager?.pausedContinuousTransformTypes = value
-            }
-        }
-
+        private set
+    var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
+        private set
     var disabledBackgroundTiles: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                logger.d { "$module. disabledBackgroundTiles=$value. '$logKey'" }
-                tileManager?.disabledBackgroundTiles = value
-            }
-        }
-
+        private set
     var stopped: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                logger.d { "$module. stopped=$value. '$logKey'" }
-                val stoppedState = if (value) "stopped" else "started"
-                if (value) {
-                    tileManager?.clean(stoppedState)
-                }
-                refreshReadyState(stoppedState)
-            }
-        }
-
+        private set
     var lifecycle: Lifecycle? = null
-        set(value) {
-            if (field != value) {
-                field?.removeObserver(stoppedLifecycleObserver)
-                field = value
-                if (coroutineScope != null) {
-                    value?.addObserver(stoppedLifecycleObserver)
-                }
-            }
-        }
-
+        private set
     var disabledAutoStopWithLifecycle: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                logger.d { "$module. disabledAutoStopWithLifecycle=$value. '$logKey'" }
-                if (value) {
-                    stopped = false
-                } else {
-                    refreshStoppedState()
-                }
-            }
-        }
-
+        private set
     var regionDecoders: List<RegionDecoder.Factory> = emptyList()
         private set
-
 
     var imageInfo: ImageInfo? = null
         private set
@@ -209,6 +128,7 @@ class SubsamplingCore constructor(
 
 
     fun setImage(subsamplingImage: SubsamplingImage?): Boolean {
+        requiredMainThread()
         if (disabled) {
             logger.d { "$module. setImage. disabled. '${subsamplingImage}'" }
             cachedImage = subsamplingImage
@@ -235,46 +155,136 @@ class SubsamplingCore constructor(
         })
     }
 
-
-    fun setContainerSize(containerSize: IntSizeCompat) {
-        val oldPreferredTileSize = preferredTileSize
-        val newPreferredTileSize = calculatePreferredTileSize(containerSize)
-        val checkPassed = checkNewPreferredTileSize(
-            oldPreferredTileSize = oldPreferredTileSize,
-            newPreferredTileSize = newPreferredTileSize
-        )
-        logger.d {
-            "$module. setContainerSize. preferredTileSize ${if (checkPassed) "changed" else "keep"}. " +
-                    "oldPreferredTileSize=${oldPreferredTileSize.toShortString()}, " +
-                    "newPreferredTileSize=${newPreferredTileSize.toShortString()}, " +
-                    "containerSize=${containerSize.toShortString()}. " +
-                    "'$logKey'"
-        }
-        if (checkPassed) {
-            this.preferredTileSize = newPreferredTileSize
-            resetTileManager("preferredTileSizeChanged")
+    fun setDisabled(disabled: Boolean) {
+        requiredMainThread()
+        if (this.disabled != disabled) {
+            logger.d { "$module. disabled=$disabled. '$logKey'" }
+            if (disabled) {
+                cachedImage = subsamplingImage
+                setImage(null as SubsamplingImage?)
+                this.disabled = disabled
+            } else {
+                this.disabled = disabled
+                setImage(cachedImage)
+                cachedImage = null
+            }
         }
     }
 
-    fun setContentSize(contentSize: IntSizeCompat) {
-        if (this.contentSize != contentSize) {
-            this.contentSize = contentSize
-            resetTileDecoder("contentSizeChanged")
+    fun setTileImageCache(tileImageCache: TileImageCache?) {
+        requiredMainThread()
+        if (tileImageCacheHelper.tileImageCache != tileImageCache) {
+            logger.d { "$module. tileImageCache=$tileImageCache. '$logKey'" }
+            tileImageCacheHelper.tileImageCache = tileImageCache
+        }
+    }
+
+    fun setDisabledTileImageCache(disabled: Boolean) {
+        requiredMainThread()
+        if (tileImageCacheHelper.disabled != disabled) {
+            logger.d { "$module. disabledTileImageCache=$disabled. '$logKey'" }
+            tileImageCacheHelper.disabled = disabled
+        }
+    }
+
+    fun setTileAnimationSpec(tileAnimationSpec: TileAnimationSpec) {
+        requiredMainThread()
+        if (this.tileAnimationSpec != tileAnimationSpec) {
+            logger.d { "$module. tileAnimationSpec=$tileAnimationSpec. '$logKey'" }
+            this.tileAnimationSpec = tileAnimationSpec
+            tileManager?.tileAnimationSpec = tileAnimationSpec
+        }
+    }
+
+    fun setPausedContinuousTransformTypes(@ContinuousTransformType pausedContinuousTransformTypes: Int) {
+        requiredMainThread()
+        if (this.pausedContinuousTransformTypes != pausedContinuousTransformTypes) {
+            logger.d {
+                val namesString = ContinuousTransformType.names(pausedContinuousTransformTypes)
+                    .joinToString(prefix = "[", postfix = "]")
+                "$module. pausedContinuousTransformTypes=$namesString. '$logKey'"
+            }
+            this.pausedContinuousTransformTypes = pausedContinuousTransformTypes
+            tileManager?.pausedContinuousTransformTypes = pausedContinuousTransformTypes
+        }
+    }
+
+    fun setDisabledBackgroundTiles(disabledBackgroundTiles: Boolean) {
+        requiredMainThread()
+        if (this.disabledBackgroundTiles != disabledBackgroundTiles) {
+            logger.d { "$module. disabledBackgroundTiles=$disabledBackgroundTiles. '$logKey'" }
+            this.disabledBackgroundTiles = disabledBackgroundTiles
+            tileManager?.disabledBackgroundTiles = disabledBackgroundTiles
+        }
+    }
+
+    fun setStopped(stopped: Boolean) {
+        requiredMainThread()
+        if (this.stopped != stopped) {
+            logger.d { "$module. stopped=$stopped. '$logKey'" }
+            this.stopped = stopped
+            val stoppedState = if (stopped) "stopped" else "started"
+            if (stopped) {
+                tileManager?.clean(stoppedState)
+            }
+            refreshReadyState(stoppedState)
+        }
+    }
+
+    fun setLifecycle(lifecycle: Lifecycle?) {
+        requiredMainThread()
+        if (this.lifecycle != lifecycle) {
+            this.lifecycle?.removeObserver(stoppedLifecycleObserver)
+            this.lifecycle = lifecycle
+            if (coroutineScope != null) {
+                lifecycle?.addObserver(stoppedLifecycleObserver)
+            }
+        }
+    }
+
+    fun setDisabledAutoStopWithLifecycle(disabled: Boolean) {
+        requiredMainThread()
+        if (this.disabledAutoStopWithLifecycle != disabled) {
+            logger.d { "$module. disabledAutoStopWithLifecycle=$disabled. '$logKey'" }
+            this.disabledAutoStopWithLifecycle = disabled
+            if (disabled) {
+                setStopped(false)
+            } else {
+                refreshStoppedState()
+            }
         }
     }
 
     fun setRegionDecoders(regionDecoders: List<RegionDecoder.Factory>) {
+        requiredMainThread()
         if (this.regionDecoders != regionDecoders) {
             this.regionDecoders = regionDecoders
             resetTileDecoder("regionDecodersChanged")
         }
     }
 
+
+    /* *************************************** Internal ***************************************** */
+
     fun onAttached() {
+        requiredMainThread()
         if (this.coroutineScope != null) return
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         this.coroutineScope = coroutineScope
 
+        coroutineScope.launch {
+            // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
+            // Container size animations cause frequent changes in v, so a delayed reset avoids this problem
+            @Suppress("OPT_IN_USAGE")
+            zoomableBridge.containerSizeFlow.debounce(80).collect {
+                updateContainerSize(it)
+            }
+        }
+        coroutineScope.launch {
+            zoomableBridge.contentSizeFlow.collect {
+                updateContentSize(it)
+            }
+        }
         coroutineScope.launch {
             zoomableBridge.transformFlow.collect {
                 refreshTiles(caller = "transformChanged")
@@ -297,11 +307,39 @@ class SubsamplingCore constructor(
     }
 
     fun onDetached() {
+        requiredMainThread()
         val coroutineScope = this.coroutineScope ?: return
         lifecycle?.removeObserver(stoppedLifecycleObserver)
         clean("setCoroutineScope")
         coroutineScope.cancel()
         this.coroutineScope = null
+    }
+
+    private fun updateContainerSize(containerSize: IntSizeCompat) {
+        val oldPreferredTileSize = preferredTileSize
+        val newPreferredTileSize = calculatePreferredTileSize(containerSize)
+        val checkPassed = checkNewPreferredTileSize(
+            oldPreferredTileSize = oldPreferredTileSize,
+            newPreferredTileSize = newPreferredTileSize
+        )
+        logger.d {
+            "$module. setContainerSize. preferredTileSize ${if (checkPassed) "changed" else "keep"}. " +
+                    "oldPreferredTileSize=${oldPreferredTileSize.toShortString()}, " +
+                    "newPreferredTileSize=${newPreferredTileSize.toShortString()}, " +
+                    "containerSize=${containerSize.toShortString()}. " +
+                    "'$logKey'"
+        }
+        if (checkPassed) {
+            this.preferredTileSize = newPreferredTileSize
+            resetTileManager("preferredTileSizeChanged")
+        }
+    }
+
+    private fun updateContentSize(contentSize: IntSizeCompat) {
+        if (this.contentSize != contentSize) {
+            this.contentSize = contentSize
+            resetTileDecoder("contentSizeChanged")
+        }
     }
 
     private fun resetTileDecoder(caller: String) {
@@ -474,7 +512,7 @@ class SubsamplingCore constructor(
         val lifecycle = lifecycle
         if (lifecycle != null) {
             val stopped = !lifecycle.currentState.isAtLeast(STARTED)
-            this@SubsamplingCore.stopped = stopped
+            this@SubsamplingCore.setStopped(stopped)
         }
     }
 

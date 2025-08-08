@@ -185,7 +185,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         val subsamplingEngine = _subsamplingEngine ?: return
         val tileImageCacheState = subsamplingEngine.tileImageCacheState
         if (tileImageCacheState.value == null) {
-            tileImageCacheState.value = PicassoTileImageCache(Picasso.get())
+            subsamplingEngine.setTileImageCache(PicassoTileImageCache(Picasso.get()))
         }
 
         // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.

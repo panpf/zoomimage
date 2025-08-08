@@ -101,7 +101,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
             val subsamplingEngine = _subsamplingEngine ?: return@post
             val tileImageCacheState = subsamplingEngine.tileImageCacheState
             if (tileImageCacheState.value == null && sketch != null) {
-                tileImageCacheState.value = SketchTileImageCache(sketch)
+                subsamplingEngine.setTileImageCache(SketchTileImageCache(sketch))
             }
 
             val result = SketchUtils.getResult(this)

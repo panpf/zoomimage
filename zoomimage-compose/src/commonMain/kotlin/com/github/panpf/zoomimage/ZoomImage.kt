@@ -95,12 +95,13 @@ fun ZoomImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    zoomState.zoomable.contentScale = contentScale
-    zoomState.zoomable.alignment = alignment
-    zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
-    zoomState.zoomable.contentSize = remember(painter.intrinsicSize) {
+    zoomState.zoomable.setContentScale(contentScale)
+    zoomState.zoomable.setAlignment(alignment)
+    zoomState.zoomable.setLayoutDirection(LocalLayoutDirection.current)
+    val painterSize = remember(painter.intrinsicSize) {
         painter.intrinsicSize.round()
     }
+    zoomState.zoomable.setContentSize(painterSize)
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     BoxWithConstraints(modifier = modifier.mouseZoom(zoomState.zoomable)) {
@@ -115,7 +116,7 @@ fun ZoomImage(
             val height = with(density) { maxHeight.toPx() }.roundToInt()
             IntSize(width = width, height = height)
         }
-        zoomState.zoomable.containerSize = newContainerSize
+        zoomState.zoomable.setContainerSize(newContainerSize)
 
         BaseZoomImage(
             painter = painter,

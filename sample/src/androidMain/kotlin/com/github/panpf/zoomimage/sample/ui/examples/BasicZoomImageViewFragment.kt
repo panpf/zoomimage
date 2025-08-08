@@ -50,7 +50,7 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
 
     override fun createZoomImageView(context: Context): ZoomImageView {
         return ZoomImageView(context).apply {
-            subsampling.tileImageCacheState.value = SketchTileImageCache(sketch)
+            subsampling.setTileImageCache(SketchTileImageCache(sketch))
         }
     }
 

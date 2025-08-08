@@ -102,7 +102,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
             val subsamplingEngine = _subsamplingEngine ?: return@post
             val tileImageCacheState = subsamplingEngine.tileImageCacheState
             if (tileImageCacheState.value == null) {
-                tileImageCacheState.value = GlideTileImageCache(Glide.get(context))
+                subsamplingEngine.setTileImageCache(GlideTileImageCache(Glide.get(context)))
             }
 
             val coroutineScope = coroutineScope!!

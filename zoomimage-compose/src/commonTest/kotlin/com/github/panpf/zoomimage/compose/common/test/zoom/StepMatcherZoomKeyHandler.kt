@@ -33,8 +33,8 @@ class StepMatcherZoomKeyHandler {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                 }
@@ -128,8 +128,8 @@ class StepMatcherZoomKeyHandler {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                 }

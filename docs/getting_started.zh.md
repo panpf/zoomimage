@@ -150,6 +150,11 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 > [!TIP] 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 > 可以读取也可以设置的属性:
 
+只读属性：
+
+* `zoomable.containerSize: IntSize`: 当前 container 的大小
+* `zoomable.contentSize: IntSize`: 当前 content 的大小
+* `zoomable.contentOriginSize: IntSize`: 当前 content 的原始大小
 * `zoomable.contentScale: ContentScale`: content 的缩放方式，默认是 ContentScale.Fit
 * `zoomable.alignment: Alignment`: content 在 container 中的对齐方式，默认是 Alignment.TopStart
 * `zoomable.layoutDirection: LayoutDirection`: container 的布局方向，默认是 LayoutDirection.Ltr
@@ -158,7 +163,8 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
   ScalesCalculator.Dynamic
 * `zoomable.threeStepScale: Boolean`: 双击缩放时是否在 minScale、mediumScale 和 maxScale 之间循环缩放，默认是
   false
-* `zoomable.rubberBandScale: Boolean`: 是否开启橡皮筋效果，默认是 true
+* `zoomable.rubberBandScale: Boolean`: 缩放超出 minScale 或 maxScale 后是否使用橡皮筋效果，默认是
+  true
 * `zoomable.oneFingerScaleSpec: OneFingerScaleSpec`: 单指缩放配置，默认是 OneFingerScaleSpec.Default
 * `zoomable.animationSpec: ZoomAnimationSpec`: 缩放、偏移等动画配置，默认是 ZoomAnimationSpec.Default
 * `zoomable.limitOffsetWithinBaseVisibleRect: Boolean`: 是否将偏移限制在 contentBaseVisibleRect
@@ -173,28 +179,9 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * `zoomable.reverseMouseWheelScale: Boolean`: 是否反转鼠标滚轮的方向，默认是 false
 * `zoomable.mouseWheelScaleCalculator: MouseWheelScaleCalculator`: 鼠标滚轮缩放计算器，默认是
   MouseWheelScaleCalculator.Default
-* `subsampling.disabled: Boolean`: 是否禁用子采样功能
-* `subsampling.tileImageCache: TileImageCache?`: Tile 图块的内存缓存，默认为 null，集成图片加载器的组件会自动设置它
-* `subsampling.disabledTileImageCache: Boolean`: 是否禁用 Tile 图块的内存缓存，默认为 false
-* `subsampling.tileAnimationSpec: TileAnimationSpec`: 图块动画的配置，默认为
-  TileAnimationSpec.Default
-* `subsampling.pausedContinuousTransformTypes: Int`: 暂停加载图块的连续变换类型的配置，可以通过位或运算符组合多个类型，默认为
-  TileManager.DefaultPausedContinuousTransformType
-* `subsampling.disabledBackgroundTiles: Boolean`: 是否禁用背景图块，默认为 false
-* `subsampling.stopped: Boolean`: 是否停止加载图块，默认为 false
-* `subsampling.disabledAutoStopWithLifecycle: Boolean`: 是否禁用根据 Lifecycle 自动停止加载图块，默认为
-  false
-* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: 添加自定义的 RegionDecoder，默认为空列表
-* `subsampling.showTileBounds: Boolean`: 是否显示 Tile 的边界，默认为 false
-
-只能读取的属性：
-
-* `zoomable.containerSize: IntSize`: 当前 container 的大小
-* `zoomable.contentSize: IntSize`: 当前 content 的大小
-* `zoomable.contentOriginSize: IntSize`: 当前 content 的原始大小
-* `zoomable.transform.scale: ScaleFactor`: 当前缩放比例（baseTransform.scale * userTransform.scale）
-* `zoomable.baseTransform.scale: ScaleFactor`: 当前基础缩放比例，受 contentScale 和 alignment 参数影响
-* `zoomable.userTransform.scale: ScaleFactor`: 当前用户缩放比例，受 scale()、locate() 以及用户手势缩放、双击等操作影响
+* `zoomable.transform: Transform`: 当前变换状态（baseTransform + userTransform）
+* `zoomable.baseTransform: Transform`: 当前基础变换状态，受 contentScale 和 alignment 参数影响
+* `zoomable.userTransform: Transform`: 当前用户变换状态，受 scale()、locate() 以及用户手势缩放、双击等操作影响
 * `zoomable.minScale: Float`: 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
 * `zoomable.mediumScale: Float`: 中间缩放比例，用于双击缩放时的一个循环缩放比例
 * `zoomable.maxScale: Float`: 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
@@ -211,6 +198,18 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect 映射到原图上的区域
 * `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect 映射到原图上的区域
 * `zoomable.scrollEdge: ScrollEdge`: 当前偏移的边界状态
+
+* `subsampling.disabled: Boolean`: 是否禁用子采样功能
+* `subsampling.tileImageCache: TileImageCache?`: Tile 图块的内存缓存，默认为 null
+* `subsampling.disabledTileImageCache: Boolean`: 是否禁用 Tile 图块的内存缓存，默认为 false
+* `subsampling.tileAnimationSpec: TileAnimationSpec`: 图块动画配置，默认为 TileAnimationSpec.Default
+* `subsampling.pausedContinuousTransformTypes: Int`: 暂停加载图块的连续变换类型的配置
+* `subsampling.disabledBackgroundTiles: Boolean`: 是否禁用背景图块，默认为 false
+* `subsampling.stopped: Boolean`: 是否停止加载图块，默认为 false
+* `subsampling.disabledAutoStopWithLifecycle: Boolean`: 是否禁用根据 Lifecycle 自动停止加载图块，默认为
+  false
+* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: 添加自定义的 RegionDecoder，默认为空列表
+* `subsampling.showTileBounds: Boolean`: 是否显示 Tile 的边界，默认为 false
 * `subsampling.ready: Boolean`: 是否已经准备好了
 * `subsampling.imageInfo: ImageInfo`: 图片的尺寸、格式信息
 * `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: 磁贴网格大小映射表
@@ -219,8 +218,25 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * `subsampling.foregroundTiles: List<TileSnapshot>`: 当前前景图块列表
 * `subsampling.backgroundTiles: List<TileSnapshot>`: 当前背景图块列表
 
-可交互的方法：
+交互方法：
 
+* `zoomable.setReadMode(ReadMode?)`: 设置阅读模式配置
+* `zoomable.setScalesCalculator(ScalesCalculator)`: 设置 minScale、mediumScale 和 maxScale 的计算器
+* `zoomable.setThreeStepScale(Boolean)`: 设置双击缩放时是否在 minScale、mediumScale 和 maxScale
+  之间循环缩放
+* `zoomable.setRubberBandScale(Boolean)`: 设置缩放超出 minScale 或 maxScale 后是否使用橡皮筋效果
+* `zoomable.setOneFingerScaleSpec(OneFingerScaleSpec)`: 设置单指缩放配置
+* `zoomable.setAnimationSpec(ZoomAnimationSpec)`: 设置缩放、偏移等动画配置
+* `zoomable.setLimitOffsetWithinBaseVisibleRect(Boolean)`: 设置是否将偏移限制在
+  contentBaseVisibleRect 内
+* `zoomable.setContainerWhitespaceMultiple(Float)`: 设置基于容器尺寸的倍数为容器四周添加空白区域
+* `zoomable.setContainerWhitespace(ContainerWhitespace)`: 设置容器四周空白区域的配置，优先级高于
+  containerWhitespaceMultiple
+* `zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(Boolean)`: 设置是否在相同宽高比的
+  contentSize 改变时保持 transform 不变
+* `zoomable.setDisabledGestureTypes(Int)`: 设置禁用的手势类型，可以使用 GestureType 的位或操作来组合多个手势类型
+* `zoomable.setReverseMouseWheelScale(Boolean)`: 设置是否反转鼠标滚轮的方向
+* `zoomable.setMouseWheelScaleCalculator(MouseWheelScaleCalculator)`: 设置鼠标滚轮缩放计算器
 * `zoomable.scale()`: 缩放 content 到指定的倍数
 * `zoomable.scaleBy()`: 以乘法的方式增量缩放 content 指定的倍数
 * `zoomable.scaleByPlus()`: 以加法的方式增量缩放 content 指定的倍数
@@ -239,7 +255,19 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * `zoomable.sourceToDraw(Offset): Offset`: 将原图上的点转换为绘制时的点，原点是 container 的左上角
 * `zoomable.sourceToDraw(Rect): Rect`: 将原图上的矩形转换为绘制时的矩形，原点是 container 的左上角
 * `zoomable.canScroll(): Boolean`: 判断当前 content 在指定方向上是否可以滚动
-* `subsampling.setImage(): Boolean`: 设置子采样图片，返回是否成功，集成图片加载器的组件会自动设置设置子采样图片
+
+* `subsampling.setImage(SubsamplingImage?): Boolean`: 设置子采样图片，返回是否成功，集成图片加载器的组件会自动设置子采样图片
+* `subsampling.setDisabled(Boolean)`: 设置是否禁用子采样功能
+* `subsampling.setTileImageCache(TileImageCache?)`: 设置 Tile 图块的内存缓存，集成图片加载器的组件会自动设置它
+* `subsampling.setDisabledTileImageCache(Boolean)`: 设置是否禁用 Tile 图块的内存缓存
+* `subsampling.setTileAnimationSpec(TileAnimationSpec)`: 设置图块动画配置
+* `subsampling.setPausedContinuousTransformTypes(Int)`: 设置暂停加载图块的连续变换类型的配置，可以通过位或运算符组合多个类型，默认为
+  TileManager.DefaultPausedContinuousTransformType
+* `subsampling.setDisabledBackgroundTiles(Boolean)`: 设置是否禁用背景图块
+* `subsampling.setStopped(Boolean)`: 设置是否停止加载图块
+* `subsampling.setDisabledAutoStopWithLifecycle(Boolean)`: 设置是否禁用根据 Lifecycle 自动停止加载图块功能
+* `subsampling.setRegionDecoders(List<RegionDecoder.Factory>)`: 设置自定义的 RegionDecoder
+* `subsampling.setShowTileBounds(Boolean)`: 设置是否显示 Tile 的边界
 
 #### 监听属性变化
 

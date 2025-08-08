@@ -64,9 +64,33 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 
 > 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
+
+只读属性：
+
 * `zoomable.transform.rotation: Float`: 当前旋转角度（基础旋转角度 + 用户旋转角度）
 * `zoomable.baseTransform.rotation: Float`: 当前基础旋转角度，受 rotate() 方法影响
 * `zoomable.userTransform.rotation: Float`: 当前用户旋转角度，一直为 0
+* `zoomable.continuousTransformType: Int`: 当前正在进行的连续变换的类型
+* `zoomable.contentBaseDisplayRectF: Rect`: content 经过 baseTransform 变换后在 container 中的区域
+* `zoomable.contentBaseDisplayRect: IntRect`: content 经过 baseTransform 变换后在 container 中的区域
+* `zoomable.contentBaseVisibleRectF: Rect`: content 经过 baseTransform 变换后自身对用户可见的区域
+* `zoomable.contentBaseVisibleRect: IntRect`: content 经过 baseTransform 变换后自身对用户可见的区域
+* `zoomable.contentDisplayRectF: Rect`: content 经过 transform 变换后在 container 中的区域
+* `zoomable.contentDisplayRect: IntRect`: content 经过 transform 变换后在 container 中的区域
+* `zoomable.contentVisibleRectF: Rect`: content 经过 transform 变换后自身对用户可见的区域
+* `zoomable.contentVisibleRect: IntRect`: content 经过 transform 变换后自身对用户可见的区域
+* `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect 映射到原图上的区域
+* `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect 映射到原图上的区域
+
+交互方法：
+
+* `zoomable.rotate()`: 旋转 content 到指定的角度，角度只能是 90 的倍数
+* `zoomable.rotateBy()`: 以增量的方式旋转 content 指定的角度，角度只能是 90 的倍数
+* `zoomable.touchPointToContentPoint(): IntOffset`: 将触摸点转换为 content 上的点，原点是 content
+  的左上角
+* `zoomable.touchPointToContentPointF(): Offset`: 将触摸点转换为 content 上的点，原点是 content 的左上角
+* `zoomable.sourceToDraw(Offset): Offset`: 将原图上的点转换为绘制时的点，原点是 container 的左上角
+* `zoomable.sourceToDraw(Rect): Rect`: 将原图上的矩形转换为绘制时的矩形，原点是 container 的左上角
 
 #### 监听属性变化
 

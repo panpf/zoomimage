@@ -54,6 +54,7 @@ import com.github.panpf.zoomimage.glide.GlideTileImageCache
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
@@ -146,13 +147,14 @@ fun GlideZoomAsyncImage(
     // TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
-    zoomState.zoomable.contentScale = contentScale
-    zoomState.zoomable.alignment = alignment
-    zoomState.zoomable.layoutDirection = LocalLayoutDirection.current
+    zoomState.zoomable.setContentScale(contentScale)
+    zoomState.zoomable.setAlignment(alignment)
+    zoomState.zoomable.setLayoutDirection(LocalLayoutDirection.current)
 
     val context = LocalContext.current
     val glide = Glide.get(context)
-    zoomState.subsampling.tileImageCache = remember(glide) { GlideTileImageCache(glide) }
+    val tileImageCache = remember(glide) { GlideTileImageCache(glide) }
+    zoomState.subsampling.setTileImageCache(tileImageCache)
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
@@ -178,7 +180,6 @@ fun GlideZoomAsyncImage(
                             coroutineScope = coroutineScope,
                             glide = glide,
                             zoomState = zoomState,
-                            model = model
                         )
                     )
             },
@@ -214,7 +215,6 @@ private class ResetListener(
     private val coroutineScope: CoroutineScope,
     private val glide: Glide,
     private val zoomState: GlideZoomState,
-    private val model: Any?,
 ) : RequestListener<Drawable> {
 
     private val logger = zoomState.zoomable.logger
@@ -225,7 +225,9 @@ private class ResetListener(
         target: Target<Drawable>,
         isFirstResource: Boolean
     ): Boolean {
-        updateZoom(ready = false, resource = null, model)
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            updateZoom(ready = false, resource = null, model)
+        }
         return false
     }
 
@@ -236,11 +238,13 @@ private class ResetListener(
         dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
-        updateZoom(ready = true, resource = resource, model)
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            updateZoom(ready = true, resource = resource, model)
+        }
         return false
     }
 
-    private fun updateZoom(ready: Boolean, resource: Drawable?, model: Any?) {
+    private suspend fun updateZoom(ready: Boolean, resource: Drawable?, model: Any?) {
         val drawableSize = resource
             ?.let { IntSize(it.intrinsicWidth, it.intrinsicHeight) }
             ?.takeIf { it.isNotEmpty() }
@@ -249,25 +253,23 @@ private class ResetListener(
             val state = if (ready) "Ready" else "Failed"
             "GlideZoomAsyncImage. $state. contentSize=$drawableSize. model='$model'"
         }
-        zoomState.zoomable.contentSize = drawableSize
+        zoomState.zoomable.setContentSize(drawableSize)
 
         if (ready && model != null && resource != null) {
-            coroutineScope.launch {
-                val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
-                    it.generateImage(context, glide, model, resource)
+            val generateResult = zoomState.subsamplingImageGenerators.firstNotNullOfOrNull {
+                it.generateImage(context, glide, model, resource)
+            }
+            if (generateResult is SubsamplingImageGenerateResult.Success) {
+                zoomState.setSubsamplingImage(generateResult.subsamplingImage)
+            } else {
+                logger.d {
+                    val errorMessage =
+                        if (generateResult is SubsamplingImageGenerateResult.Error)
+                            generateResult.message else "unknown error"
+                    "GlideZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
+                            "model='$model', drawable=$resource"
                 }
-                if (generateResult is SubsamplingImageGenerateResult.Success) {
-                    zoomState.setSubsamplingImage(generateResult.subsamplingImage)
-                } else {
-                    logger.d {
-                        val errorMessage =
-                            if (generateResult is SubsamplingImageGenerateResult.Error)
-                                generateResult.message else "unknown error"
-                        "GlideZoomAsyncImage. setSubsamplingImage failed. $errorMessage. " +
-                                "model='$model', drawable=$resource"
-                    }
-                    zoomState.setSubsamplingImage(null as SubsamplingImage?)
-                }
+                zoomState.setSubsamplingImage(null as SubsamplingImage?)
             }
         } else {
             logger.v {

@@ -24,7 +24,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -137,9 +136,9 @@ open class ZoomImageView @JvmOverloads constructor(
         wrappedScaleType = initScaleType
 
         val zoomableEngine = ZoomableEngine(logger, view = this).apply {
-            contentScaleState.value = initScaleType.toContentScale()
-            alignmentState.value = initScaleType.toAlignment()
-            rtlLayoutDirectionState.value = view.layoutDirection == View.LAYOUT_DIRECTION_RTL
+            setContentScale(initScaleType.toContentScale())
+            setAlignment(initScaleType.toAlignment())
+            setRtlLayoutDirection(view.layoutDirection == LAYOUT_DIRECTION_RTL)
         }
         val subsamplingEngine = SubsamplingEngine(zoomableEngine)
 
@@ -215,7 +214,7 @@ open class ZoomImageView @JvmOverloads constructor(
                 val lifecycle =
                     view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
                 if (lifecycle != null) {
-                    _subsamplingEngine?.lifecycle = lifecycle
+                    _subsamplingEngine?.setLifecycle(lifecycle)
                 }
             }
         }
@@ -251,7 +250,7 @@ open class ZoomImageView @JvmOverloads constructor(
         try {
             if (array.hasValue(styleable.ZoomImageView_contentScale)) {
                 val contentScaleCode = array.getInt(styleable.ZoomImageView_contentScale, -1)
-                zoomable.contentScaleState.value = when (contentScaleCode) {
+                val contentScale = when (contentScaleCode) {
                     0 -> ContentScaleCompat.Crop
                     1 -> ContentScaleCompat.Fit
                     2 -> ContentScaleCompat.FillHeight
@@ -261,11 +260,12 @@ open class ZoomImageView @JvmOverloads constructor(
                     6 -> ContentScaleCompat.FillBounds
                     else -> throw IllegalArgumentException("Unknown contentScaleCode: $contentScaleCode")
                 }
+                zoomable.setContentScale(contentScale)
             }
 
             if (array.hasValue(styleable.ZoomImageView_alignment)) {
                 val alignmentCode = array.getInt(styleable.ZoomImageView_alignment, -1)
-                zoomable.alignmentState.value = when (alignmentCode) {
+                val alignment = when (alignmentCode) {
                     0 -> AlignmentCompat.TopStart
                     1 -> AlignmentCompat.TopCenter
                     2 -> AlignmentCompat.TopEnd
@@ -277,23 +277,25 @@ open class ZoomImageView @JvmOverloads constructor(
                     8 -> AlignmentCompat.BottomEnd
                     else -> throw IllegalArgumentException("Unknown alignmentCode: $alignmentCode")
                 }
+                zoomable.setAlignment(alignment)
             }
 
             if (array.hasValue(styleable.ZoomImageView_animateScale)) {
                 val animateScale = array.getBoolean(styleable.ZoomImageView_animateScale, false)
-                zoomable.animationSpecState.value =
+                val animationSpec =
                     if (animateScale) ZoomAnimationSpec.Default else ZoomAnimationSpec.None
+                zoomable.setAnimationSpec(animationSpec)
             }
 
             if (array.hasValue(styleable.ZoomImageView_rubberBandScale)) {
                 val rubberBandScale =
                     array.getBoolean(styleable.ZoomImageView_rubberBandScale, false)
-                zoomable.rubberBandScaleState.value = rubberBandScale
+                zoomable.setRubberBandScale(rubberBandScale)
             }
 
             if (array.hasValue(styleable.ZoomImageView_threeStepScale)) {
                 val threeStepScale = array.getBoolean(styleable.ZoomImageView_threeStepScale, false)
-                zoomable.threeStepScaleState.value = threeStepScale
+                zoomable.setThreeStepScale(threeStepScale)
             }
 
             if (array.hasValue(styleable.ZoomImageView_limitOffsetWithinBaseVisibleRect)) {
@@ -301,44 +303,44 @@ open class ZoomImageView @JvmOverloads constructor(
                     styleable.ZoomImageView_limitOffsetWithinBaseVisibleRect,
                     false
                 )
-                zoomable.limitOffsetWithinBaseVisibleRectState.value =
-                    limitOffsetWithinBaseVisibleRect
+                zoomable.setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect)
             }
 
             if (array.hasValue(styleable.ZoomImageView_readMode)) {
                 val readModeCode = array.getInt(styleable.ZoomImageView_readMode, -1)
-                zoomable.readModeState.value = when (readModeCode) {
+                val readMode = when (readModeCode) {
                     0 -> ReadMode.Default
                     1 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_HORIZONTAL)
                     2 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_VERTICAL)
                     3 -> null
                     else -> throw IllegalArgumentException("Unknown readModeCode: $readModeCode")
                 }
+                zoomable.setReadMode(readMode)
             }
 
 
             if (array.hasValue(styleable.ZoomImageView_showTileBounds)) {
                 val showTileBounds = array.getBoolean(styleable.ZoomImageView_showTileBounds, false)
-                subsampling.showTileBoundsState.value = showTileBounds
+                subsampling.setShowTileBounds(showTileBounds)
             }
 
             if (array.hasValue(styleable.ZoomImageView_pausedContinuousTransformTypes)) {
                 val pausedContinuousTransformTypes =
                     array.getInt(styleable.ZoomImageView_pausedContinuousTransformTypes, 0)
-                subsampling.pausedContinuousTransformTypesState.value =
-                    pausedContinuousTransformTypes
+                subsampling.setPausedContinuousTransformTypes(pausedContinuousTransformTypes)
             }
 
             if (array.hasValue(styleable.ZoomImageView_disabledBackgroundTiles)) {
                 val disabledBackgroundTiles =
                     array.getBoolean(styleable.ZoomImageView_disabledBackgroundTiles, false)
-                subsampling.disabledBackgroundTilesState.value = disabledBackgroundTiles
+                subsampling.setDisabledBackgroundTiles(disabledBackgroundTiles)
             }
 
             if (array.hasValue(styleable.ZoomImageView_tileAnimation)) {
                 val tileAnimation = array.getBoolean(styleable.ZoomImageView_tileAnimation, false)
-                subsampling.tileAnimationSpecState.value =
+                val tileAnimationSpec =
                     if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
+                subsampling.setTileAnimationSpec(tileAnimationSpec)
             }
 
 
@@ -372,9 +374,11 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     private fun resetContentSize() {
-        _zoomableEngine?.contentSizeState?.value = drawable?.intrinsicSize()
+        val zoomableEngine = _zoomableEngine ?: return
+        val drawableSize = drawable?.intrinsicSize()
             ?.takeIf { it.isNotEmpty() }
             ?: IntSizeCompat.Zero
+        zoomableEngine.setContentSize(drawableSize)
     }
 
     private fun resetScrollBarHelper() {
@@ -412,8 +416,8 @@ open class ZoomImageView @JvmOverloads constructor(
         val zoomEngine = _zoomableEngine
         if (zoomEngine != null) {
             this.wrappedScaleType = scaleType
-            zoomEngine.contentScaleState.value = scaleType.toContentScale()
-            zoomEngine.alignmentState.value = scaleType.toAlignment()
+            zoomEngine.setContentScale(scaleType.toContentScale())
+            zoomEngine.setAlignment(scaleType.toAlignment())
         } else {
             super.setScaleType(scaleType)
         }
@@ -437,7 +441,7 @@ open class ZoomImageView @JvmOverloads constructor(
             height = height - paddingTop - paddingBottom
         )
         if (newContainerSize != oldContainerSize) {
-            zoomable.containerSizeState.value = newContainerSize
+            zoomable.setContainerSize(newContainerSize)
         }
     }
 

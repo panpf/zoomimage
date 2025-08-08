@@ -33,53 +33,67 @@ import kotlin.test.assertSame
 class SubsamplingEngineTest {
 
     @Test
-    fun testConstructor() {
+    fun testConstructor() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         assertSame(expected = zoomable, actual = subsampling.zoomableEngine)
         assertSame(expected = zoomable.logger, actual = subsampling.logger)
         assertSame(expected = zoomable.view, actual = subsampling.view)
     }
 
     @Test
-    fun testTileImageCache() {
+    fun testTileImageCache() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         assertEquals(expected = null, actual = subsampling.tileImageCacheState.value)
 
         val testTileImageCache = TestTileImageCache()
-        subsampling.tileImageCacheState.value = testTileImageCache
+        withContext(Dispatchers.Main) {
+            subsampling.setTileImageCache(testTileImageCache)
+        }
         assertSame(expected = testTileImageCache, actual = subsampling.tileImageCacheState.value)
     }
 
     @Test
-    fun testDisabledTileImageCache() {
+    fun testDisabledTileImageCache() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         assertEquals(expected = false, actual = subsampling.disabledTileImageCacheState.value)
 
-        subsampling.disabledTileImageCacheState.value = true
+        withContext(Dispatchers.Main) {
+            subsampling.setDisabledTileImageCache(true)
+        }
         assertEquals(expected = true, actual = subsampling.disabledTileImageCacheState.value)
     }
 
     @Test
-    fun testTileAnimationSpec() {
+    fun testTileAnimationSpec() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         assertEquals(
             expected = TileAnimationSpec.Default,
             actual = subsampling.tileAnimationSpecState.value
         )
 
-        subsampling.tileAnimationSpecState.value = TileAnimationSpec.None
+        withContext(Dispatchers.Main) {
+            subsampling.setTileAnimationSpec(TileAnimationSpec.None)
+        }
         assertEquals(
             expected = TileAnimationSpec.None,
             actual = subsampling.tileAnimationSpecState.value
@@ -87,18 +101,23 @@ class SubsamplingEngineTest {
     }
 
     @Test
-    fun testPausedContinuousTransformTypes() {
+    fun testPausedContinuousTransformTypes() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         assertEquals(
             expected = TileManager.DefaultPausedContinuousTransformTypes,
             actual = subsampling.pausedContinuousTransformTypesState.value
         )
 
-        subsampling.pausedContinuousTransformTypesState.value =
-            ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+        withContext(Dispatchers.Main) {
+            subsampling.setPausedContinuousTransformTypes(
+                ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+            )
+        }
         assertEquals(
             expected = ContinuousTransformType.GESTURE or ContinuousTransformType.FLING,
             actual = subsampling.pausedContinuousTransformTypesState.value
@@ -106,14 +125,18 @@ class SubsamplingEngineTest {
     }
 
     @Test
-    fun testDisabledBackgroundTiles() {
+    fun testDisabledBackgroundTiles() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         assertEquals(expected = false, actual = subsampling.disabledBackgroundTilesState.value)
 
-        subsampling.disabledBackgroundTilesState.value = true
+        withContext(Dispatchers.Main) {
+            subsampling.setDisabledBackgroundTiles(true)
+        }
         assertEquals(expected = true, actual = subsampling.disabledBackgroundTilesState.value)
     }
 
@@ -128,10 +151,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
@@ -147,7 +176,9 @@ class SubsamplingEngineTest {
                 actual = subsampling.foregroundTilesState.value.any { it.state != TileState.STATE_NONE },
             )
 
-            subsampling.stoppedState.value = true
+            withContext(Dispatchers.Main) {
+                subsampling.setStopped(true)
+            }
             Thread.sleep(2000)
             delayUntil(2000) { !subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(expected = false, actual = subsampling.readyState.value)
@@ -161,14 +192,18 @@ class SubsamplingEngineTest {
     }
 
     @Test
-    fun testDisabledAutoStopWithLifecycle() {
+    fun testDisabledAutoStopWithLifecycle() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
-        subsampling.onAttachToWindow()
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         val lifecycle = TestLifecycle()
-        subsampling.lifecycle = lifecycle
+        withContext(Dispatchers.Main) {
+            subsampling.onAttachToWindow()
+            subsampling.setLifecycle(lifecycle)
+        }
 
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.RESUMED, actual = lifecycle.currentState)
@@ -179,7 +214,9 @@ class SubsamplingEngineTest {
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
 
 
-        lifecycle.currentState = Lifecycle.State.CREATED
+        withContext(Dispatchers.Main) {
+            lifecycle.currentState = Lifecycle.State.CREATED
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(
@@ -188,7 +225,9 @@ class SubsamplingEngineTest {
         )
         assertEquals(expected = true, actual = subsampling.stoppedState.value)
 
-        lifecycle.currentState = Lifecycle.State.STARTED
+        withContext(Dispatchers.Main) {
+            lifecycle.currentState = Lifecycle.State.STARTED
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(
@@ -198,28 +237,36 @@ class SubsamplingEngineTest {
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
 
         // disabledAutoStopWithLifecycle is true, so it will not stop when the lifecycle is stopped
-        subsampling.disabledAutoStopWithLifecycleState.value = true
-        lifecycle.currentState = Lifecycle.State.STARTED
+        withContext(Dispatchers.Main) {
+            subsampling.setDisabledAutoStopWithLifecycle(true)
+            lifecycle.currentState = Lifecycle.State.STARTED
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
 
-        lifecycle.currentState = Lifecycle.State.CREATED
+        withContext(Dispatchers.Main) {
+            lifecycle.currentState = Lifecycle.State.CREATED
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
 
-        lifecycle.currentState = Lifecycle.State.STARTED
+        withContext(Dispatchers.Main) {
+            lifecycle.currentState = Lifecycle.State.STARTED
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
 
 
-        subsampling.disabledAutoStopWithLifecycleState.value = false
-        lifecycle.currentState = Lifecycle.State.CREATED
+        withContext(Dispatchers.Main) {
+            subsampling.setDisabledAutoStopWithLifecycle(false)
+            lifecycle.currentState = Lifecycle.State.CREATED
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(
@@ -228,21 +275,27 @@ class SubsamplingEngineTest {
         )
         assertEquals(expected = true, actual = subsampling.stoppedState.value)
 
-        subsampling.disabledAutoStopWithLifecycleState.value = true
+        withContext(Dispatchers.Main) {
+            subsampling.setDisabledAutoStopWithLifecycle(true)
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
 
-        subsampling.disabledAutoStopWithLifecycleState.value = true
-        subsampling.stoppedState.value = true
-        lifecycle.currentState = Lifecycle.State.STARTED
+        withContext(Dispatchers.Main) {
+            subsampling.setDisabledAutoStopWithLifecycle(true)
+            subsampling.setStopped(true)
+            lifecycle.currentState = Lifecycle.State.STARTED
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = true, actual = subsampling.stoppedState.value)
 
-        subsampling.disabledAutoStopWithLifecycleState.value = false
+        withContext(Dispatchers.Main) {
+            subsampling.setDisabledAutoStopWithLifecycle(false)
+        }
         Thread.sleep(100)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(
@@ -253,14 +306,18 @@ class SubsamplingEngineTest {
     }
 
     @Test
-    fun testShowTileBounds() {
+    fun testShowTileBounds() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        val subsampling = SubsamplingEngine(zoomable)
+        val subsampling = withContext(Dispatchers.Main) {
+            SubsamplingEngine(zoomable)
+        }
         assertEquals(expected = false, actual = subsampling.showTileBoundsState.value)
 
-        subsampling.showTileBoundsState.value = true
+        withContext(Dispatchers.Main) {
+            subsampling.setShowTileBounds(true)
+        }
         assertEquals(expected = true, actual = subsampling.showTileBoundsState.value)
     }
 
@@ -276,7 +333,9 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            val subsampling = SubsamplingEngine(zoomable)
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
             Thread.sleep(500)
             assertEquals(expected = null, actual = subsampling.imageInfoState.value)
         }
@@ -291,8 +350,12 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = null, actual = subsampling.imageInfoState.value)
@@ -308,10 +371,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(
@@ -333,7 +402,9 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            val subsampling = SubsamplingEngine(zoomable)
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
             Thread.sleep(500)
             assertEquals(
                 expected = "{}",
@@ -351,8 +422,12 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(
@@ -371,10 +446,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(
@@ -396,7 +477,9 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            val subsampling = SubsamplingEngine(zoomable)
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
             Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
@@ -412,8 +495,12 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
@@ -429,10 +516,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(expected = true, actual = subsampling.readyState.value)
@@ -448,11 +541,17 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
-            subsampling.lifecycle = TestLifecycle(Lifecycle.State.CREATED)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                subsampling.setLifecycle(TestLifecycle(Lifecycle.State.CREATED))
+            }
             Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
@@ -471,10 +570,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
@@ -494,10 +599,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(20f, animated = false)
@@ -520,10 +631,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             delayUntil(2000) { subsampling.readyState.value }
             assertEquals(
@@ -543,10 +660,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
@@ -570,10 +693,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(20f, animated = false)
@@ -599,10 +728,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             Thread.sleep(1000)
             assertEquals(
@@ -625,10 +760,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
@@ -655,10 +796,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
@@ -688,10 +835,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
@@ -713,7 +866,9 @@ class SubsamplingEngineTest {
                 actual = subsampling.imageInfoState.value.toString()
             )
 
-            subsampling.setImage(null as ImageSource?)
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(null as ImageSource?)
+            }
             Thread.sleep(1000)
             assertEquals(
                 expected = "{}",
@@ -741,11 +896,17 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
                 .apply { subsamplingHolder = this }
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
@@ -791,10 +952,16 @@ class SubsamplingEngineTest {
                 }
             }
             val zoomable = ZoomableEngine(Logger("Test", level = Logger.Level.Debug), imageView)
-            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
-            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
-            val subsampling = SubsamplingEngine(zoomable)
-            subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            withContext(Dispatchers.Main) {
+                zoomable.setContainerSize(IntSizeCompat(516, 516))
+                zoomable.setContentSize(IntSizeCompat(86, 1522))
+            }
+            val subsampling = withContext(Dispatchers.Main) {
+                SubsamplingEngine(zoomable)
+            }
+            withContext(Dispatchers.Main) {
+                subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+            }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
@@ -805,13 +972,17 @@ class SubsamplingEngineTest {
             assertNotNull(subsampling.subsamplingImage)
             assertEquals(expected = 48, actual = subsampling.foregroundTilesState.value.size)
 
-            subsampling.disabledState.value = true
+            withContext(Dispatchers.Main) {
+                subsampling.setDisabled(true)
+            }
             Thread.sleep(2000)
             assertEquals(expected = true, actual = subsampling.disabledState.value)
             assertNull(subsampling.subsamplingImage)
             assertEquals(expected = 0, actual = subsampling.foregroundTilesState.value.size)
 
-            subsampling.disabledState.value = false
+            withContext(Dispatchers.Main) {
+                subsampling.setDisabled(false)
+            }
             Thread.sleep(2000)
             assertEquals(expected = false, actual = subsampling.disabledState.value)
             assertNotNull(subsampling.subsamplingImage)

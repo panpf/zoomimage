@@ -45,12 +45,8 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScrollEdge
 import com.github.panpf.zoomimage.zoom.internal.ZoomableCore
 import com.github.panpf.zoomimage.zoom.name
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 /**
  * Engines that control scale, pan, rotation
@@ -60,7 +56,6 @@ import kotlinx.coroutines.launch
 @Suppress("RedundantConstructorKeyword")
 class ZoomableEngine constructor(val logger: Logger, val view: View) {
 
-    private var coroutineScope: CoroutineScope? = null
     private val zoomableCore = ZoomableCore(
         logger = logger,
         module = "ZoomableEngine",
@@ -91,161 +86,180 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
     )
 
 
-    /* *********************************** Properties initialized by the component ****************************** */
+    /* *********************************** Configured properties ****************************** */
+
+    private val _containerSizeState: MutableStateFlow<IntSizeCompat> =
+        MutableStateFlow(value = zoomableCore.containerSize)
+    private val _contentSizeState: MutableStateFlow<IntSizeCompat> =
+        MutableStateFlow(value = zoomableCore.contentSize)
+    private val _contentOriginSizeState: MutableStateFlow<IntSizeCompat> =
+        MutableStateFlow(value = zoomableCore.contentOriginSize)
+    private val _contentScaleState: MutableStateFlow<ContentScaleCompat> =
+        MutableStateFlow(value = zoomableCore.contentScale)
+    private val _alignmentState: MutableStateFlow<AlignmentCompat> =
+        MutableStateFlow(value = zoomableCore.alignment)
+    private val _rtlLayoutDirectionState: MutableStateFlow<Boolean> =
+        MutableStateFlow(value = zoomableCore.rtlLayoutDirection)
+    private val _readModeState: MutableStateFlow<ReadMode?> =
+        MutableStateFlow(value = zoomableCore.readMode)
+    private val _scalesCalculatorState: MutableStateFlow<ScalesCalculator> =
+        MutableStateFlow(value = zoomableCore.scalesCalculator)
+    private val _threeStepScaleState: MutableStateFlow<Boolean> =
+        MutableStateFlow(value = zoomableCore.threeStepScale)
+    private val _rubberBandScaleState: MutableStateFlow<Boolean> =
+        MutableStateFlow(value = zoomableCore.rubberBandScale)
+    private val _oneFingerScaleSpecState: MutableStateFlow<OneFingerScaleSpec> =
+        MutableStateFlow(value = zoomableCore.oneFingerScaleSpec)
+    private val _animationSpecState: MutableStateFlow<ZoomAnimationSpec> =
+        MutableStateFlow(value = ZoomAnimationSpec.Default)
+    private val _limitOffsetWithinBaseVisibleRectState: MutableStateFlow<Boolean> =
+        MutableStateFlow(value = zoomableCore.limitOffsetWithinBaseVisibleRect)
+    private val _containerWhitespaceMultipleState: MutableStateFlow<Float> =
+        MutableStateFlow(value = zoomableCore.containerWhitespaceMultiple)
+    private val _containerWhitespaceState: MutableStateFlow<ContainerWhitespace> =
+        MutableStateFlow(value = zoomableCore.containerWhitespace)
+    private val _keepTransformWhenSameAspectRatioContentSizeChangedState: MutableStateFlow<Boolean> =
+        MutableStateFlow(value = zoomableCore.keepTransformWhenSameAspectRatioContentSizeChanged)
+    private val _disabledGestureTypesState: MutableStateFlow<Int> = MutableStateFlow(value = 0)
 
     /**
-     * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component
+     * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component, setup by the [ZoomImageView] component
      */
-    val containerSizeState: MutableStateFlow<IntSizeCompat> =
-        MutableStateFlow(zoomableCore.containerSize)
+    val containerSizeState: StateFlow<IntSizeCompat> = _containerSizeState
 
     /**
      * The size of the content, this is usually the size of the thumbnail Drawable, setup by the [ZoomImageView] component
      */
-    val contentSizeState: MutableStateFlow<IntSizeCompat> =
-        MutableStateFlow(zoomableCore.contentSize)
+    val contentSizeState: StateFlow<IntSizeCompat> = _contentSizeState
 
     /**
      * The original size of the content, it is usually set by [SubsamplingEngine] after parsing the original size of the image.
      * If not empty, it means that the subsampling function has been enabled
      */
-    val contentOriginSizeState: MutableStateFlow<IntSizeCompat> =
-        MutableStateFlow(zoomableCore.contentOriginSize)
-
-
-    /* *********************************** Properties configured by the user ****************************** */
+    val contentOriginSizeState: StateFlow<IntSizeCompat> = _contentOriginSizeState
 
     /**
      * The scale of the content, usually set by [ZoomImageView] component
      */
-    val contentScaleState: MutableStateFlow<ContentScaleCompat> =
-        MutableStateFlow(zoomableCore.contentScale)
+    val contentScaleState: StateFlow<ContentScaleCompat> = _contentScaleState
 
     /**
      * The alignment of the content, usually set by [ZoomImageView] component
      */
-    val alignmentState: MutableStateFlow<AlignmentCompat> = MutableStateFlow(zoomableCore.alignment)
+    val alignmentState: StateFlow<AlignmentCompat> = _alignmentState
 
     /**
      * The layout direction of the content, usually set by [ZoomImageView] component
      */
-    val rtlLayoutDirectionState: MutableStateFlow<Boolean> =
-        MutableStateFlow(zoomableCore.rtlLayoutDirection)
+    val rtlLayoutDirectionState: StateFlow<Boolean> = _rtlLayoutDirectionState
 
     /**
      * Setup whether to enable read mode and configure read mode
      */
-    val readModeState: MutableStateFlow<ReadMode?> = MutableStateFlow(zoomableCore.readMode)
+    val readModeState: StateFlow<ReadMode?> = _readModeState
 
     /**
      * Set up [ScalesCalculator] for custom calculations mediumScale and maxScale
      */
-    val scalesCalculatorState: MutableStateFlow<ScalesCalculator> =
-        MutableStateFlow(zoomableCore.scalesCalculator)
+    val scalesCalculatorState: StateFlow<ScalesCalculator> = _scalesCalculatorState
 
     /**
      * If true, the switchScale() method will cycle between minScale, mediumScale, maxScale,
      * otherwise only cycle between minScale and mediumScale
      */
-    val threeStepScaleState: MutableStateFlow<Boolean> =
-        MutableStateFlow(zoomableCore.threeStepScale)
+    val threeStepScaleState: StateFlow<Boolean> = _threeStepScaleState
 
     /**
      * If true, when the user zooms to the minimum or maximum zoom factor through a gesture,
      * continuing to zoom will have a rubber band effect, and when the hand is released,
      * it will rollback to the minimum or maximum zoom factor
      */
-    val rubberBandScaleState: MutableStateFlow<Boolean> =
-        MutableStateFlow(zoomableCore.rubberBandScale)
+    val rubberBandScaleState: StateFlow<Boolean> = _rubberBandScaleState
 
     /**
      * One finger double-click and hold the screen and slide up and down to scale the configuration
      */
-    val oneFingerScaleSpecState: MutableStateFlow<OneFingerScaleSpec> =
-        MutableStateFlow(zoomableCore.oneFingerScaleSpec)
+    val oneFingerScaleSpecState: StateFlow<OneFingerScaleSpec> = _oneFingerScaleSpecState
 
     /**
      * The animation configuration for the zoom animation
      */
-    val animationSpecState: MutableStateFlow<ZoomAnimationSpec> =
-        MutableStateFlow(ZoomAnimationSpec.Default)
+    val animationSpecState: StateFlow<ZoomAnimationSpec> = _animationSpecState
 
     /**
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
-    val limitOffsetWithinBaseVisibleRectState: MutableStateFlow<Boolean> =
-        MutableStateFlow(zoomableCore.limitOffsetWithinBaseVisibleRect)
+    val limitOffsetWithinBaseVisibleRectState: StateFlow<Boolean> =
+        _limitOffsetWithinBaseVisibleRectState
 
     /**
      * Add whitespace around containers based on container size
      */
-    var containerWhitespaceMultipleState: MutableStateFlow<Float> =
-        MutableStateFlow(zoomableCore.containerWhitespaceMultiple)
+    val containerWhitespaceMultipleState: StateFlow<Float> = _containerWhitespaceMultipleState
 
     /**
      * Add whitespace around containers, has higher priority than [containerWhitespaceMultipleState]
      */
-    var containerWhitespaceState: MutableStateFlow<ContainerWhitespace> =
-        MutableStateFlow(zoomableCore.containerWhitespace)
+    val containerWhitespaceState: StateFlow<ContainerWhitespace> = _containerWhitespaceState
 
     /**
      * Transform are keep when content with the same aspect ratio is switched
      */
-    var keepTransformWhenSameAspectRatioContentSizeChangedState: MutableStateFlow<Boolean> =
-        MutableStateFlow(zoomableCore.keepTransformWhenSameAspectRatioContentSizeChanged)
+    val keepTransformWhenSameAspectRatioContentSizeChangedState: StateFlow<Boolean> =
+        _keepTransformWhenSameAspectRatioContentSizeChangedState
 
     /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
      *
      * @see com.github.panpf.zoomimage.zoom.GestureType
      */
-    var disabledGestureTypesState: MutableStateFlow<Int> = MutableStateFlow(0)
+    val disabledGestureTypesState: StateFlow<Int> = _disabledGestureTypesState
 
 
-    /* *********************************** Properties readable by the user ******************************* */
+    /* *********************************** Transform status properties ******************************* */
 
     private val _transformState: MutableStateFlow<TransformCompat> =
-        MutableStateFlow(zoomableCore.transform)
+        MutableStateFlow(value = zoomableCore.transform)
     private val _baseTransformState: MutableStateFlow<TransformCompat> =
-        MutableStateFlow(zoomableCore.baseTransform)
+        MutableStateFlow(value = zoomableCore.baseTransform)
     private val _userTransformState: MutableStateFlow<TransformCompat> =
-        MutableStateFlow(zoomableCore.userTransform)
+        MutableStateFlow(value = zoomableCore.userTransform)
     private val _minScaleState: MutableStateFlow<Float> =
-        MutableStateFlow(zoomableCore.minScale)
+        MutableStateFlow(value = zoomableCore.minScale)
     private val _mediumScaleState: MutableStateFlow<Float> =
-        MutableStateFlow(zoomableCore.mediumScale)
+        MutableStateFlow(value = zoomableCore.mediumScale)
     private val _maxScaleState: MutableStateFlow<Float> =
-        MutableStateFlow(zoomableCore.maxScale)
+        MutableStateFlow(value = zoomableCore.maxScale)
     private val _contentBaseDisplayRectFState: MutableStateFlow<RectCompat> =
-        MutableStateFlow(zoomableCore.contentBaseDisplayRect)
+        MutableStateFlow(value = zoomableCore.contentBaseDisplayRect)
     private val _contentBaseDisplayRectState: MutableStateFlow<IntRectCompat> =
-        MutableStateFlow(zoomableCore.contentBaseDisplayRect.round())
+        MutableStateFlow(value = zoomableCore.contentBaseDisplayRect.round())
     private val _contentBaseVisibleRectFState: MutableStateFlow<RectCompat> =
-        MutableStateFlow(zoomableCore.contentBaseVisibleRect)
+        MutableStateFlow(value = zoomableCore.contentBaseVisibleRect)
     private val _contentBaseVisibleRectState: MutableStateFlow<IntRectCompat> =
-        MutableStateFlow(zoomableCore.contentBaseVisibleRect.round())
+        MutableStateFlow(value = zoomableCore.contentBaseVisibleRect.round())
     private val _contentDisplayRectFState: MutableStateFlow<RectCompat> =
-        MutableStateFlow(zoomableCore.contentDisplayRect)
+        MutableStateFlow(value = zoomableCore.contentDisplayRect)
     private val _contentDisplayRectState: MutableStateFlow<IntRectCompat> =
-        MutableStateFlow(zoomableCore.contentDisplayRect.round())
+        MutableStateFlow(value = zoomableCore.contentDisplayRect.round())
     private val _contentVisibleRectFState: MutableStateFlow<RectCompat> =
-        MutableStateFlow(zoomableCore.contentVisibleRect)
+        MutableStateFlow(value = zoomableCore.contentVisibleRect)
     private val _contentVisibleRectState: MutableStateFlow<IntRectCompat> =
-        MutableStateFlow(zoomableCore.contentVisibleRect.round())
+        MutableStateFlow(value = zoomableCore.contentVisibleRect.round())
     private val _sourceScaleFactor: MutableStateFlow<ScaleFactorCompat> =
-        MutableStateFlow(zoomableCore.sourceScaleFactor)
+        MutableStateFlow(value = zoomableCore.sourceScaleFactor)
     private val _sourceVisibleRectFState: MutableStateFlow<RectCompat> =
-        MutableStateFlow(zoomableCore.sourceVisibleRect)
+        MutableStateFlow(value = zoomableCore.sourceVisibleRect)
     private val _sourceVisibleRectState: MutableStateFlow<IntRectCompat> =
-        MutableStateFlow(zoomableCore.sourceVisibleRect.round())
+        MutableStateFlow(value = zoomableCore.sourceVisibleRect.round())
     private val _userOffsetBoundsRectFState: MutableStateFlow<RectCompat> =
-        MutableStateFlow(zoomableCore.userOffsetBoundsRect)
+        MutableStateFlow(value = zoomableCore.userOffsetBoundsRect)
     private val _userOffsetBoundsRectState: MutableStateFlow<IntRectCompat> =
-        MutableStateFlow(zoomableCore.userOffsetBoundsRect.round())
+        MutableStateFlow(value = zoomableCore.userOffsetBoundsRect.round())
     private val _scrollEdgeState: MutableStateFlow<ScrollEdge> =
-        MutableStateFlow(zoomableCore.scrollEdge)
+        MutableStateFlow(value = zoomableCore.scrollEdge)
     private val _continuousTransformTypeState: MutableStateFlow<Int> =
-        MutableStateFlow(zoomableCore.continuousTransformType)
+        MutableStateFlow(value = zoomableCore.continuousTransformType)
 
     /**
      * Final transformation, include the final scale, offset, rotation,
@@ -377,6 +391,152 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         if (view.isAttachedToWindow) {
             onAttachToWindow()
         }
+    }
+
+
+    /* *********************************** Interactive with component ******************************* */
+
+    /**
+     * Set the container size, this is usually the size of the [ZoomImageView] component, setup by the [ZoomImageView] component
+     */
+    fun setContainerSize(containerSize: IntSizeCompat) {
+        _containerSizeState.value = containerSize
+        zoomableCore.setContainerSize(containerSize)
+    }
+
+    /**
+     * Set the content size, this is usually the size of the thumbnail Drawable, setup by the [ZoomImageView] component
+     */
+    fun setContentSize(contentSize: IntSizeCompat) {
+        _contentSizeState.value = contentSize
+        zoomableCore.setContentSize(contentSize)
+    }
+
+    /**
+     * Set the original content size, it is usually set by [SubsamplingEngine] after parsing the original size of the image.
+     */
+    fun setContentOriginSize(contentOriginSize: IntSizeCompat) {
+        _contentOriginSizeState.value = contentOriginSize
+        zoomableCore.setContentOriginSize(contentOriginSize)
+    }
+
+    /**
+     * Set the content scale, usually set by ZoomImage component.
+     */
+    fun setContentScale(contentScale: ContentScaleCompat) {
+        _contentScaleState.value = contentScale
+        zoomableCore.setContentScale(contentScale)
+    }
+
+    /**
+     * Set the content alignment, usually set by ZoomImage component.
+     */
+    fun setAlignment(alignment: AlignmentCompat) {
+        _alignmentState.value = alignment
+        zoomableCore.setAlignment(alignment)
+    }
+
+    /**
+     * Set the layout direction of the content, usually set by ZoomImage component.
+     */
+    fun setRtlLayoutDirection(rtlLayoutDirection: Boolean) {
+        _rtlLayoutDirectionState.value = rtlLayoutDirection
+        zoomableCore.setRtlLayoutDirection(rtlLayoutDirection)
+    }
+
+
+    /* *********************************** Interactive with user ******************************* */
+
+    /**
+     * Setup whether to enable read mode and configure read mode
+     */
+    fun setReadMode(readMode: ReadMode?) {
+        _readModeState.value = readMode
+        zoomableCore.setReadMode(readMode)
+    }
+
+    /**
+     * Setup [ScalesCalculator] for custom calculations mediumScale and maxScale
+     */
+    fun setScalesCalculator(scalesCalculator: ScalesCalculator) {
+        _scalesCalculatorState.value = scalesCalculator
+        zoomableCore.setScalesCalculator(scalesCalculator)
+    }
+
+    /**
+     * Setup whether to enable three-step scaling. After turning on,
+     * it will switch cyclically between [minScaleState], [mediumScaleState], and [maxScaleState]
+     */
+    fun setThreeStepScale(threeStepScale: Boolean) {
+        _threeStepScaleState.value = threeStepScale
+        zoomableCore.setThreeStepScale(threeStepScale)
+    }
+
+    /**
+     * Setup whether to enable the rubber band zoom effect.
+     * When the user zooms to the minimum or maximum scaling factor through gestures,
+     * continuing to zoom will have a rubber band effect
+     */
+    fun setRubberBandScale(rubberBandScale: Boolean) {
+        _rubberBandScaleState.value = rubberBandScale
+        zoomableCore.setRubberBandScale(rubberBandScale)
+    }
+
+    /**
+     * Setup one finger scale configuration
+     */
+    fun setOneFingerScaleSpec(oneFingerScaleSpec: OneFingerScaleSpec) {
+        _oneFingerScaleSpecState.value = oneFingerScaleSpec
+        zoomableCore.setOneFingerScaleSpec(oneFingerScaleSpec)
+    }
+
+    /**
+     * Setup the configuration of the transformation animation
+     */
+    fun setAnimationSpec(animationSpec: ZoomAnimationSpec) {
+        _animationSpecState.value = animationSpec
+        zoomableCore.setAnimationSpec(animationSpec)
+    }
+
+    /**
+     * Setup whether to limit the offset of the user's pan to within the base visible rect
+     */
+    fun setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect: Boolean) {
+        _limitOffsetWithinBaseVisibleRectState.value = limitOffsetWithinBaseVisibleRect
+        zoomableCore.setLimitOffsetWithinBaseVisibleRect(limitOffsetWithinBaseVisibleRect)
+    }
+
+    /**
+     * Setup add whitespace around containers based on container size
+     */
+    fun setContainerWhitespaceMultiple(containerWhitespaceMultiple: Float) {
+        _containerWhitespaceMultipleState.value = containerWhitespaceMultiple
+        zoomableCore.setContainerWhitespaceMultiple(containerWhitespaceMultiple)
+    }
+
+    /**
+     * Setup add whitespace around containers, has higher priority than [containerWhitespaceMultipleState]
+     */
+    fun setContainerWhitespace(containerWhitespace: ContainerWhitespace) {
+        _containerWhitespaceState.value = containerWhitespace
+        zoomableCore.setContainerWhitespace(containerWhitespace)
+    }
+
+    /**
+     * Setup whether transform are keep when content with the same aspect ratio is switched
+     */
+    fun setKeepTransformWhenSameAspectRatioContentSizeChanged(keepTransform: Boolean) {
+        _keepTransformWhenSameAspectRatioContentSizeChangedState.value = keepTransform
+        zoomableCore.setKeepTransformWhenSameAspectRatioContentSizeChanged(keepTransform)
+    }
+
+    /**
+     * Setup disabled gesture types. Allow multiple types to be combined through the 'and' operator
+     *
+     * @see GestureType
+     */
+    fun setDisabledGestureTypes(disabledGestureTypes: Int) {
+        _disabledGestureTypesState.value = disabledGestureTypes
     }
 
 
@@ -570,113 +730,21 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         direction = direction
     )
 
+    /**
+     * Force reset the transform state
+     */
+    fun reset() = zoomableCore.reset(caller = "fromUser", force = true)
+
 
     /* *************************************** Internal ***************************************** */
 
     fun onAttachToWindow() {
-        val coroutineScope = this.coroutineScope
-        if (coroutineScope != null) return
-
-        val newCoroutineScope = CoroutineScope(Dispatchers.Main)
-        this.coroutineScope = newCoroutineScope
-
-        bindProperties(newCoroutineScope)
+        // ...
     }
 
     fun onDetachFromWindow() {
-        val coroutineScope = this.coroutineScope ?: return
-
-        coroutineScope.cancel("onDetachFromWindow")
-        this.coroutineScope = null
+        // ...
     }
-
-    private fun bindProperties(coroutineScope: CoroutineScope) {
-        /*
-         * Must be immediate, otherwise the user will see the image move quickly from the top to the center
-         */
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            containerSizeState.collect {
-                zoomableCore.setContainerSize(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            contentSizeState.collect {
-                zoomableCore.setContentSize(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            contentOriginSizeState.collect {
-                zoomableCore.setContentOriginSize(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            contentScaleState.collect {
-                zoomableCore.setContentScale(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            alignmentState.collect {
-                zoomableCore.setAlignment(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            rtlLayoutDirectionState.collect {
-                zoomableCore.setRtlLayoutDirection(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            readModeState.collect {
-                zoomableCore.setReadMode(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            scalesCalculatorState.collect {
-                zoomableCore.setScalesCalculator(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            threeStepScaleState.collect {
-                zoomableCore.setThreeStepScale(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            rubberBandScaleState.collect {
-                zoomableCore.setRubberBandScale(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            oneFingerScaleSpecState.collect {
-                zoomableCore.setOneFingerScaleSpec(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            animationSpecState.collect {
-                zoomableCore.setAnimationSpec(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            limitOffsetWithinBaseVisibleRectState.collect {
-                zoomableCore.setLimitOffsetWithinBaseVisibleRect(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            containerWhitespaceMultipleState.collect {
-                zoomableCore.setContainerWhitespaceMultiple(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            containerWhitespaceState.collect {
-                zoomableCore.setContainerWhitespace(it)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            keepTransformWhenSameAspectRatioContentSizeChangedState.collect {
-                zoomableCore.setKeepTransformWhenSameAspectRatioContentSizeChanged(it)
-            }
-        }
-    }
-
-    suspend fun reset() = zoomableCore.reset(caller = "fromUser", force = true)
 
     internal suspend fun stopAllAnimation(caller: String) = zoomableCore.stopAllAnimation(caller)
 

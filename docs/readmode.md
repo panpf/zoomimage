@@ -21,7 +21,7 @@ content of the long text image
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.readMode = ReadMode.Default
+zoomState.zoomable.setReadMode(ReadMode.Default)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",

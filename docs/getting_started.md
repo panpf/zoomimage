@@ -60,7 +60,7 @@ Compose multiplatform：
 val zoomState: ZoomState by rememberZoomState()
 val imageSource = remember {
     val resUri = Res.getUri("files/huge_world.jpeg")
-  ImageSource.fromComposeResource(resUri)
+    ImageSource.fromComposeResource(resUri)
 }
 zoomState.setSubsamplingImage(imageSource)
 ZoomImage(
@@ -163,8 +163,11 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 > [!TIP] Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
 > suffixed with State compared to the compose version
 
-Properties that can be read or set:
+Readable properties:
 
+* `zoomable.containerSize: IntSize`: The size of the container that holds the content
+* `zoomable.contentSize: IntSize`: The size of the content, usually Painter.intrinsicSize.round()
+* `zoomable.contentOriginSize: IntSize`: The original size of the content
 * `zoomable.contentScale: ContentScale`: The default scaling method of content is ContentScale.Fit
 * `zoomable.alignment: Alignment`: The alignment of content in container is Alignment.TopStart by
   default
@@ -196,36 +199,11 @@ Properties that can be read or set:
   the default is false
 * `zoomable.mouseWheelScaleCalculator: MouseWheelScaleCalculator`: Mouse wheel zoom calculator, the
   default is MouseWheelScaleCalculator.Default
-* `subsampling.disabled: Boolean`: Whether to disable subsampling function
-* `subsampling.tileImageCache: TileImageCache?`: The memory cache of Tile tile is null by default.
-  The components that integrate the image loader will automatically set it.
-* `subsampling.disabledTileImageCache: Boolean`: Whether to disable the memory cache of Tile tile,
-  default to false
-* `subsampling.tileAnimationSpec: TileAnimationSpec`: The configuration of tile animation is default
-  to TileAnimationSpec.Default
-* `subsampling.pausedContinuousTransformTypes: Int`: Pauses the configuration of continuous
-  transformation types for loading tiles. Multiple types can be combined by bits or operators. The
-  default is TileManager.DefaultPausedContinuousTransformType
-* `subsampling.disabledBackgroundTiles: Boolean`: Whether to disable background tile, default to
-  false
-* `subsampling.stopped: Boolean`: Whether to stop loading tiles, default to false
-* `subsampling.disabledAutoStopWithLifecycle: Boolean`: Whether to disable automatic stop loading of
-  tiles based on Lifecycle, default to false
-* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: Add a custom RegionDecoder, default to
-  an empty list
-* `subsampling.showTileBounds: Boolean`: Whether to display the boundary of Tile, default to false
-
-Readable properties:
-
-* `zoomable.containerSize: IntSize`: The size of the container that holds the content
-* `zoomable.contentSize: IntSize`: The size of the content, usually Painter.intrinsicSize.round()
-* `zoomable.contentOriginSize: IntSize`: The original size of the content
-* `zoomable.transform.scale: ScaleFactor`: Current scaling (baseTransform.scale *
-  userTransform.scale)
-* `zoomable.baseTransform.scale: ScaleFactor`: The current underlying scale, affected by the
-  contentScale and alignment parameter
-* `zoomable.userTransform.scale: ScaleFactor`: The current user scaling factor is affected by
-  scale(), locate(), user gesture scale, double-click and other operations
+* `zoomable.transform: Transform`:Current transform status (baseTransform + userTransform)
+* `zoomable.baseTransform: Transform`: The current basic transformation state is affected by
+  contentScale and alignment parameters
+* `zoomable.userTransform: Transform`: The current user's transformation status is affected by
+  scale(), location(), user gesture scaling, double-clicking and other operations
 * `zoomable.minScale: Float`: Minimum scale factor, for limits the final scale factor, and as a
   target value for one of when switch scale
 * `zoomable.mediumScale: Float`: Medium scale factor, only as a target value for one of when switch
@@ -254,6 +232,23 @@ Readable properties:
 * `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect maps to the area on the original image
 * `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect maps to the area on the original image
 * `zoomable.scrollEdge: ScrollEdge`: Edge state for the current offset
+
+* `subsampling.disabled: Boolean`: Whether to disable subsampling function
+* `subsampling.tileImageCache: TileImageCache?`: The memory cache of Tile tile is null by default.
+* `subsampling.disabledTileImageCache: Boolean`: Whether to disable the memory cache of Tile tile,
+  default to false
+* `subsampling.tileAnimationSpec: TileAnimationSpec`: The configuration of tile animation is default
+  to TileAnimationSpec.Default
+* `subsampling.pausedContinuousTransformTypes: Int`: Pauses the configuration of continuous
+  transformation types for loading tiles
+* `subsampling.disabledBackgroundTiles: Boolean`: Whether to disable background tile, default to
+  false
+* `subsampling.stopped: Boolean`: Whether to stop loading tiles, default to false
+* `subsampling.disabledAutoStopWithLifecycle: Boolean`: Whether to disable automatic stop loading of
+  tiles based on Lifecycle, default to false
+* `subsampling.regionDecoders: List<RegionDecoder.Factory>`: Add a custom RegionDecoder, default to
+  an empty list
+* `subsampling.showTileBounds: Boolean`: Whether to display the boundary of Tile, default to false
 * `subsampling.ready: Boolean`: Whether the image is ready for subsampling
 * `subsampling.imageInfo: ImageInfo`: The information of the image, including width, height, format,
   exif information, etc
@@ -265,6 +260,30 @@ Readable properties:
 
 Interactive methods:
 
+* `zoomable.setReadMode(ReadMode?)`: Setting up reading mode configuration
+* `zoomable.setScalesCalculator(ScalesCalculator)`: Set minScale, mediumScale, and maxScale
+  calculator
+* `zoomable.setThreeStepScale(Boolean)`: Set whether to cyclically scale between minScale,
+  mediumScale, and maxScale when double-clicking to zoom
+* `zoomable.setRubberBandScale(Boolean)`: Set whether to use rubber band effect after scaling
+  exceeds minScale or maxScale
+* `zoomable.setOneFingerScaleSpec(OneFingerScaleSpec)`: Set single finger zoom configuration
+* `zoomable.setAnimationSpec(ZoomAnimationSpec)`: Set animation configurations such as zoom, offset,
+  etc.
+* `zoomable.setLimitOffsetWithinBaseVisibleRect(Boolean)`: Set whether to limit offsets to
+  contentBaseVisibleRect
+* `zoomable.setContainerWhitespaceMultiple(Float)`: Set multiples based on container size to add
+  blank areas around the container
+* `zoomable.setContainerWhitespace(ContainerWhitespace)`: Set the configuration of blank areas
+  around the container, with priority higher than containerWhitespaceMultiple
+* `zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(Boolean)`: Set whether the
+  transform remains unchanged when the contentSize of the same aspect ratio is changed
+* `zoomable.setDisabledGestureTypes(Int)`: Set the disabled gesture type, you can use the bits or
+  actions of GestureType to combine multiple gesture types
+* `zoomable.setReverseMouseWheelScale(Boolean)`: Set whether to reverse the direction of the mouse
+  wheel
+* `zoomable.setMouseWheelScaleCalculator(MouseWheelScaleCalculator)`: Setting up the mouse wheel
+  zoom calculator
 * `zoomable.scale()`: Scaling content to the specified multiple
 * `zoomable.scaleBy()`: Incrementally scale the multiple specified by content by multiplication
 * `zoomable.scaleByPlus()`: Incrementally scale content specified multiples by addition
@@ -289,8 +308,24 @@ Interactive methods:
   when drawing, the origin is the upper left corner of the container
 * `zoomable.canScroll(): Boolean`: Determine whether the current content can scroll in the specified
   direction
+
 * `subsampling.setImage(): Boolean`: Set the subsampling image, return whether it is successful, the
   components that integrate the image loader will automatically set the subsampling image
+* `subsampling.setDisabled(Boolean)`: Set whether to disable subsampling function
+* `subsampling.setTileImageCache(TileImageCache?)`: Set the memory cache of Tile tile, and the
+  components that integrate the picture loader will automatically set it
+* `subsampling.setDisabledTileImageCache(Boolean)`: Set whether to disable the memory cache of Tile
+  tiles
+* `subsampling.setTileAnimationSpec(TileAnimationSpec)`: Set tile animation configuration
+* `subsampling.setPausedContinuousTransformTypes(Int)`: Set the configuration of the continuous
+  transformation type that pauses loading tile. Multiple types can be combined by bits or operators.
+  The default is TileManager.DefaultPausedContinuousTransformType
+* `subsampling.setDisabledBackgroundTiles(Boolean)`: Set whether to disable background tiles
+* `subsampling.setStopped(Boolean)`: Set whether to stop loading tiles
+* `subsampling.setDisabledAutoStopWithLifecycle(Boolean)`: Set whether to disable the automatic stop
+  loading of tiles according to Lifecycle
+* `subsampling.setRegionDecoders(List<RegionDecoder.Factory>)`: Set up a custom RegionDecoder
+* `subsampling.setShowTileBounds(Boolean)`: Set whether to display the boundary of Tile
 
 #### Listen property changed
 

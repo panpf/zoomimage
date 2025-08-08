@@ -79,8 +79,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                 }
@@ -149,8 +149,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                 }
@@ -215,8 +215,9 @@ class MoveKeyHandlerTest {
             )
         )
 
-        zoomableState.disabledGestureTypes =
+        zoomableState.setDisabledGestureTypes(
             zoomableState.disabledGestureTypes or GestureType.KEYBOARD_DRAG
+        )
         assertEquals(
             expected = false,
             actual = zoomableState.checkSupportGestureType(GestureType.KEYBOARD_DRAG)
@@ -243,8 +244,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     upMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = 100f)
@@ -260,8 +261,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     upMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)
@@ -282,8 +283,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     downMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = 100f)
@@ -299,8 +300,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     downMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)
@@ -321,8 +322,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     leftMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = 100f)
@@ -338,8 +339,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     leftMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)
@@ -360,8 +361,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     rightMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = 100f)
@@ -377,8 +378,8 @@ class MoveKeyHandlerTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.setContainerSize(IntSize(516, 516))
+                zoomable.setContentSize(IntSize(86, 1522))
                 LaunchedEffect(Unit) {
                     zoomable.scale(zoomable.maxScale, animated = false)
                     rightMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)

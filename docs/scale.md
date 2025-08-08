@@ -47,8 +47,8 @@ Example:
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomable.contentScaleState.value = ContentScaleCompat.None
-sketchZoomImageView.zoomable.alignmentState.value = AlignmentCompat.BottomEnd
+sketchZoomImageView.zoomable.setContentScale(ContentScaleCompat.None)
+sketchZoomImageView.zoomable.setAlignment(AlignmentCompat.BottomEnd)
 ```
 
 ### minScale, mediumScale, maxScale
@@ -106,9 +106,9 @@ Example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
+zoomState.zoomable.setScalesCalculator(ScalesCalculator.Fixed)
 // or
-zoomState.zoomable.scalesCalculator = MyScalesCalculator()
+zoomState.zoomable.setScalesCalculator(MyScalesCalculator())
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -127,8 +127,9 @@ turn it off as follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.TWO_FINGER_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -151,7 +152,7 @@ The threeStepScale property is true, as follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.threeStepScale = true
+zoomState.zoomable.setThreeStepScale(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -218,8 +219,9 @@ The double-click scale feature is on by default, but you can turn it off as foll
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.DOUBLE_TAP_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -237,8 +239,9 @@ down to scale the image. This feature is enabled by default, but you can turn it
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -259,7 +262,7 @@ You can reverse mouse wheel scaling by setting the `reverseMouseWheelScale` prop
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.reverseMouseWheelScale = true
+zoomState.zoomable.setReverseMouseWheelScale(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -274,8 +277,9 @@ The mouse wheel scale function is enabled by default, but you can turn it off as
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -292,10 +296,10 @@ follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.mouseWheelScaleCalculator =
-    MouseWheelScaleCalculator { currentScale, scrollDelta ->
-        // return new scale
-    }
+val mouseWheelScaleCalculator = MouseWheelScaleCalculator { currentScale, scrollDelta ->
+    // return new scale
+}
+zoomState.zoomable.setMouseWheelScaleCalculator(mouseWheelScaleCalculator)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -342,8 +346,9 @@ You can also turn it off dynamically via gesture control, as follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
+zoomState.zoomable.setDisabledGestureTypes(
     zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -509,7 +514,7 @@ Example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.rubberBandScale = false
+zoomState.zoomable.setRubberBandScale(false)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -529,14 +534,15 @@ Example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.animationSpec = ZoomAnimationSpec(
+val animationSpec = ZoomAnimationSpec(
     durationMillis = 500,
     easing = LinearOutSlowInEasing,
     initialVelocity = 10f
 )
+zoomState.setAnimationSpec(animationSpec)
 
 // Or modify some parameters based on the default values
-zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
+zoomState.setAnimationSpec(ZoomAnimationSpec.Default.copy(durationMillis = 500))
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -563,13 +569,9 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 > Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
 > suffixed with State compared to the compose version
 
-Properties that can be read or set:
+Readable properties:
 
 * `zoomable.contentScale: ContentScale`: The default scaling method of content is ContentScale.Fit
-* `zoomable.alignment: Alignment`: The alignment of content in container is Alignment.TopStart by
-  default
-* `zoomable.layoutDirection: LayoutDirection`: The layout direction of container, the default is
-  LayoutDirection.Ltr
 * `zoomable.readMode: ReadMode?`: Reading mode configuration, default is null
 * `zoomable.scalesCalculator: ScalesCalculator`: The minScale, mediumScale, and maxScale
   calculators, the default is ScalesCalculator.Dynamic
@@ -580,15 +582,6 @@ Properties that can be read or set:
   default is OneFingerScaleSpec.Default
 * `zoomable.animationSpec: ZoomAnimationSpec`: Animation configurations such as zoom, offset, etc.,
   default is ZoomAnimationSpec.Default
-* `zoomable.limitOffsetWithinBaseVisibleRect: Boolean`: Whether to limit the offset to
-  contentBaseVisibleRect, the default is false
-* `zoomable.containerWhitespaceMultiple: Float`: Add blank space around the container based on
-  multiples of the container size, the default is 0f
-* `zoomable.containerWhitespace: ContainerWhitespace`: The configuration of blank areas around the
-  container has higher priority than containerWhitespaceMultiple, and the default is
-  ContainerWhitespace.Zero
-* `zoomable.keepTransformWhenSameAspectRatioContentSizeChanged: Boolean`: Whether to keep transform
-  unchanged when the contentSize of the same aspect ratio is changed, the default is false
 * `zoomable.disabledGestureTypes: Int`: Configure the disabled gesture type, the default is 0 (no
   gesture is disabled), and multiple gesture types can be combined using the bits or actions of
   GestureType
@@ -596,12 +589,6 @@ Properties that can be read or set:
   the default is false
 * `zoomable.mouseWheelScaleCalculator: MouseWheelScaleCalculator`: Mouse wheel zoom calculator, the
   default is MouseWheelScaleCalculator.Default
-
-Readable properties:
-
-* `zoomable.containerSize: IntSize`: The size of the container that holds the content
-* `zoomable.contentSize: IntSize`: The size of the content, usually Painter.intrinsicSize.round()
-* `zoomable.contentOriginSize: IntSize`: The original size of the content
 * `zoomable.transform.scale: ScaleFactor`: Current scaling (baseTransform.scale *
   userTransform.scale)
 * `zoomable.baseTransform.scale: ScaleFactor`: The current underlying scale, affected by the
@@ -632,25 +619,33 @@ Readable properties:
   transform transformation
 * `zoomable.contentVisibleRect: IntRect`: The content is visible region to the user after the final
   transform transformation
-* `zoomable.sourceScaleFactor: ScaleFactor`: Scaling ratio based on the original image
 * `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect maps to the area on the original image
 * `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect maps to the area on the original image
-* `zoomable.scrollEdge: ScrollEdge`: Edge state for the current offset
+* `zoomable.sourceScaleFactor: ScaleFactor`: Scaling ratio based on the original image
 
 Interactive methods:
 
+* `zoomable.setReadMode(ReadMode?)`: Setting up reading mode configuration
+* `zoomable.setScalesCalculator(ScalesCalculator)`: Set minScale, mediumScale, and maxScale
+  calculator
+* `zoomable.setThreeStepScale(Boolean)`: Set whether to cyclically scale between minScale,
+  mediumScale, and maxScale when double-clicking to zoom
+* `zoomable.setRubberBandScale(Boolean)`: Set whether to use rubber band effect after scaling
+  exceeds minScale or maxScale
+* `zoomable.setOneFingerScaleSpec(OneFingerScaleSpec)`: Set single finger zoom configuration
+* `zoomable.setAnimationSpec(ZoomAnimationSpec)`: Set animation configurations such as zoom, offset,
+  etc.
+* `zoomable.setDisabledGestureTypes(Int)`: Set the disabled gesture type, you can use the bits or
+  actions of GestureType to combine multiple gesture types
+* `zoomable.setReverseMouseWheelScale(Boolean)`: Set whether to reverse the direction of the mouse
+  wheel
+* `zoomable.setMouseWheelScaleCalculator(MouseWheelScaleCalculator)`: Setting up the mouse wheel
+  zoom calculator
 * `zoomable.scale()`: Scaling content to the specified multiple
 * `zoomable.scaleBy()`: Incrementally scale the multiple specified by content by multiplication
 * `zoomable.scaleByPlus()`: Incrementally scale content specified multiples by addition
 * `zoomable.switchScale()`: Switch the scaling multiple of the content, loop between minScale and
   mediumScale by default, if threeStepScale is true, loop between minScale, mediumScale and maxScale
-* `zoomable.offset()`: Offset content to the specified location
-* `zoomable.offsetBy()`: Offset as incremental content specified offset
-* `zoomable.locate()`: Position to a specified position on the content, or scale to a specified
-  multiple when used.
-* `zoomable.rotate()`: Rotate content to the specified angle, the angle can only be multiples of 90
-* `zoomable.rotateBy()`: Rotate the angle specified by content in incremental manner, the angle can
-  only be multiples of 90.
 * `zoomable.getNextStepScale(): Float`: Get the next scaling multiple, loop between minScale and
   mediumScale by default, if threeStepScale is true, loop between minScale, mediumScale and maxScale
 * `zoomable.touchPointToContentPoint(): IntOffset`: Convert the touch point to a point on the
@@ -661,8 +656,6 @@ Interactive methods:
   the time of drawing, the origin is the upper left corner of the container
 * `zoomable.sourceToDraw(Rect): Rect`: Convert the rectangle on the original image to the rectangle
   when drawing, the origin is the upper left corner of the container
-* `zoomable.canScroll(): Boolean`: Determine whether the current content can scroll in the specified
-  direction
 
 #### Listen property changed
 

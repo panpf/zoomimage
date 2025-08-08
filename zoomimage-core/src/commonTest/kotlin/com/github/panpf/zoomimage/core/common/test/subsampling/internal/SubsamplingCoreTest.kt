@@ -16,8 +16,11 @@ import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.times
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -25,15 +28,16 @@ import kotlin.test.assertNotEquals
 class SubsamplingCoreTest {
 
     @Test
-    fun test() {
+    fun test() = runTest {
         val imageFile: ResourceImageFile = ResourceImages.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
+        val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
         val subsamplingCore = SubsamplingCore(
             module = "Test",
             logger = Logger("Test"),
             tileImageConvertor = null,
-            zoomableBridge = TestZoomableBridge(imageFile, contentSize),
+            zoomableBridge = zoomableBridge,
             onReadyChanged = {},
             onTileChanged = {}
         )
@@ -47,7 +51,9 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.onAttached()
+        withContext(Dispatchers.Main) {
+            subsamplingCore.onAttached()
+        }
         block(5000)
         assertEquals(expected = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
@@ -59,7 +65,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
+        zoomableBridge.containerSizeState.value = IntSizeCompat(1200, 700)
         block(5000)
         assertEquals(expected = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
@@ -71,7 +77,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.setContentSize(contentSize)
+        zoomableBridge.contentSizeState.value = contentSize
         block(5000)
         assertEquals(expected = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
@@ -83,7 +89,9 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.setImage(imageFile.toImageSource())
+        withContext(Dispatchers.Main) {
+            subsamplingCore.setImage(imageFile.toImageSource())
+        }
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -109,15 +117,16 @@ class SubsamplingCoreTest {
     }
 
     @Test
-    fun testAttachedAndDetached() {
+    fun testAttachedAndDetached() = runTest {
         val imageFile: ResourceImageFile = ResourceImages.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
+        val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
         val subsamplingCore = SubsamplingCore(
             module = "Test",
             logger = Logger("Test"),
             tileImageConvertor = null,
-            zoomableBridge = TestZoomableBridge(imageFile, contentSize),
+            zoomableBridge = zoomableBridge,
             onReadyChanged = {},
             onTileChanged = {}
         )
@@ -131,10 +140,14 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.onAttached()
-        subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
-        subsamplingCore.setContentSize(contentSize)
-        subsamplingCore.setImage(imageFile.toImageSource())
+        withContext(Dispatchers.Main) {
+            subsamplingCore.onAttached()
+        }
+        zoomableBridge.containerSizeState.value = IntSizeCompat(1200, 700)
+        zoomableBridge.contentSizeState.value = contentSize
+        withContext(Dispatchers.Main) {
+            subsamplingCore.setImage(imageFile.toImageSource())
+        }
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -158,7 +171,9 @@ class SubsamplingCoreTest {
             actual = subsamplingCore.tileGridSizeMap.toString()
         )
 
-        subsamplingCore.onDetached()
+        withContext(Dispatchers.Main) {
+            subsamplingCore.onDetached()
+        }
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
@@ -170,7 +185,9 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.onAttached()
+        withContext(Dispatchers.Main) {
+            subsamplingCore.onAttached()
+        }
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -196,15 +213,16 @@ class SubsamplingCoreTest {
     }
 
     @Test
-    fun testSetContainerSize() {
+    fun testUpdateContainerSize() = runTest {
         val imageFile: ResourceImageFile = ResourceImages.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
+        val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
         val subsamplingCore = SubsamplingCore(
             module = "Test",
             logger = Logger("Test"),
             tileImageConvertor = null,
-            zoomableBridge = TestZoomableBridge(imageFile, contentSize),
+            zoomableBridge = zoomableBridge,
             onReadyChanged = {},
             onTileChanged = {}
         )
@@ -218,10 +236,14 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.onAttached()
-        subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
-        subsamplingCore.setContentSize(contentSize)
-        subsamplingCore.setImage(imageFile.toImageSource())
+        withContext(Dispatchers.Main) {
+            subsamplingCore.onAttached()
+        }
+        zoomableBridge.containerSizeState.value = IntSizeCompat(1200, 700)
+        zoomableBridge.contentSizeState.value = contentSize
+        withContext(Dispatchers.Main) {
+            subsamplingCore.setImage(imageFile.toImageSource())
+        }
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -245,7 +267,7 @@ class SubsamplingCoreTest {
             actual = subsamplingCore.tileGridSizeMap.toString()
         )
 
-        subsamplingCore.setContainerSize(IntSizeCompat(1200, 700).times(1.5f))
+        zoomableBridge.containerSizeState.value = IntSizeCompat(1200, 700).times(1.5f)
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -269,7 +291,7 @@ class SubsamplingCoreTest {
             actual = subsamplingCore.tileGridSizeMap.toString()
         )
 
-        subsamplingCore.setContainerSize(IntSizeCompat(1200, 700).times(2f))
+        zoomableBridge.containerSizeState.value = IntSizeCompat(1200, 700).times(2f)
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -295,15 +317,16 @@ class SubsamplingCoreTest {
     }
 
     @Test
-    fun testSetContentSize() {
+    fun testUpdateContentSize() = runTest {
         val imageFile: ResourceImageFile = ResourceImages.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
+        val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
         val subsamplingCore = SubsamplingCore(
             module = "Test",
             logger = Logger("Test"),
             tileImageConvertor = null,
-            zoomableBridge = TestZoomableBridge(imageFile, contentSize),
+            zoomableBridge = zoomableBridge,
             onReadyChanged = {},
             onTileChanged = {}
         )
@@ -317,10 +340,14 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.onAttached()
-        subsamplingCore.setContainerSize(IntSizeCompat(1200, 700))
-        subsamplingCore.setContentSize(contentSize)
-        subsamplingCore.setImage(imageFile.toImageSource())
+        withContext(Dispatchers.Main) {
+            subsamplingCore.onAttached()
+        }
+        zoomableBridge.containerSizeState.value = IntSizeCompat(1200, 700)
+        zoomableBridge.contentSizeState.value = contentSize
+        withContext(Dispatchers.Main) {
+            subsamplingCore.setImage(imageFile.toImageSource())
+        }
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -344,7 +371,7 @@ class SubsamplingCoreTest {
             actual = subsamplingCore.tileGridSizeMap.toString()
         )
 
-        subsamplingCore.setContentSize(IntSizeCompat.Zero)
+        zoomableBridge.contentSizeState.value = IntSizeCompat.Zero
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = false, actual = subsamplingCore.ready)
@@ -356,7 +383,7 @@ class SubsamplingCoreTest {
         assertEquals(expected = IntRectCompat.Zero, actual = subsamplingCore.imageLoadRect)
         assertEquals(expected = emptyMap(), actual = subsamplingCore.tileGridSizeMap)
 
-        subsamplingCore.setContentSize(contentSize)
+        zoomableBridge.contentSizeState.value = contentSize
         block(5000)
         assertNotEquals(illegal = null, actual = subsamplingCore.subsamplingImage)
         assertEquals(expected = true, actual = subsamplingCore.ready)
@@ -402,6 +429,8 @@ class SubsamplingCoreTest {
         private val _continuousTransformTypeFlow: MutableStateFlow<Int> = MutableStateFlow(0)
 
         var contentOriginSize: IntSizeCompat? = null
+        val containerSizeState = MutableStateFlow(IntSizeCompat.Zero)
+        val contentSizeState = MutableStateFlow(contentSize)
 
         override val contentVisibleRect: RectCompat
             get() {
@@ -422,6 +451,10 @@ class SubsamplingCoreTest {
             get() = _transformFlow
         override val continuousTransformTypeFlow: Flow<Int>
             get() = _continuousTransformTypeFlow
+        override val containerSizeFlow: Flow<IntSizeCompat>
+            get() = containerSizeState
+        override val contentSizeFlow: Flow<IntSizeCompat>
+            get() = contentSizeState
 
         override fun setContentOriginSize(contentOriginSize: IntSizeCompat) {
             this.contentOriginSize = contentOriginSize

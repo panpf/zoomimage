@@ -222,10 +222,10 @@ example:
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // Turn off animations
-zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
+zoomState.subsampling.setTileAnimationSpec(TileAnimationSpec.None)
 
 // Modify the duration and refresh interval of the animation
-zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+zoomState.subsampling.setTileAnimationSpec(TileAnimationSpec(duration = 400, interval = 16))
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -253,11 +253,12 @@ example:
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // All continuous transform types load tiles in real time
-zoomState.subsampling.pausedContinuousTransformTypes = 0
+zoomState.subsampling.setPausedContinuousTransformTypes(0)
 
 // All continuous transform types pause loading of tiles
-zoomState.subsampling.pausedContinuousTransformTypes =
+zoomState.subsampling.setPausedContinuousTransformTypes(
     TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -279,9 +280,9 @@ example:
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // stop
-zoomState.subsampling.stopped = true
+zoomState.subsampling.setStopped(true)
 // restart
-zoomState.subsampling.stopped = false
+zoomState.subsampling.setStopped(false)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -305,7 +306,7 @@ property as follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.disabledAutoStopWithLifecycle = true
+zoomState.subsampling.setDisabledAutoStopWithLifecycle(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -331,7 +332,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.disabledBackgroundTiles = true
+zoomState.subsampling.setDisabledBackgroundTiles(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -356,7 +357,8 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.tileImageCache = remember { MyTileImageCache() }
+val titleImageCache = remember { MyTileImageCache() }
+zoomState.subsampling.setTileImageCache(titleImageCache)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -376,9 +378,9 @@ example:
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // Disable memory caching
-zoomState.subsampling.disabledTileImageCache = true
+zoomState.subsampling.setDisabledTileImageCache(true)
 // Memory caching is allowed
-zoomState.subsampling.disabledTileImageCache = false
+zoomState.subsampling.setDisabledTileImageCache(false)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -403,7 +405,7 @@ Then apply your [RegionDecoder] on [SubsamplingState] or [SubsamplingEngine] as 
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.regionDecoders = listOf(MyRegionDecoder.Factory())
+zoomState.subsampling.setRegionDecoders(listOf(MyRegionDecoder.Factory()))
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -413,7 +415,7 @@ SketchZoomAsyncImage(
 )
 
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.subsampling.regionDecodersState.value = listOf(MyRegionDecoder.Factory())
+sketchZoomImageView.subsampling.setRegionDecoders(listOf(MyRegionDecoder.Factory()))
 ```
 
 ### Disable subsampling
@@ -424,7 +426,7 @@ follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.subsampling.disabled = true
+zoomState.subsampling.setDisabled(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -451,18 +453,16 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 > * Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
     suffixed with State compared to the compose version
 
-Properties that can be read or set:
+Readable properties:
 
 * `subsampling.disabled: Boolean`: Whether to disable subsampling function
 * `subsampling.tileImageCache: TileImageCache?`: The memory cache of Tile tile is null by default.
-  The components that integrate the image loader will automatically set it.
 * `subsampling.disabledTileImageCache: Boolean`: Whether to disable the memory cache of Tile tile,
   default to false
 * `subsampling.tileAnimationSpec: TileAnimationSpec`: The configuration of tile animation is default
   to TileAnimationSpec.Default
 * `subsampling.pausedContinuousTransformTypes: Int`: Pauses the configuration of continuous
-  transformation types for loading tiles. Multiple types can be combined by bits or operators. The
-  default is TileManager.DefaultPausedContinuousTransformType
+  transformation types for loading tiles
 * `subsampling.disabledBackgroundTiles: Boolean`: Whether to disable background tile, default to
   false
 * `subsampling.stopped: Boolean`: Whether to stop loading tiles, default to false
@@ -471,9 +471,6 @@ Properties that can be read or set:
 * `subsampling.regionDecoders: List<RegionDecoder.Factory>`: Add a custom RegionDecoder, default to
   an empty list
 * `subsampling.showTileBounds: Boolean`: Whether to display the boundary of Tile, default to false
-
-Readable properties:
-
 * `subsampling.ready: Boolean`: Whether the image is ready for subsampling
 * `subsampling.imageInfo: ImageInfo`: The information of the image, including width, height, format,
   exif information, etc
@@ -487,6 +484,21 @@ Interactive methods:
 
 * `subsampling.setImage(): Boolean`: Set the subsampling image, return whether it is successful, the
   components that integrate the image loader will automatically set the subsampling image
+* `subsampling.setDisabled(Boolean)`: Set whether to disable subsampling function
+* `subsampling.setTileImageCache(TileImageCache?)`: Set the memory cache of Tile tile, and the
+  components that integrate the picture loader will automatically set it
+* `subsampling.setDisabledTileImageCache(Boolean)`: Set whether to disable the memory cache of Tile
+  tiles
+* `subsampling.setTileAnimationSpec(TileAnimationSpec)`: Set tile animation configuration
+* `subsampling.setPausedContinuousTransformTypes(Int)`: Set the configuration of the continuous
+  transformation type that pauses loading tile. Multiple types can be combined by bits or operators.
+  The default is TileManager.DefaultPausedContinuousTransformType
+* `subsampling.setDisabledBackgroundTiles(Boolean)`: Set whether to disable background tiles
+* `subsampling.setStopped(Boolean)`: Set whether to stop loading tiles
+* `subsampling.setDisabledAutoStopWithLifecycle(Boolean)`: Set whether to disable the automatic stop
+  loading of tiles according to Lifecycle
+* `subsampling.setRegionDecoders(List<RegionDecoder.Factory>)`: Set up a custom RegionDecoder
+* `subsampling.setShowTileBounds(Boolean)`: Set whether to display the boundary of Tile
 
 #### Listen property changed
 

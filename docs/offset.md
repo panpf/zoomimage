@@ -17,8 +17,9 @@ ZoomImage enables one finger drag gestures by default, but you can turn it off a
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
-    zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
+zoomState.zoomable.setDisabledGestureTypes(
+  zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -67,8 +68,9 @@ You can also turn it off dynamically via gesture control, as follows:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.disabledGestureTypes =
-    zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
+zoomState.zoomable.setDisabledGestureTypes(
+  zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
+)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -139,7 +141,7 @@ Example:
 ```kotlin
 val zoomState: ZoomState by rememberSketchZoomState()
 
-zoomState.zoomable.limitOffsetWithinBaseVisibleRect = true
+zoomState.zoomable.setLimitOffsetWithinBaseVisibleRect(true)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -162,16 +164,16 @@ Example:
 val zoomState: ZoomState by rememberSketchZoomState()
 
 // Set the specific size through the containerWhitespace property
-zoomState.zoomable.containerWhitespace = ContainerWhitespace(
-    left = 4f, top = 3f, right = 2f, bottom = 1f
+zoomState.zoomable.setContainerWhitespace(
+  ContainerWhitespace(left = 4f, top = 3f, right = 2f, bottom = 1f)
 )
 // or
-zoomState.zoomable.containerWhitespace = ContainerWhitespace(horizontal = 2f, vertical = 1f)
+zoomState.zoomable.setContainerWhitespace(ContainerWhitespace(horizontal = 2f, vertical = 1f))
 // or
-zoomState.zoomable.containerWhitespace = ContainerWhitespace(size = 1f)
+zoomState.zoomable.setContainerWhitespace(ContainerWhitespace(size = 1f))
 
 // Leave 50% of the container size white space between the edge of the image and the edge of the container
-zoomState.zoomable.containerWhitespaceMultiple = 0.5f
+zoomState.zoomable.setContainerWhitespaceMultiple(0.5f)
 
 SketchZoomAsyncImage(
     uri = "https://sample.com/sample.jpeg",
@@ -198,12 +200,67 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 > Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
 > suffixed with State compared to the compose version
 
+Readable properties:
+
+* `zoomable.alignment: Alignment`: The alignment of content in container is Alignment.TopStart by
+  default
+* `zoomable.limitOffsetWithinBaseVisibleRect: Boolean`: Whether to limit the offset to
+  contentBaseVisibleRect, the default is false
+* `zoomable.containerWhitespaceMultiple: Float`: Add blank space around the container based on
+  multiples of the container size, the default is 0f
+* `zoomable.containerWhitespace: ContainerWhitespace`: The configuration of blank areas around the
+  container has higher priority than containerWhitespaceMultiple, and the default is
+  ContainerWhitespace.Zero
+* `zoomable.disabledGestureTypes: Int`: Configure the disabled gesture type, the default is 0 (no
+  gesture is disabled), and multiple gesture types can be combined using the bits or actions of
+  GestureType
 * `zoomable.transform.offset: Offset`: Current offset (baseTransform.offset + userTransform.offset)
 * `zoomable.baseTransform.offset: Offset`: The current base offset, affected by the alignment
   parameter and the rotate method
 * `zoomable.userTransform.offset: Offset`: The current user offset, affected by offset(), locate(),
   and user gesture dragging
+* `zoomable.contentBaseDisplayRectF: Rect`: The content region in the container after the
+  baseTransform transformation
+* `zoomable.contentBaseDisplayRect: IntRect`: The content region in the container after the
+  baseTransform transformation
+* `zoomable.contentBaseVisibleRectF: Rect`: The content is visible region to the user after the
+  baseTransform transformation
+* `zoomable.contentBaseVisibleRect: IntRect`: The content is visible region to the user after the
+  baseTransform transformation
+* `zoomable.contentDisplayRectF: Rect`: The content region in the container after the final
+  transform transformation
+* `zoomable.contentDisplayRect: IntRect`: The content region in the container after the final
+  transform transformation
+* `zoomable.contentVisibleRectF: Rect`: The content is visible region to the user after the final
+  transform transformation
+* `zoomable.contentVisibleRect: IntRect`: The content is visible region to the user after the final
+  transform transformation
+* `zoomable.sourceVisibleRectF: Rect`: contentVisibleRect maps to the area on the original image
+* `zoomable.sourceVisibleRect: IntRect`: contentVisibleRect maps to the area on the original image
 * `zoomable.scrollEdge: ScrollEdge`: Edge state for the current offset
+
+Interactive methods:
+
+* `zoomable.setLimitOffsetWithinBaseVisibleRect(Boolean)`: Set whether to limit offsets to
+  contentBaseVisibleRect
+* `zoomable.setContainerWhitespaceMultiple(Float)`: Set multiples based on container size to add
+  blank areas around the container
+* `zoomable.setContainerWhitespace(ContainerWhitespace)`: Set the configuration of blank areas
+  around the container, with priority higher than containerWhitespaceMultiple
+* `zoomable.setDisabledGestureTypes(Int)`: Set the disabled gesture type, you can use the bits or
+  actions of GestureType to combine multiple gesture types
+* `zoomable.offset()`: Offset content to the specified location
+* `zoomable.offsetBy()`: Offset as incremental content specified offset
+* `zoomable.touchPointToContentPoint(): IntOffset`: Convert the touch point to a point on the
+  content, the origin is the upper left corner of the content
+* `zoomable.touchPointToContentPointF(): Offset`: Convert the touch point to a point on the content,
+  the origin is the upper left corner of the content
+* `zoomable.sourceToDraw(Offset): Offset`: Convert the points on the original image to the points at
+  the time of drawing, the origin is the upper left corner of the container
+* `zoomable.sourceToDraw(Rect): Rect`: Convert the rectangle on the original image to the rectangle
+  when drawing, the origin is the upper left corner of the container
+* `zoomable.canScroll(): Boolean`: Determine whether the current content can scroll in the specified
+  direction
 
 #### Listen property changed
 
