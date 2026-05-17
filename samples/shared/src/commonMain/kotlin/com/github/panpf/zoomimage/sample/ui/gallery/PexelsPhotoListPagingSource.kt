@@ -16,12 +16,8 @@
 
 package com.github.panpf.zoomimage.sample.ui.gallery
 
-import app.cash.paging.PagingSource
-import app.cash.paging.PagingSourceLoadParams
-import app.cash.paging.PagingSourceLoadResult
-import app.cash.paging.PagingSourceLoadResultError
-import app.cash.paging.PagingState
-import app.cash.paging.createPagingSourceLoadResultPage
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.github.panpf.zoomimage.sample.data.api.Response
 import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsApi
 import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsPhoto
@@ -33,13 +29,13 @@ class PexelsPhotoListPagingSource(val pexelsApi: PexelsApi) : PagingSource<Int, 
 
     override fun getRefreshKey(state: PagingState<Int, Photo>): Int = 0
 
-    override suspend fun load(params: PagingSourceLoadParams<Int>): PagingSourceLoadResult<Int, Photo> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
         val pageNumber = (params.key ?: 0).coerceAtLeast(1)
         val response = try {
             pexelsApi.curated(pageNumber, params.loadSize)
         } catch (e: Exception) {
             e.printStackTrace()
-            return PagingSourceLoadResultError(e)
+            return LoadResult.Error(e)
         }
 
         return if (response is Response.Success) {
@@ -47,10 +43,10 @@ class PexelsPhotoListPagingSource(val pexelsApi: PexelsApi) : PagingSource<Int, 
             val photos = pexelsPhotos.map { it.toPhoto() }
             val filteredPhotos = photos.filter { keySet.add(it.originalUrl) }
             val nextKey = if (pexelsPhotos.isNotEmpty()) pageNumber + 1 else null
-            createPagingSourceLoadResultPage(filteredPhotos, null, nextKey)
+            LoadResult.Page(filteredPhotos, null, nextKey)
         } else {
             response as Response.Error
-            PagingSourceLoadResultError(Exception("Http error: ${response.throwable?.message}"))
+            LoadResult.Error(Exception("Http error: ${response.throwable?.message}"))
         }
     }
 

@@ -1,3 +1,20 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
-actual fun localPhotoListPermission(): Any? = null
+import androidx.compose.runtime.Composable
+import cafe.adriel.voyager.navigator.LocalNavigator
+import com.github.panpf.zoomimage.sample.ui.gridCellsMinSize
+import org.koin.compose.viewmodel.koinViewModel
+
+@Composable
+actual fun LocalPhotoListPage() {
+    val navigator = LocalNavigator.current!!
+    val localPhotoListViewModel: LocalPhotoListViewModel = koinViewModel()
+    PagingPhotoList(
+        photoPagingFlow = localPhotoListViewModel.pagingFlow,
+        gridCellsMinSize = gridCellsMinSize,
+        onClick = { photos, _, index ->
+            val params = buildPhotoPagerScreenParams(photos, index)
+            navigator.push(PhotoPagerScreen(params))
+        },
+    )
+}

@@ -28,10 +28,8 @@ import com.github.panpf.zoomimage.sample.ic_debug
 import com.github.panpf.zoomimage.sample.ic_pexels
 import com.github.panpf.zoomimage.sample.ic_phone
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
-import com.github.panpf.zoomimage.sample.ui.components.PermissionContainer
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListPage
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListPage
-import com.github.panpf.zoomimage.sample.ui.gallery.localPhotoListPermission
 import com.github.panpf.zoomimage.sample.ui.test.TestPage
 import com.github.panpf.zoomimage.sample.util.Platform
 import com.github.panpf.zoomimage.sample.util.current
@@ -56,19 +54,13 @@ enum class HomeTab(
         title = "Pexels",
         icon = Res.drawable.ic_pexels,
         padding = 1.5.dp,
-        content = { PexelsPhotoListPage(this) }
+        content = { PexelsPhotoListPage() }
     ),
     LOCAL(
         title = "Local",
         icon = Res.drawable.ic_phone,
         padding = 0.dp,
-        content = {
-            PermissionContainer(
-                permission = localPhotoListPermission(),
-                permissionRequired = false,
-                content = { LocalPhotoListPage(this) }
-            )
-        }
+        content = { LocalPhotoListPage() }
     ),
     TEST(
         title = "Test",

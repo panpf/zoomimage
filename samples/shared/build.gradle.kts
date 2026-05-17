@@ -48,6 +48,7 @@ kotlin {
             api(projects.zoomimageComposeCoil3)
             api(projects.zoomimageComposeResources)
             api(projects.zoomimageComposeSketch4Koin)
+            api(libs.androidx.paging.compose)
             api(libs.jetbrains.compose.components.resources)
             api(libs.jetbrains.compose.material)    // pull refresh
             api(libs.jetbrains.compose.material3)
@@ -116,9 +117,6 @@ kotlin {
                 api(libs.moko.permissions)
                 api(libs.moko.permissions.storage)
             }
-        }
-        nonJsCommonMain.dependencies {
-            api(libs.multiplatform.paging)
         }
         wasmJsMain.dependencies {
             // https://youtrack.jetbrains.com/issue/KTOR-7934/JS-WASM-fails-with-IllegalStateException-Content-Length-mismatch-on-requesting-gzipped-content

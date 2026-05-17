@@ -16,20 +16,15 @@
 
 package com.github.panpf.zoomimage.sample.ui.gallery
 
-import app.cash.paging.PagingSource
-import app.cash.paging.PagingSourceLoadParams
-import app.cash.paging.PagingSourceLoadResult
-import app.cash.paging.PagingState
-import app.cash.paging.createPagingSourceLoadResultPage
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.data.builtinImages
 import com.github.panpf.zoomimage.sample.data.localImages
 import com.github.panpf.zoomimage.sample.data.readImageInfoOrNull
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
-class LocalPhotoListPagingSource(
-    val sketch: Sketch
-) : PagingSource<Int, Photo>() {
+class LocalPhotoListPagingSource(val sketch: Sketch) : PagingSource<Int, Photo>() {
 
     private val keySet = HashSet<String>()  // Compose LazyVerticalGrid does not allow a key repeat
     private var _builtInPhotos: List<String>? = null
@@ -42,7 +37,7 @@ class LocalPhotoListPagingSource(
         }
     }
 
-    override suspend fun load(params: PagingSourceLoadParams<Int>): PagingSourceLoadResult<Int, Photo> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
         val startPosition = params.key ?: 0
         val pageSize = params.loadSize
 
@@ -68,11 +63,7 @@ class LocalPhotoListPagingSource(
         }.map { uri -> uriToPhoto(uri) }
         val nextKey = if (photos.isNotEmpty()) startPosition + pageSize else null
         val filteredPhotos = photos.filter { keySet.add(it.originalUrl) }
-        return createPagingSourceLoadResultPage(
-            filteredPhotos,
-            null,
-            nextKey
-        )
+        return LoadResult.Page(data = filteredPhotos, prevKey = null, nextKey = nextKey)
     }
 
     private suspend fun uriToPhoto(uri: String): Photo {

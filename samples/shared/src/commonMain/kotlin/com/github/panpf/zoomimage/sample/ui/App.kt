@@ -22,7 +22,6 @@ import org.koin.compose.koinInject
 
 // TODO ios edge to edge
 // TODO navigation3
-// TODO paging3
 
 @Composable
 fun App(onContentChanged: ((Navigator) -> Unit)? = null) {
