@@ -1,11 +1,11 @@
 package com.github.panpf.zoomimage.core.sketch4.desktop.test
 
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.DataFrom
-import com.github.panpf.sketch.source.KotlinResourceDataSource
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
@@ -19,7 +19,7 @@ class SketchImageSourceFactoryTest {
     fun testConstructor() {
         val context = PlatformContext.INSTANCE
         val sketch = Sketch(context)
-        val imageUri = ResourceImages.dog.uri
+        val imageUri = ComposeResImageFiles.dog.uri
 
         val request = ImageRequest(context, imageUri)
         SketchImageSource.Factory(sketch, request)
@@ -31,7 +31,7 @@ class SketchImageSourceFactoryTest {
     fun testKeyAndImageUri() {
         val context = PlatformContext.INSTANCE
         val sketch = Sketch(context)
-        val request = ImageRequest(context, ResourceImages.dog.uri)
+        val request = ImageRequest(context, ComposeResImageFiles.dog.uri)
         val factory = SketchImageSource.Factory(sketch, request)
         assertEquals(request.key, factory.key)
         assertEquals(request.uri.toString(), factory.imageUri)
@@ -44,10 +44,10 @@ class SketchImageSourceFactoryTest {
         sketch.downloadCache.clear()
         SketchImageSource.Factory(
             sketch = sketch,
-            request = ImageRequest(context, ResourceImages.dog.uri)
+            request = ImageRequest(context, ComposeResImageFiles.dog.uri)
         ).let { runBlocking { it.create() } }.apply {
             assertTrue(
-                this.dataSource is KotlinResourceDataSource,
+                this.dataSource is ByteArrayDataSource,
                 message = "${this.dataSource}"
             )
             assertEquals(DataFrom.LOCAL, this.dataSource.dataFrom)
@@ -58,8 +58,8 @@ class SketchImageSourceFactoryTest {
     fun testEqualsAndHashCode() {
         val context = PlatformContext.INSTANCE
         val sketch = Sketch(context)
-        val request1 = ImageRequest(context, ResourceImages.dog.uri)
-        val request2 = ImageRequest(context, ResourceImages.cat.uri)
+        val request1 = ImageRequest(context, ComposeResImageFiles.dog.uri)
+        val request2 = ImageRequest(context, ComposeResImageFiles.cat.uri)
 
         val element1 = SketchImageSource.Factory(sketch, request1)
         val element11 = SketchImageSource.Factory(sketch, request1)
@@ -78,7 +78,7 @@ class SketchImageSourceFactoryTest {
     fun testToString() {
         val context = PlatformContext.INSTANCE
         val sketch = Sketch(context)
-        val imageUri = ResourceImages.dog.uri
+        val imageUri = ComposeResImageFiles.dog.uri
         val request = ImageRequest(context, imageUri)
 
         val factory = SketchImageSource.Factory(sketch, request)

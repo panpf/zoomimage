@@ -10,7 +10,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.GlideZoomAsyncImage
 import com.github.panpf.zoomimage.GlideZoomState
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
@@ -34,7 +34,7 @@ class GlideZoomAsyncImageTest {
                         val zoomState = rememberGlideZoomState()
                             .apply { zoomStateHolder = this }
                         GlideZoomAsyncImage(
-                            model = ResourceImages.hugeChina.uri,
+                            model = ComposeResImageFiles.hugeChina.uri,
                             contentDescription = "",
                             modifier = Modifier.size(500.dp),
                             zoomState = zoomState,
@@ -90,7 +90,7 @@ class GlideZoomAsyncImageTest {
                         val zoomState = rememberGlideZoomState()
                             .apply { zoomStateHolder = this }
                         GlideZoomAsyncImage(
-                            model = ResourceImages.hugeChina.uri,
+                            model = ComposeResImageFiles.hugeChina.uri,
                             contentDescription = "",
                             modifier = Modifier.size(500.dp),
                             zoomState = zoomState,

@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.core.sketch3.test
 
 import android.graphics.BitmapFactory
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.datasource.AssetDataSource
 import com.github.panpf.sketch.datasource.DataFrom
@@ -73,7 +73,7 @@ class SketchImageSourceTest {
         val sketch = Sketch.Builder(context).build()
         SketchImageSource.Factory(
             sketch = sketch,
-            request = LoadRequest(context, newAssetUri(ResourceImages.dog.resourceName))
+            request = LoadRequest(context, newAssetUri(ComposeResImageFiles.dog.name))
         ).let { runBlocking { it.create() } }.apply {
             assertTrue(
                 this.dataSource is AssetDataSource,

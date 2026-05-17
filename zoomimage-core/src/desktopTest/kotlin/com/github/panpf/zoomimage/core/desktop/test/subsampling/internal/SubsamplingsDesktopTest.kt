@@ -1,11 +1,10 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.createTileDecoder
 import com.github.panpf.zoomimage.test.TestRegionDecoder
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.div
@@ -20,7 +19,7 @@ class SubsamplingDesktopTest {
         val logger = Logger("MyTest")
 
         // success
-        val hugeLongQmshtImageFile = ResourceImages.hugeLongQmsht
+        val hugeLongQmshtImageFile = ComposeResImageFiles.hugeLongQmsht
         val hugeLongQmshtImageSource = hugeLongQmshtImageFile.toImageSource()
         createTileDecoder(
             logger = logger,

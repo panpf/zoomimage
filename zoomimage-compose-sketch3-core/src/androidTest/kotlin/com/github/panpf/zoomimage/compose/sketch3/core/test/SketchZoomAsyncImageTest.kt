@@ -13,7 +13,7 @@ import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.compose.AsyncImageState
 import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.request.DisplayRequest
@@ -48,7 +48,7 @@ class SketchZoomAsyncImageTest {
                             val state = rememberAsyncImageState()
                                 .apply { stateHolder = this }
                             SketchZoomAsyncImage(
-                                imageUri = ResourceImages.hugeChina.uri,
+                                imageUri = ComposeResImageFiles.hugeChina.uri,
                                 contentDescription = "",
                                 sketch = sketch,
                                 placeholder = null,
@@ -116,7 +116,7 @@ class SketchZoomAsyncImageTest {
                             val zoomState = rememberSketchZoomState()
                                 .apply { zoomStateHolder = this }
                             SketchZoomAsyncImage(
-                                imageUri = ResourceImages.hugeChina.uri,
+                                imageUri = ComposeResImageFiles.hugeChina.uri,
                                 contentDescription = "",
                                 sketch = sketch,
                                 modifier = Modifier.size(500.dp),
@@ -184,7 +184,7 @@ class SketchZoomAsyncImageTest {
                             SketchZoomAsyncImage(
                                 request = DisplayRequest(
                                     LocalContext.current,
-                                    ResourceImages.hugeChina.uri
+                                    ComposeResImageFiles.hugeChina.uri
                                 ),
                                 contentDescription = "",
                                 sketch = sketch,
@@ -247,7 +247,7 @@ class SketchZoomAsyncImageTest {
                             SketchZoomAsyncImage(
                                 request = DisplayRequest(
                                     LocalContext.current,
-                                    ResourceImages.hugeChina.uri
+                                    ComposeResImageFiles.hugeChina.uri
                                 ),
                                 contentDescription = "",
                                 sketch = sketch,
@@ -317,7 +317,7 @@ class SketchZoomAsyncImageTest {
                             val state = rememberAsyncImageState()
                                 .apply { stateHolder = this }
                             SketchZoomAsyncImage(
-                                imageUri = ResourceImages.hugeChina.uri,
+                                imageUri = ComposeResImageFiles.hugeChina.uri,
                                 contentDescription = "",
                                 sketch = sketch,
                                 onPainterState = null,
@@ -385,7 +385,7 @@ class SketchZoomAsyncImageTest {
                             val zoomState = rememberSketchZoomState()
                                 .apply { zoomStateHolder = this }
                             SketchZoomAsyncImage(
-                                imageUri = ResourceImages.hugeChina.uri,
+                                imageUri = ComposeResImageFiles.hugeChina.uri,
                                 contentDescription = "",
                                 sketch = sketch,
                                 onPainterState = null,
@@ -453,7 +453,7 @@ class SketchZoomAsyncImageTest {
                             SketchZoomAsyncImage(
                                 request = DisplayRequest(
                                     LocalContext.current,
-                                    ResourceImages.hugeChina.uri
+                                    ComposeResImageFiles.hugeChina.uri
                                 ),
                                 contentDescription = "",
                                 sketch = sketch,
@@ -516,7 +516,7 @@ class SketchZoomAsyncImageTest {
                             SketchZoomAsyncImage(
                                 request = DisplayRequest(
                                     LocalContext.current,
-                                    ResourceImages.hugeChina.uri
+                                    ComposeResImageFiles.hugeChina.uri
                                 ),
                                 contentDescription = "",
                                 sketch = sketch,

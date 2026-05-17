@@ -10,7 +10,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView.ScaleType
 import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -239,7 +239,7 @@ class ZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
-                    .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
+                    .fromAsset(zoomImageView.context, ComposeResImageFiles.hugeCard.name)
                 zoomImageView.setSubsamplingImage(imageSource)
             }
             Thread.sleep(500)
@@ -270,7 +270,7 @@ class ZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
-                    .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
+                    .fromAsset(zoomImageView.context, ComposeResImageFiles.hugeCard.name)
                 zoomImageView.setSubsamplingImage(imageSource.toFactory())
             }
             Thread.sleep(500)

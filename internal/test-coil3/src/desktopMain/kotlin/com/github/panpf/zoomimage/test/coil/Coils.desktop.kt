@@ -8,6 +8,8 @@ import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceUriKeyer
 actual fun newImageLoader(context: PlatformContext): ImageLoader {
     return ImageLoader.Builder(context).apply {
         components {
+            add(CoilComposeResourceUriFetcher.Factory())
+            add(CoilComposeResourceUriKeyer())
             add(CoilKotlinResourceUriFetcher.Factory())
             add(CoilKotlinResourceUriKeyer())
         }

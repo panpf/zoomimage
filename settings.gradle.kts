@@ -13,7 +13,9 @@ dependencyResolutionManagement {
 }
 
 /*
- * Release
+ * Public Modules
+ *
+ * Synced with buildSrc/src/main/kotlin/utils.kt publicModules list.
  */
 include(":zoomimage-compose")
 include(":zoomimage-compose-coil2")
@@ -47,11 +49,14 @@ include(":zoomimage-view-sketch4")
 include(":zoomimage-view-sketch4-core")
 include(":zoomimage-view-sketch4-koin")
 
-
 /*
- * Private
+ * Private Modules
  */
-include(":sample")
+include(":samples:androidApp")
+include(":samples:desktopApp")
+include(":samples:jsApp")
+include(":samples:shared")
+include(":samples:wasmJsApp")
 include(":internal:images")
 include(":internal:test-coil2")
 include(":internal:test-coil3")

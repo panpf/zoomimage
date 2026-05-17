@@ -1,13 +1,13 @@
 [versions]
-android-plugin = "8.10.0"
+android-plugin = "9.2.1"
 androidx-activity = "1.10.1"
 androidx-appcompat = "1.7.0"
-androidx-compose = "1.8.0" # sync with jetbrains-compose
+androidx-compose = "1.10.5" # sync with jetbrains-compose
 androidx-constraintlayout = "2.2.1"
 androidx-constraintlayout-compose = "1.1.1"
 androidx-exifinterface = "1.4.1"
-androidx-lifecycle = "2.8.5" # sync with jetbrains-lifecycle
-androidx-navigation = "2.9.0"
+androidx-lifecycle = "2.10.0" # sync with jetbrains-lifecycle
+androidx-navigation = "2.9.8"
 androidx-recyclerview = "1.4.0"
 androidx-swiperefreshlayout = "1.1.0"
 androidx-test-ext-junit = "1.2.1"
@@ -19,7 +19,7 @@ appdirs = "1.4.0"
 
 buildkonfig = "0.17.0"  # Version 0.17.1 will cause an error when the zoomimimage-compose-glide module is compiled 'Multiple values are not allowed for plugin option androidx.compose.compiler.plugins.kotlin:sourceInformation'
 
-dokka = "1.9.20"    # 2.0.0 There is a problem with the version configuration, so I won't upgrade it yet
+dokka = "2.2.0"
 
 coil2 = "2.7.0"
 coil3 = "3.2.0"
@@ -31,17 +31,19 @@ google-accompanist = "0.37.3"
 google-material = "1.12.0"
 gradle-maven-publish-plugin = "0.33.0"
 
-jetbrains-compose = "1.8.0"
-jetbrains-lifecycle = "2.8.4"
+jetbrains-compose = "1.10.3"
+jetbrains-lifecycle = "2.10.0"
 jetbrains-compose-material-icons-core = "1.7.3"
+jetbrains-compose-material3 = "1.9.0"
+jetbrains-compose-material3-adaptiveNavigation3 = "1.3.0-alpha07"
 
 koin = "4.1.0"
 
-kotlin = "2.1.10" # 2.1.20 version will report an error when sync 'kotlin-project-structure-metadata.json (No such file or directory)', but it does not affect the compilation
-kotlinx-atomicfu = "0.27.0" # sync with kotlin
+kotlin = "2.3.20"
+kotlinx-atomicfu = "0.32.1"
 kotlinx-collections-immutable = "0.3.8"
 kotlinx-coroutines = "1.10.2"
-kotlinx-cover = "0.9.1"
+kotlinx-cover = "0.9.8"
 kotlinx-serialization-json = "1.8.1"
 ktor = "3.0.3" # 3.1.0+ Error when publishing packaging obfuscation on desktop platform: 'https://youtrack.jetbrains.com/issue/KTOR-8325/Proguard-cant-find-enclosing-method-attachFor-error-since-3.1.0'
 ktor31 = "3.1.3" # https://youtrack.jetbrains.com/issue/KTOR-7934/JS-WASM-fails-with-IllegalStateException-Content-Length-mismatch-on-requesting-gzipped-content
@@ -64,7 +66,7 @@ panpf-tools4k = "1.0.0"
 picasso = "2.8"
 photoview = "2.3.0"
 
-skiko = "0.9.4"    # sync with jetbrains-compose. 'SkiaRegionDecoder.Factory#checkSupport()' must be modified
+skiko = "0.9.37.4"    # sync with jetbrains-compose. 'SkiaRegionDecoder.Factory#checkSupport()' must be modified
 subsampling-scale-image-view = "3.10.0"
 
 telephoto = "0.15.1"
@@ -82,7 +84,6 @@ gradlePlugin-kotlinSerialization = { module = "org.jetbrains.kotlin:kotlin-seria
 gradlePlugin-kotlinxAtomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "kotlinx-atomicfu" }
 gradlePlugin-kotlinxCover = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kotlinx-cover" }
 gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradle-maven-publish-plugin" }
-#gradlePlugin-dokka = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "dokka" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
@@ -126,9 +127,20 @@ glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 
-jetbrains-lifecycle-common = { module = "org.jetbrains.androidx.lifecycle:lifecycle-common", version.ref = "jetbrains-lifecycle" }
-jetbrains-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrains-lifecycle" }
+jetbrains-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
+jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
+jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
+jetbrains-compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "jetbrains-compose" }
+jetbrains-compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "jetbrains-compose" }
+jetbrains-compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
+jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose" }
+jetbrains-compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "jetbrains-compose" }
 jetbrains-compose-material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "jetbrains-compose-material-icons-core" }
+jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "jetbrains-compose-material3" }
+jetbrains-compose-material3-adaptiveNavigation3 = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "jetbrains-compose-material3-adaptiveNavigation3" }
+jetbrains-lifecycle-common = { module = "org.jetbrains.androidx.lifecycle:lifecycle-common", version.ref = "jetbrains-lifecycle" }
+jetbrains-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "jetbrains-lifecycle" }
+jetbrains-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrains-lifecycle" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }

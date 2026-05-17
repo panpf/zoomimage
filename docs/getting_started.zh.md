@@ -299,13 +299,13 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [SketchZoomAsyncImage]: ../zoomimage-compose-sketch4/src/commonMain/kotlin/com/github/panpf/zoomimage/SingletonSketchZoomAsyncImage.kt
 
-[ZoomImageSample]: ../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageSample.kt
+[ZoomImageSample]: ../samples/shared/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageSample.kt
 
-[CoilZoomAsyncImageSample]: ../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomAsyncImageSample.common.kt
+[CoilZoomAsyncImageSample]: ../samples/shared/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomAsyncImageSample.common.kt
 
-[GlideZoomAsyncImageSample]: ../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomAsyncImageSample.kt
+[GlideZoomAsyncImageSample]: ../samples/shared/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomAsyncImageSample.kt
 
-[SketchZoomAsyncImageSample]: ../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/SketchZoomAsyncImageSample.kt
+[SketchZoomAsyncImageSample]: ../samples/shared/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/SketchZoomAsyncImageSample.kt
 
 [ZoomImageView]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
@@ -317,15 +317,15 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [SketchZoomImageView]: ../zoomimage-view-sketch4-core/src/main/kotlin/com/github/panpf/zoomimage/SketchZoomImageView.kt
 
-[ZoomImageViewFragment]: ../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageViewFragment.kt
+[ZoomImageViewFragment]: ../samples/androidApp/src/main/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageViewFragment.kt
 
-[CoilZoomImageViewFragment]: ../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomImageViewFragment.kt
+[CoilZoomImageViewFragment]: ../samples/androidApp/src/main/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomImageViewFragment.kt
 
-[GlideZoomImageViewFragment]: ../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomImageViewFragment.kt
+[GlideZoomImageViewFragment]: ../samples/androidApp/src/main/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomImageViewFragment.kt
 
-[PicassoZoomImageViewFragment]: ../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/PicassoZoomImageViewFragment.kt
+[PicassoZoomImageViewFragment]: ../samples/androidApp/src/main/kotlin/com/github/panpf/zoomimage/sample/ui/examples/PicassoZoomImageViewFragment.kt
 
-[SketchZoomImageViewFragment]: ../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/SketchZoomImageViewFragment.kt
+[SketchZoomImageViewFragment]: ../samples/androidApp/src/main/kotlin/com/github/panpf/zoomimage/sample/ui/examples/SketchZoomImageViewFragment.kt
 
 [Sketch]: https://github.com/panpf/sketch
 

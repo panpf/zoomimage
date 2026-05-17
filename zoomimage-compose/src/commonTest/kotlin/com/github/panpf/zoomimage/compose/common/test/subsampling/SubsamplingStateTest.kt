@@ -8,7 +8,7 @@ import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
@@ -19,11 +19,8 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
-import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.TestTileImageCache
-import com.github.panpf.zoomimage.test.current
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.waitMillis
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -169,7 +166,8 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testStopped() {
+    fun testStopped() = runTest {
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -182,7 +180,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -342,12 +340,7 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testImageInfo() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testImageInfo() = runTest {
         // basic
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
@@ -363,6 +356,7 @@ class SubsamplingStateTest {
         }
 
         // setImage
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -371,7 +365,7 @@ class SubsamplingStateTest {
                     val zoomable = rememberZoomableState(logger)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -393,7 +387,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -407,12 +401,7 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testTileGridSizeMap() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testTileGridSizeMap() = runTest {
         // basic
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
@@ -431,6 +420,7 @@ class SubsamplingStateTest {
         }
 
         // setImage
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -439,7 +429,7 @@ class SubsamplingStateTest {
                     val zoomable = rememberZoomableState(logger)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -464,7 +454,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -478,12 +468,7 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testReady() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testReady() = runTest {
         // basic
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
@@ -500,6 +485,7 @@ class SubsamplingStateTest {
         }
 
         // setImage
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -508,7 +494,7 @@ class SubsamplingStateTest {
                     val zoomable = rememberZoomableState(logger)
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -530,7 +516,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -552,7 +538,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(1000)
@@ -562,11 +548,7 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testForegroundTiles() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
+    fun testForegroundTiles() = runTest {
 //        // basic
 //        runComposeUiTest {
 //            var subsamplingHolder: SubsamplingState? = null
@@ -583,6 +565,7 @@ class SubsamplingStateTest {
 //        }
 //
 //        // setImage, containerSize, contentSize
+//        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
 //        runComposeUiTest {
 //            var subsamplingHolder: SubsamplingState? = null
 //            setContent {
@@ -595,7 +578,7 @@ class SubsamplingStateTest {
 //                    }
 //                    val subsampling = rememberSubsamplingState(zoomable)
 //                        .apply { subsamplingHolder = this }
-//                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+//                    subsampling.setImage(hugeLongComicImageSource)
 //                }
 //            }
 //            waitMillis(100)
@@ -605,6 +588,7 @@ class SubsamplingStateTest {
 //        }
 
         // setImage, containerSize, contentSize, scale 5
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -615,7 +599,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -642,7 +626,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -660,13 +644,9 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testSampleSize() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testSampleSize() = runTest {
         // setImage, containerSize, contentSize, scale 10
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -677,7 +657,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -701,7 +681,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -732,7 +712,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -754,12 +734,8 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testImageLoadRect() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testImageLoadRect() = runTest {
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -770,7 +746,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                 }
             }
             waitMillis(100)
@@ -797,7 +773,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -831,7 +807,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -857,11 +833,8 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testClean() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
+    fun testClean() = runTest {
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -872,7 +845,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -916,13 +889,9 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testRememberObserver() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testRememberObserver() = runTest {
         var subsamplingHolder: SubsamplingState? = null
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             setContent {
                 TestLifecycle {
@@ -932,7 +901,7 @@ class SubsamplingStateTest {
                     zoomable.setContentSize(IntSize(86, 1522))
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {
@@ -973,7 +942,8 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testDisabled() {
+    fun testDisabled() = runTest {
+        val hugeLongComicImageSource = ComposeResImageFiles.hugeLongComic.toImageSource()
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -986,7 +956,7 @@ class SubsamplingStateTest {
                     }
                     val subsampling = rememberSubsamplingState(zoomable)
                         .apply { subsamplingHolder = this }
-                    subsampling.setImage(ResourceImages.hugeLongComic.toImageSource())
+                    subsampling.setImage(hugeLongComicImageSource)
                     LaunchedEffect(Unit) {
                         snapshotFlow { zoomable.contentOriginSize }.collect {
                             if (it.isNotEmpty()) {

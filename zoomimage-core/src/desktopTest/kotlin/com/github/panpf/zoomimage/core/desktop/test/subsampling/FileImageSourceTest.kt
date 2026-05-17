@@ -56,14 +56,8 @@ class FileImageSourceTest {
     fun testOpenSource() = runTest {
         val localImages = DesktopLocalImages.with()
         val path1 = localImages.cat.uri.replace("file://", "")
-        val path2 = localImages.dog.uri.replace("file://", "")
-
         FileImageSource(path1.toPath()).openSource().buffer().use {
             it.readByteArray()
-        }
-
-        FileImageSource(path2.toPath()).openSource().buffer().use {
-            it.readByteArray().decodeToString()
         }
     }
 

@@ -2,6 +2,24 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+## Android
+
+* The minimum version of all compose modules has been upgraded to 23
+
+## iOS
+
+* change: iosX64 platform is no longer supported
+
+## Dependencies
+
+* Upgrade to kotlin 2.3.20
+* Upgrade to jetbrains compose 1.10.3
+* Upgrade to jetbrains lifecycle 2.10.0
+* Upgrade to jetbrains skiko 0.9.37.4
+* Upgrade to androidx compose 1.10.5
+
 # 1.4.0
 
 ![TIP]

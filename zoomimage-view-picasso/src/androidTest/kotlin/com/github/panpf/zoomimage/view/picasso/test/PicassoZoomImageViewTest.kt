@@ -6,7 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.PicassoZoomImageView
@@ -119,7 +119,7 @@ class PicassoZoomImageViewTest {
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                picassoZoomImageView.loadImage(ResourceImages.hugeCard.uri) {
+                picassoZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri) {
                     fit()
                     centerInside()
                 }
@@ -149,7 +149,7 @@ class PicassoZoomImageViewTest {
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                picassoZoomImageView.loadImage(ResourceImages.hugeCard.uri) {
+                picassoZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri) {
                     fit()
                     centerInside()
                 }
@@ -189,7 +189,7 @@ class PicassoZoomImageViewTest {
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                picassoZoomImageView.loadImage(ResourceImages.hugeCard.uri + "1") {
+                picassoZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri + "1") {
                     fit()
                     centerInside()
                     error(ColorDrawable(Color.CYAN))

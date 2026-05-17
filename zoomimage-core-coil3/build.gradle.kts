@@ -1,12 +1,11 @@
 plugins {
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlinx.kover")
 }
 
-addAllMultiplatformTargets()
-
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.core.coil3")
+addMultiplatformTargets(KmpTarget.entries.toTypedArray())
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.core.coil3")
 
 kotlin {
     sourceSets {
@@ -22,7 +21,7 @@ kotlin {
             implementation(libs.coil3.network.ktor)
             implementation(libs.ktor.client.java)
         }
-        androidInstrumentedTest.dependencies {
+        androidDeviceTest.dependencies {
             implementation(projects.internal.testCore)
         }
     }

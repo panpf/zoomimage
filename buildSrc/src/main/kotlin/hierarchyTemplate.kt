@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalKotlinGradlePluginApi::class)
 
+import com.android.build.api.withAndroid
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
@@ -44,8 +46,10 @@ private val hierarchyTemplate = KotlinHierarchyTemplate {
 private fun KotlinHierarchyBuilder.groupNonAndroid() {
     group("nonAndroid") {
         withJvm()
-        groupJsCommon()
         groupNative()
+        withJs()
+        withWasmJs()
+        groupJsCommon()
     }
 }
 
@@ -58,6 +62,8 @@ private fun KotlinHierarchyBuilder.groupJsCommon() {
 
 private fun KotlinHierarchyBuilder.groupNonJsCommon() {
     group("nonJsCommon") {
+        withAndroid()
+        withJvm()
         groupJvmCommon()
         groupNative()
     }
@@ -65,15 +71,17 @@ private fun KotlinHierarchyBuilder.groupNonJsCommon() {
 
 private fun KotlinHierarchyBuilder.groupJvmCommon() {
     group("jvmCommon") {
-        withAndroidTarget()
+        withAndroid()
         withJvm()
     }
 }
 
 private fun KotlinHierarchyBuilder.groupNonJvmCommon() {
     group("nonJvmCommon") {
-        groupJsCommon()
         groupNative()
+        withJs()
+        withWasmJs()
+        groupJsCommon()
     }
 }
 
@@ -97,8 +105,12 @@ private fun KotlinHierarchyBuilder.groupNative() {
 
 private fun KotlinHierarchyBuilder.groupNonNative() {
     group("nonNative") {
-        groupJsCommon()
+        withAndroid()
+        withJvm()
+        withJs()
+        withWasmJs()
         groupJvmCommon()
+        groupJsCommon()
     }
 }
 

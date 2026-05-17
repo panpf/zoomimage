@@ -20,17 +20,16 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy.DISABLED
 import coil3.request.ImageRequest.Builder
 import coil3.size.Precision.EXACT
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.images.coil.platformComposeSubsamplingImageGenerators
 import com.github.panpf.zoomimage.rememberCoilZoomState
-import com.github.panpf.zoomimage.test.Platform
-import com.github.panpf.zoomimage.test.Platform.iOS
 import com.github.panpf.zoomimage.test.TestLifecycle
+import com.github.panpf.zoomimage.test.coil.CoilComposeResourceSubsamplingImageGenerator
 import com.github.panpf.zoomimage.test.coil.Coils
-import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.waitMillis
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -42,10 +41,6 @@ class SingletonCoilZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testCoilZoomAsyncImage1() {
-        if (Platform.current == iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
         Coils.imageLoader()
 
         runComposeUiTest {
@@ -56,13 +51,16 @@ class SingletonCoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val subsamplingImageGenerators =
-                            remember { platformComposeSubsamplingImageGenerators() }
+                        val subsamplingImageGenerators = remember {
+                            platformComposeSubsamplingImageGenerators()
+                                .plus(CoilComposeResourceSubsamplingImageGenerator())
+                                .toImmutableList()
+                        }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),
@@ -128,13 +126,16 @@ class SingletonCoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val subsamplingImageGenerators =
-                            remember { platformComposeSubsamplingImageGenerators() }
+                        val subsamplingImageGenerators = remember {
+                            platformComposeSubsamplingImageGenerators()
+                                .plus(CoilComposeResourceSubsamplingImageGenerator())
+                                .toImmutableList()
+                        }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),
@@ -190,10 +191,6 @@ class SingletonCoilZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testCoilZoomAsyncImage2() {
-        if (Platform.current == iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
         Coils.imageLoader()
 
         runComposeUiTest {
@@ -202,13 +199,16 @@ class SingletonCoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val subsamplingImageGenerators =
-                            remember { platformComposeSubsamplingImageGenerators() }
+                        val subsamplingImageGenerators = remember {
+                            platformComposeSubsamplingImageGenerators()
+                                .plus(CoilComposeResourceSubsamplingImageGenerator())
+                                .toImmutableList()
+                        }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),
@@ -274,13 +274,16 @@ class SingletonCoilZoomAsyncImageTest {
             setContent {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
-                        val subsamplingImageGenerators =
-                            remember { platformComposeSubsamplingImageGenerators() }
+                        val subsamplingImageGenerators = remember {
+                            platformComposeSubsamplingImageGenerators()
+                                .plus(CoilComposeResourceSubsamplingImageGenerator())
+                                .toImmutableList()
+                        }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = Builder(LocalPlatformContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(EXACT)
                                 memoryCachePolicy(DISABLED)
                             }.build(),

@@ -12,7 +12,7 @@ import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.AsyncImageState
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
@@ -20,10 +20,7 @@ import com.github.panpf.sketch.request.LoadState.Success
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.SketchZoomState
 import com.github.panpf.zoomimage.rememberSketchZoomState
-import com.github.panpf.zoomimage.test.Platform
-import com.github.panpf.zoomimage.test.Platform.iOS
 import com.github.panpf.zoomimage.test.TestLifecycle
-import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.sketch.Sketchs
 import com.github.panpf.zoomimage.test.waitMillis
 import kotlin.test.Test
@@ -36,10 +33,6 @@ class SingletonSketchZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testSketchZoomAsyncImage1() {
-        if (Platform.current == iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
         Sketchs.sketch()
 
         runComposeUiTest {
@@ -54,7 +47,7 @@ class SingletonSketchZoomAsyncImageTest {
                             val state = rememberAsyncImageState()
                                 .apply { stateHolder = this }
                             SketchZoomAsyncImage(
-                                uri = ResourceImages.hugeChina.uri,
+                                uri = ComposeResImageFiles.hugeChina.uri,
                                 contentDescription = "",
                                 modifier = Modifier.size(500.dp),
                                 zoomState = zoomState,
@@ -120,7 +113,7 @@ class SingletonSketchZoomAsyncImageTest {
                             val zoomState = rememberSketchZoomState()
                                 .apply { zoomStateHolder = this }
                             SketchZoomAsyncImage(
-                                uri = ResourceImages.hugeChina.uri,
+                                uri = ComposeResImageFiles.hugeChina.uri,
                                 contentDescription = "",
                                 modifier = Modifier.size(500.dp),
                                 zoomState = zoomState,
@@ -173,10 +166,6 @@ class SingletonSketchZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testSketchZoomAsyncImage2() {
-        if (Platform.current == iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
         Sketchs.sketch()
 
         runComposeUiTest {
@@ -188,7 +177,7 @@ class SingletonSketchZoomAsyncImageTest {
                             val zoomState = rememberSketchZoomState()
                                 .apply { zoomStateHolder = this }
                             SketchZoomAsyncImage(
-                                request = ComposableImageRequest(ResourceImages.hugeChina.uri),
+                                request = ComposableImageRequest(ComposeResImageFiles.hugeChina.uri),
                                 contentDescription = "",
                                 modifier = Modifier.size(500.dp),
                                 zoomState = zoomState,
@@ -246,7 +235,7 @@ class SingletonSketchZoomAsyncImageTest {
                             val zoomState = rememberSketchZoomState()
                                 .apply { zoomStateHolder = this }
                             SketchZoomAsyncImage(
-                                request = ComposableImageRequest(ResourceImages.hugeChina.uri),
+                                request = ComposableImageRequest(ComposeResImageFiles.hugeChina.uri),
                                 contentDescription = "",
                                 modifier = Modifier.size(500.dp),
                                 zoomState = zoomState,

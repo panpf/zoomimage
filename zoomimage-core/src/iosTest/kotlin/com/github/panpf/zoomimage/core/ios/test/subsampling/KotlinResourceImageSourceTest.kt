@@ -1,10 +1,12 @@
 package com.github.panpf.zoomimage.core.ios.test.subsampling
 
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.KotlinResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.KotlinResourceImageSource
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import kotlinx.coroutines.test.runTest
+import okio.buffer
+import okio.use
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -13,63 +15,44 @@ class KotlinResourceImageSourceTest {
 
     @Test
     fun testFromKotlinResource() = runTest {
-        val resourceName1 = ResourceImages.cat.resourceName
-        val resourceName2 = ResourceImages.dog.resourceName
+        val resourceName = KotlinResImageFiles.cat.name
 
         assertEquals(
-            expected = KotlinResourceImageSource(resourceName1),
-            actual = ImageSource.fromKotlinResource(resourceName1)
-        )
-
-        assertEquals(
-            expected = KotlinResourceImageSource(resourceName2),
-            actual = ImageSource.fromKotlinResource(resourceName2)
+            expected = KotlinResourceImageSource(resourceName),
+            actual = ImageSource.fromKotlinResource(resourceName)
         )
 
         assertNotEquals(
-            illegal = KotlinResourceImageSource(resourceName1),
-            actual = ImageSource.fromKotlinResource(resourceName2)
+            illegal = KotlinResourceImageSource(resourceName),
+            actual = ImageSource.fromKotlinResource("${resourceName}_fake")
         )
     }
 
     @Test
     fun testKey() = runTest {
-        val resourceName1 = ResourceImages.cat.resourceName
-        val resourceName2 = ResourceImages.dog.resourceName
+        val resourceName = KotlinResImageFiles.cat.name
 
         assertEquals(
-            expected = "file:///kotlin_resource/$resourceName1",
-            actual = KotlinResourceImageSource(resourceName1).key
-        )
-        assertEquals(
-            expected = "file:///kotlin_resource/$resourceName2",
-            actual = KotlinResourceImageSource(resourceName2).key
+            expected = "file:///kotlin_resource/$resourceName",
+            actual = KotlinResourceImageSource(resourceName).key
         )
     }
 
     @Test
     fun testOpenSource() = runTest {
-        // TODO test: Files in kotlin resources cannot be accessed in ios test environment.
-        //      There are other places where this problem also occurs, search for it
-//        val resourceName1 = ResourceImages.cat.resourceName
-//        val resourceName2 = ResourceImages.dog.resourceName
-//
-//        KotlinResourceImageSource(resourceName1).openSource().buffer().use {
-//            it.readByteArray()
-//        }
-//
-//        KotlinResourceImageSource(resourceName2).openSource().buffer().use {
-//            it.readByteArray().decodeToString()
-//        }
+        val resourceName = KotlinResImageFiles.cat.name
+        KotlinResourceImageSource(resourceName).openSource().buffer().use {
+            it.readByteArray()
+        }
     }
 
     @Test
     fun testEqualsAndHashCode() = runTest {
-        val resourceName1 = ResourceImages.cat.resourceName
-        val resourceName2 = ResourceImages.dog.resourceName
+        val resourceName = KotlinResImageFiles.cat.name
+        val resourceName2 = "${resourceName}_fake"
 
-        val source1 = KotlinResourceImageSource(resourceName1)
-        val source12 = KotlinResourceImageSource(resourceName1)
+        val source1 = KotlinResourceImageSource(resourceName)
+        val source12 = KotlinResourceImageSource(resourceName)
         val source2 = KotlinResourceImageSource(resourceName2)
         val source22 = KotlinResourceImageSource(resourceName2)
 
@@ -89,16 +72,11 @@ class KotlinResourceImageSourceTest {
 
     @Test
     fun testToString() = runTest {
-        val resourceName1 = ResourceImages.cat.resourceName
-        val resourceName2 = ResourceImages.dog.resourceName
+        val resourceName = KotlinResImageFiles.cat.name
 
         assertEquals(
-            expected = "KotlinResourceImageSource('$resourceName1')",
-            actual = KotlinResourceImageSource(resourceName1).toString()
-        )
-        assertEquals(
-            expected = "KotlinResourceImageSource('$resourceName2')",
-            actual = KotlinResourceImageSource(resourceName2).toString()
+            expected = "KotlinResourceImageSource('$resourceName')",
+            actual = KotlinResourceImageSource(resourceName).toString()
         )
     }
 }

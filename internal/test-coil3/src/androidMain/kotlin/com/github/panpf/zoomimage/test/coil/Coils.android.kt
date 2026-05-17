@@ -4,5 +4,10 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 
 actual fun newImageLoader(context: PlatformContext): ImageLoader {
-    return ImageLoader.Builder(context).build()
+    return ImageLoader.Builder(context).apply {
+        components {
+            add(CoilComposeResourceUriFetcher.Factory())
+            add(CoilComposeResourceUriKeyer())
+        }
+    }.build()
 }

@@ -4,17 +4,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
-import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.TestLifecycle
-import com.github.panpf.zoomimage.test.current
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.waitMillis
 import com.github.panpf.zoomimage.util.Logger
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -55,11 +53,8 @@ class ZoomStateTest {
     }
 
     @Test
-    fun testSetImageSource() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
+    fun testSetImageSource() = runTest {
+        val hugeCardImageSource = ComposeResImageFiles.hugeCard.toImageSource()
 
         runComposeUiTest {
             var zoomStateHolder: ZoomState? = null
@@ -92,7 +87,7 @@ class ZoomStateTest {
                     LaunchedEffect(Unit) {
                         zoomState.zoomable.setContainerSize(IntSize(516, 516))
                         zoomState.zoomable.setContentSize(bitmapSize)
-                        zoomState.setSubsamplingImage(ResourceImages.hugeCard.toImageSource())
+                        zoomState.setSubsamplingImage(hugeCardImageSource)
                     }
                 }
             }
@@ -118,9 +113,7 @@ class ZoomStateTest {
                     LaunchedEffect(Unit) {
                         zoomState.zoomable.setContainerSize(IntSize(516, 516))
                         zoomState.zoomable.setContentSize(bitmapSize)
-                        zoomState.setSubsamplingImage(
-                            ResourceImages.hugeCard.toImageSource().toFactory()
-                        )
+                        zoomState.setSubsamplingImage(hugeCardImageSource.toFactory())
                     }
                 }
             }
@@ -146,7 +139,7 @@ class ZoomStateTest {
                     LaunchedEffect(Unit) {
                         zoomState.zoomable.setContainerSize(IntSize(516, 516))
                         zoomState.zoomable.setContentSize(bitmapSize)
-                        zoomState.setSubsamplingImage(ResourceImages.hugeCard.toImageSource())
+                        zoomState.setSubsamplingImage(hugeCardImageSource)
                         zoomState.setSubsamplingImage(null as ImageSource.Factory?)
                     }
                 }

@@ -1,11 +1,10 @@
 plugins {
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.kotlin.multiplatform")
 }
 
-addAllMultiplatformTargets()
-
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.sketch4.core")
+addMultiplatformTargets(KmpTarget.entries.toTypedArray())
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.test.sketch4.core")
 
 kotlin {
     sourceSets {

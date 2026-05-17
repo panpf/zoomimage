@@ -1,12 +1,11 @@
 package com.github.panpf.zoomimage.view.sketch4.core.test
 
-import android.R
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageResult.Error
@@ -65,7 +64,7 @@ class SketchZoomImageViewTest {
             val activity = scenario.getActivitySync()
             val coilZoomImageView = withContext(Dispatchers.Main) {
                 SketchZoomImageView(activity).apply {
-                    activity.findViewById<ViewGroup>(R.id.content)
+                    activity.findViewById<ViewGroup>(android.R.id.content)
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
@@ -114,7 +113,7 @@ class SketchZoomImageViewTest {
             val activity = scenario.getActivitySync()
             val sketchZoomImageView = withContext(Dispatchers.Main) {
                 SketchZoomImageView(activity).apply {
-                    activity.findViewById<ViewGroup>(R.id.content)
+                    activity.findViewById<ViewGroup>(android.R.id.content)
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
@@ -127,7 +126,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ResourceImages.hugeCard.uri)
+            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -143,7 +142,7 @@ class SketchZoomImageViewTest {
             val activity = scenario.getActivitySync()
             val sketchZoomImageView = withContext(Dispatchers.Main) {
                 SketchZoomImageView(activity).apply {
-                    activity.findViewById<ViewGroup>(R.id.content)
+                    activity.findViewById<ViewGroup>(android.R.id.content)
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
@@ -156,7 +155,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ResourceImages.hugeCard.uri)
+            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -184,7 +183,7 @@ class SketchZoomImageViewTest {
             val activity = scenario.getActivitySync()
             val sketchZoomImageView = withContext(Dispatchers.Main) {
                 SketchZoomImageView(activity).apply {
-                    activity.findViewById<ViewGroup>(R.id.content)
+                    activity.findViewById<ViewGroup>(android.R.id.content)
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
@@ -197,7 +196,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ResourceImages.hugeCard.uri + "1") {
+            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri + "1") {
                 error(IntColorFetcher(Color.CYAN))
             }
             Thread.sleep(500)
@@ -215,7 +214,7 @@ class SketchZoomImageViewTest {
             val activity = scenario.getActivitySync()
             val sketchZoomImageView = withContext(Dispatchers.Main) {
                 SketchZoomImageView(activity).apply {
-                    activity.findViewById<ViewGroup>(R.id.content)
+                    activity.findViewById<ViewGroup>(android.R.id.content)
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
@@ -228,7 +227,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ResourceImages.hugeCard.uri)
+            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -277,7 +276,7 @@ class SketchZoomImageViewTest {
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                activity.findViewById<ViewGroup>(R.id.content)
+                activity.findViewById<ViewGroup>(android.R.id.content)
                     .addView(sketchZoomImageView, LayoutParams(516, 516))
             }
             Thread.sleep(100)

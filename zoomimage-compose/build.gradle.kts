@@ -1,23 +1,22 @@
 plugins {
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlinx.kover")
 }
 
-addAllMultiplatformTargets()
-
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose")
+addMultiplatformTargets(KmpTarget.entries.toTypedArray())
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.compose")
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.zoomimageCore)
-            api(compose.foundation)
-            api(compose.runtime)
-            api(compose.ui)
-            api(compose.uiUtil)
+            api(libs.jetbrains.compose.foundation)
+            api(libs.jetbrains.compose.runtime)
+            api(libs.jetbrains.compose.ui)
+//            api(compose.uiUtil)
             api(libs.kotlinx.collections.immutable)
             api(libs.jetbrains.lifecycle.runtime.compose)
         }
@@ -25,7 +24,7 @@ kotlin {
         commonTest.dependencies {
             implementation(projects.internal.testCompose)
         }
-        androidInstrumentedTest.dependencies {
+        androidDeviceTest.dependencies {
             implementation(projects.internal.testCompose)
         }
     }

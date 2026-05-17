@@ -1,10 +1,9 @@
 package com.github.panpf.zoomimage.compose.resources.test
 
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromComposeResource
-import com.github.panpf.zoomimage.test.Platform
-import com.github.panpf.zoomimage.test.current
 import kotlinx.coroutines.test.runTest
 import okio.buffer
 import okio.use
@@ -32,7 +31,7 @@ class ComposeResourceImageSourceTest {
         )
 
         val okResourcePath3 =
-            "file:/Users/panpf/Workspace/zoomimage/sample/build/processedResources/desktop/main/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
+            "file:/Users/panpf/Workspace/zoomimage/samples/shared/build/processedResources/desktop/main/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
         assertEquals(
             expected = okResourcePath,
             actual = ImageSource.fromComposeResource(okResourcePath3).resourcePath
@@ -66,48 +65,42 @@ class ComposeResourceImageSourceTest {
 
     @Test
     fun testKey() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
-        val resourceName2 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_world.jpg"
-
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
+        }
         assertEquals(
-            expected = "file:///compose_resource/$resourceName1",
-            actual = ComposeResourceImageSource(resourceName1, byteArrayOf()).key
-        )
-        assertEquals(
-            expected = "file:///compose_resource/$resourceName2",
-            actual = ComposeResourceImageSource(resourceName2, byteArrayOf()).key
+            expected = "file:///compose_resource/$resourcePath",
+            actual = ComposeResourceImageSource(resourcePath, byteArrayOf()).key
         )
     }
 
     @Test
     fun testOpenSource() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
-        val resourceName2 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_world.jpg"
-
-        ComposeResourceImageSource(resourceName1, byteArrayOf()).openSource().buffer().use {
-            it.readByteArray()
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
         }
-
-        ComposeResourceImageSource(resourceName2, byteArrayOf()).openSource().buffer().use {
-            it.readByteArray().decodeToString()
-        }
+        ComposeResourceImageSource(resourcePath, byteArrayOf())
+            .openSource().buffer()
+            .use { it.readByteArray() }
     }
 
     @Test
     fun testEqualsAndHashCode() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
-        val resourceName2 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_world.jpg"
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
+        }
+        val resourcePath2 = "${resourcePath}_fake"
 
-        val source1 = ComposeResourceImageSource(resourceName1, byteArrayOf())
-        val source12 = ComposeResourceImageSource(resourceName1, byteArrayOf())
-        val source2 = ComposeResourceImageSource(resourceName2, byteArrayOf())
-        val source22 = ComposeResourceImageSource(resourceName2, byteArrayOf())
+        val source1 = ComposeResourceImageSource(resourcePath, byteArrayOf())
+        val source12 = ComposeResourceImageSource(resourcePath, byteArrayOf())
+        val source2 = ComposeResourceImageSource(resourcePath2, byteArrayOf())
+        val source22 = ComposeResourceImageSource(resourcePath2, byteArrayOf())
 
         assertEquals(expected = source1, actual = source1)
         assertEquals(expected = source1, actual = source12)
@@ -125,65 +118,55 @@ class ComposeResourceImageSourceTest {
 
     @Test
     fun testToString() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
-        val resourceName2 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_world.jpg"
-
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
+        }
         assertEquals(
-            expected = "ComposeResourceImageSource('$resourceName1')",
-            actual = ComposeResourceImageSource(resourceName1, byteArrayOf()).toString()
-        )
-        assertEquals(
-            expected = "ComposeResourceImageSource('$resourceName2')",
-            actual = ComposeResourceImageSource(resourceName2, byteArrayOf()).toString()
+            expected = "ComposeResourceImageSource('$resourcePath')",
+            actual = ComposeResourceImageSource(resourcePath, byteArrayOf()).toString()
         )
     }
 
     @Test
     fun testFactoryKey() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
-        val resourceName2 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_world.jpg"
-
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
+        }
         assertEquals(
-            expected = "file:///compose_resource/$resourceName1",
-            actual = ComposeResourceImageSource.Factory(resourceName1).key
-        )
-        assertEquals(
-            expected = "file:///compose_resource/$resourceName2",
-            actual = ComposeResourceImageSource.Factory(resourceName2).key
+            expected = "file:///compose_resource/$resourcePath",
+            actual = ComposeResourceImageSource.Factory(resourcePath).key
         )
     }
 
     @Test
-    fun testFactoryCreate() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
+    fun testFactoryCreate() = runTest {
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
         }
-        runTest {
-            val resourceName1 =
-                "composeResources/com.github.panpf.zoomimage.sample.test.compose/files/dog.jpg"
-
-            ComposeResourceImageSource.Factory(resourceName1).create().openSource().buffer().use {
-                it.readByteArray()
-            }
+        ComposeResourceImageSource.Factory(resourcePath).create().openSource().buffer().use {
+            it.readByteArray()
         }
     }
 
     @Test
     fun testFactoryEqualsAndHashCode() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
-        val resourceName2 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_world.jpg"
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
+        }
+        val resourcePath2 = "${resourcePath}_fake"
 
-        val source1 = ComposeResourceImageSource.Factory(resourceName1)
-        val source12 = ComposeResourceImageSource.Factory(resourceName1)
-        val source2 = ComposeResourceImageSource.Factory(resourceName2)
-        val source22 = ComposeResourceImageSource.Factory(resourceName2)
+        val source1 = ComposeResourceImageSource.Factory(resourcePath)
+        val source12 = ComposeResourceImageSource.Factory(resourcePath)
+        val source2 = ComposeResourceImageSource.Factory(resourcePath2)
+        val source22 = ComposeResourceImageSource.Factory(resourcePath2)
 
         assertEquals(expected = source1, actual = source12)
         assertEquals(expected = source2, actual = source22)
@@ -198,18 +181,14 @@ class ComposeResourceImageSourceTest {
 
     @Test
     fun testFactoryToString() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
-        val resourceName2 =
-            "composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_world.jpg"
-
+        val resourcePath = ComposeResImageFiles.cat.uri.let {
+            val index = it.indexOf("composeResources")
+            require(index >= 0) { "Invalid compose resource uri: $it" }
+            it.substring(index)
+        }
         assertEquals(
-            expected = "ComposeResourceImageSource.Factory('$resourceName1')",
-            actual = ComposeResourceImageSource.Factory(resourceName1).toString()
-        )
-        assertEquals(
-            expected = "ComposeResourceImageSource.Factory('$resourceName2')",
-            actual = ComposeResourceImageSource.Factory(resourceName2).toString()
+            expected = "ComposeResourceImageSource.Factory('$resourcePath')",
+            actual = ComposeResourceImageSource.Factory(resourcePath).toString()
         )
     }
 }

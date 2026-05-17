@@ -1,6 +1,6 @@
 package com.githb.panpf.zoomimage.images
 
-import com.github.panpf.zoomimage.subsampling.KotlinResourceImageSource
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.Dispatchers
@@ -31,15 +31,15 @@ class IOSLocalImages private constructor() {
 
         suspend fun saveToExternalFilesDir() = withContext(Dispatchers.IO) {
             val fileSystem = FileSystem.SYSTEM
-            val outDir = appCacheDirectory()!!.resolve("zoomimage-files")
+            val outDir = appCacheDirectory().resolve("zoomimage-files")
             if (!fileSystem.exists(outDir)) {
                 fileSystem.createDirectories(outDir)
             }
-            ResourceImages.values.forEach {
-                val file = outDir.resolve(it.resourceName)
+            ComposeResImageFiles.values.forEach {
+                val file = outDir.resolve(it.name)
                 if (!fileSystem.exists(file)) {
                     try {
-                        KotlinResourceImageSource(it.resourceName).openSource()
+                        it.toImageSource().openSource()
                             .buffer().use { input ->
                                 fileSystem.sink(file).buffer().use { output ->
                                     output.writeAll(input)
@@ -54,104 +54,26 @@ class IOSLocalImages private constructor() {
         }
     }
 
-    private val path =
-        "file://${appCacheDirectory()!!.resolve("zoomimage-files")}/"
+    private val cacheDir = "${appCacheDirectory().resolve("zoomimage-files")}".toPath()
 
-    val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val anim = ResourceImages.anim.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val longEnd =
-        ResourceImages.longEnd.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val longWhale =
-        ResourceImages.longWhale.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val hugeChina =
-        ResourceImages.hugeChina.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val hugeCard =
-        ResourceImages.hugeCard.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val hugeLongQmsht =
-        ResourceImages.hugeLongQmsht.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
-    val hugeLongComic =
-        ResourceImages.hugeLongComic.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
+    val cat = ComposeResImageFiles.cat.toLocalImageFile(cacheDir)
+    val dog = ComposeResImageFiles.dog.toLocalImageFile(cacheDir)
+    val anim = ComposeResImageFiles.anim.toLocalImageFile(cacheDir)
+    val longEnd = ComposeResImageFiles.longEnd.toLocalImageFile(cacheDir)
+    val longWhale = ComposeResImageFiles.longWhale.toLocalImageFile(cacheDir)
+    val hugeChina = ComposeResImageFiles.hugeChina.toLocalImageFile(cacheDir)
+    val hugeCard = ComposeResImageFiles.hugeCard.toLocalImageFile(cacheDir)
+    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toLocalImageFile(cacheDir)
+    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toLocalImageFile(cacheDir)
 
-    val exifFlipHorizontal =
-        ResourceImages.exifFlipHorizontal.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
-    val exifFlipVertical =
-        ResourceImages.exifFlipVertical.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
-    val exifNormal =
-        ResourceImages.exifNormal.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
-    val exifRotate90 =
-        ResourceImages.exifRotate90.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
-    val exifRotate180 =
-        ResourceImages.exifRotate180.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
-    val exifRotate270 =
-        ResourceImages.exifRotate270.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
-    val exifTranspose =
-        ResourceImages.exifTranspose.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
-    val exifTransverse =
-        ResourceImages.exifTransverse.let {
-            it.copy(
-                uri = it.uri.replace(
-                    "file:///kotlin_resource/",
-                    path
-                )
-            )
-        }
+    val exifFlipHorizontal = ComposeResImageFiles.exifFlipHorizontal.toLocalImageFile(cacheDir)
+    val exifFlipVertical = ComposeResImageFiles.exifFlipVertical.toLocalImageFile(cacheDir)
+    val exifNormal = ComposeResImageFiles.exifNormal.toLocalImageFile(cacheDir)
+    val exifRotate90 = ComposeResImageFiles.exifRotate90.toLocalImageFile(cacheDir)
+    val exifRotate180 = ComposeResImageFiles.exifRotate180.toLocalImageFile(cacheDir)
+    val exifRotate270 = ComposeResImageFiles.exifRotate270.toLocalImageFile(cacheDir)
+    val exifTranspose = ComposeResImageFiles.exifTranspose.toLocalImageFile(cacheDir)
+    val exifTransverse = ComposeResImageFiles.exifTransverse.toLocalImageFile(cacheDir)
 
     val exifs = arrayOf(
         exifFlipHorizontal,
@@ -186,7 +108,27 @@ class IOSLocalImages private constructor() {
     )
 }
 
-fun appCacheDirectory(): Path? {
+class IosLocalImageFile(
+    override val name: String,
+    override val uri: String,
+    override val size: IntSizeCompat,
+    override val exifOrientation: Int = ExifOrientation.UNDEFINED,
+) : ImageFile {
+
+    override fun toString(): String =
+        "IosLocalImageFile(name='$name', uri='$uri', size=$size, exifOrientation=$exifOrientation)"
+}
+
+fun ComposeResImageFile.toLocalImageFile(
+    cacheDir: Path
+): IosLocalImageFile = IosLocalImageFile(
+    name = this.name,
+    uri = cacheDir.resolve(this.name).toString(),
+    size = this.size,
+    exifOrientation = this.exifOrientation
+)
+
+fun appCacheDirectory(): Path {
     return getCacheDirectory().toPath()
 }
 

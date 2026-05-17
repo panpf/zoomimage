@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
-import com.githb.panpf.zoomimage.images.ResourceImageFile
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFile
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
@@ -17,7 +17,6 @@ import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.subsampling.toFactory
 import com.github.panpf.zoomimage.test.decodeImageInfo
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.useApply
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -45,7 +44,7 @@ class TileManagerTest {
 
     @Test
     fun testPausedContinuousTransformType() = runTest {
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             assertEquals(
                 TileManager.DefaultPausedContinuousTransformTypes,
                 tileManager.pausedContinuousTransformTypes
@@ -168,7 +167,7 @@ class TileManagerTest {
 
     @Test
     fun testDisabledBackgroundTiles() = runTest {
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             assertEquals(false, tileManager.disabledBackgroundTiles)
             assertEquals(0, tileManager.sampleSize)
             assertEquals(emptyList(), tileManager.backgroundTiles)
@@ -238,7 +237,7 @@ class TileManagerTest {
 
     @Test
     fun testTileAnimationSpec() = runTest {
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             assertEquals(TileAnimationSpec.Default, tileManager.tileAnimationSpec)
 
             assertTrue(foregroundTilesChangedList.size == 0)
@@ -271,7 +270,7 @@ class TileManagerTest {
 
     @Test
     fun testSortedTileGridMap() = runTest {
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             assertEquals(
                 "[32:2:2x1,16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:50:50x1]",
                 tileManager.sortedTileGridMap.toIntroString()
@@ -281,7 +280,7 @@ class TileManagerTest {
 
     @Test
     fun testSampleSize() = runTest {
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             listOf(
                 1f to 0,
                 3f to 8,
@@ -297,7 +296,7 @@ class TileManagerTest {
 
     @Test
     fun testImageLoadRect() = runTest {
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             val widthSpace = contentSize.width / 4
             val heightSpace = contentSize.height / 4
             val contentVisibleRect1 = IntRectCompat(
@@ -351,7 +350,7 @@ class TileManagerTest {
     @Test
     fun testRefreshTiles() = runTest {
         // rotation =
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             listOf(-90, 0, 90, 180, 270, 360, 450)
                 .forEach { rotation ->
                     assertEquals(
@@ -371,7 +370,7 @@ class TileManagerTest {
         }
 
         // scale and contentVisibleRect
-        createTileManagerHolder(ResourceImages.hugeCard).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeCard).useApply {
             val tileManager = tileManager
             val contentSize = contentSize
             assertEquals(0, tileManager.sampleSize)
@@ -480,7 +479,7 @@ class TileManagerTest {
 
     @Test
     fun testClean() = runTest {
-        createTileManagerHolder(ResourceImages.hugeLongQmsht).useApply {
+        createTileManagerHolder(ComposeResImageFiles.hugeLongQmsht).useApply {
             assertEquals(0, refreshTiles(scale = 3f))
             Thread.sleep(1000)
             assertEquals(
@@ -511,10 +510,10 @@ class TileManagerTest {
         }
     }
 
-    private fun createTileManagerHolder(
-        resourceImageFile: ResourceImageFile
+    private suspend fun createTileManagerHolder(
+        composeResImageFile: ComposeResImageFile
     ): TileManagerHolder {
-        val imageSource = resourceImageFile.toImageSource()
+        val imageSource = composeResImageFile.toImageSource()
         val imageInfo = imageSource.decodeImageInfo()
         return TileManagerHolder(imageSource, imageInfo)
     }

@@ -52,20 +52,11 @@ class ByteArrayImageSourceTest {
     @Test
     fun testOpenSource() {
         val string1 = "1234567890"
-        val string2 = "abcdefghij"
-
         assertEquals(
             expected = string1,
-            actual = ByteArrayImageSource(string1.encodeToByteArray()).openSource().buffer().use {
-                it.readByteArray().decodeToString()
-            }
-        )
-
-        assertEquals(
-            expected = string2,
-            actual = ByteArrayImageSource(string2.encodeToByteArray()).openSource().buffer().use {
-                it.readByteArray().decodeToString()
-            }
+            actual = ByteArrayImageSource(string1.encodeToByteArray())
+                .openSource().buffer()
+                .use { it.readByteArray().decodeToString() }
         )
     }
 

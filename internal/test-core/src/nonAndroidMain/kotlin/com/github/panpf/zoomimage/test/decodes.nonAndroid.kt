@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.test
 
-import com.githb.panpf.zoomimage.images.ResourceImageFile
+import com.githb.panpf.zoomimage.images.ComposeResImageFile
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import okio.buffer
 import okio.use
@@ -9,7 +9,7 @@ import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Rect
 
-actual fun ResourceImageFile.decode(): TileBitmap {
+actual suspend fun ComposeResImageFile.decode(): TileBitmap {
     val byteArray = toImageSource().openSource().buffer().use {
         it.readByteArray()
     }

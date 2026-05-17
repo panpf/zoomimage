@@ -2,6 +2,24 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+## Android
+
+* 所有 compose 模块最低版本升级到 23
+
+## iOS
+
+* change: 不再支持 iosX64 平台
+
+## Dependencies
+
+* 升级 kotlin 2.3.20
+* 升级 jetbrains compose 1.10.3
+* 升级 jetbrains lifecycle 2.10.0
+* 升级 jetbrains skiko 0.9.37.4
+* 升级 androidx compose 1.10.5
+
 # 1.4.0
 
 ![TIP]

@@ -12,7 +12,7 @@ import coil3.request.ErrorResult
 import coil3.request.SuccessResult
 import coil3.request.error
 import coil3.util.CoilUtils
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.CoilZoomImageView
@@ -121,7 +121,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
-            coilZoomImageView.load(ResourceImages.hugeCard.uri)
+            coilZoomImageView.load(ComposeResImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
@@ -150,7 +150,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
-            coilZoomImageView.load(ResourceImages.hugeCard.uri)
+            coilZoomImageView.load(ComposeResImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
@@ -191,7 +191,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
-            coilZoomImageView.load(ResourceImages.hugeCard.uri + "1") {
+            coilZoomImageView.load(ComposeResImageFiles.hugeCard.uri + "1") {
                 error(ColorDrawable(Color.CYAN))
             }
             Thread.sleep(500)
@@ -222,7 +222,7 @@ class CoilZoomImageViewTest {
             assertNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
-            coilZoomImageView.load(ResourceImages.hugeCard.uri)
+            coilZoomImageView.load(ComposeResImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)

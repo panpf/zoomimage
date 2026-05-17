@@ -16,6 +16,47 @@
  */
 import org.gradle.api.Project
 
+/**
+ * A list of all public modules in the project.
+ *
+ * Synced with settings.gradle.kts public modules list.
+ */
+val publicModules = setOf(
+    "zoomimage-compose",
+    "zoomimage-compose-coil2",
+    "zoomimage-compose-coil2-core",
+    "zoomimage-compose-coil3",
+    "zoomimage-compose-coil3-core",
+    "zoomimage-compose-glide",
+    "zoomimage-compose-resources",
+    "zoomimage-compose-sketch3",
+    "zoomimage-compose-sketch3-core",
+    "zoomimage-compose-sketch4",
+    "zoomimage-compose-sketch4-core",
+    "zoomimage-compose-sketch4-koin",
+    "zoomimage-core",
+    "zoomimage-core-coil2",
+    "zoomimage-core-coil3",
+    "zoomimage-core-glide",
+    "zoomimage-core-picasso",
+    "zoomimage-core-sketch3",
+    "zoomimage-core-sketch4",
+    "zoomimage-view",
+    "zoomimage-view-coil2",
+    "zoomimage-view-coil2-core",
+    "zoomimage-view-coil3",
+    "zoomimage-view-coil3-core",
+    "zoomimage-view-glide",
+    "zoomimage-view-picasso",
+    "zoomimage-view-sketch3",
+    "zoomimage-view-sketch3-core",
+    "zoomimage-view-sketch4",
+    "zoomimage-view-sketch4-core",
+    "zoomimage-view-sketch4-koin",
+)
+
+val Project.lowMinSdk: Int
+    get() = intProperty("lowMinSdk")
 
 val Project.minSdk: Int
     get() = intProperty("minSdk")
@@ -26,8 +67,8 @@ val Project.targetSdk: Int
 val Project.compileSdk: Int
     get() = intProperty("compileSdk")
 
-//val Project.groupId: String
-//    get() = stringProperty("POM_GROUP_ID")
+val Project.groupId: String
+    get() = stringProperty("POM_ARTIFACT_ID")
 
 val Project.versionName: String
     get() = stringProperty("versionName")
@@ -49,3 +90,57 @@ private fun Project.booleanProperty(
     name: String,
     default: () -> Boolean = { error("unknown property: $name") },
 ): Boolean = (properties[name] as String?)?.toBooleanStrict() ?: default()
+
+/**
+ * '1.2.0' -> '1.2.0099'
+ * '1.2.1' -> '1.2.0199'
+ * '1.2.21' -> '1.2.2199'
+ * '1.2.1-alpha01' -> '1.2.0101'
+ * '1.2.1-alpha01' -> '1.2.0101'
+ * '1.2.1-beta01' -> '1.2.0131'
+ * '1.2.1-rc01' -> '1.2.0161'
+ */
+fun convertDesktopPackageVersion(version: String): String {
+    val versionItems = version.split("-")
+    val (major, preRelease) = when (versionItems.size) {
+        2 -> versionItems[0] to versionItems[1]
+        1 -> versionItems[0] to null
+        else -> throw IllegalArgumentException("The version is invalid, version: $version")
+    }
+    val majorItems = major.split(".")
+    require(majorItems.size == 3) {
+        "The major part of the version string must have three parts, but was: $version"
+    }
+    val patch = majorItems[2].toIntOrNull()
+        ?: throw IllegalArgumentException("The patch part of version is invalid. version: $version")
+    require(patch < 100) {
+        "The patch part of the version string must be less than 100, but was: $version"
+    }
+
+    val finalPreReleaseNumberFormatted = if (preRelease != null) {
+        val preReleaseRules = listOf(
+            "alpha" to 0,
+            "beta" to 30,
+            "rc" to 60
+        )
+        val preReleaseRule = preReleaseRules.find { preRelease.startsWith(it.first) }
+            ?: throw IllegalArgumentException("The pre-release part of the version string must start with 'alpha', 'beta' or 'rc', but was: $version")
+        val preReleaseNumber = preRelease.replace(preReleaseRule.first, "").toIntOrNull()
+            ?: throw IllegalArgumentException("The pre-release part of the version string must start with 'alpha', 'beta' or 'rc', but was: $version")
+        require(preReleaseNumber < 30) {
+            "The pre-release number must be less than 30, but was: $version"
+        }
+        val finalPreReleaseNumber = preReleaseRule.second + preReleaseNumber
+        String.format("%02d", finalPreReleaseNumber)
+    } else {
+        "99"
+    }
+    val finalPatch = String.format("%02d", patch)
+    val newPatch = "${finalPatch}${finalPreReleaseNumberFormatted}"
+    val newVersion = listOf(
+        majorItems[0],  // Major
+        majorItems[1],  // Minor
+        newPatch       // Patch with pre-release number
+    ).joinToString(".")
+    return newVersion
+}

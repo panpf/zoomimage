@@ -1,22 +1,13 @@
 plugins {
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("com.codingfeline.buildkonfig")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlinx.atomicfu")
     id("org.jetbrains.kotlinx.kover")
 }
 
-addAllMultiplatformTargets()
-
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.core") {
-    buildFeatures {
-        buildConfig = true
-    }
-    defaultConfig {
-        buildConfigField("String", "VERSION_NAME", "\"${project.versionName}\"")
-        buildConfigField("int", "VERSION_CODE", project.versionCode.toString())
-    }
-}
+addMultiplatformTargets(KmpTarget.entries.toTypedArray())
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.core")
 
 kotlin {
     sourceSets {
@@ -40,7 +31,7 @@ kotlin {
         commonTest.dependencies {
             implementation(projects.internal.testCore)
         }
-        androidInstrumentedTest.dependencies {
+        androidDeviceTest.dependencies {
             implementation(projects.internal.testCore)
         }
     }

@@ -19,52 +19,41 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
-enum class MultiplatformTargets {
+enum class KmpTarget {
     Android,
     Desktop,
     Js,
     WasmJs,
-    IosX64,
-    IosArm64,
-    IosSimulatorArm64,
-//    MacosX64,
-//    MacosArm64
+    Ios,
 }
 
-fun Project.addAllMultiplatformTargets(vararg targets: MultiplatformTargets) {
+fun Project.addMultiplatformTargets(kmpTargets: Array<KmpTarget>) {
     plugins.withId("org.jetbrains.kotlin.multiplatform") {
         extensions.configure<KotlinMultiplatformExtension> {
             applyMyHierarchyTemplate()
 
-            if (targets.isEmpty() || targets.contains(MultiplatformTargets.Android)) {
-                val isAndroidApp = plugins.hasPlugin("com.android.application")
-                val isAndroidLibrary = plugins.hasPlugin("com.android.library")
-                if (isAndroidApp || isAndroidLibrary) {
-                    androidTarget {
-                        if (isAndroidLibrary) {
-                            publishLibraryVariants("release")
-                        }
-                    }
-                }
+            if (kmpTargets.contains(KmpTarget.Android)) {
+                androidLibrary {}
             }
 
-            if (targets.isEmpty() || targets.contains(MultiplatformTargets.Desktop)) {
+            if (kmpTargets.contains(KmpTarget.Desktop)) {
                 jvm("desktop")
             }
 
-            if (targets.isEmpty() || targets.contains(MultiplatformTargets.Js)) {
+            if (kmpTargets.contains(KmpTarget.Js)) {
                 js {
-                    browser()
-                    nodejs {
+                    browser {
                         testTask {
-                            useMocha {
-                                timeout = "60s"
+                            useKarma {
+                                useChromeHeadless()
                             }
                         }
                     }
@@ -73,18 +62,14 @@ fun Project.addAllMultiplatformTargets(vararg targets: MultiplatformTargets) {
                 }
             }
 
-            if (targets.isEmpty() || targets.contains(MultiplatformTargets.WasmJs)) {
+            if (kmpTargets.contains(KmpTarget.WasmJs)) {
                 @OptIn(ExperimentalWasmDsl::class)
                 wasmJs {
-                    // TODO: Fix wasm tests.
                     browser {
                         testTask {
-                            enabled = false
-                        }
-                    }
-                    nodejs {
-                        testTask {
-                            enabled = false
+                            useKarma {
+                                useChromeHeadless()
+                            }
                         }
                     }
                     binaries.executable()
@@ -92,36 +77,88 @@ fun Project.addAllMultiplatformTargets(vararg targets: MultiplatformTargets) {
                 }
             }
 
-            if (targets.isEmpty() || targets.contains(MultiplatformTargets.IosX64)) {
-                iosX64()
-            }
-            if (targets.isEmpty() || targets.contains(MultiplatformTargets.IosArm64)) {
+            if (kmpTargets.contains(KmpTarget.Ios)) {
                 iosArm64()
-            }
-            if (targets.isEmpty() || targets.contains(MultiplatformTargets.IosSimulatorArm64)) {
                 iosSimulatorArm64()
             }
-
-//            if (targets.isEmpty() || targets.contains(MultiplatformTargets.MacosX64)) {
-//                macosX64()
-//            }
-//            if (targets.isEmpty() || targets.contains(MultiplatformTargets.MacosArm64)) {
-//                macosArm64()
-//            }
         }
 
-        if (targets.isEmpty() || targets.contains(MultiplatformTargets.Js)) {
+        if (kmpTargets.contains(KmpTarget.Ios)) {
+            copyResourcesToIosTestBin()
+        }
+
+        if (kmpTargets.contains(KmpTarget.Js)) {
             applyKotlinJsImplicitDependencyWorkaround()
         }
-        if (targets.isEmpty() || targets.contains(MultiplatformTargets.WasmJs)) {
+        if (kmpTargets.contains(KmpTarget.WasmJs)) {
             applyKotlinWasmJsImplicitDependencyWorkaround()
         }
-        // An error occurs when compiling js or wasmJs:
-        // Resolving dependency configuration 'androidDebugAndroidTestCompilationApi' is not allowed as it is defined as 'canBeResolved=false'.
-        //Instead, a resolvable ('canBeResolved=true') dependency configuration that extends 'androidDebugAndroidTestCompilationApi' should be resolved.
-//        if (targets.isEmpty() || targets.contains(MultiplatformTargets.WasmJs)) {
-//            createSkikoWasmJsRuntimeDependency()
-//        }
+
+        // Cannot find module './skiko.mjs'
+        if (kmpTargets.contains(KmpTarget.Js) || kmpTargets.contains(KmpTarget.WasmJs)) {
+            createSkikoWasmJsRuntimeDependency()
+        }
+    }
+}
+
+/**
+ * Although the iosTest environment is configured with a dependency on the images module,
+ * it still cannot access the resource files in the images module.
+ * The temporary solution is to copy the resource files to the bin directory of iosTest before executing the test task.
+ */
+fun Project.copyResourcesToIosTestBin() {
+    val copyComposeResourcesTask = tasks.register(
+        /* name = */ "copyComposeResourcesToIosTestBin",
+        /* type = */ Copy::class.java
+    ) {
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
+        description = "Copy compose resources to iOS simulator build bin directory for tests"
+        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+
+        val fromDir = file("${project.rootDir}/internal/images/src/commonMain/composeResources")
+        if (!fromDir.exists()) {
+            throw IllegalStateException("Source directory '$fromDir' does not exist. Please check the path.")
+        }
+        from(fromDir)
+
+        val destDir =
+            layout.buildDirectory.dir("bin/iosSimulatorArm64/debugTest/compose-resources/composeResources/com.github.panpf.zoomimage.images")
+        into(destDir)
+
+        doLast {
+            println("Copyed compose resources from '$fromDir' to '${destDir.get()}'")
+        }
+    }
+
+    val copyKotlinResourcesTask = tasks.register(
+        /* name = */ "copyKotlinResourcesToIosTestBin",
+        /* type = */ Copy::class.java
+    ) {
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
+        description = "Copy kotlin resources to iOS simulator build bin directory for tests"
+        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+
+        val fromDir = file("${project.rootDir}/internal/images/src/iosMain/resources")
+        if (!fromDir.exists()) {
+            throw IllegalStateException("Source directory '$fromDir' does not exist. Please check the path.")
+        }
+        from(fromDir)
+
+        val destDir =
+            layout.buildDirectory.dir("bin/iosSimulatorArm64/debugTest/compose-resources")
+        into(destDir)
+
+        doLast {
+            println("Copyed kotlin resources from '$fromDir' to '${destDir.get()}'")
+        }
+    }
+
+    afterEvaluate {
+        val testTaskName = "iosSimulatorArm64Test"
+        tasks.findByName(testTaskName)?.let { testTask ->
+            testTask.dependsOn(copyComposeResourcesTask)
+            testTask.dependsOn(copyKotlinResourcesTask)
+        }
     }
 }
 
@@ -143,7 +180,6 @@ fun Project.applyKotlinJsImplicitDependencyWorkaround() {
         }
         named("jsBrowserProductionWebpack").configure(configureJs)
         named("jsBrowserProductionLibraryDistribution").configure(configureJs)
-        named("jsNodeProductionLibraryDistribution").configure(configureJs)
     }
 }
 
@@ -165,7 +201,6 @@ fun Project.applyKotlinWasmJsImplicitDependencyWorkaround() {
         }
         named("wasmJsBrowserProductionWebpack").configure(configureWasmJs)
         named("wasmJsBrowserProductionLibraryDistribution").configure(configureWasmJs)
-        named("wasmJsNodeProductionLibraryDistribution").configure(configureWasmJs)
     }
 }
 
@@ -174,6 +209,9 @@ val NamedDomainObjectContainer<KotlinSourceSet>.androidUnitTest: NamedDomainObje
 
 val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest: NamedDomainObjectProvider<KotlinSourceSet>
     get() = named("androidInstrumentedTest")
+
+val NamedDomainObjectContainer<KotlinSourceSet>.androidDeviceTest: NamedDomainObjectProvider<KotlinSourceSet>
+    get() = named("androidDeviceTest")
 
 val NamedDomainObjectContainer<KotlinSourceSet>.desktopMain: NamedDomainObjectProvider<KotlinSourceSet>
     get() = named("desktopMain")

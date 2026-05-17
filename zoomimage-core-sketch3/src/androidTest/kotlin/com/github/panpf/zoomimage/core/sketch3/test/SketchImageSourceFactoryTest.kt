@@ -17,7 +17,7 @@
 package com.github.panpf.zoomimage.core.sketch3.test
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.datasource.AssetDataSource
 import com.github.panpf.sketch.datasource.DataFrom
@@ -36,7 +36,7 @@ class SketchImageSourceFactoryTest {
     fun testConstructor() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val imageUri = ResourceImages.dog.uri
+        val imageUri = ComposeResImageFiles.dog.uri
 
         val request = LoadRequest(context, imageUri)
         SketchImageSource.Factory(sketch, request)
@@ -48,7 +48,7 @@ class SketchImageSourceFactoryTest {
     fun testKeyAndImageUri() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val imageUri = ResourceImages.dog.uri
+        val imageUri = ComposeResImageFiles.dog.uri
         val request = LoadRequest(context, imageUri)
         val factory = SketchImageSource.Factory(sketch, request)
         assertEquals(request.uriString, factory.key)
@@ -61,7 +61,7 @@ class SketchImageSourceFactoryTest {
         val sketch = Sketch.Builder(context).build()
         SketchImageSource.Factory(
             sketch = sketch,
-            request = LoadRequest(context, newAssetUri(ResourceImages.dog.resourceName))
+            request = LoadRequest(context, newAssetUri(ComposeResImageFiles.dog.name))
         ).let { runBlocking { it.create() } }.apply {
             assertTrue(
                 this.dataSource is AssetDataSource,
@@ -75,8 +75,8 @@ class SketchImageSourceFactoryTest {
     fun testEqualsAndHashCode() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val request1 = LoadRequest(context, ResourceImages.dog.uri)
-        val request2 = LoadRequest(context, ResourceImages.cat.uri)
+        val request1 = LoadRequest(context, ComposeResImageFiles.dog.uri)
+        val request2 = LoadRequest(context, ComposeResImageFiles.cat.uri)
 
         val element1 = SketchImageSource.Factory(sketch, request1)
         val element11 = SketchImageSource.Factory(sketch, request1)
@@ -95,7 +95,7 @@ class SketchImageSourceFactoryTest {
     fun testToString() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val imageUri = ResourceImages.dog.uri
+        val imageUri = ComposeResImageFiles.dog.uri
         val request = LoadRequest(context, imageUri)
 
         val factory = SketchImageSource.Factory(sketch, request)

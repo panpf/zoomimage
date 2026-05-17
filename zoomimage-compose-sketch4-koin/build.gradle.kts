@@ -1,14 +1,13 @@
 plugins {
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlinx.kover")
 }
 
-addAllMultiplatformTargets()
-
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.sketch4.koin")
+addMultiplatformTargets(KmpTarget.entries.toTypedArray())
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.sketch4.koin")
 
 kotlin {
     sourceSets {
@@ -22,7 +21,7 @@ kotlin {
             implementation(projects.internal.testKoin)
             implementation(projects.internal.testSketch4Core)
         }
-        androidInstrumentedTest.dependencies {
+        androidDeviceTest.dependencies {
             implementation(projects.internal.testCompose)
             implementation(projects.internal.testKoin)
             implementation(projects.internal.testSketch4Core)

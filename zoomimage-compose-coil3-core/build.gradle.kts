@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
@@ -7,9 +7,8 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
 }
 
-addAllMultiplatformTargets()
-
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.coil3.core")
+addMultiplatformTargets(KmpTarget.entries.toTypedArray())
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.coil3.core")
 
 kotlin {
     sourceSets {
@@ -29,7 +28,7 @@ kotlin {
             implementation(projects.internal.testCoil3)
             implementation(projects.internal.utilsCoil3Compose)
         }
-        androidInstrumentedTest.dependencies {
+        androidDeviceTest.dependencies {
             implementation(projects.internal.testCompose)
             implementation(projects.internal.testCoil3)
             implementation(projects.internal.utilsCoil3Compose)

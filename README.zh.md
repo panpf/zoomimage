@@ -242,7 +242,7 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 ## 示例
 
-你可以在 [examples](sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples)
+你可以在 [examples](samples/shared/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples)
 目录下找到示例代码，也可以到 [release](https://github.com/panpf/zoomimage/releases) 页面下载 App 体验
 
 ## 更新日志

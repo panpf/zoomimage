@@ -24,15 +24,12 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.size.Precision
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.rememberCoilZoomState
-import com.github.panpf.zoomimage.test.Platform
-import com.github.panpf.zoomimage.test.Platform.iOS
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.coil.Coils
-import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.waitMillis
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -59,7 +56,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -130,7 +127,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -199,7 +196,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -270,7 +267,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ResourceImages.longEnd.uri)
+                                data(ComposeResImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -327,10 +324,6 @@ class CoilZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testBuildContentSizeWithCrossfade() {
-        if (Platform.current == iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
         val imageLoader = Coils.imageLoader()
 
         runComposeUiTest {
@@ -346,7 +339,7 @@ class CoilZoomAsyncImageTest {
                         }
                         LaunchedEffect(Unit) {
                             val request = ImageRequest.Builder(context)
-                                .data(ResourceImages.dog.uri)
+                                .data(ComposeResImageFiles.dog.uri)
                                 .size(1100, 733)
                                 .precision(Precision.EXACT)
                                 .build()
@@ -369,7 +362,7 @@ class CoilZoomAsyncImageTest {
                             CoilZoomAsyncImage(
                                 modifier = Modifier.size(500.dp),
                                 model = ImageRequest.Builder(context)
-                                    .data(ResourceImages.dog.uri)
+                                    .data(ComposeResImageFiles.dog.uri)
                                     .placeholderMemoryCacheKey(bigImageMemoryCacheKey1)
                                     .memoryCachePolicy(CachePolicy.DISABLED)
                                     .size(1100 / 2, 733 / 2)

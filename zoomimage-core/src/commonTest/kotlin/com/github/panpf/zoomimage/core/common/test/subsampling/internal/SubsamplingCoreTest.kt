@@ -1,13 +1,12 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling.internal
 
-import com.githb.panpf.zoomimage.images.ResourceImageFile
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFile
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.internal.SubsamplingCore
 import com.github.panpf.zoomimage.subsampling.internal.ZoomableBridge
 import com.github.panpf.zoomimage.test.block
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -29,7 +28,7 @@ class SubsamplingCoreTest {
 
     @Test
     fun test() = runTest {
-        val imageFile: ResourceImageFile = ResourceImages.hugeChina
+        val imageFile: ComposeResImageFile = ComposeResImageFiles.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
         val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
@@ -118,7 +117,7 @@ class SubsamplingCoreTest {
 
     @Test
     fun testAttachedAndDetached() = runTest {
-        val imageFile: ResourceImageFile = ResourceImages.hugeChina
+        val imageFile: ComposeResImageFile = ComposeResImageFiles.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
         val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
@@ -214,7 +213,7 @@ class SubsamplingCoreTest {
 
     @Test
     fun testPreferredTileSize() = runTest {
-        val imageFile: ResourceImageFile = ResourceImages.hugeChina
+        val imageFile: ComposeResImageFile = ComposeResImageFiles.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
         val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
@@ -318,7 +317,7 @@ class SubsamplingCoreTest {
 
     @Test
     fun testContentSize() = runTest {
-        val imageFile: ResourceImageFile = ResourceImages.hugeChina
+        val imageFile: ComposeResImageFile = ComposeResImageFiles.hugeChina
         val contentSize: IntSizeCompat = imageFile.size / 8
 
         val zoomableBridge = TestZoomableBridge(imageFile, contentSize)
@@ -411,7 +410,7 @@ class SubsamplingCoreTest {
     // TODO test
 
     private class TestZoomableBridge(
-        imageFile: ResourceImageFile,
+        imageFile: ComposeResImageFile,
         val contentSize: IntSizeCompat
     ) : ZoomableBridge {
 

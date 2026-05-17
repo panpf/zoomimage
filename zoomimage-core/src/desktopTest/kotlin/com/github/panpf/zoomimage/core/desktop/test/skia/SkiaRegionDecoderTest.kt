@@ -1,11 +1,11 @@
 package com.github.panpf.zoomimage.core.desktop.test.skia
 
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaRegionDecoder
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import kotlinx.coroutines.test.runTest
 import org.jetbrains.skia.Color
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,8 +14,8 @@ import kotlin.test.assertNotEquals
 class SkiaRegionDecoderTest {
 
     @Test
-    fun testDecodeRegion() {
-        val imageFile = ResourceImages.hugeChina
+    fun testDecodeRegion() = runTest {
+        val imageFile = ComposeResImageFiles.hugeChina
         val imageSize = imageFile.size  // 6799x4882
         val tileSize = IntSizeCompat(679, 1219)
         val imageSource = imageFile.toImageSource()
@@ -41,8 +41,8 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
-    fun testDecodeRegionOutOfRange1() {
-        val imageFile = ResourceImages.hugeChina
+    fun testDecodeRegionOutOfRange1() = runTest {
+        val imageFile = ComposeResImageFiles.hugeChina
         val imageSize = imageFile.size  // 6799x4882
         val tileSize = IntSizeCompat(679, 1219)
         val imageSource = imageFile.toImageSource()
@@ -68,8 +68,8 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
-    fun testDecodeRegionOutOfRange2() {
-        val imageFile = ResourceImages.hugeChina
+    fun testDecodeRegionOutOfRange2() = runTest {
+        val imageFile = ComposeResImageFiles.hugeChina
         val imageSize = imageFile.size  // 6799x4882
         val tileSize = IntSizeCompat(679, 1219)
         val imageSource = imageFile.toImageSource()

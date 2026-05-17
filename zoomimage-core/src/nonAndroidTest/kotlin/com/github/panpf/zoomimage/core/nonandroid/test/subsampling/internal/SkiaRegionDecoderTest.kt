@@ -1,16 +1,13 @@
 package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaRegionDecoder
 import com.github.panpf.zoomimage.subsampling.toFactory
-import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.TestImageSource
-import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.hammingDistance
 import com.github.panpf.zoomimage.test.produceFingerPrint
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntRectCompat
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.skia.Bitmap
@@ -45,12 +42,7 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
-    fun testFactoryCreate() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testFactoryCreate() = runTest {
         val imageSource1 = TestImageSource()
         val imageSource2 = TestImageSource()
         val subsamplingImage1 = SubsamplingImage(imageSource1)
@@ -70,7 +62,7 @@ class SkiaRegionDecoderTest {
                 assertSame(subsamplingImage2, subsamplingImage)
             }
 
-        val imageFile = ResourceImages.exifRotate90
+        val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         SkiaRegionDecoder.Factory().create(SubsamplingImage(imageSource), imageSource).apply {
             assertEquals(expected = imageFile.size, actual = imageInfo.size)
@@ -106,8 +98,8 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
-    fun testImageInfo() {
-        val imageFile = ResourceImages.exifRotate90
+    fun testImageInfo() = runTest {
+        val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource).apply {
             assertEquals(expected = imageFile.size, actual = imageInfo.size)
@@ -126,8 +118,8 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
-    fun testPrepare() {
-        val imageFile = ResourceImages.exifRotate90
+    fun testPrepare() = runTest {
+        val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource).use {
             it.prepare()
@@ -141,12 +133,8 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
-    fun testDecodeRegion() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-        val imageSource1 = ResourceImages.exifNormal.toImageSource()
+    fun testDecodeRegion() = runTest {
+        val imageSource1 = ComposeResImageFiles.exifNormal.toImageSource()
         val bitmap11: Bitmap
         SkiaRegionDecoder.Factory()
             .create(SubsamplingImage(imageSource1.toFactory()), imageSource1).use { decodeHelper1 ->
@@ -169,7 +157,7 @@ class SkiaRegionDecoderTest {
                 }
             }
 
-        val imageSource2 = ResourceImages.exifRotate90.toImageSource()
+        val imageSource2 = ComposeResImageFiles.exifRotate90.toImageSource()
         val bitmap2: Bitmap
         SkiaRegionDecoder.Factory()
             .create(SubsamplingImage(imageSource2.toFactory()), imageSource2)

@@ -13,16 +13,14 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.SizeColorPainter
 import com.github.panpf.zoomimage.test.TestLifecycle
-import com.github.panpf.zoomimage.test.current
-import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.waitMillis
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -31,12 +29,8 @@ class ZoomImageTest {
 
     @Test
     @OptIn(ExperimentalTestApi::class)
-    fun testZoomImage() {
-        if (Platform.current == Platform.iOS) {
-            // Files in kotlin resources cannot be accessed in ios test environment.
-            return
-        }
-
+    fun testZoomImage() = runTest {
+        val imageSource = ComposeResImageFiles.hugeChina.toImageSource()
         runComposeUiTest {
             var zoomStateHolder: ZoomState? = null
             setContent {
@@ -51,7 +45,7 @@ class ZoomImageTest {
                             zoomState = zoomState,
                         )
                         LaunchedEffect(Unit) {
-                            zoomState.setSubsamplingImage(ResourceImages.hugeChina.toImageSource())
+                            zoomState.setSubsamplingImage(imageSource)
                         }
                     }
                 }
@@ -112,7 +106,7 @@ class ZoomImageTest {
                             alignment = Alignment.BottomEnd,
                         )
                         LaunchedEffect(Unit) {
-                            zoomState.setSubsamplingImage(ResourceImages.hugeChina.toImageSource())
+                            zoomState.setSubsamplingImage(ComposeResImageFiles.hugeChina.toImageSource())
                         }
                     }
                 }

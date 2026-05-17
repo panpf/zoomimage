@@ -1,12 +1,12 @@
 package com.github.panpf.zoomimage.core.sketch4.desktop.test
 
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.DataFrom
 import com.github.panpf.sketch.source.FileDataSource
-import com.github.panpf.sketch.source.KotlinResourceDataSource
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.runBlocking
@@ -48,10 +48,10 @@ class SketchImageSourceTest {
         val sketch = Sketch(context)
         SketchImageSource.Factory(
             sketch = sketch,
-            request = ImageRequest(context, ResourceImages.dog.uri)
+            request = ImageRequest(context, ComposeResImageFiles.dog.uri)
         ).let { runBlocking { it.create() } }.apply {
             assertTrue(
-                this.dataSource is KotlinResourceDataSource,
+                this.dataSource is ByteArrayDataSource,
                 message = "${this.dataSource}"
             )
             assertEquals(DataFrom.LOCAL, this.dataSource.dataFrom)

@@ -1,5 +1,15 @@
 package com.github.panpf.zoomimage.core.nonandroid.test.subsampling
 
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.test.createBitmap
+import com.github.panpf.zoomimage.test.decode
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import kotlinx.coroutines.test.runTest
+import org.jetbrains.skia.ColorType
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import com.github.panpf.zoomimage.subsampling.byteCount as expectByteCount
 import com.github.panpf.zoomimage.subsampling.height as expectHeight
 import com.github.panpf.zoomimage.subsampling.isImmutable as expectIsImmutable
@@ -8,15 +18,6 @@ import com.github.panpf.zoomimage.subsampling.isRecycled as expectIsRecycled
 import com.github.panpf.zoomimage.subsampling.recycle as expectRecycle
 import com.github.panpf.zoomimage.subsampling.size as expectSize
 import com.github.panpf.zoomimage.subsampling.width as expectWidth
-import com.githb.panpf.zoomimage.images.ResourceImages
-import com.github.panpf.zoomimage.test.createBitmap
-import com.github.panpf.zoomimage.test.decode
-import com.github.panpf.zoomimage.util.IntSizeCompat
-import org.jetbrains.skia.ColorType
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class TileBitmapNonAndroidTest {
 
@@ -59,15 +60,15 @@ class TileBitmapNonAndroidTest {
     }
 
     @Test
-    fun testIsMutable() {
-        assertTrue(ResourceImages.dog.decode().expectIsMutable)
-        assertFalse(ResourceImages.dog.decode().apply { setImmutable() }.expectIsMutable)
+    fun testIsMutable() = runTest {
+        assertTrue(ComposeResImageFiles.dog.decode().expectIsMutable)
+        assertFalse(ComposeResImageFiles.dog.decode().apply { setImmutable() }.expectIsMutable)
     }
 
     @Test
-    fun testIsImmutable() {
-        assertFalse(ResourceImages.dog.decode().expectIsImmutable)
-        assertTrue(ResourceImages.dog.decode().apply { setImmutable() }.expectIsImmutable)
+    fun testIsImmutable() = runTest {
+        assertFalse(ComposeResImageFiles.dog.decode().expectIsImmutable)
+        assertTrue(ComposeResImageFiles.dog.decode().apply { setImmutable() }.expectIsImmutable)
     }
 
     @Test

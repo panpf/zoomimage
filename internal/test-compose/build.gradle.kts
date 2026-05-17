@@ -1,20 +1,18 @@
 plugins {
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-addAllMultiplatformTargets()
-
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.compose")
+addMultiplatformTargets(KmpTarget.entries.toTypedArray())
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.test.compose")
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.internal.testCore)
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-            api(compose.uiTest)
+            api(libs.jetbrains.compose.ui.test)
             api(libs.jetbrains.lifecycle.runtime.compose)
         }
         androidMain.dependencies {

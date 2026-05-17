@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bumptech.glide.Glide
 import com.bumptech.glide.getRequestFromView
-import com.githb.panpf.zoomimage.images.ResourceImages
+import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.GlideZoomImageView
@@ -117,7 +117,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ResourceImages.hugeCard.uri)
+                    .load(ComposeResImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
             Thread.sleep(500)
@@ -148,7 +148,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ResourceImages.hugeCard.uri)
+                    .load(ComposeResImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
             Thread.sleep(500)
@@ -190,7 +190,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ResourceImages.hugeCard.uri + "1")
+                    .load(ComposeResImageFiles.hugeCard.uri + "1")
                     .error(ColorDrawable(Color.CYAN))
                     .into(glideZoomImageView)
             }
@@ -222,7 +222,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ResourceImages.hugeCard.uri)
+                    .load(ComposeResImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
             Thread.sleep(500)
