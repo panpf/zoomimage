@@ -19,6 +19,10 @@
 * 升级 jetbrains lifecycle 2.10.0
 * 升级 jetbrains skiko 0.9.37.4
 * 升级 androidx compose 1.10.5
+* 升级 androidx exifinterface 1.4.2
+* 升级 kotlinx collections immutable 0.4.0
+* 升级 kotlinx coroutines 1.11.0
+* 升级 okio 3.17.0
 
 # 1.4.0
 

@@ -19,6 +19,10 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * Upgrade to jetbrains lifecycle 2.10.0
 * Upgrade to jetbrains skiko 0.9.37.4
 * Upgrade to androidx compose 1.10.5
+* Upgrade to androidx exifinterface 1.4.2
+* Upgrade to kotlinx collections immutable 0.4.0
+* Upgrade to kotlinx coroutines 1.11.0
+* Upgrade to okio 3.17.0
 
 # 1.4.0
 
