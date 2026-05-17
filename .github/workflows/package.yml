@@ -1,24 +1,27 @@
 name: Package
-# TODO Update
 
 on: workflow_dispatch
+
+env:
+  JAVA_VERSION: 21
+  JAVA_DISTRIBUTION: zulu
 
 jobs:
   package-android:
     name: Package android
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
+      - uses: android-actions/setup-android@v4
 
       - name: Run package
         run: ./gradlew samples:androidApp:assembleRelease
@@ -30,17 +33,19 @@ jobs:
           path: samples/androidApp/build/outputs/apk/release/*.apk
 
   package-ios:
-    name: Package ios
-    runs-on: macos-latest
+    name: Package iOS
+    runs-on: macos-26
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
 
       - name: Run package
         run: xcodebuild -project samples/iosApp/iosApp.xcodeproj -scheme iosApp -destination 'generic/platform=iOS Simulator' ARCHS=arm64 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath samples/shared/build/ios/outputs/
@@ -64,14 +69,16 @@ jobs:
     name: Package linux desktop
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
 
       - name: Run package
         run: ./gradlew samples:desktopApp:packageReleaseDeb
@@ -83,17 +90,19 @@ jobs:
           path: samples/desktopApp/build/compose/binaries/main-release/deb/*.deb
 
   package-macos:
-    name: Package macos desktop
-    runs-on: macos-latest
+    name: Package macOS desktop
+    runs-on: macos-26
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
 
       - name: Run package
         run: ./gradlew samples:desktopApp:packageReleaseDmg
@@ -108,14 +117,16 @@ jobs:
     name: Package windows desktop
     runs-on: windows-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
 
       - name: Run package
         run: ./gradlew samples:desktopApp:packageReleaseMsi
@@ -130,14 +141,16 @@ jobs:
     name: Package js browser
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
 
       - name: Run package
         run: ./gradlew samples:jsApp:jsBrowserDistribution
@@ -158,17 +171,19 @@ jobs:
           path: samples/jsApp/build/dist/js/productionExecutable/*.zip
 
   package-wasm-js:
-    name: Package wasm js browser
+    name: Package wasmJs browser
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
 
       - name: Run package
         run: ./gradlew samples:wasmJsApp:wasmJsBrowserDistribution

@@ -1,25 +1,27 @@
 name: Publish to maven central
-# TODO Update
 
 on: workflow_dispatch
+
+env:
+  JAVA_VERSION: 21
+  JAVA_DISTRIBUTION: zulu
 
 jobs:
   publish:
     name: Publish to maven central
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
-      - name: Checkout
-        id: check
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
+      - uses: android-actions/setup-android@v4
 
       - name: Run publish
         env:
