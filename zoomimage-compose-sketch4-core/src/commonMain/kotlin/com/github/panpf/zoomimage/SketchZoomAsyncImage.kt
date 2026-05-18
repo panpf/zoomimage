@@ -251,6 +251,7 @@ fun SketchZoomAsyncImage(
             Box(
                 Modifier
                     .matchParentSize()
+//                    .windowInsetsPadding(WindowInsets.safeDrawing)    // TODO scroll bar window inset
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }
