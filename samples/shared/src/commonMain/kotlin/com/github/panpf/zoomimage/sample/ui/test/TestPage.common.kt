@@ -29,10 +29,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
+import androidx.navigation3.runtime.NavKey
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_github
+import com.github.panpf.zoomimage.sample.ui.CoilBigStartCrossfadeTestRoute
+import com.github.panpf.zoomimage.sample.ui.ExifOrientationTestRoute
+import com.github.panpf.zoomimage.sample.ui.GraphicsLayerTestRoute
+import com.github.panpf.zoomimage.sample.ui.ImageSourceTestRoute
+import com.github.panpf.zoomimage.sample.ui.KeyTestRoute
+import com.github.panpf.zoomimage.sample.ui.LocalNavBackStack
+import com.github.panpf.zoomimage.sample.ui.ModifierZoomTestRoute
+import com.github.panpf.zoomimage.sample.ui.MouseTestRoute
+import com.github.panpf.zoomimage.sample.ui.OverlayTestRoute
+import com.github.panpf.zoomimage.sample.ui.TempTestRoute
+import com.github.panpf.zoomimage.sample.ui.ZoomImageSwitchTestRoute
 import com.github.panpf.zoomimage.sample.ui.components.AutoLinkText
 import com.github.panpf.zoomimage.sample.util.Platform
 import com.github.panpf.zoomimage.sample.util.current
@@ -40,16 +50,16 @@ import com.github.panpf.zoomimage.sample.util.isMobile
 import org.jetbrains.compose.resources.painterResource
 
 fun testItems(): List<TestItem> = listOf(
-    TestItem("ImageSource", ImageSourceTestScreen()),
-    TestItem("Exif Orientation", ExifOrientationTestScreen()),
-    TestItem("Graphics Layer", GraphicsLayerTestScreen()),
-    TestItem("Modifier.zoom()", ModifierZoomTestScreen()),
-    TestItem("Mouse", MouseTestScreen()),
-    TestItem("KeyZoom", KeyTestScreen()),
-    TestItem("ZoomImage (Switch)", ZoomImageSwitchTestScreen()),
-    TestItem("CoilBigStartCrossfade", CoilBigStartCrossfadeTestScreen()),
-    TestItem("Overlay", OverlayTestScreen()),
-    TestItem("Temp", TempTestScreen()),
+    TestItem("ImageSource", ImageSourceTestRoute),
+    TestItem("Exif Orientation", ExifOrientationTestRoute),
+    TestItem("Graphics Layer", GraphicsLayerTestRoute),
+    TestItem("Modifier.zoom()", ModifierZoomTestRoute),
+    TestItem("Mouse", MouseTestRoute),
+    TestItem("KeyZoom", KeyTestRoute),
+    TestItem("ZoomImage (Switch)", ZoomImageSwitchTestRoute),
+    TestItem("CoilBigStartCrossfade", CoilBigStartCrossfadeTestRoute),
+    TestItem("Overlay", OverlayTestRoute),
+    TestItem("Temp", TempTestRoute),
 ).plus(platformTestItems())
 
 expect fun platformTestItems(): List<TestItem>
@@ -80,11 +90,11 @@ fun TestPage() {
     }
 }
 
-data class TestItem(val title: String, val screen: Screen)
+data class TestItem(val title: String, val navKey: NavKey)
 
 @Composable
 fun TestGridItem(item: TestItem) {
-    val navigator = LocalNavigator.current!!
+    val navBackStack = LocalNavBackStack.current
     val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
@@ -92,7 +102,7 @@ fun TestGridItem(item: TestItem) {
             .heightIn(100.dp, 1000.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(colorScheme.primaryContainer)
-            .clickable { navigator.push(item.screen) }
+            .clickable { navBackStack.add(item.navKey) }
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {

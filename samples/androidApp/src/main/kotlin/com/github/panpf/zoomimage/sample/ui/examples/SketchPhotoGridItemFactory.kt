@@ -59,7 +59,7 @@ class SketchPhotoGridItemFactory(val fragmentManager: FragmentManager) :
                     background = R.color.placeholder_bg
                 )
             )
-            kotlin.error(
+            error(
                 IconDrawableStateImage(
                     icon = R.drawable.ic_error_baseline,
                     background = R.color.placeholder_bg

@@ -16,10 +16,9 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.util.Logger
 
-class KeyTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun KeyTestScreen() {
+    BaseScreen {
         ToolbarScaffold("Key") {
             val focusRequester = remember { FocusRequester() }
             val zoomState = rememberSketchZoomState()

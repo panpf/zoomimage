@@ -23,10 +23,9 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.util.Logger
 
-class CoilBigStartCrossfadeTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun CoilBigStartCrossfadeTestScreen() {
+    BaseScreen {
         ToolbarScaffold("CoilBigStartCrossfade") {
             val context = LocalPlatformContext.current
             var bigImageMemoryCacheKey: MemoryCache.Key? by remember { mutableStateOf(null) }

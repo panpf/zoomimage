@@ -20,7 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
+import com.github.panpf.zoomimage.sample.ui.LocalNavBackStack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +29,7 @@ fun ToolbarScaffold(
     ignoreNavigationBarInsets: Boolean = false,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val navigator = LocalNavigator.current!!
+    val navBackStack = LocalNavBackStack.current
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
             title = {
@@ -44,7 +44,7 @@ fun ToolbarScaffold(
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(50.dp)
-                        .clickable { navigator.pop() }
+                        .clickable { navBackStack.removeLastOrNull() }
                         .padding(14.dp),
                 )
             }

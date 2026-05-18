@@ -18,10 +18,9 @@ import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoDetail
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
-class ExifOrientationTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun ExifOrientationTestScreen() {
+    BaseScreen {
         ToolbarScaffold("Exif Orientation", ignoreNavigationBarInsets = true) {
             val colorScheme = MaterialTheme.colorScheme
             val pagerItems = remember {

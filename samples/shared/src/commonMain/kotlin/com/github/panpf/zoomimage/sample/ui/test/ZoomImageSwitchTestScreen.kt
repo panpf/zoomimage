@@ -63,10 +63,9 @@ val imageSwitchTestResources = arrayOf(
     ComposeResImageFiles.longWhale,
 )
 
-class ZoomImageSwitchTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun ZoomImageSwitchTestScreen() {
+    BaseScreen {
         ToolbarScaffold("ZoomImage (Switch)") {
             val zoomState = rememberSketchZoomState()
             zoomState.zoomable.setReadMode(ReadMode.Default)

@@ -33,10 +33,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
-object HorHomeScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun HorHomeScreen() {
+    BaseScreen {
         Row(Modifier.fillMaxSize()) {
             val coroutineScope = rememberCoroutineScope()
             val appSettings: AppSettings = koinInject()
@@ -93,7 +92,7 @@ object HorHomeScreen : BaseScreen() {
                 modifier = Modifier.fillMaxHeight().weight(1f),
                 userScrollEnabled = false,
             ) { pageIndex ->
-                homeTabs[pageIndex].content.invoke(this@HorHomeScreen)
+                homeTabs[pageIndex].content.invoke()
             }
         }
     }

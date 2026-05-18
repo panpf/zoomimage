@@ -50,10 +50,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
-class OverlayTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun OverlayTestScreen() {
+    BaseScreen {
         ToolbarScaffold(title = "Overlay") {
             val zoomState = rememberSketchZoomState()
             SketchZoomAsyncImage(
@@ -138,111 +137,111 @@ class OverlayTestScreen : BaseScreen() {
             }
         }
     }
+}
 
-    @Composable
-    fun Overlay(zoomable: ZoomableState, viewModel: OverlayTestViewModel) {
-        if (zoomable.containerSize.isEmpty()) return
-        if (zoomable.contentSize.isEmpty()) return
-        if (zoomable.contentOriginSize.isEmpty()) return
+@Composable
+fun Overlay(zoomable: ZoomableState, viewModel: OverlayTestViewModel) {
+    if (zoomable.containerSize.isEmpty()) return
+    if (zoomable.contentSize.isEmpty()) return
+    if (zoomable.contentOriginSize.isEmpty()) return
 
-        val markList: ImmutableList<Mark> by viewModel.marks.collectAsState()
-        val rectMode by viewModel.rectMode.collectAsState()
-        val partitionMode by viewModel.partitionMode.collectAsState()
-        if (partitionMode) {
-            DrawMarksWithPartitionMapping(zoomable, rectMode, markList)
-        } else {
-            DrawMarksWithOverallMapping(zoomable, rectMode, markList)
+    val markList: ImmutableList<Mark> by viewModel.marks.collectAsState()
+    val rectMode by viewModel.rectMode.collectAsState()
+    val partitionMode by viewModel.partitionMode.collectAsState()
+    if (partitionMode) {
+        DrawMarksWithPartitionMapping(zoomable, rectMode, markList)
+    } else {
+        DrawMarksWithOverallMapping(zoomable, rectMode, markList)
+    }
+}
+
+@Composable
+fun DrawMarksWithOverallMapping(
+    zoomable: ZoomableState,
+    rectMode: Boolean,
+    markList: ImmutableList<Mark>
+) {
+    val sourceVisibleRect = zoomable.sourceVisibleRectF.takeIf { !it.isEmpty } ?: return
+    val density = LocalDensity.current
+    val style by remember {
+        derivedStateOf {
+            // Always keep the border looking width 2dp
+            Stroke(2.dp.toPx(density) / zoomable.sourceScaleFactor.scaleX)
         }
     }
-
-    @Composable
-    fun DrawMarksWithOverallMapping(
-        zoomable: ZoomableState,
-        rectMode: Boolean,
-        markList: ImmutableList<Mark>
+    Canvas(
+        Modifier
+            .fillMaxSize()
+            .zooming(zoomable, firstScaleByContentSize = true)
     ) {
-        val sourceVisibleRect = zoomable.sourceVisibleRectF.takeIf { !it.isEmpty } ?: return
-        val density = LocalDensity.current
-        val style by remember {
-            derivedStateOf {
-                // Always keep the border looking width 2dp
-                Stroke(2.dp.toPx(density) / zoomable.sourceScaleFactor.scaleX)
-            }
-        }
-        Canvas(
-            Modifier
-                .fillMaxSize()
-                .zooming(zoomable, firstScaleByContentSize = true)
-        ) {
-            markList.forEach { mark ->
-                val markRect = Rect(
-                    center = Offset(x = mark.cxPx, y = mark.cyPx),
-                    radius = mark.radiusPx
-                )
-                if (sourceVisibleRect.overlaps(other = markRect)) {
-                    if (rectMode) {
-                        drawRect(
-                            color = Color.Red,
-                            topLeft = markRect.topLeft,
-                            size = markRect.size,
-                            alpha = 0.5f,
-                            style = style
-                        )
-                    } else {
-                        drawCircle(
-                            color = Color.Red,
-                            radius = mark.radiusPx,
-                            center = Offset(x = mark.cxPx, y = mark.cyPx),
-                            alpha = 0.5f,
-                            style = style
-                        )
-                    }
+        markList.forEach { mark ->
+            val markRect = Rect(
+                center = Offset(x = mark.cxPx, y = mark.cyPx),
+                radius = mark.radiusPx
+            )
+            if (sourceVisibleRect.overlaps(other = markRect)) {
+                if (rectMode) {
+                    drawRect(
+                        color = Color.Red,
+                        topLeft = markRect.topLeft,
+                        size = markRect.size,
+                        alpha = 0.5f,
+                        style = style
+                    )
+                } else {
+                    drawCircle(
+                        color = Color.Red,
+                        radius = mark.radiusPx,
+                        center = Offset(x = mark.cxPx, y = mark.cyPx),
+                        alpha = 0.5f,
+                        style = style
+                    )
                 }
             }
         }
     }
+}
 
-    @Composable
-    fun DrawMarksWithPartitionMapping(
-        zoomable: ZoomableState,
-        rectMode: Boolean,
-        markList: ImmutableList<Mark>
+@Composable
+fun DrawMarksWithPartitionMapping(
+    zoomable: ZoomableState,
+    rectMode: Boolean,
+    markList: ImmutableList<Mark>
+) {
+    val sourceVisibleRect = zoomable.sourceVisibleRectF.takeIf { !it.isEmpty } ?: return
+    val sourceScaleFactor = zoomable.sourceScaleFactor
+    val density = LocalDensity.current
+    val style = remember { Stroke(2.dp.toPx(density)) }
+    Canvas(
+        Modifier
+            .fillMaxSize()
+            .clipToBounds()
     ) {
-        val sourceVisibleRect = zoomable.sourceVisibleRectF.takeIf { !it.isEmpty } ?: return
-        val sourceScaleFactor = zoomable.sourceScaleFactor
-        val density = LocalDensity.current
-        val style = remember { Stroke(2.dp.toPx(density)) }
-        Canvas(
-            Modifier
-                .fillMaxSize()
-                .clipToBounds()
-        ) {
-            markList.forEach { mark ->
-                val markRect = Rect(
-                    center = Offset(x = mark.cxPx, y = mark.cyPx),
-                    radius = mark.radiusPx
-                )
-                if (sourceVisibleRect.overlaps(other = markRect)) {
-                    if (rectMode) {
-                        val drawRect = zoomable.sourceToDraw(markRect)
-                        drawRect(
-                            color = Color.Red,
-                            topLeft = drawRect.topLeft,
-                            size = drawRect.size,
-                            alpha = 0.5f,
-                            style = style
-                        )
-                    } else {
-                        val drawPoint = zoomable.sourceToDraw(Offset(mark.cxPx, mark.cyPx))
-                        val drawRadius = mark.radiusPx * sourceScaleFactor.scaleX
-                        drawCircle(
-                            color = Color.Red,
-                            radius = drawRadius,
-                            center = drawPoint,
-                            alpha = 0.5f,
-                            style = style
-                        )
-                    }
+        markList.forEach { mark ->
+            val markRect = Rect(
+                center = Offset(x = mark.cxPx, y = mark.cyPx),
+                radius = mark.radiusPx
+            )
+            if (sourceVisibleRect.overlaps(other = markRect)) {
+                if (rectMode) {
+                    val drawRect = zoomable.sourceToDraw(markRect)
+                    drawRect(
+                        color = Color.Red,
+                        topLeft = drawRect.topLeft,
+                        size = drawRect.size,
+                        alpha = 0.5f,
+                        style = style
+                    )
+                } else {
+                    val drawPoint = zoomable.sourceToDraw(Offset(mark.cxPx, mark.cyPx))
+                    val drawRadius = mark.radiusPx * sourceScaleFactor.scaleX
+                    drawCircle(
+                        color = Color.Red,
+                        radius = drawRadius,
+                        center = drawPoint,
+                        alpha = 0.5f,
+                        style = style
+                    )
                 }
             }
         }

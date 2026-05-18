@@ -84,10 +84,9 @@ import kotlinx.coroutines.flow.filter
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.min
 
-class GraphicsLayerTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun GraphicsLayerTestScreen() {
+    BaseScreen {
         ToolbarScaffold("Graphics Layer") {
             val context = LocalPlatformContext.current
 
@@ -569,31 +568,31 @@ class GraphicsLayerTestScreen : BaseScreen() {
             )
         }
     }
+}
 
-    @Composable
-    inline fun Container(
-        modifier: Modifier,
-        imageContent: @Composable BoxScope.(column: Boolean) -> Unit,
-        operationContent: @Composable BoxScope.(column: Boolean) -> Unit
-    ) {
-        val windowSize = windowSize()
-        if (windowSize.width < windowSize.height) {
-            Column(modifier) {
-                Box(Modifier.fillMaxWidth().weight(1f)) {
-                    imageContent(true)
-                }
-                Box(Modifier.fillMaxWidth().weight(1f)) {
-                    operationContent(true)
-                }
+@Composable
+inline fun Container(
+    modifier: Modifier,
+    imageContent: @Composable BoxScope.(column: Boolean) -> Unit,
+    operationContent: @Composable BoxScope.(column: Boolean) -> Unit
+) {
+    val windowSize = windowSize()
+    if (windowSize.width < windowSize.height) {
+        Column(modifier) {
+            Box(Modifier.fillMaxWidth().weight(1f)) {
+                imageContent(true)
             }
-        } else {
-            Row(modifier) {
-                Box(Modifier.fillMaxHeight().weight(1f)) {
-                    imageContent(false)
-                }
-                Box(Modifier.fillMaxHeight().weight(1f)) {
-                    operationContent(false)
-                }
+            Box(Modifier.fillMaxWidth().weight(1f)) {
+                operationContent(true)
+            }
+        }
+    } else {
+        Row(modifier) {
+            Box(Modifier.fillMaxHeight().weight(1f)) {
+                imageContent(false)
+            }
+            Box(Modifier.fillMaxHeight().weight(1f)) {
+                operationContent(false)
             }
         }
     }

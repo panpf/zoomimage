@@ -37,10 +37,9 @@ import me.saket.telephoto.zoomable.rememberZoomableImageState
 import me.saket.telephoto.zoomable.rememberZoomableState
 import kotlin.math.roundToInt
 
-class TelephotoSwitchTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun TelephotoSwitchTestScreen() {
+    BaseScreen {
         ToolbarScaffold("Telephoto (Switch)") {
             val zoomState = rememberZoomableImageState(rememberZoomableState())
             Column(

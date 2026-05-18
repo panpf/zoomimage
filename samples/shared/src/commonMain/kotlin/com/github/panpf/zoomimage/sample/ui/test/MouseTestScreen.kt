@@ -20,11 +20,10 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.util.onPointerEvent
 
-class MouseTestScreen : BaseScreen() {
-
-    @Composable
-    @OptIn(ExperimentalComposeUiApi::class)
-    override fun DrawContent() {
+@Composable
+@OptIn(ExperimentalComposeUiApi::class)
+fun MouseTestScreen() {
+    BaseScreen {
         ToolbarScaffold("Mouse") {
             var number by remember { mutableStateOf(0f) }
             var color by remember { mutableStateOf(Color(0, 0, 0)) }

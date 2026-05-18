@@ -4,21 +4,12 @@ import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-expect class PhotoPagerScreenParams {
-
-    val photos: List<Photo>
-    val totalCount: Int
-    val startPosition: Int
+data class PhotoPagerScreenParams(
+    val photos: List<Photo>,
+    val totalCount: Int,
+    val startPosition: Int,
     val initialPosition: Int
-
-    constructor(
-        photos: List<Photo>,
-        totalCount: Int,
-        startPosition: Int,
-        initialPosition: Int
-    )
-}
+)
 
 fun buildPhotoPagerScreenParams(
     items: List<Photo>,

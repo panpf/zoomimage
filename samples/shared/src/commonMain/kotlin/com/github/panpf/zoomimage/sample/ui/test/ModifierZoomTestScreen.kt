@@ -23,10 +23,9 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.util.Logger
 
-class ModifierZoomTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun ModifierZoomTestScreen() {
+    BaseScreen {
         ToolbarScaffold("Modifier.Zoom") {
             val zoomableState = rememberZoomableState()
             zoomableState.logger.level = Logger.Level.Debug

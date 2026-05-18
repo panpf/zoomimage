@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import com.github.panpf.zoomimage.sample.ui.base.BaseActivity
-import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerScreen
 import com.github.panpf.zoomimage.sample.ui.util.isDarkTheme
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
@@ -38,8 +37,11 @@ class ComposeMainActivity : BaseActivity() {
         }
 
         setContent {
-            App(onContentChanged = { navigator ->
-                lightStatusAndNavigationBar = navigator.lastItem !is PhotoPagerScreen
+            App(onNavBackStackChanged = {
+                val route = it.lastOrNull()
+                if (route != null && route is MyNavKey) {
+                    lightStatusAndNavigationBar = route.lightStatusAndNavigationBar
+                }
             })
         }
 

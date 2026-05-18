@@ -1,7 +1,8 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.navigator.LocalNavigator
+import com.github.panpf.zoomimage.sample.ui.LocalNavBackStack
+import com.github.panpf.zoomimage.sample.ui.PhotoPagerRoute
 import com.github.panpf.zoomimage.sample.ui.components.PermissionContainer
 import com.github.panpf.zoomimage.sample.ui.gridCellsMinSize
 import dev.icerock.moko.permissions.Permission
@@ -14,14 +15,14 @@ actual fun LocalPhotoListPage() {
         permission = Permission.STORAGE,    // TODO Change to GALLERY
         permissionRequired = false,
     ) {
-        val navigator = LocalNavigator.current!!
+        val navBackStack = LocalNavBackStack.current
         val localPhotoListViewModel: LocalPhotoListViewModel = koinViewModel()
         PagingPhotoList(
             photoPagingFlow = localPhotoListViewModel.pagingFlow,
             gridCellsMinSize = gridCellsMinSize,
             onClick = { photos, _, index ->
                 val params = buildPhotoPagerScreenParams(photos, index)
-                navigator.push(PhotoPagerScreen(params))
+                navBackStack.add(PhotoPagerRoute(params))
             },
         )
     }

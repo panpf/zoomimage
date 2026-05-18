@@ -62,10 +62,9 @@ expect suspend fun sketchFetcherToZoomImageImageSource(
     http2ByteArray: Boolean = false
 ): ImageSource.Factory?
 
-class ImageSourceTestScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+@Composable
+fun ImageSourceTestScreen() {
+    BaseScreen {
         val context = LocalPlatformContext.current
         var imageSourceTestItems by remember { mutableStateOf<List<Pair<String, String>>?>(null) }
         LaunchedEffect(Unit) {
@@ -96,73 +95,73 @@ class ImageSourceTestScreen : BaseScreen() {
             }
         }
     }
+}
 
-    @Composable
-    fun ImageSourceSample(
-        sketchImageUri: String,
-        photoPaletteState: MutableState<PhotoPalette>,
-        pageSelected: Boolean,
+@Composable
+fun ImageSourceSample(
+    sketchImageUri: String,
+    photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
+) {
+    BaseZoomImageSample(
+        photo = Photo(sketchImageUri),
+        photoPaletteState = photoPaletteState,
+        createZoomState = { rememberZoomState() },
+        pageSelected = pageSelected,
     ) {
-        BaseZoomImageSample(
-            photo = Photo(sketchImageUri),
-            photoPaletteState = photoPaletteState,
-            createZoomState = { rememberZoomState() },
-            pageSelected = pageSelected,
-        ) {
-            val context = LocalPlatformContext.current
-            val sketch: Sketch = koinInject()
-            val tileImageCache = remember(sketch) { SketchTileImageCache(sketch) }
-            zoomState.subsampling.setTileImageCache(tileImageCache)
+        val context = LocalPlatformContext.current
+        val sketch: Sketch = koinInject()
+        val tileImageCache = remember(sketch) { SketchTileImageCache(sketch) }
+        zoomState.subsampling.setTileImageCache(tileImageCache)
 
-            var pageState by remember { mutableStateOf<PageState?>(null) }
-            var imagePainter: Painter? by remember { mutableStateOf(null) }
-            LaunchedEffect(sketchImageUri) {
-                pageState = Loading
-                val imageRequest = ImageRequest(context, sketchImageUri) {
-                    memoryCachePolicy(DISABLED)
-                }
-                val imageResult = imageRequest.execute()
-                pageState = if (imageResult is ImageResult.Success) {
-                    null
-                } else {
-                    Error()
-                }
-                imagePainter = imageResult.image?.asPainter()
-
-                val imageSource = sketchImageUriToZoomImageImageSource(
-                    sketch = sketch,
-                    imageUri = sketchImageUri,
-                    http2ByteArray = true
-                )
-                val imageInfo = if (imageResult is ImageResult.Success) {
-                    ImageInfo(
-                        imageResult.imageInfo.width,
-                        imageResult.imageInfo.height,
-                        imageResult.imageInfo.mimeType
-                    )
-                } else {
-                    null
-                }
-                zoomState.setSubsamplingImage(imageSource, imageInfo)
+        var pageState by remember { mutableStateOf<PageState?>(null) }
+        var imagePainter: Painter? by remember { mutableStateOf(null) }
+        LaunchedEffect(sketchImageUri) {
+            pageState = Loading
+            val imageRequest = ImageRequest(context, sketchImageUri) {
+                memoryCachePolicy(DISABLED)
             }
-
-            val imagePainter1 = imagePainter
-            if (imagePainter1 != null) {
-                ZoomImage(
-                    painter = imagePainter1,
-                    contentDescription = "view image",
-                    contentScale = contentScale,
-                    alignment = alignment,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .capturable(capturableState),
-                    zoomState = zoomState,
-                    scrollBar = scrollBar,
-                    onLongPress = { onLongClick.invoke() },
-                )
+            val imageResult = imageRequest.execute()
+            pageState = if (imageResult is ImageResult.Success) {
+                null
+            } else {
+                Error()
             }
+            imagePainter = imageResult.image?.asPainter()
 
-            PageState(pageState = pageState)
+            val imageSource = sketchImageUriToZoomImageImageSource(
+                sketch = sketch,
+                imageUri = sketchImageUri,
+                http2ByteArray = true
+            )
+            val imageInfo = if (imageResult is ImageResult.Success) {
+                ImageInfo(
+                    imageResult.imageInfo.width,
+                    imageResult.imageInfo.height,
+                    imageResult.imageInfo.mimeType
+                )
+            } else {
+                null
+            }
+            zoomState.setSubsamplingImage(imageSource, imageInfo)
         }
+
+        val imagePainter1 = imagePainter
+        if (imagePainter1 != null) {
+            ZoomImage(
+                painter = imagePainter1,
+                contentDescription = "view image",
+                contentScale = contentScale,
+                alignment = alignment,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .capturable(capturableState),
+                zoomState = zoomState,
+                scrollBar = scrollBar,
+                onLongPress = { onLongClick.invoke() },
+            )
+        }
+
+        PageState(pageState = pageState)
     }
 }

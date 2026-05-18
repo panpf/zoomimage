@@ -49,18 +49,21 @@ kotlin {
             api(projects.zoomimageComposeResources)
             api(projects.zoomimageComposeSketch4Koin)
             api(libs.androidx.paging.compose)
-            api(libs.jetbrains.compose.components.resources)
-            api(libs.jetbrains.compose.material)    // pull refresh
-            api(libs.jetbrains.compose.material3)
             api(
                 libs.coil3.network.ktor.get().let { "${it.group}:${it.name}:${it.version}" }) {
                 // See libs.versions.toml#ktor
                 exclude(group = "io.ktor", module = "ktor-client-core")
             }
+            api(libs.jetbrains.compose.components.resources)
+            api(libs.jetbrains.compose.material)    // pull refresh
+            api(libs.jetbrains.compose.material.icons.core)
+            api(libs.jetbrains.compose.material3)
+            api(libs.jetbrains.compose.material3.adaptiveNavigation3)
             api(libs.jetbrains.compose.ui.tooling.preview)
             api(libs.jetbrains.lifecycle.viewmodel)
+            api(libs.jetbrains.lifecycle.viewmodelNavigation3)
+            api(libs.jetbrains.navigation3.ui)
             api(libs.ktor.http.cio)  // See libs.versions.toml#ktor
-            api(libs.jetbrains.compose.material.icons.core)
             api(libs.koin.core)
             api(libs.koin.compose)
             api(libs.koin.compose.viewmodel)
@@ -68,16 +71,13 @@ kotlin {
             api(libs.ktor.client.contentNegotiation)
             api(libs.ktor.serialization.kotlinxJson)
             api(libs.kotlinx.collections.immutable)
+            api(libs.kotlinx.coroutines.core)
             api(libs.multiplatform.settings)
             api(libs.panpf.sketch4.animated.gif)
             api(libs.panpf.sketch4.compose.resources)
             api(libs.panpf.sketch4.extensions.compose)
             api(libs.panpf.sketch4.http.ktor3)
             api(libs.panpf.sketch4.svg)
-            api(libs.voyager.navigator)
-            api(libs.voyager.screenModel)
-            api(libs.voyager.transitions)
-            api(libs.kotlinx.coroutines.core)
         }
         androidMain.dependencies {
             api(projects.zoomimageComposeGlide)

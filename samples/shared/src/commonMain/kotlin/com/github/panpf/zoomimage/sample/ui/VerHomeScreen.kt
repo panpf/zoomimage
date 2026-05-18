@@ -21,7 +21,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_debug
@@ -39,41 +38,9 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
-val gridCellsMinSize: Dp = if (Platform.current.isMobile()) 100.dp else 150.dp
-
 @Composable
-expect fun VerHomeHeader()
-
-enum class HomeTab(
-    val title: String,
-    val icon: DrawableResource,
-    val padding: Dp,
-    val content: @Composable Screen.() -> Unit
-) {
-    PEXELS(
-        title = "Pexels",
-        icon = Res.drawable.ic_pexels,
-        padding = 1.5.dp,
-        content = { PexelsPhotoListPage() }
-    ),
-    LOCAL(
-        title = "Local",
-        icon = Res.drawable.ic_phone,
-        padding = 0.dp,
-        content = { LocalPhotoListPage() }
-    ),
-    TEST(
-        title = "Test",
-        icon = Res.drawable.ic_debug,
-        padding = 1.dp,
-        content = { TestPage() }
-    ),
-}
-
-object VerHomeScreen : BaseScreen() {
-
-    @Composable
-    override fun DrawContent() {
+fun VerHomeScreen() {
+    BaseScreen {
         Column(Modifier.fillMaxSize()) {
             VerHomeHeader()
 
@@ -94,7 +61,7 @@ object VerHomeScreen : BaseScreen() {
                 state = pagerState,
                 modifier = Modifier.fillMaxSize().weight(1f),
             ) { pageIndex ->
-                homeTabs[pageIndex].content.invoke(this@VerHomeScreen)
+                homeTabs[pageIndex].content.invoke()
             }
 
             NavigationBar(Modifier.fillMaxWidth()) {
@@ -116,4 +83,32 @@ object VerHomeScreen : BaseScreen() {
             }
         }
     }
+}
+
+val gridCellsMinSize: Dp = if (Platform.current.isMobile()) 100.dp else 150.dp
+
+enum class HomeTab(
+    val title: String,
+    val icon: DrawableResource,
+    val padding: Dp,
+    val content: @Composable () -> Unit
+) {
+    PEXELS(
+        title = "Pexels",
+        icon = Res.drawable.ic_pexels,
+        padding = 1.5.dp,
+        content = { PexelsPhotoListPage() }
+    ),
+    LOCAL(
+        title = "Local",
+        icon = Res.drawable.ic_phone,
+        padding = 0.dp,
+        content = { LocalPhotoListPage() }
+    ),
+    TEST(
+        title = "Test",
+        icon = Res.drawable.ic_debug,
+        padding = 1.dp,
+        content = { TestPage() }
+    ),
 }
