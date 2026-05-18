@@ -21,6 +21,9 @@ import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
+import com.github.panpf.zoomimage.sample.util.Platform
+import com.github.panpf.zoomimage.sample.util.current
+import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.util.Logger
 
 @Composable
@@ -55,7 +58,7 @@ fun ModifierZoomTestScreen() {
                 Text(
                     text = text,
                     modifier = Modifier
-                        .padding(100.dp)
+                        .padding(if (Platform.current.isMobile()) 20.dp else 100.dp)
                         .background(
                             MaterialTheme.colorScheme.secondaryContainer,
                             MaterialTheme.shapes.medium
