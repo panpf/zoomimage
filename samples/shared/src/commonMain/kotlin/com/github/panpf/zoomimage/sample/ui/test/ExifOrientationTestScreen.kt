@@ -15,13 +15,13 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.components.HorizontalTabPager
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
-import com.github.panpf.zoomimage.sample.ui.gallery.PhotoDetail
+import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 @Composable
 fun ExifOrientationTestScreen() {
     BaseScreen {
-        ToolbarScaffold("Exif Orientation", ignoreNavigationBarInsets = true) {
+        ToolbarScaffold("Exif Orientation") {
             val colorScheme = MaterialTheme.colorScheme
             val pagerItems = remember {
                 ComposeResImageFiles.exifs.map { imageFile ->
@@ -33,7 +33,11 @@ fun ExifOrientationTestScreen() {
                         contentFactory = { data, _, pageSelected ->
                             val photoPaletteState =
                                 remember { mutableStateOf(PhotoPalette(colorScheme)) }
-                            PhotoDetail(Photo(data.uri), photoPaletteState, pageSelected)
+                            SketchZoomAsyncImageSample(
+                                Photo(data.uri),
+                                photoPaletteState,
+                                pageSelected
+                            )
                         }
                     )
                 }.toTypedArray()

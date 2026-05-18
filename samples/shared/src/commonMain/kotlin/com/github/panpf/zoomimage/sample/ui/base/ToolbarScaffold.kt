@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,7 +24,6 @@ import com.github.panpf.zoomimage.sample.ui.LocalNavBackStack
 @Composable
 fun ToolbarScaffold(
     title: String,
-    ignoreNavigationBarInsets: Boolean = false,
     content: @Composable BoxScope.() -> Unit,
 ) {
     val navBackStack = LocalNavBackStack.current
@@ -49,12 +46,7 @@ fun ToolbarScaffold(
                 )
             }
         )
-        val insetModifier = if (!ignoreNavigationBarInsets) {
-            Modifier.windowInsetsPadding(NavigationBarDefaults.windowInsets)
-        } else {
-            Modifier
-        }
-        Box(Modifier.fillMaxWidth().weight(1f).then(insetModifier)) {
+        Box(Modifier.fillMaxWidth().weight(1f)) {
             content()
         }
     }

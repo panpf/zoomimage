@@ -2,7 +2,10 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -18,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -28,8 +30,6 @@ import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-
-val photoPagerTopBarHeight = 80.dp
 
 @Composable
 fun PhotoPagerScreen(params: PhotoPagerScreenParams) {
@@ -95,12 +95,14 @@ fun PhotoPagerScreen(params: PhotoPagerScreenParams) {
             }
         }
 
-        PhotoPagerHeaders(params, pagerState, horizontalLayout, photoPaletteState)
+        Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+            PhotoPagerHeaders(params, pagerState, horizontalLayout, photoPaletteState)
 
-        TurnPageIndicator(pagerState, photoPaletteState)
+            TurnPageIndicator(pagerState, photoPaletteState)
 
-        if (!Platform.current.isMobile()) {
-            PhotoPagerGesturePromptDialog(appSettings)
+            if (!Platform.current.isMobile()) {
+                PhotoPagerGesturePromptDialog(appSettings)
+            }
         }
     }
     LaunchedEffect(Unit) {

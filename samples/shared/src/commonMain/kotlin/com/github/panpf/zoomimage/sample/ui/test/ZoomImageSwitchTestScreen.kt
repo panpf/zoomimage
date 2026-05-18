@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilledIconButton
@@ -70,7 +73,11 @@ fun ZoomImageSwitchTestScreen() {
             val zoomState = rememberSketchZoomState()
             zoomState.zoomable.setReadMode(ReadMode.Default)
             zoomState.logger.level = Logger.Level.Debug
-            Column(Modifier.fillMaxSize().background(Color.Black)) {
+            Column(
+                Modifier.fillMaxSize()
+                    .background(Color.Black)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+            ) {
                 val imageUris = remember { imageSwitchTestResources.map { it.uri } }
                 var currentImageUri by remember { mutableStateOf(imageUris.first()) }
                 Box(Modifier.fillMaxWidth().weight(1f)) {

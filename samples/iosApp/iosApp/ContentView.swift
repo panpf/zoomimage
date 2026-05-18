@@ -14,6 +14,7 @@ struct ComposeView: UIViewControllerRepresentable {
 struct ContentView: View {
     var body: some View {
         ComposeView()
+            .ignoresSafeArea(.all) // Ignore all safe areas and let Compose take up the full screen
             // Compose has own keyboard handler.
             .ignoresSafeArea(.keyboard)
     }

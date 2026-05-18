@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -70,69 +74,75 @@ fun OverlayTestScreen() {
                 viewModel = viewModel,
             )
 
-            val coroutineScope = rememberCoroutineScope()
             Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(20.dp)
-                    .alpha(0.8f)
-                    .clip(RoundedCornerShape(50))
-                    .background(colorScheme.tertiaryContainer)
-                    .size(50.dp)
-                    .clickable {
-                        coroutineScope.launch {
-                            zoomState.zoomable.rotateBy(90)
-                        }
-                    },
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_rotate_right),
-                    contentDescription = null,
-                    tint = colorScheme.onTertiaryContainer,
-                    modifier = Modifier.size(30.dp).align(Alignment.Center)
-                )
-            }
-
-            Column(
-                modifier = Modifier
+                Modifier.fillMaxWidth()
                     .align(Alignment.BottomStart)
-                    .padding(20.dp)
-                    .alpha(0.8f)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
             ) {
-                Row(
+                val coroutineScope = rememberCoroutineScope()
+                Box(
                     modifier = Modifier
-                        .height(50.dp)
+                        .align(Alignment.BottomEnd)
+                        .padding(20.dp)
+                        .alpha(0.8f)
                         .clip(RoundedCornerShape(50))
                         .background(colorScheme.tertiaryContainer)
-                        .padding(horizontal = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .size(50.dp)
+                        .clickable {
+                            coroutineScope.launch {
+                                zoomState.zoomable.rotateBy(90)
+                            }
+                        },
                 ) {
-                    val rectMode by viewModel.rectMode.collectAsState()
-                    Text("Point")
-                    Spacer(Modifier.size(4.dp))
-                    Switch(checked = rectMode, onCheckedChange = { viewModel.setRectMode(it) })
-                    Spacer(Modifier.size(4.dp))
-                    Text("Rect")
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_rotate_right),
+                        contentDescription = null,
+                        tint = colorScheme.onTertiaryContainer,
+                        modifier = Modifier.size(30.dp).align(Alignment.Center)
+                    )
                 }
 
-                Spacer(Modifier.size(10.dp))
-
-                Row(
+                Column(
                     modifier = Modifier
-                        .height(50.dp)
-                        .clip(RoundedCornerShape(50))
-                        .background(colorScheme.tertiaryContainer)
-                        .padding(horizontal = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .align(Alignment.BottomStart)
+                        .padding(20.dp)
+                        .alpha(0.8f)
                 ) {
-                    val partitionMode by viewModel.partitionMode.collectAsState()
-                    Text("Overall")
-                    Spacer(Modifier.size(4.dp))
-                    Switch(
-                        checked = partitionMode,
-                        onCheckedChange = { viewModel.setPartitionMode(it) })
-                    Spacer(Modifier.size(4.dp))
-                    Text("Partition")
+                    Row(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .clip(RoundedCornerShape(50))
+                            .background(colorScheme.tertiaryContainer)
+                            .padding(horizontal = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val rectMode by viewModel.rectMode.collectAsState()
+                        Text("Point")
+                        Spacer(Modifier.size(4.dp))
+                        Switch(checked = rectMode, onCheckedChange = { viewModel.setRectMode(it) })
+                        Spacer(Modifier.size(4.dp))
+                        Text("Rect")
+                    }
+
+                    Spacer(Modifier.size(10.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .clip(RoundedCornerShape(50))
+                            .background(colorScheme.tertiaryContainer)
+                            .padding(horizontal = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val partitionMode by viewModel.partitionMode.collectAsState()
+                        Text("Overall")
+                        Spacer(Modifier.size(4.dp))
+                        Switch(
+                            checked = partitionMode,
+                            onCheckedChange = { viewModel.setPartitionMode(it) })
+                        Spacer(Modifier.size(4.dp))
+                        Text("Partition")
+                    }
                 }
             }
         }

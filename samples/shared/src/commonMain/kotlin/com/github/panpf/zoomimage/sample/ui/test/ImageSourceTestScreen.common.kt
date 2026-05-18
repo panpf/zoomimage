@@ -72,7 +72,7 @@ fun ImageSourceTestScreen() {
         }
         val imageSourceTestItems1 = imageSourceTestItems
         if (imageSourceTestItems1 != null) {
-            ToolbarScaffold("ImageSource", ignoreNavigationBarInsets = true) {
+            ToolbarScaffold("ImageSource") {
                 val colorScheme = MaterialTheme.colorScheme
                 val pagerItems = remember {
                     imageSourceTestItems1.map { pair ->
