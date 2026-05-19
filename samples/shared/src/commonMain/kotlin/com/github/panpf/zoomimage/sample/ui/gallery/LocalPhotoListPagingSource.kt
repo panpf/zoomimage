@@ -19,65 +19,36 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.zoomimage.sample.data.builtinImages
-import com.github.panpf.zoomimage.sample.data.localImages
-import com.github.panpf.zoomimage.sample.data.readImageInfoOrNull
+import com.github.panpf.zoomimage.sample.data.BuiltinPhotoListRepo
+import com.github.panpf.zoomimage.sample.data.PhotoService
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 class LocalPhotoListPagingSource(val sketch: Sketch) : PagingSource<Int, Photo>() {
 
-    private val keySet = HashSet<String>()  // Compose LazyVerticalGrid does not allow a key repeat
-    private var _builtInPhotos: List<String>? = null
+    private val photoService = PhotoService(sketch)
+    private val builtinPhotoListRepo = BuiltinPhotoListRepo(sketch)
 
     override fun getRefreshKey(state: PagingState<Int, Photo>): Int = 0
 
-    private suspend fun getBuiltInPhotos(): List<String> {
-        return _builtInPhotos ?: builtinImages(sketch.context).map { it.uri }.also {
-            _builtInPhotos = it
-        }
-    }
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
-        val startPosition = params.key ?: 0
+        val pageStart = params.key ?: 0
         val pageSize = params.loadSize
 
-        val builtInPhotos = getBuiltInPhotos()
-        val photos = if (startPosition < builtInPhotos.size) {
-            val fromBuiltInPhotos = builtInPhotos.subList(
-                fromIndex = startPosition,
-                toIndex = (startPosition + pageSize).coerceAtMost(builtInPhotos.size)
+        val builtinPhotos = builtinPhotoListRepo.loadPhotoList(pageStart, pageSize)
+        val galleryPhotos = if (builtinPhotos.size < pageSize) {
+            val builtinPhotoListSize = builtinPhotoListRepo.getSize()
+            val galleryPageStart = if (pageStart < builtinPhotoListSize)
+                0 else pageStart - builtinPhotoListSize
+            val galleryPageSize = pageSize - builtinPhotos.size
+            photoService.loadFromGallery(
+                pageStart = galleryPageStart,
+                pageSize = galleryPageSize
             )
-            val fromPhotoAlbumPhotos = if (fromBuiltInPhotos.size < pageSize) {
-                val photoAlbumStartPosition = 0
-                val photoAlbumPageSize = pageSize - fromBuiltInPhotos.size
-                localImages(sketch.context, photoAlbumStartPosition, photoAlbumPageSize)
-            } else {
-                emptyList()
-            }
-            fromBuiltInPhotos.toMutableList().apply {
-                addAll(fromPhotoAlbumPhotos)
-            }
         } else {
-            val photoAlbumStartPosition = startPosition - builtInPhotos.size
-            localImages(sketch.context, photoAlbumStartPosition, pageSize)
-        }.map { uri -> uriToPhoto(uri) }
-        val nextKey = if (photos.isNotEmpty()) startPosition + pageSize else null
-        val filteredPhotos = photos.filter { keySet.add(it.originalUrl) }
-        return LoadResult.Page(data = filteredPhotos, prevKey = null, nextKey = nextKey)
-    }
-
-    private suspend fun uriToPhoto(uri: String): Photo {
-        val imageInfo = readImageInfoOrNull(
-            context = sketch.context,
-            sketch = sketch,
-            uri = uri,
-        )
-        return Photo(
-            originalUrl = uri,
-            mediumUrl = null,
-            thumbnailUrl = null,
-            width = imageInfo?.width,
-            height = imageInfo?.height,
-        )
+            emptyList()
+        }
+        val dataList = builtinPhotos + galleryPhotos
+        val nextKey = if (dataList.size >= pageSize) pageStart + pageSize else null
+        return LoadResult.Page(data = dataList, prevKey = null, nextKey = nextKey)
     }
 }

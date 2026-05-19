@@ -6,13 +6,13 @@ import com.github.panpf.zoomimage.sample.ui.PhotoPagerRoute
 import com.github.panpf.zoomimage.sample.ui.components.PermissionContainer
 import com.github.panpf.zoomimage.sample.ui.gridCellsMinSize
 import dev.icerock.moko.permissions.Permission
-import dev.icerock.moko.permissions.storage.STORAGE
+import dev.icerock.moko.permissions.gallery.GALLERY
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 actual fun LocalPhotoListPage() {
     PermissionContainer(
-        permission = Permission.STORAGE,    // TODO Change to GALLERY
+        permission = Permission.GALLERY,
         permissionRequired = false,
     ) {
         val navBackStack = LocalNavBackStack.current

@@ -27,8 +27,6 @@ import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
 import org.koin.compose.koinInject
 
-// TODO ios edge to edge
-
 @Composable
 fun App(onNavBackStackChanged: ((List<NavKey>) -> Unit)? = null) {
     AppTheme {

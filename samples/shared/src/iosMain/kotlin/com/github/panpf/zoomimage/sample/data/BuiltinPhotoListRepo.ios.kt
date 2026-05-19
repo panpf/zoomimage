@@ -2,11 +2,9 @@ package com.github.panpf.zoomimage.sample.data
 
 import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.githb.panpf.zoomimage.images.HttpImageFiles
-import com.githb.panpf.zoomimage.images.ImageFile
-import com.github.panpf.sketch.PlatformContext
+import com.github.panpf.sketch.Sketch
 
-
-actual suspend fun builtinImages(context: PlatformContext): List<ImageFile> {
+actual suspend fun buildPlatformBuiltinPhotoList(sketch: Sketch): List<String> {
     return listOf(
         ComposeResImageFiles.cat,
         ComposeResImageFiles.dog,
@@ -18,10 +16,5 @@ actual suspend fun builtinImages(context: PlatformContext): List<ImageFile> {
         ComposeResImageFiles.hugeLongQmsht,
         HttpImageFiles.hugeLongComic,
     ).plus(ComposeResImageFiles.exifs)
+        .map { it.uri }
 }
-
-actual suspend fun localImages(
-    context: PlatformContext,
-    startPosition: Int,
-    pageSize: Int
-): List<String> = emptyList()

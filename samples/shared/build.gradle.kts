@@ -94,8 +94,6 @@ kotlin {
             api(libs.glide.compose)
             api(libs.google.material)
             api(libs.koin.android)
-            api(libs.moko.permissions)
-            api(libs.moko.permissions.storage)
             api(libs.panpf.tools4a.activity)
             api(libs.panpf.tools4a.device)
             api(libs.panpf.tools4a.dimen)
@@ -113,10 +111,11 @@ kotlin {
             // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
             // This may be a bug of kmp.
             resources.srcDirs("../../internal/images/src/iosMain/resources")
-            dependencies {
-                api(libs.moko.permissions)
-                api(libs.moko.permissions.storage)
-            }
+        }
+        phoneMain.dependencies {
+            api(libs.moko.permissions)
+            api(libs.moko.permissions.storage)
+            api(libs.moko.permissions.gallery)
         }
         wasmJsMain.dependencies {
             // https://youtrack.jetbrains.com/issue/KTOR-7934/JS-WASM-fails-with-IllegalStateException-Content-Length-mismatch-on-requesting-gzipped-content

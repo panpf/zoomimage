@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.util
 
+import okio.ByteString.Companion.encodeUtf8
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract
@@ -70,3 +71,10 @@ inline fun <T> T.ifLet(predicate: Boolean, block: (T) -> T): T {
     }
     return if (predicate) block(this) else this
 }
+
+/**
+ * Calculate MD5
+ *
+ * @see com.github.panpf.sketch.core.common.test.util.CoreUtilsTest.testMd5
+ */
+internal fun String.md5() = encodeUtf8().md5().hex()
