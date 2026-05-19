@@ -40,7 +40,7 @@ import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
-import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
+import com.github.panpf.zoomimage.sample.image.PaletteInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.simplePalette
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
@@ -215,7 +215,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
             crossfade(alwaysUse = true, durationMillis = 400)
             resizeOnDraw()
             components {
-                addDecodeInterceptor(PaletteDecodeInterceptor())
+                add(PaletteInterceptor())
             }
         }
     }

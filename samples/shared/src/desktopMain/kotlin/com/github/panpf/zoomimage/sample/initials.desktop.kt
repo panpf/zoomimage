@@ -8,7 +8,7 @@ import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceUriFetcher
 import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceUriKeyer
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriFetcher
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriKeyer
-import com.github.panpf.zoomimage.sample.util.PexelsCompatibleRequestInterceptor
+import com.github.panpf.zoomimage.sample.util.PexelsCompatibleInterceptor
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
@@ -31,7 +31,7 @@ actual fun platformModule(context: PlatformContext): Module = module {
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
     addComponents {
-        addRequestInterceptor(PexelsCompatibleRequestInterceptor())
+        add(PexelsCompatibleInterceptor())
     }
 }
 

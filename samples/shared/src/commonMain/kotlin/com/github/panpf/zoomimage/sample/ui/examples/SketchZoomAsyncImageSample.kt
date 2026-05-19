@@ -16,7 +16,7 @@ import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.rememberSketchZoomState
-import com.github.panpf.zoomimage.sample.image.DelayedLoadRequestInterceptor
+import com.github.panpf.zoomimage.sample.image.DelayedLoadInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
@@ -43,7 +43,7 @@ fun SketchZoomAsyncImageSample(
                 crossfade(fadeStart = false)
                 merge(getPlatformSketchZoomAsyncImageSampleImageOptions())
                 addComponents {
-                    addRequestInterceptor(DelayedLoadRequestInterceptor(2000L))
+                    add(DelayedLoadInterceptor(2000L))
                 }
             },
             contentDescription = "view image",

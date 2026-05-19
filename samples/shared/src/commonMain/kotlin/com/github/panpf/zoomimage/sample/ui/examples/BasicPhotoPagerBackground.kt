@@ -19,7 +19,7 @@ import com.github.panpf.sketch.request.disallowAnimatedImage
 import com.github.panpf.sketch.resize.Precision.SMALLER_SIZE
 import com.github.panpf.sketch.transform.BlurTransformation
 import com.github.panpf.sketch.util.toSketchSize
-import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
+import com.github.panpf.zoomimage.sample.image.PaletteInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.simplePalette
 import com.github.panpf.zoomimage.sample.ui.util.windowSize
@@ -51,7 +51,7 @@ fun BasicPagerBackground(
         crossfade(alwaysUse = true, durationMillis = 400)
         resizeOnDraw()
         components {
-            addDecodeInterceptor(PaletteDecodeInterceptor())
+            add(PaletteInterceptor())
         }
     }
     Image(

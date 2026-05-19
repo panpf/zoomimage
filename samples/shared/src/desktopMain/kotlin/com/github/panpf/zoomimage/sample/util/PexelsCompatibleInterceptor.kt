@@ -3,17 +3,15 @@ package com.github.panpf.zoomimage.sample.util
 import com.github.panpf.sketch.http.HttpHeaders
 import com.github.panpf.sketch.http.merged
 import com.github.panpf.sketch.request.ImageData
-import com.github.panpf.sketch.request.RequestInterceptor
-import com.github.panpf.sketch.request.RequestInterceptor.Chain
+import com.github.panpf.sketch.request.Interceptor
 import com.github.panpf.sketch.request.httpHeaders
 
-class PexelsCompatibleRequestInterceptor : RequestInterceptor {
+class PexelsCompatibleInterceptor : Interceptor {
 
     override val key: String? = null
+    override val sortWeight: Int = 0
 
-    override val sortWeight: Int = 80
-
-    override suspend fun intercept(chain: Chain): Result<ImageData> {
+    override suspend fun intercept(chain: Interceptor.Chain): Result<ImageData> {
         val request = chain.request
         return if (request.uri.toString().contains("://images.pexels.com/")) {
             val newRequest = request.newBuilder().apply {
@@ -42,6 +40,6 @@ class PexelsCompatibleRequestInterceptor : RequestInterceptor {
     }
 
     override fun toString(): String {
-        return "PexelsCompatibleRequestInterceptor(sortWeight=$sortWeight)"
+        return "PexelsCompatibleInterceptor(sortWeight=$sortWeight)"
     }
 }

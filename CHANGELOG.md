@@ -23,6 +23,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * Upgrade to kotlinx collections immutable 0.4.0
 * Upgrade to kotlinx coroutines 1.11.0
 * Upgrade to okio 3.17.0
+* Upgrade to sketch 4.5.0-alpha03
 
 # 1.4.0
 
