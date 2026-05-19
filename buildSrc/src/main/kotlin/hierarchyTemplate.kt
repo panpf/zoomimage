@@ -40,6 +40,8 @@ private val hierarchyTemplate = KotlinHierarchyTemplate {
         groupNonJvmCommon()
         groupNative()
         groupNonNative()
+        groupPhone()
+        groupNonPhone()
     }
 }
 
@@ -85,6 +87,7 @@ private fun KotlinHierarchyBuilder.groupNonJvmCommon() {
     }
 }
 
+// TODO remove
 private fun KotlinHierarchyBuilder.groupNative() {
     group("native") {
         withNative()
@@ -103,6 +106,7 @@ private fun KotlinHierarchyBuilder.groupNative() {
     }
 }
 
+// TODO remove
 private fun KotlinHierarchyBuilder.groupNonNative() {
     group("nonNative") {
         withAndroid()
@@ -110,6 +114,24 @@ private fun KotlinHierarchyBuilder.groupNonNative() {
         withJs()
         withWasmJs()
         groupJvmCommon()
+        groupJsCommon()
+    }
+}
+
+private fun KotlinHierarchyBuilder.groupPhone() {
+    group("phone") {
+        withAndroid()
+        group("ios") {
+            withIos()
+        }
+    }
+}
+
+private fun KotlinHierarchyBuilder.groupNonPhone() {
+    group("nonPhone") {
+        withJvm()
+        withJs()
+        withWasmJs()
         groupJsCommon()
     }
 }
