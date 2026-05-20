@@ -1,11 +1,11 @@
 package com.github.panpf.zoomimage.core.sketch4.desktop.test
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.DataFrom
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test

@@ -1,6 +1,5 @@
-package com.githb.panpf.zoomimage.images
+package com.github.panpf.zoomimage.images
 
-import com.github.panpf.zoomimage.images.R
 import com.github.panpf.zoomimage.util.IntSizeCompat
 
 object AndroidResourceImageFiles {

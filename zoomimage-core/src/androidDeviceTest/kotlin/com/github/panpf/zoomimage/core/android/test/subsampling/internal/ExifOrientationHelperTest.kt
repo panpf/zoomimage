@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
 import android.graphics.BitmapFactory
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.test.produceFingerPrint
 import com.github.panpf.zoomimage.util.IntRectCompat

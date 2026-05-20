@@ -1,7 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
-import com.githb.panpf.zoomimage.images.HttpImageFiles
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher
 import com.github.panpf.sketch.fetch.Fetcher
@@ -10,6 +8,8 @@ import com.github.panpf.sketch.fetch.HttpUriFetcher
 import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.HttpImageFiles
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromByteArray

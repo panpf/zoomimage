@@ -1,8 +1,8 @@
 package com.github.panpf.zoomimage.sample.data
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
-import com.githb.panpf.zoomimage.images.HttpImageFiles
 import com.github.panpf.sketch.Sketch
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.HttpImageFiles
 
 actual suspend fun buildPlatformBuiltinPhotoList(sketch: Sketch): List<String> {
     return listOf(

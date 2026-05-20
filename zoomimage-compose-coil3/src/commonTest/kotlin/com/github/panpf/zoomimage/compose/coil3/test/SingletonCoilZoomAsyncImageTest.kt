@@ -20,9 +20,9 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy.DISABLED
 import coil3.request.ImageRequest.Builder
 import coil3.size.Precision.EXACT
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.images.coil.platformComposeSubsamplingImageGenerators
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.test.TestLifecycle

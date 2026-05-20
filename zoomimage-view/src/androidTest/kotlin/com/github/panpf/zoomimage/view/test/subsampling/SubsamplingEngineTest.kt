@@ -4,8 +4,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.Lifecycle
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.tools4a.test.ktx.getActivitySync
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileState

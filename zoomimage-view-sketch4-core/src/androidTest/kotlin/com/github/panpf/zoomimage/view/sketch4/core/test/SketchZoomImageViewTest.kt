@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageResult.Error
@@ -17,6 +16,7 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse

@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaRegionDecoder

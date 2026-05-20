@@ -12,11 +12,11 @@ import coil3.request.ErrorResult
 import coil3.request.SuccessResult
 import coil3.request.error
 import coil3.util.CoilUtils
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.CoilZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse

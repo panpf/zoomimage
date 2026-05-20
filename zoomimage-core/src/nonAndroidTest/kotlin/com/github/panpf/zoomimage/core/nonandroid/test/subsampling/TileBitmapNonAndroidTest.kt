@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.core.nonandroid.test.subsampling
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.test.createBitmap
 import com.github.panpf.zoomimage.test.decode
 import com.github.panpf.zoomimage.util.IntSizeCompat

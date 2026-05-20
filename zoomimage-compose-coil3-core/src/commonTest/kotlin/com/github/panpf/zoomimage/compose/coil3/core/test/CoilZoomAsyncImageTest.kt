@@ -29,9 +29,9 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.crossfade
 import coil3.size.Precision
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.images.coil.platformComposeSubsamplingImageGenerators
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.test.TestLifecycle

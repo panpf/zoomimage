@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.compose.resources.test
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromComposeResource

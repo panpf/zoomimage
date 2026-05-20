@@ -8,9 +8,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.GlideZoomAsyncImage
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 

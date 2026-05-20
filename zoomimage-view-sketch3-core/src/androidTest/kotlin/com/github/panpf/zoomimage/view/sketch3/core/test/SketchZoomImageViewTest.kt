@@ -7,7 +7,6 @@ import android.net.Uri
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
@@ -18,6 +17,7 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse

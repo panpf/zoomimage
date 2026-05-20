@@ -13,10 +13,10 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.test.SizeColorPainter
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.waitMillis

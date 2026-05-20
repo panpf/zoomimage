@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.core.desktop.test.skia
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaRegionDecoder
 import com.github.panpf.zoomimage.util.IntRectCompat

@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import androidx.core.graphics.get
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.closeQuietly
 import kotlinx.coroutines.test.runTest

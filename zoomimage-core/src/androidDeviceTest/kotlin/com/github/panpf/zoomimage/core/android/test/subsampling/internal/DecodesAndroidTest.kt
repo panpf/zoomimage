@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
 import android.webkit.MimeTypeMap
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.AndroidRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper

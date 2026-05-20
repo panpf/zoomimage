@@ -1,4 +1,4 @@
-package com.githb.panpf.zoomimage.images
+package com.github.panpf.zoomimage.images
 
 interface ExifOrientation {
     companion object {

@@ -36,9 +36,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.Res

@@ -6,11 +6,11 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.PicassoZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.picasso.PicassoSubsamplingImageGenerator
 import com.github.panpf.zoomimage.picasso.internal.EnginePicassoSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult

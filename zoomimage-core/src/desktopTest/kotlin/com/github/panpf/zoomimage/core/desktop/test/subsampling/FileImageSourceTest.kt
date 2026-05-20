@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling
 
-import com.githb.panpf.zoomimage.images.DesktopLocalImages
+import com.github.panpf.zoomimage.images.DesktopLocalImages
 import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromFile

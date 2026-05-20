@@ -4,9 +4,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
 import com.github.panpf.zoomimage.test.TestLifecycle

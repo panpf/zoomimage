@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.githb.panpf.zoomimage.images
+package com.github.panpf.zoomimage.images
 
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource

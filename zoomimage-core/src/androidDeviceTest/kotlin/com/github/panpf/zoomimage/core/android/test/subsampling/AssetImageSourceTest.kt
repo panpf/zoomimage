@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.AssetImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.subsampling.AssetImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset

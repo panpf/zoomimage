@@ -1,4 +1,4 @@
-package com.githb.panpf.zoomimage.images
+package com.github.panpf.zoomimage.images
 
 import android.content.Context
 import android.os.Environment

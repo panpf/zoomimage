@@ -8,13 +8,13 @@ import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileState

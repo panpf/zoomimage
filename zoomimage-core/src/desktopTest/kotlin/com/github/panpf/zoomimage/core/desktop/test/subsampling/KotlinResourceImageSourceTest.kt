@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.core.desktop.test.subsampling
 
-import com.githb.panpf.zoomimage.images.KotlinResImageFiles
+import com.github.panpf.zoomimage.images.KotlinResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.KotlinResourceImageSource
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource

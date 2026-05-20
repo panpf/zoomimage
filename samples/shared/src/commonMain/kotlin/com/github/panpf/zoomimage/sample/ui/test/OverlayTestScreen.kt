@@ -37,11 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zooming
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_rotate_right

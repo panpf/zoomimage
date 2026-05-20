@@ -3,7 +3,7 @@ package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Build.VERSION_CODES
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.AndroidRegionDecoder

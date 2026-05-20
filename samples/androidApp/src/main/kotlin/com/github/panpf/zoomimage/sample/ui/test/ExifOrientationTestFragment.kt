@@ -4,9 +4,9 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentTabPagerBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment

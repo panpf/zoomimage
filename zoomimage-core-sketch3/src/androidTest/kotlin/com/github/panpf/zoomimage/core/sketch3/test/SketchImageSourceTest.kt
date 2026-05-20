@@ -18,13 +18,13 @@ package com.github.panpf.zoomimage.core.sketch3.test
 
 import android.graphics.BitmapFactory
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.datasource.AssetDataSource
 import com.github.panpf.sketch.datasource.DataFrom
 import com.github.panpf.sketch.datasource.FileDataSource
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.request.LoadRequest
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.runBlocking

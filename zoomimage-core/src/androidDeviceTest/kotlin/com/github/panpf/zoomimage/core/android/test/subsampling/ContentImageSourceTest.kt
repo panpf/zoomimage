@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.core.android.test.subsampling
 
 import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
-import com.githb.panpf.zoomimage.images.ContentImageFiles
+import com.github.panpf.zoomimage.images.ContentImageFiles
 import com.github.panpf.zoomimage.subsampling.ContentImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromContent

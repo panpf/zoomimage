@@ -1,11 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
-import com.githb.panpf.zoomimage.images.AndroidLocalImageFiles
-import com.githb.panpf.zoomimage.images.AndroidResourceImageFiles
-import com.githb.panpf.zoomimage.images.AssetImageFiles
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
-import com.githb.panpf.zoomimage.images.ContentImageFiles
-import com.githb.panpf.zoomimage.images.HttpImageFiles
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.fetch.AssetUriFetcher
 import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher
@@ -17,6 +11,12 @@ import com.github.panpf.sketch.fetch.ResourceUriFetcher
 import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
+import com.github.panpf.zoomimage.images.AndroidLocalImageFiles
+import com.github.panpf.zoomimage.images.AndroidResourceImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ContentImageFiles
+import com.github.panpf.zoomimage.images.HttpImageFiles
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset

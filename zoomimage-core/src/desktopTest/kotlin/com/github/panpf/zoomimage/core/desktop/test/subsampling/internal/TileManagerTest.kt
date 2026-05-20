@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
-import com.githb.panpf.zoomimage.images.ComposeResImageFile
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFile
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage

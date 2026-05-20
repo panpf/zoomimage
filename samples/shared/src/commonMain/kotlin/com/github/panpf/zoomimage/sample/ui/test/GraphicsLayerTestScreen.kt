@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.rememberAsyncImagePainter
@@ -59,6 +58,7 @@ import com.github.panpf.zoomimage.compose.util.toCompat
 import com.github.panpf.zoomimage.compose.util.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.plus
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_arrow_down
 import com.github.panpf.zoomimage.sample.ic_arrow_left

@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.core.android.test.subsampling
 
 import android.graphics.Bitmap.Config.ARGB_8888
 import android.graphics.Bitmap.Config.RGB_565
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.test.copyWith
 import com.github.panpf.zoomimage.test.createBitmap
 import com.github.panpf.zoomimage.test.decode

@@ -3,7 +3,7 @@ package com.github.panpf.zoomimage.core.android.test.util
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
-import com.githb.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.util.isAndSupportHardware
 import com.github.panpf.zoomimage.util.requiredMainThread
 import com.github.panpf.zoomimage.util.requiredWorkThread
