@@ -1,0 +1,54 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <zoomimage:zoomimage-core-coil3>
+final class com.github.panpf.zoomimage.coil/CoilHttpImageSource : com.github.panpf.zoomimage.subsampling/ImageSource { // com.github.panpf.zoomimage.coil/CoilHttpImageSource|null[0]
+    constructor <init>(kotlin/String, kotlin/Function0<okio/Source>) // com.github.panpf.zoomimage.coil/CoilHttpImageSource.<init>|<init>(kotlin.String;kotlin.Function0<okio.Source>){}[0]
+
+    final val key // com.github.panpf.zoomimage.coil/CoilHttpImageSource.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.coil/CoilHttpImageSource.key.<get-key>|<get-key>(){}[0]
+    final val openSourceFactory // com.github.panpf.zoomimage.coil/CoilHttpImageSource.openSourceFactory|{}openSourceFactory[0]
+        final fun <get-openSourceFactory>(): kotlin/Function0<okio/Source> // com.github.panpf.zoomimage.coil/CoilHttpImageSource.openSourceFactory.<get-openSourceFactory>|<get-openSourceFactory>(){}[0]
+    final val url // com.github.panpf.zoomimage.coil/CoilHttpImageSource.url|{}url[0]
+        final fun <get-url>(): kotlin/String // com.github.panpf.zoomimage.coil/CoilHttpImageSource.url.<get-url>|<get-url>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.coil/CoilHttpImageSource.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.coil/CoilHttpImageSource.hashCode|hashCode(){}[0]
+    final fun openSource(): okio/Source // com.github.panpf.zoomimage.coil/CoilHttpImageSource.openSource|openSource(){}[0]
+    final fun toString(): kotlin/String // com.github.panpf.zoomimage.coil/CoilHttpImageSource.toString|toString(){}[0]
+
+    final class Factory : com.github.panpf.zoomimage.subsampling/ImageSource.Factory { // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory|null[0]
+        constructor <init>(coil3/PlatformContext, coil3/ImageLoader, coil3.request/ImageRequest) // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.<init>|<init>(coil3.PlatformContext;coil3.ImageLoader;coil3.request.ImageRequest){}[0]
+        constructor <init>(coil3/PlatformContext, coil3/ImageLoader, kotlin/String) // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.<init>|<init>(coil3.PlatformContext;coil3.ImageLoader;kotlin.String){}[0]
+
+        final val context // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.context|{}context[0]
+            final fun <get-context>(): coil3/PlatformContext // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.context.<get-context>|<get-context>(){}[0]
+        final val imageLoader // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.imageLoader|{}imageLoader[0]
+            final fun <get-imageLoader>(): coil3/ImageLoader // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.imageLoader.<get-imageLoader>|<get-imageLoader>(){}[0]
+        final val key // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.key|{}key[0]
+            final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.key.<get-key>|<get-key>(){}[0]
+        final val request // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.request|{}request[0]
+            final fun <get-request>(): coil3.request/ImageRequest // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.request.<get-request>|<get-request>(){}[0]
+        final val url // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.url|{}url[0]
+            final fun <get-url>(): kotlin/String // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.url.<get-url>|<get-url>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.toString|toString(){}[0]
+        final suspend fun create(): com.github.panpf.zoomimage.coil/CoilHttpImageSource // com.github.panpf.zoomimage.coil/CoilHttpImageSource.Factory.create|create(){}[0]
+    }
+}
+
+final class com.github.panpf.zoomimage.coil/CoilTileImageCache : com.github.panpf.zoomimage.subsampling/TileImageCache { // com.github.panpf.zoomimage.coil/CoilTileImageCache|null[0]
+    constructor <init>(coil3/ImageLoader) // com.github.panpf.zoomimage.coil/CoilTileImageCache.<init>|<init>(coil3.ImageLoader){}[0]
+
+    final fun get(kotlin/String): com.github.panpf.zoomimage.subsampling/TileImage? // com.github.panpf.zoomimage.coil/CoilTileImageCache.get|get(kotlin.String){}[0]
+    final fun put(kotlin/String, com.github.panpf.zoomimage.subsampling/TileImage, kotlin/String, com.github.panpf.zoomimage.subsampling/ImageInfo): com.github.panpf.zoomimage.subsampling/TileImage? // com.github.panpf.zoomimage.coil/CoilTileImageCache.put|put(kotlin.String;com.github.panpf.zoomimage.subsampling.TileImage;kotlin.String;com.github.panpf.zoomimage.subsampling.ImageInfo){}[0]
+}
+
+final suspend fun com.github.panpf.zoomimage.coil.internal/dataToImageSource(coil3/PlatformContext, coil3/ImageLoader, coil3.request/ImageRequest): com.github.panpf.zoomimage.subsampling/ImageSource.Factory? // com.github.panpf.zoomimage.coil.internal/dataToImageSource|dataToImageSource(coil3.PlatformContext;coil3.ImageLoader;coil3.request.ImageRequest){}[0]
+final suspend fun com.github.panpf.zoomimage.coil.internal/dataToImageSource(coil3/PlatformContext, coil3/ImageLoader, kotlin/Any): com.github.panpf.zoomimage.subsampling/ImageSource.Factory? // com.github.panpf.zoomimage.coil.internal/dataToImageSource|dataToImageSource(coil3.PlatformContext;coil3.ImageLoader;kotlin.Any){}[0]

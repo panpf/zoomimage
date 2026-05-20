@@ -1,0 +1,51 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <zoomimage:zoomimage-core-sketch4>
+final class com.github.panpf.zoomimage.sketch/SketchImageSource : com.github.panpf.zoomimage.subsampling/ImageSource { // com.github.panpf.zoomimage.sketch/SketchImageSource|null[0]
+    constructor <init>(kotlin/String, com.github.panpf.sketch.source/DataSource) // com.github.panpf.zoomimage.sketch/SketchImageSource.<init>|<init>(kotlin.String;com.github.panpf.sketch.source.DataSource){}[0]
+
+    final val dataSource // com.github.panpf.zoomimage.sketch/SketchImageSource.dataSource|{}dataSource[0]
+        final fun <get-dataSource>(): com.github.panpf.sketch.source/DataSource // com.github.panpf.zoomimage.sketch/SketchImageSource.dataSource.<get-dataSource>|<get-dataSource>(){}[0]
+    final val imageUri // com.github.panpf.zoomimage.sketch/SketchImageSource.imageUri|{}imageUri[0]
+        final fun <get-imageUri>(): kotlin/String // com.github.panpf.zoomimage.sketch/SketchImageSource.imageUri.<get-imageUri>|<get-imageUri>(){}[0]
+    final val key // com.github.panpf.zoomimage.sketch/SketchImageSource.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.sketch/SketchImageSource.key.<get-key>|<get-key>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.sketch/SketchImageSource.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.sketch/SketchImageSource.hashCode|hashCode(){}[0]
+    final fun openSource(): okio/Source // com.github.panpf.zoomimage.sketch/SketchImageSource.openSource|openSource(){}[0]
+    final fun toString(): kotlin/String // com.github.panpf.zoomimage.sketch/SketchImageSource.toString|toString(){}[0]
+
+    final class Factory : com.github.panpf.zoomimage.subsampling/ImageSource.Factory { // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory|null[0]
+        constructor <init>(com.github.panpf.sketch/Sketch, com.github.panpf.sketch.request/ImageRequest) // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.<init>|<init>(com.github.panpf.sketch.Sketch;com.github.panpf.sketch.request.ImageRequest){}[0]
+        constructor <init>(com.github.panpf.sketch/Sketch, kotlin/String) // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.<init>|<init>(com.github.panpf.sketch.Sketch;kotlin.String){}[0]
+
+        final val imageUri // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.imageUri|{}imageUri[0]
+            final fun <get-imageUri>(): kotlin/String // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.imageUri.<get-imageUri>|<get-imageUri>(){}[0]
+        final val key // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.key|{}key[0]
+            final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.key.<get-key>|<get-key>(){}[0]
+        final val request // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.request|{}request[0]
+            final fun <get-request>(): com.github.panpf.sketch.request/ImageRequest // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.request.<get-request>|<get-request>(){}[0]
+        final val sketch // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.sketch|{}sketch[0]
+            final fun <get-sketch>(): com.github.panpf.sketch/Sketch // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.sketch.<get-sketch>|<get-sketch>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.toString|toString(){}[0]
+        final suspend fun create(): com.github.panpf.zoomimage.sketch/SketchImageSource // com.github.panpf.zoomimage.sketch/SketchImageSource.Factory.create|create(){}[0]
+    }
+}
+
+final class com.github.panpf.zoomimage.sketch/SketchTileImageCache : com.github.panpf.zoomimage.subsampling/TileImageCache { // com.github.panpf.zoomimage.sketch/SketchTileImageCache|null[0]
+    constructor <init>(com.github.panpf.sketch/Sketch) // com.github.panpf.zoomimage.sketch/SketchTileImageCache.<init>|<init>(com.github.panpf.sketch.Sketch){}[0]
+
+    final fun get(kotlin/String): com.github.panpf.zoomimage.subsampling/TileImage? // com.github.panpf.zoomimage.sketch/SketchTileImageCache.get|get(kotlin.String){}[0]
+    final fun put(kotlin/String, com.github.panpf.zoomimage.subsampling/TileImage, kotlin/String, com.github.panpf.zoomimage.subsampling/ImageInfo): com.github.panpf.zoomimage.subsampling/TileImage? // com.github.panpf.zoomimage.sketch/SketchTileImageCache.put|put(kotlin.String;com.github.panpf.zoomimage.subsampling.TileImage;kotlin.String;com.github.panpf.zoomimage.subsampling.ImageInfo){}[0]
+}
+
+final fun com.github.panpf.zoomimage.sketch/platformRequest(com.github.panpf.sketch.request/ImageRequest): com.github.panpf.sketch.request/ImageRequest // com.github.panpf.zoomimage.sketch/platformRequest|platformRequest(com.github.panpf.sketch.request.ImageRequest){}[0]

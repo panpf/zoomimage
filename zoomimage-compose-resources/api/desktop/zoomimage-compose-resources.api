@@ -1,0 +1,27 @@
+public final class com/github/panpf/zoomimage/subsampling/ComposeResourceImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;[B)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBytes ()[B
+	public fun getKey ()Ljava/lang/String;
+	public final fun getResourcePath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ComposeResourceImageSource$Factory : com/github/panpf/zoomimage/subsampling/ImageSource$Factory {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public fun create (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey ()Ljava/lang/String;
+	public final fun getResourcePath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ComposeResourceImageSourceKt {
+	public static final fun fromComposeResource (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Companion;Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/ComposeResourceImageSource$Factory;
+}
+

@@ -1,6 +1,10 @@
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -28,7 +32,7 @@ buildscript {
         classpath(libs.gradlePlugin.mavenPublish)
     }
 }
-// TODO abiValidation
+
 plugins {
     alias(libs.plugins.dokka)
 }
@@ -188,5 +192,27 @@ allprojects {
     // Configure Dokka plugin for all publishable library modules
     if (isPublishableModule) {
         apply { plugin("org.jetbrains.dokka") }
+    }
+
+    // Enable ABI validation for all publishable library modules.
+    if (isPublishableModule) {
+        configureAbiValidation()
+    }
+}
+
+@OptIn(ExperimentalAbiValidation::class)
+fun Project.configureAbiValidation() {
+    // TODO The Android platform's ABI does not currently work
+    afterEvaluate {
+        val kotlinExtension =
+            extensions.findByType<KotlinProjectExtension>() ?: return@afterEvaluate
+
+        // Unfortunately the 'enabled' property doesn't share a common interface.
+        kotlinExtension.extensions.findByType<AbiValidationExtension>()?.apply {
+            enabled.set(true)
+        }
+        kotlinExtension.extensions.findByType<AbiValidationMultiplatformExtension>()?.apply {
+            enabled.set(true)
+        }
     }
 }

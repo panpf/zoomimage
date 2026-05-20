@@ -1,0 +1,36 @@
+public final class com/github/panpf/zoomimage/coil/CoilHttpImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey ()Ljava/lang/String;
+	public final fun getOpenSourceFactory ()Lkotlin/jvm/functions/Function0;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/coil/CoilHttpImageSource$Factory : com/github/panpf/zoomimage/subsampling/ImageSource$Factory {
+	public fun <init> (Lcoil3/PlatformContext;Lcoil3/ImageLoader;Lcoil3/request/ImageRequest;)V
+	public fun <init> (Lcoil3/PlatformContext;Lcoil3/ImageLoader;Ljava/lang/String;)V
+	public fun create (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContext ()Lcoil3/PlatformContext;
+	public final fun getImageLoader ()Lcoil3/ImageLoader;
+	public fun getKey ()Ljava/lang/String;
+	public final fun getRequest ()Lcoil3/request/ImageRequest;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/coil/CoilTileImageCache : com/github/panpf/zoomimage/subsampling/TileImageCache {
+	public fun <init> (Lcoil3/ImageLoader;)V
+	public fun get (Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public fun put (Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/TileImage;Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+}
+
+public final class com/github/panpf/zoomimage/coil/internal/Coil_core_utils_desktopKt {
+	public static final fun dataToImageSource (Lcoil3/PlatformContext;Lcoil3/ImageLoader;Lcoil3/request/ImageRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun dataToImageSource (Lcoil3/PlatformContext;Lcoil3/ImageLoader;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

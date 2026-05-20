@@ -1,0 +1,34 @@
+public final class com/github/panpf/zoomimage/sketch/SketchImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> (Ljava/lang/String;Lcom/github/panpf/sketch/source/DataSource;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDataSource ()Lcom/github/panpf/sketch/source/DataSource;
+	public final fun getImageUri ()Ljava/lang/String;
+	public fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/sketch/SketchImageSource$Factory : com/github/panpf/zoomimage/subsampling/ImageSource$Factory {
+	public fun <init> (Lcom/github/panpf/sketch/Sketch;Lcom/github/panpf/sketch/request/ImageRequest;)V
+	public fun <init> (Lcom/github/panpf/sketch/Sketch;Ljava/lang/String;)V
+	public fun create (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImageUri ()Ljava/lang/String;
+	public fun getKey ()Ljava/lang/String;
+	public final fun getRequest ()Lcom/github/panpf/sketch/request/ImageRequest;
+	public final fun getSketch ()Lcom/github/panpf/sketch/Sketch;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/sketch/SketchImageSource_desktopKt {
+	public static final fun platformRequest (Lcom/github/panpf/sketch/request/ImageRequest;)Lcom/github/panpf/sketch/request/ImageRequest;
+}
+
+public final class com/github/panpf/zoomimage/sketch/SketchTileImageCache : com/github/panpf/zoomimage/subsampling/TileImageCache {
+	public fun <init> (Lcom/github/panpf/sketch/Sketch;)V
+	public fun get (Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public fun put (Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/TileImage;Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+}
+

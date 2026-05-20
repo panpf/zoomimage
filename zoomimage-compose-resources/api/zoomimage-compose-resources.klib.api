@@ -1,0 +1,54 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <zoomimage:zoomimage-compose-resources>
+final class com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource : com.github.panpf.zoomimage.subsampling/ImageSource { // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource|null[0]
+    constructor <init>(kotlin/String, kotlin/ByteArray) // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.<init>|<init>(kotlin.String;kotlin.ByteArray){}[0]
+
+    final val bytes // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.bytes|{}bytes[0]
+        final fun <get-bytes>(): kotlin/ByteArray // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.bytes.<get-bytes>|<get-bytes>(){}[0]
+    final val key // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.key.<get-key>|<get-key>(){}[0]
+    final val resourcePath // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.resourcePath|{}resourcePath[0]
+        final fun <get-resourcePath>(): kotlin/String // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.resourcePath.<get-resourcePath>|<get-resourcePath>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.hashCode|hashCode(){}[0]
+    final fun openSource(): okio/Source // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.openSource|openSource(){}[0]
+    final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.toString|toString(){}[0]
+
+    final class Factory : com.github.panpf.zoomimage.subsampling/ImageSource.Factory { // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory|null[0]
+        constructor <init>(kotlin/String) // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.<init>|<init>(kotlin.String){}[0]
+
+        final val key // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.key|{}key[0]
+            final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.key.<get-key>|<get-key>(){}[0]
+        final val resourcePath // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.resourcePath|{}resourcePath[0]
+            final fun <get-resourcePath>(): kotlin/String // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.resourcePath.<get-resourcePath>|<get-resourcePath>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.toString|toString(){}[0]
+        final suspend fun create(): com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource // com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory.create|create(){}[0]
+    }
+}
+
+final val com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource$stableprop // com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource$stableprop|#static{}com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource$stableprop[0]
+final val com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource_Factory$stableprop // com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource_Factory$stableprop|#static{}com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource_Factory$stableprop[0]
+final val zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_array$stableprop // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_array$stableprop|#static{}zoomimage_zoomimage_compose_resources_generated_resources_Res_array$stableprop[0]
+final val zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_drawable$stableprop // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_drawable$stableprop|#static{}zoomimage_zoomimage_compose_resources_generated_resources_Res_drawable$stableprop[0]
+final val zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_font$stableprop // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_font$stableprop|#static{}zoomimage_zoomimage_compose_resources_generated_resources_Res_font$stableprop[0]
+final val zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_plurals$stableprop // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_plurals$stableprop|#static{}zoomimage_zoomimage_compose_resources_generated_resources_Res_plurals$stableprop[0]
+final val zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_string$stableprop // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_string$stableprop|#static{}zoomimage_zoomimage_compose_resources_generated_resources_Res_string$stableprop[0]
+
+final fun (com.github.panpf.zoomimage.subsampling/ImageSource.Companion).com.github.panpf.zoomimage.subsampling/fromComposeResource(kotlin/String): com.github.panpf.zoomimage.subsampling/ComposeResourceImageSource.Factory // com.github.panpf.zoomimage.subsampling/fromComposeResource|fromComposeResource@com.github.panpf.zoomimage.subsampling.ImageSource.Companion(kotlin.String){}[0]
+final fun com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource$stableprop_getter(): kotlin/Int // com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource$stableprop_getter|com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource$stableprop_getter(){}[0]
+final fun com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource_Factory$stableprop_getter(): kotlin/Int // com.github.panpf.zoomimage.subsampling/com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource_Factory$stableprop_getter|com_github_panpf_zoomimage_subsampling_ComposeResourceImageSource_Factory$stableprop_getter(){}[0]
+final fun zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_array$stableprop_getter(): kotlin/Int // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_array$stableprop_getter|zoomimage_zoomimage_compose_resources_generated_resources_Res_array$stableprop_getter(){}[0]
+final fun zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_drawable$stableprop_getter(): kotlin/Int // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_drawable$stableprop_getter|zoomimage_zoomimage_compose_resources_generated_resources_Res_drawable$stableprop_getter(){}[0]
+final fun zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_font$stableprop_getter(): kotlin/Int // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_font$stableprop_getter|zoomimage_zoomimage_compose_resources_generated_resources_Res_font$stableprop_getter(){}[0]
+final fun zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_plurals$stableprop_getter(): kotlin/Int // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_plurals$stableprop_getter|zoomimage_zoomimage_compose_resources_generated_resources_Res_plurals$stableprop_getter(){}[0]
+final fun zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_string$stableprop_getter(): kotlin/Int // zoomimage.zoomimage_compose_resources.generated.resources/zoomimage_zoomimage_compose_resources_generated_resources_Res_string$stableprop_getter|zoomimage_zoomimage_compose_resources_generated_resources_Res_string$stableprop_getter(){}[0]

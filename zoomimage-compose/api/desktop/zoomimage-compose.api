@@ -1,0 +1,563 @@
+public final class com/github/panpf/zoomimage/ZoomImageKt {
+	public static final fun ZoomImage (Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Lcom/github/panpf/zoomimage/compose/ZoomState;Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+}
+
+public final class com/github/panpf/zoomimage/compose/Logger_composeKt {
+	public static final fun rememberZoomImageLogger (Ljava/lang/String;Lcom/github/panpf/zoomimage/util/Logger$Level;Lcom/github/panpf/zoomimage/util/Logger$Pipeline;Landroidx/compose/runtime/Composer;II)Lcom/github/panpf/zoomimage/util/Logger;
+}
+
+public class com/github/panpf/zoomimage/compose/ZoomState {
+	public static final field $stable I
+	public fun <init> (Lcom/github/panpf/zoomimage/util/Logger;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/subsampling/SubsamplingState;)V
+	public final fun getLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	public final fun getSubsampling ()Lcom/github/panpf/zoomimage/compose/subsampling/SubsamplingState;
+	public final fun getZoomable ()Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;
+	public final fun setImageSource (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;)Z
+	public final fun setImageSource (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Z
+	public final fun setSubsamplingImage (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Z
+	public final fun setSubsamplingImage (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Z
+	public final fun setSubsamplingImage (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;)Z
+	public static synthetic fun setSubsamplingImage$default (Lcom/github/panpf/zoomimage/compose/ZoomState;Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILjava/lang/Object;)Z
+	public static synthetic fun setSubsamplingImage$default (Lcom/github/panpf/zoomimage/compose/ZoomState;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILjava/lang/Object;)Z
+}
+
+public final class com/github/panpf/zoomimage/compose/ZoomStateKt {
+	public static final fun rememberZoomState (Lcom/github/panpf/zoomimage/util/Logger$Level;Landroidx/compose/runtime/Composer;II)Lcom/github/panpf/zoomimage/compose/ZoomState;
+}
+
+public final class com/github/panpf/zoomimage/compose/internal/BaseZoomImageKt {
+	public static final fun BaseZoomImage (Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;ZZLandroidx/compose/runtime/Composer;II)V
+}
+
+public final class com/github/panpf/zoomimage/compose/subsampling/ComposeTileImage : com/github/panpf/zoomimage/subsampling/TileImage {
+	public static final field $stable I
+	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/BitmapTileImage;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBitmap ()Landroidx/compose/ui/graphics/ImageBitmap;
+	public fun getByteCount ()J
+	public fun getHeight ()I
+	public fun getWidth ()I
+	public fun hashCode ()I
+	public fun isRecycled ()Z
+	public fun recycle ()V
+	public fun setIsDisplayed (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/compose/subsampling/ComposeTileImageConvertor : com/github/panpf/zoomimage/subsampling/internal/TileImageConvertor {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun convert (Lcom/github/panpf/zoomimage/subsampling/TileImage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/github/panpf/zoomimage/compose/subsampling/SubsamplingState : androidx/compose/runtime/RememberObserver {
+	public static final field $stable I
+	public fun <init> (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Landroidx/lifecycle/Lifecycle;)V
+	public final fun getBackgroundTiles ()Ljava/util/List;
+	public final fun getDisabled ()Z
+	public final fun getDisabledAutoStopWithLifecycle ()Z
+	public final fun getDisabledBackgroundTiles ()Z
+	public final fun getDisabledTileImageCache ()Z
+	public final fun getForegroundTiles ()Ljava/util/List;
+	public final fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public final fun getImageLoadRect ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getLifecycle ()Landroidx/lifecycle/Lifecycle;
+	public final fun getLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	public final fun getPausedContinuousTransformTypes ()I
+	public final fun getReady ()Z
+	public final fun getRegionDecoders ()Ljava/util/List;
+	public final fun getSampleSize ()I
+	public final fun getShowTileBounds ()Z
+	public final fun getStopped ()Z
+	public final fun getSubsamplingImage ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public final fun getTileAnimationSpec ()Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;
+	public final fun getTileGridSizeMap ()Ljava/util/Map;
+	public final fun getTileImageCache ()Lcom/github/panpf/zoomimage/subsampling/TileImageCache;
+	public final fun getZoomableState ()Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;
+	public fun onAbandoned ()V
+	public fun onForgotten ()V
+	public fun onRemembered ()V
+	public final fun setDisabled (Z)V
+	public final fun setDisabledAutoStopWithLifecycle (Z)V
+	public final fun setDisabledBackgroundTiles (Z)V
+	public final fun setDisabledTileImageCache (Z)V
+	public final fun setImage (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Z
+	public final fun setImage (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Z
+	public final fun setImage (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;)Z
+	public static synthetic fun setImage$default (Lcom/github/panpf/zoomimage/compose/subsampling/SubsamplingState;Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILjava/lang/Object;)Z
+	public static synthetic fun setImage$default (Lcom/github/panpf/zoomimage/compose/subsampling/SubsamplingState;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILjava/lang/Object;)Z
+	public final fun setImageSource (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;)Z
+	public final fun setImageSource (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Z
+	public final fun setPausedContinuousTransformTypes (I)V
+	public final fun setRegionDecoders (Ljava/util/List;)V
+	public final fun setShowTileBounds (Z)V
+	public final fun setStopped (Z)V
+	public final fun setTileAnimationSpec (Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;)V
+	public final fun setTileImageCache (Lcom/github/panpf/zoomimage/subsampling/TileImageCache;)V
+}
+
+public final class com/github/panpf/zoomimage/compose/subsampling/SubsamplingStateKt {
+	public static final fun rememberSubsamplingState (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Landroidx/compose/runtime/Composer;I)Lcom/github/panpf/zoomimage/compose/subsampling/SubsamplingState;
+}
+
+public final class com/github/panpf/zoomimage/compose/subsampling/Subsampling_commonKt {
+	public static final fun subsampling (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/subsampling/SubsamplingState;)Landroidx/compose/ui/Modifier;
+}
+
+public final class com/github/panpf/zoomimage/compose/subsampling/Subsampling_nonAndroidKt {
+	public static final fun isCloseAntiAliasForDrawTile ()Z
+}
+
+public final class com/github/panpf/zoomimage/compose/subsampling/TileBitmap_composeNonAndroidKt {
+	public static final fun asComposeBitmap (Lorg/jetbrains/skia/Bitmap;)Landroidx/compose/ui/graphics/ImageBitmap;
+}
+
+public final class com/github/panpf/zoomimage/compose/util/AssistKey : java/lang/Enum {
+	public static final field Alt Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+	public static final field Ctrl Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+	public static final field Meta Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+	public static final field Shift Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+	public final fun check-ZmokQxo (Ljava/lang/Object;)Z
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun plus (Lcom/github/panpf/zoomimage/compose/util/AssistKey;)[Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+	public static fun valueOf (Ljava/lang/String;)Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+	public static fun values ()[Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+}
+
+public final class com/github/panpf/zoomimage/compose/util/Compose_convert_utilsKt {
+	public static final fun roundToCompat (Landroidx/compose/ui/geometry/Rect;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun roundToCompat-k-4lQ0M (J)J
+	public static final fun roundToCompat-uvyYCjk (J)J
+	public static final fun roundToPlatform (Lcom/github/panpf/zoomimage/util/RectCompat;)Landroidx/compose/ui/unit/IntRect;
+	public static final fun roundToPlatform-0MI_WYg (J)J
+	public static final fun roundToPlatform-qkGJC9g (J)J
+	public static final fun toCompat (Landroidx/compose/ui/Alignment;)Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public static final fun toCompat (Landroidx/compose/ui/geometry/Rect;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun toCompat (Landroidx/compose/ui/layout/ContentScale;)Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public static final fun toCompat (Landroidx/compose/ui/unit/IntRect;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun toCompat (Lcom/github/panpf/zoomimage/compose/zoom/Transform;)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun toCompat--gyyYBs (J)J
+	public static final fun toCompat-FK8aYYs (J)J
+	public static final fun toCompat-__ExYCQ (J)J
+	public static final fun toCompat-k-4lQ0M (J)J
+	public static final fun toCompat-ozmzZPI (J)J
+	public static final fun toCompat-uvyYCjk (J)J
+	public static final fun toCompatOffset--gyyYBs (J)J
+	public static final fun toCompatRect (Landroidx/compose/ui/unit/IntRect;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun toCompatSize-ozmzZPI (J)J
+	public static final fun toPlatform (Lcom/github/panpf/zoomimage/util/IntRectCompat;)Landroidx/compose/ui/unit/IntRect;
+	public static final fun toPlatform (Lcom/github/panpf/zoomimage/util/RectCompat;)Landroidx/compose/ui/geometry/Rect;
+	public static final fun toPlatform (Lcom/github/panpf/zoomimage/util/TransformCompat;)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public static final fun toPlatform (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Landroidx/compose/ui/Alignment;
+	public static final fun toPlatform (Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;)Landroidx/compose/ui/layout/ContentScale;
+	public static final fun toPlatform-0MI_WYg (J)J
+	public static final fun toPlatform-1tlllzA (J)J
+	public static final fun toPlatform-grz_zgQ (J)J
+	public static final fun toPlatform-krAyMZc (J)J
+	public static final fun toPlatform-ogd_NwM (J)J
+	public static final fun toPlatform-qkGJC9g (J)J
+	public static final fun toPlatformOffset-1tlllzA (J)J
+	public static final fun toPlatformRect (Lcom/github/panpf/zoomimage/util/IntRectCompat;)Landroidx/compose/ui/geometry/Rect;
+	public static final fun toPlatformSize-grz_zgQ (J)J
+}
+
+public final class com/github/panpf/zoomimage/compose/util/Compose_platform_utilsKt {
+	public static final fun flip-JVtK1S4 (Landroidx/compose/ui/unit/IntRect;JZ)Landroidx/compose/ui/unit/IntRect;
+	public static synthetic fun flip-JVtK1S4$default (Landroidx/compose/ui/unit/IntRect;JZILjava/lang/Object;)Landroidx/compose/ui/unit/IntRect;
+	public static final fun minus-TemP2vQ (JJ)J
+	public static final fun minus-iLBOSCw (JJ)J
+	public static final fun plus-TemP2vQ (JJ)J
+	public static final fun plus-iLBOSCw (JJ)J
+	public static final fun rtlFlipped (Landroidx/compose/ui/Alignment;Landroidx/compose/ui/unit/LayoutDirection;)Landroidx/compose/ui/Alignment;
+	public static synthetic fun rtlFlipped$default (Landroidx/compose/ui/Alignment;Landroidx/compose/ui/unit/LayoutDirection;ILjava/lang/Object;)Landroidx/compose/ui/Alignment;
+}
+
+public abstract interface class com/github/panpf/zoomimage/compose/util/KeyHandler {
+	public abstract fun handle-ZmokQxo (Ljava/lang/Object;)Z
+}
+
+public final class com/github/panpf/zoomimage/compose/util/KeyHandler_commonKt {
+	public static final fun matcherKeyHandler (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/github/panpf/zoomimage/compose/util/KeyHandler;
+	public static synthetic fun matcherKeyHandler$default (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/util/KeyHandler;
+}
+
+public final class com/github/panpf/zoomimage/compose/util/KeyHandler_desktopKt {
+	public static final fun platformAssistKey ()Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+}
+
+public final class com/github/panpf/zoomimage/compose/util/KeyMatcher {
+	public static final field $stable I
+	public synthetic fun <init> (JLcom/github/panpf/zoomimage/compose/util/AssistKey;Landroidx/compose/ui/input/key/KeyEventType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLcom/github/panpf/zoomimage/compose/util/AssistKey;Landroidx/compose/ui/input/key/KeyEventType;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (J[Lcom/github/panpf/zoomimage/compose/util/AssistKey;Landroidx/compose/ui/input/key/KeyEventType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (J[Lcom/github/panpf/zoomimage/compose/util/AssistKey;Landroidx/compose/ui/input/key/KeyEventType;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAssistKeys ()[Lcom/github/panpf/zoomimage/compose/util/AssistKey;
+	public final fun getKey-EK5gGoQ ()J
+	public final fun getType-G7MBCyQ ()Landroidx/compose/ui/input/key/KeyEventType;
+	public fun hashCode ()I
+	public final fun match-ZmokQxo (Ljava/lang/Object;)Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class com/github/panpf/zoomimage/compose/util/MatcherKeyHandler : com/github/panpf/zoomimage/compose/util/KeyHandler {
+	public static final field $stable I
+	public fun <init> (Ljava/util/List;)V
+	public fun getKeyMatchers ()Ljava/util/List;
+	public fun handle-ZmokQxo (Ljava/lang/Object;)Z
+	public abstract fun onCanceled-ZmokQxo (Ljava/lang/Object;)V
+	public abstract fun onKey-ZmokQxo (Ljava/lang/Object;)V
+}
+
+public abstract class com/github/panpf/zoomimage/compose/zoom/BaseMatcherZoomKeyHandler : com/github/panpf/zoomimage/compose/zoom/internal/MatcherZoomKeyHandler {
+	public static final field $stable I
+	public fun <init> (Lkotlinx/collections/immutable/ImmutableList;)V
+	public abstract fun calculateLongPressAddValue (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Long;J)F
+	public abstract fun calculateShortPressAddValue (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+	public synthetic fun getKeyMatchers ()Ljava/util/List;
+	public fun getKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public fun onCanceled-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)V
+	public fun onKey-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)V
+	public abstract fun updateValue (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;FLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun updateValue$default (Lcom/github/panpf/zoomimage/compose/zoom/BaseMatcherZoomKeyHandler;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;FLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/KeyZoomKt {
+	public static final fun bindKeyZoomWithKeyEventFlow (Lkotlinx/coroutines/flow/SharedFlow;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lkotlinx/collections/immutable/ImmutableList;Landroidx/compose/runtime/Composer;II)V
+	public static final fun getDefaultMoveDownKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public static final fun getDefaultMoveLeftKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public static final fun getDefaultMoveRightKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public static final fun getDefaultMoveUpKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public static final fun getDefaultScaleInKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public static final fun getDefaultScaleOutKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public static final fun getDefaultZoomKeyHandlers ()Lkotlinx/collections/immutable/ImmutableList;
+	public static final fun keyZoom (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lkotlinx/collections/immutable/ImmutableList;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/MouseZoomKt {
+	public static final fun mouseZoom (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)Landroidx/compose/ui/Modifier;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/MoveArrow : java/lang/Enum {
+	public static final field Down Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
+	public static final field Left Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
+	public static final field Right Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
+	public static final field Up Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
+	public static fun values ()[Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
+}
+
+public class com/github/panpf/zoomimage/compose/zoom/MoveKeyHandler : com/github/panpf/zoomimage/compose/zoom/StepMatcherZoomKeyHandler {
+	public static final field $stable I
+	public fun <init> (Lkotlinx/collections/immutable/ImmutableList;Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;FFFI)V
+	public synthetic fun <init> (Lkotlinx/collections/immutable/ImmutableList;Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;FFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getKeyMatchers ()Ljava/util/List;
+	public fun getKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public fun getLongPressAccelerateBase ()F
+	public fun getLongPressAccelerateInterval ()I
+	public fun getLongPressStep (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+	public final fun getLongPressStepWithContainerPercentage ()F
+	public final fun getMoveArrow ()Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
+	public fun getShortPressStep (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+	public final fun getShortPressStepWithContainerPercentage ()F
+	public fun handle-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun updateValue (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;FLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public class com/github/panpf/zoomimage/compose/zoom/ScaleKeyHandler : com/github/panpf/zoomimage/compose/zoom/StepMatcherZoomKeyHandler {
+	public static final field $stable I
+	public fun <init> (Lkotlinx/collections/immutable/ImmutableList;ZFFFI)V
+	public synthetic fun <init> (Lkotlinx/collections/immutable/ImmutableList;ZFFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getKeyMatchers ()Ljava/util/List;
+	public fun getKeyMatchers ()Lkotlinx/collections/immutable/ImmutableList;
+	public fun getLongPressAccelerateBase ()F
+	public fun getLongPressAccelerateInterval ()I
+	public final fun getLongPressStep ()F
+	public fun getLongPressStep (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+	public final fun getScaleIn ()Z
+	public fun getShortPressStep (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+	public final fun getShortPressStepScaleFactor ()F
+	public fun handle-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun updateValue (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;FLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ScrollBarSpec {
+	public static final field $stable I
+	public static final field Companion Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec$Companion;
+	public synthetic fun <init> (JFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component2-D9Ej5fM ()F
+	public final fun component3-D9Ej5fM ()F
+	public final fun copy-fUABb90 (JFF)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+	public static synthetic fun copy-fUABb90$default (Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;JFFILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColor-0d7_KjU ()J
+	public final fun getMargin-D9Ej5fM ()F
+	public final fun getSize-D9Ej5fM ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ScrollBarSpec$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+}
+
+public abstract class com/github/panpf/zoomimage/compose/zoom/StepMatcherZoomKeyHandler : com/github/panpf/zoomimage/compose/zoom/BaseMatcherZoomKeyHandler {
+	public static final field $stable I
+	public fun <init> (Lkotlinx/collections/immutable/ImmutableList;)V
+	public fun calculateLongPressAddValue (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Long;J)F
+	public fun calculateShortPressAddValue (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+	public abstract fun getLongPressAccelerateBase ()F
+	public abstract fun getLongPressAccelerateInterval ()I
+	public abstract fun getLongPressStep (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+	public abstract fun getShortPressStep (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)F
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/Transform {
+	public static final field $stable I
+	public static final field Companion Lcom/github/panpf/zoomimage/compose/zoom/Transform$Companion;
+	public synthetic fun <init> (JJFJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJFJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-_hLwfpc ()J
+	public final fun component2-F1C5BW0 ()J
+	public final fun component3 ()F
+	public final fun component4-SzJe1aQ ()J
+	public final fun component5-SzJe1aQ ()J
+	public final fun copy-6XuSF3Y (JJFJJ)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public static synthetic fun copy-6XuSF3Y$default (Lcom/github/panpf/zoomimage/compose/zoom/Transform;JJFJJILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOffset-F1C5BW0 ()J
+	public final fun getOffsetX ()F
+	public final fun getOffsetY ()F
+	public final fun getRotation ()F
+	public final fun getRotationOrigin-SzJe1aQ ()J
+	public final fun getRotationOriginX ()F
+	public final fun getRotationOriginY ()F
+	public final fun getScale-_hLwfpc ()J
+	public final fun getScaleOrigin-SzJe1aQ ()J
+	public final fun getScaleOriginX ()F
+	public final fun getScaleOriginY ()F
+	public final fun getScaleX ()F
+	public final fun getScaleY ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/Transform$Companion {
+	public final fun getOrigin ()Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/TransformKt {
+	public static final fun div-5a8I_IM (Lcom/github/panpf/zoomimage/compose/zoom/Transform;J)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public static final fun isEmpty (Lcom/github/panpf/zoomimage/compose/zoom/Transform;)Z
+	public static final fun isNotEmpty (Lcom/github/panpf/zoomimage/compose/zoom/Transform;)Z
+	public static final fun lerp (Lcom/github/panpf/zoomimage/compose/zoom/Transform;Lcom/github/panpf/zoomimage/compose/zoom/Transform;F)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public static final fun minus (Lcom/github/panpf/zoomimage/compose/zoom/Transform;Lcom/github/panpf/zoomimage/compose/zoom/Transform;)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public static final fun plus (Lcom/github/panpf/zoomimage/compose/zoom/Transform;Lcom/github/panpf/zoomimage/compose/zoom/Transform;)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public static final fun times-5a8I_IM (Lcom/github/panpf/zoomimage/compose/zoom/Transform;J)Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public static final fun toShortString (Lcom/github/panpf/zoomimage/compose/zoom/Transform;)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec : com/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec {
+	public static final field $stable I
+	public static final field Companion Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec$Companion;
+	public fun <init> ()V
+	public fun <init> (ILandroidx/compose/animation/core/Easing;F)V
+	public synthetic fun <init> (ILandroidx/compose/animation/core/Easing;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Landroidx/compose/animation/core/Easing;
+	public final fun component3 ()F
+	public final fun copy (ILandroidx/compose/animation/core/Easing;F)Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;ILandroidx/compose/animation/core/Easing;FILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDurationMillis ()I
+	public final fun getEasing ()Landroidx/compose/animation/core/Easing;
+	public final fun getInitialVelocity ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec$Companion {
+	public final fun getDEFAULT_DURATION_MILLIS ()I
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;
+	public final fun getNone ()Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ZoomScrollBarKt {
+	public static final fun zoomScrollBar (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;)Landroidx/compose/ui/Modifier;
+	public static synthetic fun zoomScrollBar$default (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;ILjava/lang/Object;)Landroidx/compose/ui/Modifier;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ZoomableKt {
+	public static final fun zoom (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Landroidx/compose/ui/Modifier;
+	public static synthetic fun zoom$default (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Landroidx/compose/ui/Modifier;
+	public static final fun zoomable (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Landroidx/compose/ui/Modifier;
+	public static synthetic fun zoomable$default (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Landroidx/compose/ui/Modifier;
+	public static final fun zooming (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)Landroidx/compose/ui/Modifier;
+	public static final fun zooming (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Z)Landroidx/compose/ui/Modifier;
+	public static synthetic fun zooming$default (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;ZILjava/lang/Object;)Landroidx/compose/ui/Modifier;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ZoomableState : androidx/compose/runtime/RememberObserver {
+	public static final field $stable I
+	public fun <init> (Lcom/github/panpf/zoomimage/util/Logger;)V
+	public final fun canScroll (ZI)Z
+	public final fun getAlignment ()Landroidx/compose/ui/Alignment;
+	public final fun getAnimationSpec ()Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;
+	public final fun getBaseTransform ()Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public final fun getContainerSize-YbymL2g ()J
+	public final fun getContainerWhitespace ()Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public final fun getContainerWhitespaceMultiple ()F
+	public final fun getContentBaseDisplayRect ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getContentBaseDisplayRectF ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getContentBaseVisibleRect ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getContentBaseVisibleRectF ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getContentDisplayRect ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getContentDisplayRectF ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getContentOriginSize-YbymL2g ()J
+	public final fun getContentScale ()Landroidx/compose/ui/layout/ContentScale;
+	public final fun getContentSize-YbymL2g ()J
+	public final fun getContentVisibleRect ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getContentVisibleRectF ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getContinuousTransformType ()I
+	public final fun getDisabledGestureTypes ()I
+	public final fun getKeepTransformWhenSameAspectRatioContentSizeChanged ()Z
+	public final fun getLayoutDirection ()Landroidx/compose/ui/unit/LayoutDirection;
+	public final fun getLimitOffsetWithinBaseVisibleRect ()Z
+	public final fun getLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	public final fun getMaxScale ()F
+	public final fun getMediumScale ()F
+	public final fun getMinScale ()F
+	public final fun getMouseWheelScaleCalculator ()Lcom/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator;
+	public final fun getMouseWheelScaleScrollDeltaConverter ()Lkotlin/jvm/functions/Function1;
+	public final fun getNextStepScale ()F
+	public final fun getOneFingerScaleSpec ()Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;
+	public final fun getReadMode ()Lcom/github/panpf/zoomimage/zoom/ReadMode;
+	public final fun getReverseMouseWheelScale ()Z
+	public final fun getRubberBandScale ()Z
+	public final fun getScalesCalculator ()Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;
+	public final fun getScrollEdge ()Lcom/github/panpf/zoomimage/zoom/ScrollEdge;
+	public final fun getSourceScaleFactor-_hLwfpc ()J
+	public final fun getSourceVisibleRect ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getSourceVisibleRectF ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getThreeStepScale ()Z
+	public final fun getTransform ()Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public final fun getUserOffsetBounds ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getUserOffsetBoundsRect ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getUserOffsetBoundsRectF ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getUserTransform ()Lcom/github/panpf/zoomimage/compose/zoom/Transform;
+	public final fun locate-4GXFfcM (JFZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun locate-4GXFfcM$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;JFZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun locate-ULxng0E (JFZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun locate-ULxng0E$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;JFZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun offset-M_7yMNQ (JZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun offset-M_7yMNQ$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;JZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun offsetBy-M_7yMNQ (JZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun offsetBy-M_7yMNQ$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;JZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public fun onAbandoned ()V
+	public fun onForgotten ()V
+	public fun onRemembered ()V
+	public final fun reset ()V
+	public final fun rotate (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun rotateBy (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun scale-il34ysk (FLandroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun scale-il34ysk$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;FLandroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun scaleBy-il34ysk (FLandroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun scaleBy-il34ysk$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;FLandroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun scaleByPlus-il34ysk (FLandroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun scaleByPlus-il34ysk$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;FLandroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun setAlignment (Landroidx/compose/ui/Alignment;)V
+	public final fun setAnimationSpec (Lcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;)V
+	public final fun setContainerSize-ozmzZPI (J)V
+	public final fun setContainerWhitespace (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;)V
+	public final fun setContainerWhitespaceMultiple (F)V
+	public final fun setContentOriginSize-ozmzZPI (J)V
+	public final fun setContentScale (Landroidx/compose/ui/layout/ContentScale;)V
+	public final fun setContentSize-ozmzZPI (J)V
+	public final fun setDisabledGestureTypes (I)V
+	public final fun setKeepTransformWhenSameAspectRatioContentSizeChanged (Z)V
+	public final fun setLayoutDirection (Landroidx/compose/ui/unit/LayoutDirection;)V
+	public final fun setLimitOffsetWithinBaseVisibleRect (Z)V
+	public final fun setMouseWheelScaleCalculator (Lcom/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator;)V
+	public final fun setMouseWheelScaleScrollDeltaConverter (Lkotlin/jvm/functions/Function1;)V
+	public final fun setOneFingerScaleSpec (Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;)V
+	public final fun setReadMode (Lcom/github/panpf/zoomimage/zoom/ReadMode;)V
+	public final fun setReverseMouseWheelScale (Z)V
+	public final fun setRubberBandScale (Z)V
+	public final fun setScalesCalculator (Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;)V
+	public final fun setThreeStepScale (Z)V
+	public final fun sourceToDraw (Landroidx/compose/ui/geometry/Rect;)Landroidx/compose/ui/geometry/Rect;
+	public final fun sourceToDraw-MK-Hz9U (J)J
+	public final fun switchScale-nZhxNks (Landroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun switchScale-nZhxNks$default (Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Landroidx/compose/ui/unit/IntOffset;ZLcom/github/panpf/zoomimage/compose/zoom/ZoomAnimationSpec;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+	public final fun touchPointToContentPoint-wUy82Zw (J)J
+	public final fun touchPointToContentPointF-MK-Hz9U (J)J
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/ZoomableStateKt {
+	public static final fun rememberZoomableState (Lcom/github/panpf/zoomimage/util/Logger;Landroidx/compose/runtime/Composer;II)Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;
+}
+
+public final class com/github/panpf/zoomimage/compose/zoom/internal/ComposeAnimationAdapter : com/github/panpf/zoomimage/zoom/internal/AnimationAdapter {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun isFlingRunning ()Z
+	public fun isRunning ()Z
+	public fun startAnimation (Lcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun startFlingAnimation-SNtY3pk (JLcom/github/panpf/zoomimage/util/RectCompat;JLjava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stopAnimation (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stopFlingAnimation (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract class com/github/panpf/zoomimage/compose/zoom/internal/MatcherZoomKeyHandler : com/github/panpf/zoomimage/compose/zoom/internal/ZoomKeyHandler {
+	public static final field $stable I
+	public fun <init> (Ljava/util/List;)V
+	public fun getKeyMatchers ()Ljava/util/List;
+	public fun handle-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)Z
+	public abstract fun onCanceled-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)V
+	public abstract fun onKey-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)V
+}
+
+public abstract interface class com/github/panpf/zoomimage/compose/zoom/internal/ZoomKeyHandler {
+	public abstract fun handle-eyBIOjY (Lkotlinx/coroutines/CoroutineScope;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;Ljava/lang/Object;)Z
+}
+
+public final class com/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalculator : com/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (FF)V
+	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun calculateScale (FF)F
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lcom/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalculator;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalculator;FFILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalculator;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getStepScaleFactor ()F
+	public final fun getStepScrollDelta ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator$Companion;
+	public abstract fun calculateScale (FF)F
+}
+
+public final class com/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator;
+}
+
+public final class com/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator_desktopKt {
+	public static final fun platformMouseWheelStepScrollDelta ()F
+}
+

@@ -1,0 +1,1590 @@
+public class com/github/panpf/zoomimage/subsampling/BitmapTileImage : com/github/panpf/zoomimage/subsampling/TileImage {
+	public fun <init> (Lorg/jetbrains/skia/Bitmap;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBitmap ()Lorg/jetbrains/skia/Bitmap;
+	public fun getByteCount ()J
+	public fun getHeight ()I
+	public fun getWidth ()I
+	public fun hashCode ()I
+	public fun isRecycled ()Z
+	public fun recycle ()V
+	public fun setIsDisplayed (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ByteArrayImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> ([B)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getByteArray ()[B
+	public fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ByteArrayImageSourceKt {
+	public static final fun fromByteArray (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Companion;[B)Lcom/github/panpf/zoomimage/subsampling/ByteArrayImageSource;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/FileImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> (Lokio/Path;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey ()Ljava/lang/String;
+	public final fun getPath ()Lokio/Path;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/FileImageSourceKt {
+	public static final fun fromFile (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Companion;Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/FileImageSource;
+	public static final fun fromFile (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Companion;Lokio/Path;)Lcom/github/panpf/zoomimage/subsampling/FileImageSource;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ImageInfo {
+	public fun <init> (IILjava/lang/String;)V
+	public synthetic fun <init> (JLjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-wTLXMmk ()J
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (IILjava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/subsampling/ImageInfo;IILjava/lang/String;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public final fun copy-wW3DvEY (JLjava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public static synthetic fun copy-wW3DvEY$default (Lcom/github/panpf/zoomimage/subsampling/ImageInfo;JLjava/lang/String;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()I
+	public final fun getMimeType ()Ljava/lang/String;
+	public final fun getSize-wTLXMmk ()J
+	public final fun getWidth ()I
+	public fun hashCode ()I
+	public final fun toShortString ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/ImageSource {
+	public static final field Companion Lcom/github/panpf/zoomimage/subsampling/ImageSource$Companion;
+	public abstract fun getKey ()Ljava/lang/String;
+	public abstract fun openSource ()Lokio/Source;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ImageSource$Companion {
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/ImageSource$Factory {
+	public abstract fun create (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getKey ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ImageSource$WrapperFactory : com/github/panpf/zoomimage/subsampling/ImageSource$Factory {
+	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)V
+	public fun create (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImageSource ()Lcom/github/panpf/zoomimage/subsampling/ImageSource;
+	public fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ImageSourceKt {
+	public static final fun toFactory (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/ImageSource_jvmCommonKt {
+	public static final fun FileImageSource (Ljava/io/File;)Lcom/github/panpf/zoomimage/subsampling/FileImageSource;
+	public static final fun fromFile (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Companion;Ljava/io/File;)Lcom/github/panpf/zoomimage/subsampling/FileImageSource;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/KotlinResourceImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey ()Ljava/lang/String;
+	public final fun getResourcePath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/KotlinResourceImageSourceKt {
+	public static final fun fromKotlinResource (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Companion;Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/KotlinResourceImageSource;
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/RegionDecoder : java/lang/AutoCloseable {
+	public abstract fun copy ()Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;
+	public abstract fun decodeRegion (Lcom/github/panpf/zoomimage/util/IntRectCompat;I)Lorg/jetbrains/skia/Bitmap;
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public abstract fun getSubsamplingImage ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public abstract fun hashCode ()I
+	public abstract fun prepare ()V
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/RegionDecoder$Factory {
+	public abstract fun accept (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun checkSupport (Ljava/lang/String;)Ljava/lang/Boolean;
+	public abstract fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun hashCode ()I
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/SamplingTiles {
+	public fun <init> (ILjava/util/List;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (ILjava/util/List;)Lcom/github/panpf/zoomimage/subsampling/SamplingTiles;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/subsampling/SamplingTiles;ILjava/util/List;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/SamplingTiles;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSampleSize ()I
+	public final fun getTiles ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/SubsamplingImage {
+	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)V
+	public synthetic fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)V
+	public synthetic fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
+	public final fun component2 ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public final fun copy (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public final fun getImageSource ()Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
+	public final fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult {
+}
+
+public final class com/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Error : com/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Error;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Error;Ljava/lang/String;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Success : com/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult {
+	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;)V
+	public final fun component1 ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public final fun copy (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;)Lcom/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Success;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Success;Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSubsamplingImage ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/Tile {
+	public synthetic fun <init> (JLcom/github/panpf/zoomimage/util/IntRectCompat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun cleanTileImage ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnimationState ()Lcom/github/panpf/zoomimage/subsampling/Tile$AnimationState;
+	public final fun getCoordinate-QQ-czBQ ()J
+	public final fun getFrom ()I
+	public final fun getSampleSize ()I
+	public final fun getSrcRect ()Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun getState ()I
+	public final fun getTileImage ()Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public fun hashCode ()I
+	public final fun setState (I)V
+	public final fun setTileImage (Lcom/github/panpf/zoomimage/subsampling/TileImage;IZ)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/Tile$AnimationState {
+	public fun <init> ()V
+	public final fun calculate (J)Z
+	public final fun getAlpha ()I
+	public final fun getRunning ()Z
+	public final fun restart ()V
+	public final fun stop ()V
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileAnimationSpec {
+	public static final field Companion Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec$Companion;
+	public static final field DEFAULT_DURATION J
+	public static final field DEFAULT_INTERVAL J
+	public fun <init> ()V
+	public fun <init> (JJ)V
+	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun copy (JJ)Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;JJILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDuration ()J
+	public final fun getInterval ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileAnimationSpec$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;
+	public final fun getNone ()Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileBitmap_commonKt {
+	public static final fun getSize (Lorg/jetbrains/skia/Bitmap;)J
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileBitmap_nonAndroidKt {
+	public static final fun getByteCount (Lorg/jetbrains/skia/Bitmap;)J
+	public static final fun getHeight (Lorg/jetbrains/skia/Bitmap;)I
+	public static final fun getWidth (Lorg/jetbrains/skia/Bitmap;)I
+	public static final fun isImmutable (Lorg/jetbrains/skia/Bitmap;)Z
+	public static final fun isMutable (Lorg/jetbrains/skia/Bitmap;)Z
+	public static final fun isRecycled (Lorg/jetbrains/skia/Bitmap;)Z
+	public static final fun recycle (Lorg/jetbrains/skia/Bitmap;)V
+	public static final fun toLogString (Lorg/jetbrains/skia/Bitmap;)Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/TileImage {
+	public abstract fun getByteCount ()J
+	public abstract fun getHeight ()I
+	public abstract fun getWidth ()I
+	public abstract fun isRecycled ()Z
+	public abstract fun recycle ()V
+	public fun setIsDisplayed (Z)V
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileImage$DefaultImpls {
+	public static fun setIsDisplayed (Lcom/github/panpf/zoomimage/subsampling/TileImage;Z)V
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/TileImageCache {
+	public abstract fun get (Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public abstract fun put (Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/TileImage;Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+}
+
+public abstract interface annotation class com/github/panpf/zoomimage/subsampling/TileImageFrom : java/lang/annotation/Annotation {
+	public static final field Companion Lcom/github/panpf/zoomimage/subsampling/TileImageFrom$Companion;
+	public static final field LOCAL I
+	public static final field MEMORY_CACHE I
+	public static final field UNKNOWN I
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileImageFrom$Companion {
+	public static final field LOCAL I
+	public static final field MEMORY_CACHE I
+	public static final field UNKNOWN I
+	public final fun name (I)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileSnapshot {
+	public synthetic fun <init> (JLcom/github/panpf/zoomimage/util/IntRectCompat;ILcom/github/panpf/zoomimage/subsampling/TileImage;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-QQ-czBQ ()J
+	public final fun component2 ()Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun component3 ()I
+	public final fun component4 ()Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public final fun component5 ()I
+	public final fun component6 ()I
+	public final fun component7 ()I
+	public final fun copy-THrNmOI (JLcom/github/panpf/zoomimage/util/IntRectCompat;ILcom/github/panpf/zoomimage/subsampling/TileImage;III)Lcom/github/panpf/zoomimage/subsampling/TileSnapshot;
+	public static synthetic fun copy-THrNmOI$default (Lcom/github/panpf/zoomimage/subsampling/TileSnapshot;JLcom/github/panpf/zoomimage/util/IntRectCompat;ILcom/github/panpf/zoomimage/subsampling/TileImage;IIIILjava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/TileSnapshot;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlpha ()I
+	public final fun getCoordinate-QQ-czBQ ()J
+	public final fun getFrom ()I
+	public final fun getSampleSize ()I
+	public final fun getSrcRect ()Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun getState ()I
+	public final fun getTileImage ()Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileSnapshotKt {
+	public static final fun toSnapshot (Lcom/github/panpf/zoomimage/subsampling/Tile;)Lcom/github/panpf/zoomimage/subsampling/TileSnapshot;
+}
+
+public abstract interface annotation class com/github/panpf/zoomimage/subsampling/TileState : java/lang/annotation/Annotation {
+	public static final field Companion Lcom/github/panpf/zoomimage/subsampling/TileState$Companion;
+	public static final field STATE_ERROR I
+	public static final field STATE_LOADED I
+	public static final field STATE_LOADING I
+	public static final field STATE_NONE I
+}
+
+public final class com/github/panpf/zoomimage/subsampling/TileState$Companion {
+	public static final field STATE_ERROR I
+	public static final field STATE_LOADED I
+	public static final field STATE_LOADING I
+	public static final field STATE_NONE I
+	public final fun name (I)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/Tile_colorKt {
+	public static final field TILE_COLOR_GREEN I
+	public static final field TILE_COLOR_LIGHT_GRAY I
+	public static final field TILE_COLOR_RED I
+	public static final field TILE_COLOR_SKY_BLUE I
+	public static final field TILE_COLOR_YELLOW I
+	public static final fun tileColor (IIZ)I
+	public static final fun tileColor (IZZ)I
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/Decodes_nonAndroidKt {
+	public static final fun defaultRegionDecoder ()Lcom/github/panpf/zoomimage/subsampling/RegionDecoder$Factory;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder : com/github/panpf/zoomimage/subsampling/RegionDecoder {
+	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;[B)V
+	public synthetic fun <init> (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public fun copy ()Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;
+	public fun decodeRegion (Lcom/github/panpf/zoomimage/util/IntRectCompat;I)Lorg/jetbrains/skia/Bitmap;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public final fun getImageSource ()Lcom/github/panpf/zoomimage/subsampling/ImageSource;
+	public fun getSubsamplingImage ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public fun hashCode ()I
+	public fun prepare ()V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder$Factory : com/github/panpf/zoomimage/subsampling/RegionDecoder$Factory {
+	public fun <init> ()V
+	public fun accept (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun checkSupport (Ljava/lang/String;)Ljava/lang/Boolean;
+	public synthetic fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;
+	public fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/SubsamplingCore {
+	public fun <init> (Ljava/lang/String;Lcom/github/panpf/zoomimage/util/Logger;Lcom/github/panpf/zoomimage/subsampling/internal/TileImageConvertor;Lcom/github/panpf/zoomimage/subsampling/internal/ZoomableBridge;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public final fun getBackgroundTiles ()Ljava/util/List;
+	public final fun getDisabled ()Z
+	public final fun getDisabledAutoStopWithLifecycle ()Z
+	public final fun getDisabledBackgroundTiles ()Z
+	public final fun getDisabledTileImageCache ()Z
+	public final fun getForegroundTiles ()Ljava/util/List;
+	public final fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public final fun getImageLoadRect ()Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun getLifecycle ()Landroidx/lifecycle/Lifecycle;
+	public final fun getLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	public final fun getModule ()Ljava/lang/String;
+	public final fun getOnReadyChanged ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnTileChanged ()Lkotlin/jvm/functions/Function1;
+	public final fun getPausedContinuousTransformTypes ()I
+	public final fun getReady ()Z
+	public final fun getRegionDecoders ()Ljava/util/List;
+	public final fun getSampleSize ()I
+	public final fun getStopped ()Z
+	public final fun getSubsamplingImage ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
+	public final fun getTileAnimationSpec ()Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;
+	public final fun getTileGridSizeMap ()Ljava/util/Map;
+	public final fun getTileImageCache ()Lcom/github/panpf/zoomimage/subsampling/TileImageCache;
+	public final fun getTileImageConvertor ()Lcom/github/panpf/zoomimage/subsampling/internal/TileImageConvertor;
+	public final fun getZoomableBridge ()Lcom/github/panpf/zoomimage/subsampling/internal/ZoomableBridge;
+	public final fun onAttached ()V
+	public final fun onDetached ()V
+	public final fun setDisabled (Z)V
+	public final fun setDisabledAutoStopWithLifecycle (Z)V
+	public final fun setDisabledBackgroundTiles (Z)V
+	public final fun setDisabledTileImageCache (Z)V
+	public final fun setImage (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Z
+	public final fun setImage (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Z
+	public final fun setImage (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;)Z
+	public static synthetic fun setImage$default (Lcom/github/panpf/zoomimage/subsampling/internal/SubsamplingCore;Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILjava/lang/Object;)Z
+	public static synthetic fun setImage$default (Lcom/github/panpf/zoomimage/subsampling/internal/SubsamplingCore;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILjava/lang/Object;)Z
+	public final fun setLifecycle (Landroidx/lifecycle/Lifecycle;)V
+	public final fun setPausedContinuousTransformTypes (I)V
+	public final fun setRegionDecoders (Ljava/util/List;)V
+	public final fun setStopped (Z)V
+	public final fun setTileAnimationSpec (Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;)V
+	public final fun setTileImageCache (Lcom/github/panpf/zoomimage/subsampling/TileImageCache;)V
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/SubsamplingsKt {
+	public static final fun calculateOriginToThumbnailScaleFactor-MEmoHmQ (JJ)J
+	public static final fun calculatePreferredTileSize-grz_zgQ (J)J
+	public static final fun calculateThumbnailToOriginScaleFactor-MEmoHmQ (JJ)J
+	public static final fun canUseSubsamplingByAspectRatio-kjLh3nM (JJF)Z
+	public static synthetic fun canUseSubsamplingByAspectRatio-kjLh3nM$default (JJFILjava/lang/Object;)Z
+	public static final fun checkImageInfo-ZYX0fMU (Lcom/github/panpf/zoomimage/subsampling/ImageInfo;Lcom/github/panpf/zoomimage/subsampling/RegionDecoder$Factory;J)V
+	public static final fun checkNewPreferredTileSize-MEmoHmQ (JJ)Z
+	public static final fun createTileDecoder-zxZl2uU (Lcom/github/panpf/zoomimage/util/Logger;Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;JLjava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun toIntroString (Ljava/util/List;)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/TileDecoder : java/lang/AutoCloseable {
+	public fun <init> (Lcom/github/panpf/zoomimage/util/Logger;Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;)V
+	public fun close ()V
+	public final fun decode (Lcom/github/panpf/zoomimage/util/IntRectCompat;I)Lorg/jetbrains/skia/Bitmap;
+	public final fun getDecoderPoolSize ()I
+	public final fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
+	public final fun getLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/TileImageCacheHelper {
+	public fun <init> ()V
+	public final fun get (Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public final fun getDisabled ()Z
+	public final fun getTileImageCache ()Lcom/github/panpf/zoomimage/subsampling/TileImageCache;
+	public final fun put (Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/TileImage;Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public final fun setDisabled (Z)V
+	public final fun setTileImageCache (Lcom/github/panpf/zoomimage/subsampling/TileImageCache;)V
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/internal/TileImageConvertor {
+	public abstract fun convert (Lcom/github/panpf/zoomimage/subsampling/TileImage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/TileManager {
+	public static final field Companion Lcom/github/panpf/zoomimage/subsampling/internal/TileManager$Companion;
+	public static final field DefaultPausedContinuousTransformTypes I
+	public synthetic fun <init> (Lcom/github/panpf/zoomimage/util/Logger;Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/internal/TileDecoder;Lcom/github/panpf/zoomimage/subsampling/internal/TileImageConvertor;Lcom/github/panpf/zoomimage/subsampling/internal/TileImageCacheHelper;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;JJLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun clean (Ljava/lang/String;)V
+	public final fun getBackgroundTiles ()Ljava/util/List;
+	public final fun getDisabledBackgroundTiles ()Z
+	public final fun getForegroundTiles ()Ljava/util/List;
+	public final fun getImageLoadRect ()Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun getPausedContinuousTransformTypes ()I
+	public final fun getSampleSize ()I
+	public final fun getSortedTileGridMap ()Ljava/util/List;
+	public final fun getTileAnimationSpec ()Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;
+	public final fun refreshTiles (FLcom/github/panpf/zoomimage/util/IntRectCompat;IILjava/lang/String;)I
+	public final fun setDisabledBackgroundTiles (Z)V
+	public final fun setPausedContinuousTransformTypes (I)V
+	public final fun setTileAnimationSpec (Lcom/github/panpf/zoomimage/subsampling/TileAnimationSpec;)V
+}
+
+public final class com/github/panpf/zoomimage/subsampling/internal/TileManager$Companion {
+}
+
+public abstract interface class com/github/panpf/zoomimage/subsampling/internal/ZoomableBridge {
+	public abstract fun getContainerSizeFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getContentSizeFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getContentVisibleRect ()Lcom/github/panpf/zoomimage/util/RectCompat;
+	public abstract fun getContinuousTransformType ()I
+	public abstract fun getContinuousTransformTypeFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getTransform ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public abstract fun getTransformFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun setContentOriginSize-grz_zgQ (J)V
+}
+
+public final class com/github/panpf/zoomimage/util/Core_utils_desktopKt {
+	public static final fun requiredWorkThread ()V
+}
+
+public final class com/github/panpf/zoomimage/util/Coroutines_nonJsCommonKt {
+	public static final fun ioCoroutineDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+}
+
+public final class com/github/panpf/zoomimage/util/IntOffsetCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/IntOffsetCompat$Companion;
+	public static final synthetic fun box-impl (J)Lcom/github/panpf/zoomimage/util/IntOffsetCompat;
+	public static final fun component1-impl (J)I
+	public static final fun component2-impl (J)I
+	public static final fun copy-D9idzhY (JII)J
+	public static synthetic fun copy-D9idzhY$default (JIIILjava/lang/Object;)J
+	public static final fun div-xKu5Rpc (JF)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public static final fun getX-impl (J)I
+	public static final fun getY-impl (J)I
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public static final fun minus-lBtwmco (JJ)J
+	public static final fun plus-lBtwmco (JJ)J
+	public static final fun rem-xKu5Rpc (JI)J
+	public static final fun times-xKu5Rpc (JF)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public static final fun unaryMinus-QQ-czBQ (J)J
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class com/github/panpf/zoomimage/util/IntOffsetCompat$Companion {
+	public final fun getZero-QQ-czBQ ()J
+}
+
+public final class com/github/panpf/zoomimage/util/IntOffsetCompatKt {
+	public static final fun IntOffsetCompat (II)J
+	public static final fun div-MxpVwcQ (JJ)J
+	public static final fun lerp-Q6cTBzE (JJF)J
+	public static final fun limitTo-CasTYrg (JJ)J
+	public static final fun limitTo-MQWPdpA (JLcom/github/panpf/zoomimage/util/IntRectCompat;)J
+	public static final fun minus-34bNemQ (JJ)J
+	public static final fun minus-NzI8WeQ (JJ)J
+	public static final fun plus-34bNemQ (JJ)J
+	public static final fun plus-NzI8WeQ (JJ)J
+	public static final fun reverseRotateInSpace-t68nwyI (JJI)J
+	public static final fun rotateInSpace-t68nwyI (JJI)J
+	public static final fun round-qkGJC9g (J)J
+	public static final fun times-MxpVwcQ (JJ)J
+	public static final fun toIntOffset-grz_zgQ (J)J
+	public static final fun toOffset-1tlllzA (J)J
+	public static final fun toShortString-1tlllzA (J)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/IntRectCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/IntRectCompat$Companion;
+	public fun <init> (IIII)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun contains-1tlllzA (J)Z
+	public final fun copy (IIII)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/util/IntRectCompat;IIIIILjava/lang/Object;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun deflate (I)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBottom ()I
+	public final fun getBottomCenter-QQ-czBQ ()J
+	public final fun getBottomLeft-QQ-czBQ ()J
+	public final fun getBottomRight-QQ-czBQ ()J
+	public final fun getCenter-QQ-czBQ ()J
+	public final fun getCenterLeft-QQ-czBQ ()J
+	public final fun getCenterRight-QQ-czBQ ()J
+	public final fun getHeight ()I
+	public final fun getLeft ()I
+	public final fun getMaxDimension ()I
+	public final fun getMinDimension ()I
+	public final fun getRight ()I
+	public final fun getSize-wTLXMmk ()J
+	public final fun getTop ()I
+	public final fun getTopCenter-QQ-czBQ ()J
+	public final fun getTopLeft-QQ-czBQ ()J
+	public final fun getTopRight-QQ-czBQ ()J
+	public final fun getWidth ()I
+	public fun hashCode ()I
+	public final fun inflate (I)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun intersect (Lcom/github/panpf/zoomimage/util/IntRectCompat;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun isEmpty ()Z
+	public final fun overlaps (Lcom/github/panpf/zoomimage/util/IntRectCompat;)Z
+	public fun toString ()Ljava/lang/String;
+	public final fun translate (II)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public final fun translate-1tlllzA (J)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+}
+
+public final class com/github/panpf/zoomimage/util/IntRectCompat$Companion {
+	public final fun getZero ()Lcom/github/panpf/zoomimage/util/IntRectCompat;
+}
+
+public final class com/github/panpf/zoomimage/util/IntRectCompatKt {
+	public static final fun IntRectCompat-CasTYrg (JJ)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun IntRectCompat-MQWPdpA (JI)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun IntRectCompat-Qhh7jRA (JJ)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun div (Lcom/github/panpf/zoomimage/util/IntRectCompat;F)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun div-Msst2mk (Lcom/github/panpf/zoomimage/util/IntRectCompat;J)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun flip-nl2pQ20 (Lcom/github/panpf/zoomimage/util/IntRectCompat;JZ)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static synthetic fun flip-nl2pQ20$default (Lcom/github/panpf/zoomimage/util/IntRectCompat;JZILjava/lang/Object;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun lerp (Lcom/github/panpf/zoomimage/util/IntRectCompat;Lcom/github/panpf/zoomimage/util/IntRectCompat;F)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun limitTo (Lcom/github/panpf/zoomimage/util/IntRectCompat;Lcom/github/panpf/zoomimage/util/IntRectCompat;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun limitTo-Rn4tGQs (Lcom/github/panpf/zoomimage/util/IntRectCompat;J)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun reverseRotateInSpace-nl2pQ20 (Lcom/github/panpf/zoomimage/util/IntRectCompat;JI)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun rotateInSpace-nl2pQ20 (Lcom/github/panpf/zoomimage/util/IntRectCompat;JI)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun roundToIntRect (Lcom/github/panpf/zoomimage/util/RectCompat;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun times (Lcom/github/panpf/zoomimage/util/IntRectCompat;F)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun times-Msst2mk (Lcom/github/panpf/zoomimage/util/IntRectCompat;J)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun toRect (Lcom/github/panpf/zoomimage/util/IntRectCompat;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun toShortString (Lcom/github/panpf/zoomimage/util/IntRectCompat;)Ljava/lang/String;
+	public static final fun toShortString2 (Lcom/github/panpf/zoomimage/util/IntRectCompat;)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/IntSizeCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/IntSizeCompat$Companion;
+	public static final synthetic fun box-impl (J)Lcom/github/panpf/zoomimage/util/IntSizeCompat;
+	public static final fun component1-impl (J)I
+	public static final fun component2-impl (J)I
+	public static final fun div-0Y-eDJY (JI)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public static final fun getHeight-impl (J)I
+	public static final fun getWidth-impl (J)I
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public static final fun times-0Y-eDJY (JI)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class com/github/panpf/zoomimage/util/IntSizeCompat$Companion {
+	public final fun getZero-wTLXMmk ()J
+}
+
+public final class com/github/panpf/zoomimage/util/IntSizeCompatKt {
+	public static final fun IntSizeCompat (II)J
+	public static final fun copy-cwA5NDo (JII)J
+	public static synthetic fun copy-cwA5NDo$default (JIIILjava/lang/Object;)J
+	public static final fun div-YjnAaqo (JJ)J
+	public static final fun div-wW3DvEY (JF)J
+	public static final fun getCenter-grz_zgQ (J)J
+	public static final fun isEmpty-grz_zgQ (J)Z
+	public static final fun isNotEmpty-grz_zgQ (J)Z
+	public static final fun isSameAspectRatio-kjLh3nM (JJF)Z
+	public static synthetic fun isSameAspectRatio-kjLh3nM$default (JJFILjava/lang/Object;)Z
+	public static final fun lerp-kjLh3nM (JJF)J
+	public static final fun minus-MEmoHmQ (JJ)J
+	public static final fun plus-MEmoHmQ (JJ)J
+	public static final fun reverseRotate-wW3DvEY (JI)J
+	public static final fun rotate-wW3DvEY (JI)J
+	public static final fun times-Rn4tGQs (IJ)J
+	public static final fun times-YjnAaqo (JJ)J
+	public static final fun times-wW3DvEY (JF)J
+	public static final fun toIntRect-grz_zgQ (J)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun toShortString-grz_zgQ (J)Ljava/lang/String;
+	public static final fun toSize-grz_zgQ (J)J
+}
+
+public final class com/github/panpf/zoomimage/util/Logger {
+	public fun <init> (Ljava/lang/String;Lcom/github/panpf/zoomimage/util/Logger$Level;Lcom/github/panpf/zoomimage/util/Logger$Pipeline;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/github/panpf/zoomimage/util/Logger$Level;Lcom/github/panpf/zoomimage/util/Logger$Pipeline;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun d (Ljava/lang/String;)V
+	public final fun d (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun d (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public final fun d (Lkotlin/jvm/functions/Function0;)V
+	public final fun e (Ljava/lang/String;)V
+	public final fun e (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun e (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public final fun e (Lkotlin/jvm/functions/Function0;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun flush ()V
+	public final fun getLevel ()Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public final fun getPipeline ()Lcom/github/panpf/zoomimage/util/Logger$Pipeline;
+	public final fun getTag ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun i (Ljava/lang/String;)V
+	public final fun i (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun i (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public final fun i (Lkotlin/jvm/functions/Function0;)V
+	public final fun isLoggable (Lcom/github/panpf/zoomimage/util/Logger$Level;)Z
+	public final fun log (Lcom/github/panpf/zoomimage/util/Logger$Level;Ljava/lang/String;)V
+	public final fun log (Lcom/github/panpf/zoomimage/util/Logger$Level;Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun log (Lcom/github/panpf/zoomimage/util/Logger$Level;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public final fun log (Lcom/github/panpf/zoomimage/util/Logger$Level;Lkotlin/jvm/functions/Function0;)V
+	public final fun setLevel (Lcom/github/panpf/zoomimage/util/Logger$Level;)V
+	public final fun setPipeline (Lcom/github/panpf/zoomimage/util/Logger$Pipeline;)V
+	public fun toString ()Ljava/lang/String;
+	public final fun v (Ljava/lang/String;)V
+	public final fun v (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun v (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public final fun v (Lkotlin/jvm/functions/Function0;)V
+	public final fun w (Ljava/lang/String;)V
+	public final fun w (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun w (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public final fun w (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class com/github/panpf/zoomimage/util/Logger$Level : java/lang/Enum {
+	public static final field Assert Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public static final field Debug Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public static final field Error Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public static final field Info Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public static final field Verbose Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public static final field Warn Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/github/panpf/zoomimage/util/Logger$Level;
+	public static fun values ()[Lcom/github/panpf/zoomimage/util/Logger$Level;
+}
+
+public abstract interface class com/github/panpf/zoomimage/util/Logger$Pipeline {
+	public abstract fun flush ()V
+	public abstract fun log (Lcom/github/panpf/zoomimage/util/Logger$Level;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public final class com/github/panpf/zoomimage/util/Logger_nonAndroidKt {
+	public static final fun defaultLogPipeline ()Lcom/github/panpf/zoomimage/util/Logger$Pipeline;
+}
+
+public final class com/github/panpf/zoomimage/util/OffsetCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/OffsetCompat$Companion;
+	public static final synthetic fun box-impl (J)Lcom/github/panpf/zoomimage/util/OffsetCompat;
+	public static final fun component1-impl (J)F
+	public static final fun component2-impl (J)F
+	public static final fun copy-Xvup8NE (JFF)J
+	public static synthetic fun copy-Xvup8NE$default (JFFILjava/lang/Object;)J
+	public static final fun div-N1xY4GE (JF)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public static final fun getDistance-impl (J)F
+	public static final fun getDistanceSquared-impl (J)F
+	public static final fun getX-impl (J)F
+	public static final fun getY-impl (J)F
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public static final fun isValid-impl (J)Z
+	public static final fun minus-0C4J9Gs (JJ)J
+	public static final fun plus-0C4J9Gs (JJ)J
+	public static final fun rem-N1xY4GE (JF)J
+	public static final fun times-N1xY4GE (JF)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public static final fun unaryMinus-TU8dGBY (J)J
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class com/github/panpf/zoomimage/util/OffsetCompat$Companion {
+	public final fun getInfinite-TU8dGBY ()J
+	public final fun getUnspecified-TU8dGBY ()J
+	public final fun getZero-TU8dGBY ()J
+}
+
+public final class com/github/panpf/zoomimage/util/OffsetCompatKt {
+	public static final fun OffsetCompat (FF)J
+	public static final fun div-CM1nu1Q (JJ)J
+	public static final fun isEmpty-qkGJC9g (J)Z
+	public static final fun isFinite-qkGJC9g (J)Z
+	public static final fun isSpecified-qkGJC9g (J)Z
+	public static final fun isUnspecified-qkGJC9g (J)Z
+	public static final fun lerp-YivHGlk (JJF)J
+	public static final fun limitTo-WVw08Q4 (JLcom/github/panpf/zoomimage/util/RectCompat;)J
+	public static final fun limitTo-zqMIwm0 (JJ)J
+	public static final fun reverseRotateInSpace-qkRzp-s (JJI)J
+	public static final fun rotateInSpace-qkRzp-s (JJI)J
+	public static final fun takeOrElse-WVw08Q4 (JLkotlin/jvm/functions/Function0;)J
+	public static final fun times-CM1nu1Q (JJ)J
+	public static final fun toOffset-0MI_WYg (J)J
+	public static final fun toShortString-qkGJC9g (J)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/PrintlnLogPipeline : com/github/panpf/zoomimage/util/Logger$Pipeline {
+	public static final field INSTANCE Lcom/github/panpf/zoomimage/util/PrintlnLogPipeline;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun flush ()V
+	public fun hashCode ()I
+	public fun log (Lcom/github/panpf/zoomimage/util/Logger$Level;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/RectCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/RectCompat$Companion;
+	public fun <init> (FFFF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun contains-qkGJC9g (J)Z
+	public final fun copy (FFFF)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/util/RectCompat;FFFFILjava/lang/Object;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun deflate (F)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBottom ()F
+	public final fun getBottomCenter-TU8dGBY ()J
+	public final fun getBottomLeft-TU8dGBY ()J
+	public final fun getBottomRight-TU8dGBY ()J
+	public final fun getCenter-TU8dGBY ()J
+	public final fun getCenterLeft-TU8dGBY ()J
+	public final fun getCenterRight-TU8dGBY ()J
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getMaxDimension ()F
+	public final fun getMinDimension ()F
+	public final fun getRight ()F
+	public final fun getSize-eGdS8bc ()J
+	public final fun getTop ()F
+	public final fun getTopCenter-TU8dGBY ()J
+	public final fun getTopLeft-TU8dGBY ()J
+	public final fun getTopRight-TU8dGBY ()J
+	public final fun getWidth ()F
+	public fun hashCode ()I
+	public final fun inflate (F)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun intersect (Lcom/github/panpf/zoomimage/util/RectCompat;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun isEmpty ()Z
+	public final fun isFinite ()Z
+	public final fun isInfinite ()Z
+	public final fun overlaps (Lcom/github/panpf/zoomimage/util/RectCompat;)Z
+	public fun toString ()Ljava/lang/String;
+	public final fun translate (FF)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun translate-qkGJC9g (J)Lcom/github/panpf/zoomimage/util/RectCompat;
+}
+
+public final class com/github/panpf/zoomimage/util/RectCompat$Companion {
+	public final fun getZero ()Lcom/github/panpf/zoomimage/util/RectCompat;
+}
+
+public final class com/github/panpf/zoomimage/util/RectCompatKt {
+	public static final fun RectCompat-WVw08Q4 (JF)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun RectCompat-hMBqQ6k (JJ)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun RectCompat-zqMIwm0 (JJ)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun containsWithDelta-aWIu1aE (Lcom/github/panpf/zoomimage/util/RectCompat;JF)Z
+	public static synthetic fun containsWithDelta-aWIu1aE$default (Lcom/github/panpf/zoomimage/util/RectCompat;JFILjava/lang/Object;)Z
+	public static final fun div (Lcom/github/panpf/zoomimage/util/RectCompat;F)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun div-Msst2mk (Lcom/github/panpf/zoomimage/util/RectCompat;J)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun flip-kDAFBeQ (Lcom/github/panpf/zoomimage/util/RectCompat;JZ)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static synthetic fun flip-kDAFBeQ$default (Lcom/github/panpf/zoomimage/util/RectCompat;JZILjava/lang/Object;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun lerp (Lcom/github/panpf/zoomimage/util/RectCompat;Lcom/github/panpf/zoomimage/util/RectCompat;F)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun limitTo (Lcom/github/panpf/zoomimage/util/RectCompat;Lcom/github/panpf/zoomimage/util/RectCompat;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun limitTo-Xrn-OFs (Lcom/github/panpf/zoomimage/util/RectCompat;J)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun reverseRotateInSpace-kDAFBeQ (Lcom/github/panpf/zoomimage/util/RectCompat;JI)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun rotateInSpace-kDAFBeQ (Lcom/github/panpf/zoomimage/util/RectCompat;JI)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun round (Lcom/github/panpf/zoomimage/util/RectCompat;)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun times (Lcom/github/panpf/zoomimage/util/RectCompat;F)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun times-Msst2mk (Lcom/github/panpf/zoomimage/util/RectCompat;J)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun toShortString (Lcom/github/panpf/zoomimage/util/RectCompat;)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/ScaleFactorCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/ScaleFactorCompat$Companion;
+	public static final synthetic fun box-impl (J)Lcom/github/panpf/zoomimage/util/ScaleFactorCompat;
+	public static final fun component1-impl (J)F
+	public static final fun component2-impl (J)F
+	public static final fun copy-uSDSDIg (JFF)J
+	public static synthetic fun copy-uSDSDIg$default (JFFILjava/lang/Object;)J
+	public static final fun div-qLtMJlA (JF)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public static final fun getScaleX-impl (J)F
+	public static final fun getScaleY-impl (J)F
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public static final fun times-qLtMJlA (JF)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class com/github/panpf/zoomimage/util/ScaleFactorCompat$Companion {
+	public final fun getUnspecified-QskSSCQ ()J
+}
+
+public final class com/github/panpf/zoomimage/util/ScaleFactorCompatKt {
+	public static final fun ScaleFactorCompat (F)J
+	public static final fun ScaleFactorCompat (FF)J
+	public static final fun div-2HBCers (JJ)J
+	public static final fun div-JgHXIoU (JJ)J
+	public static final fun getOrigin (Lcom/github/panpf/zoomimage/util/ScaleFactorCompat$Companion;)J
+	public static final fun isOrigin-ogd_NwM (J)Z
+	public static final fun isSpecified-ogd_NwM (J)Z
+	public static final fun isUnspecified-ogd_NwM (J)Z
+	public static final fun lerp-OCpf0rM (JJF)J
+	public static final fun takeOrElse-pgdoVYM (JLkotlin/jvm/functions/Function0;)J
+	public static final fun times-2HBCers (JJ)J
+	public static final fun times-7wqSDuw (JJ)J
+	public static final fun times-JgHXIoU (JJ)J
+	public static final fun toShortString-ogd_NwM (J)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/SizeCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/SizeCompat$Companion;
+	public static final synthetic fun box-impl (J)Lcom/github/panpf/zoomimage/util/SizeCompat;
+	public static final fun component1-impl (J)F
+	public static final fun component2-impl (J)F
+	public static final fun copy-oAXqIOo (JFF)J
+	public static synthetic fun copy-oAXqIOo$default (JFFILjava/lang/Object;)J
+	public static final fun div-2CaWYYU (JF)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public static final fun getHeight-impl (J)F
+	public static final fun getMaxDimension-impl (J)F
+	public static final fun getMinDimension-impl (J)F
+	public static final fun getWidth-impl (J)F
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public static final fun isEmpty-impl (J)Z
+	public static final fun times-2CaWYYU (JF)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class com/github/panpf/zoomimage/util/SizeCompat$Companion {
+	public final fun getUnspecified-eGdS8bc ()J
+	public final fun getZero-eGdS8bc ()J
+}
+
+public final class com/github/panpf/zoomimage/util/SizeCompatKt {
+	public static final fun SizeCompat (FF)J
+	public static final fun getCenter-0MI_WYg (J)J
+	public static final fun isNotEmpty-0MI_WYg (J)Z
+	public static final fun isSameAspectRatio-Begjkyw (JJF)Z
+	public static synthetic fun isSameAspectRatio-Begjkyw$default (JJFILjava/lang/Object;)Z
+	public static final fun isSpecified-0MI_WYg (J)Z
+	public static final fun isUnspecified-0MI_WYg (J)Z
+	public static final fun lerp-Begjkyw (JJF)J
+	public static final fun minus-RmKfkp0 (JJ)J
+	public static final fun plus-RmKfkp0 (JJ)J
+	public static final fun reverseRotate-0phZMHs (JI)J
+	public static final fun rotate-0phZMHs (JI)J
+	public static final fun round-0MI_WYg (J)J
+	public static final fun takeOrElse-0phZMHs (JLkotlin/jvm/functions/Function0;)J
+	public static final fun times-Xrn-OFs (DJ)J
+	public static final fun times-Xrn-OFs (FJ)J
+	public static final fun times-Xrn-OFs (IJ)J
+	public static final fun toRect-0MI_WYg (J)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun toShortString-0MI_WYg (J)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/TransformCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/TransformCompat$Companion;
+	public synthetic fun <init> (JJFJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJFJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-QskSSCQ ()J
+	public final fun component2-TU8dGBY ()J
+	public final fun component3 ()F
+	public final fun component4-651KZNY ()J
+	public final fun component5-651KZNY ()J
+	public final fun copy-HFz5zfM (JJFJJ)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static synthetic fun copy-HFz5zfM$default (Lcom/github/panpf/zoomimage/util/TransformCompat;JJFJJILjava/lang/Object;)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOffset-TU8dGBY ()J
+	public final fun getOffsetX ()F
+	public final fun getOffsetY ()F
+	public final fun getRotation ()F
+	public final fun getRotationOrigin-651KZNY ()J
+	public final fun getRotationOriginX ()F
+	public final fun getRotationOriginY ()F
+	public final fun getScale-QskSSCQ ()J
+	public final fun getScaleOrigin-651KZNY ()J
+	public final fun getScaleOriginX ()F
+	public final fun getScaleOriginY ()F
+	public final fun getScaleX ()F
+	public final fun getScaleY ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/TransformCompat$Companion {
+	public final fun getOrigin ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+}
+
+public final class com/github/panpf/zoomimage/util/TransformCompatKt {
+	public static final fun div-Msst2mk (Lcom/github/panpf/zoomimage/util/TransformCompat;J)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun isEmpty (Lcom/github/panpf/zoomimage/util/TransformCompat;)Z
+	public static final fun isNotEmpty (Lcom/github/panpf/zoomimage/util/TransformCompat;)Z
+	public static final fun lerp (Lcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;F)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun minus (Lcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun plus (Lcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun times-Msst2mk (Lcom/github/panpf/zoomimage/util/TransformCompat;J)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun toShortString (Lcom/github/panpf/zoomimage/util/TransformCompat;)Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/util/TransformOriginCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/util/TransformOriginCompat$Companion;
+	public static final synthetic fun box-impl (J)Lcom/github/panpf/zoomimage/util/TransformOriginCompat;
+	public static final fun component1-impl (J)F
+	public static final fun component2-impl (J)F
+	public static final fun copy-S0NlOHY (JFF)J
+	public static synthetic fun copy-S0NlOHY$default (JFFILjava/lang/Object;)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public static final fun getPivotFractionX-impl (J)F
+	public static final fun getPivotFractionY-impl (J)F
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class com/github/panpf/zoomimage/util/TransformOriginCompat$Companion {
+	public final fun getCenter-651KZNY ()J
+}
+
+public final class com/github/panpf/zoomimage/util/TransformOriginCompatKt {
+	public static final fun TransformOriginCompat (FF)J
+	public static final fun div-W3TQDs0 (JF)J
+	public static final fun getTopStart (Lcom/github/panpf/zoomimage/util/TransformOriginCompat$Companion;)J
+	public static final fun lerp-ltj8yDI (JJF)J
+	public static final fun times-4b-i1F4 (JJ)J
+	public static final fun times-M-LwurA (JJ)J
+	public static final fun times-W3TQDs0 (JF)J
+	public static final fun toShortString-krAyMZc (J)Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/AlignmentCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/AlignmentCompat$Companion;
+	public abstract fun align-r7ZAh4o (JJZ)J
+}
+
+public final class com/github/panpf/zoomimage/zoom/AlignmentCompat$Companion {
+	public final fun getBottomCenter ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getBottomEnd ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getBottomStart ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getCenter ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getCenterEnd ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getCenterStart ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getTopCenter ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getTopEnd ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getTopStart ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+}
+
+public final class com/github/panpf/zoomimage/zoom/AlignmentCompatKt {
+	public static final fun getName (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Ljava/lang/String;
+	public static final fun isBottom (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Z
+	public static final fun isCenter (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Z
+	public static final fun isEnd (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Z
+	public static final fun isHorizontalCenter (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Z
+	public static final fun isStart (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Z
+	public static final fun isTop (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Z
+	public static final fun isVerticalCenter (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)Z
+	public static final fun rtlFlipped (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;Ljava/lang/Boolean;)Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public static synthetic fun rtlFlipped$default (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;Ljava/lang/Boolean;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public static final fun valueOf (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat$Companion;Ljava/lang/String;)Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec$Companion;
+	public abstract fun getDurationMillis ()I
+}
+
+public final class com/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec$Companion {
+	public final fun getDEFAULT_DURATION_MILLIS ()I
+}
+
+public final class com/github/panpf/zoomimage/zoom/BiasAlignmentCompat : com/github/panpf/zoomimage/zoom/AlignmentCompat {
+	public fun <init> (FF)V
+	public fun align-r7ZAh4o (JJZ)J
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lcom/github/panpf/zoomimage/zoom/BiasAlignmentCompat;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/BiasAlignmentCompat;FFILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/BiasAlignmentCompat;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHorizontalBias ()F
+	public final fun getVerticalBias ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ContainerWhitespace {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace$Companion;
+	public fun <init> (F)V
+	public fun <init> (FF)V
+	public fun <init> (FFFF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun copy (FFFF)Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;FFFFILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBottom ()F
+	public final fun getLeft ()F
+	public final fun getRight ()F
+	public final fun getTop ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ContainerWhitespace$Companion {
+	public final fun getZero ()Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ContainerWhitespaceKt {
+	public static final fun check (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;)Z
+	public static final fun isEmpty (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;)Z
+	public static final fun rtlFlipped (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;Ljava/lang/Boolean;)Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public static synthetic fun rtlFlipped$default (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;Ljava/lang/Boolean;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public static final fun toShortString (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;)Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/ContentScaleCompat {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat$Companion;
+	public abstract fun computeScaleFactor-DKw57GI (JJ)J
+}
+
+public final class com/github/panpf/zoomimage/zoom/ContentScaleCompat$Companion {
+	public final fun getCrop ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getFillBounds ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getFillHeight ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getFillWidth ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getFit ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getInside ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getNone ()Lcom/github/panpf/zoomimage/zoom/FixedScale;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ContentScaleCompatKt {
+	public static final fun getName (Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;)Ljava/lang/String;
+	public static final fun valueOf (Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat$Companion;Ljava/lang/String;)Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+}
+
+public abstract interface annotation class com/github/panpf/zoomimage/zoom/ContinuousTransformType : java/lang/annotation/Annotation {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/ContinuousTransformType$Companion;
+	public static final field FLING I
+	public static final field GESTURE I
+	public static final field LOCATE I
+	public static final field NONE I
+	public static final field OFFSET I
+	public static final field ROLLBACK I
+	public static final field SCALE I
+}
+
+public final class com/github/panpf/zoomimage/zoom/ContinuousTransformType$Companion {
+	public static final field FLING I
+	public static final field GESTURE I
+	public static final field LOCATE I
+	public static final field NONE I
+	public static final field OFFSET I
+	public static final field ROLLBACK I
+	public static final field SCALE I
+	public final fun getValues ()Ljava/util/List;
+	public final fun name (I)Ljava/lang/String;
+	public final fun names (I)Ljava/util/List;
+	public final fun parse (I)Ljava/util/List;
+}
+
+public final class com/github/panpf/zoomimage/zoom/DefaultPanToScaleTransformer : com/github/panpf/zoomimage/zoom/PanToScaleTransformer {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReference ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun transform (F)F
+}
+
+public final class com/github/panpf/zoomimage/zoom/DynamicScalesCalculator : com/github/panpf/zoomimage/zoom/ScalesCalculator {
+	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun calculate-HBVGv-w (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;FF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+	public fun calculateWithBase-HBVGv-w (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;FF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/github/panpf/zoomimage/zoom/DynamicScalesCalculator;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/DynamicScalesCalculator;FILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/DynamicScalesCalculator;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMultiple ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/Edge : java/lang/Enum {
+	public static final field BOTH Lcom/github/panpf/zoomimage/zoom/Edge;
+	public static final field END Lcom/github/panpf/zoomimage/zoom/Edge;
+	public static final field NONE Lcom/github/panpf/zoomimage/zoom/Edge;
+	public static final field START Lcom/github/panpf/zoomimage/zoom/Edge;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/github/panpf/zoomimage/zoom/Edge;
+	public static fun values ()[Lcom/github/panpf/zoomimage/zoom/Edge;
+}
+
+public final class com/github/panpf/zoomimage/zoom/FixedScale : com/github/panpf/zoomimage/zoom/ContentScaleCompat {
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public fun computeScaleFactor-DKw57GI (JJ)J
+	public final fun copy (F)Lcom/github/panpf/zoomimage/zoom/FixedScale;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/FixedScale;FILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/FixedScale;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/FixedScalesCalculator : com/github/panpf/zoomimage/zoom/ScalesCalculator {
+	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun calculate-HBVGv-w (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;FF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+	public fun calculateWithBase-HBVGv-w (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;FF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/github/panpf/zoomimage/zoom/FixedScalesCalculator;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/FixedScalesCalculator;FILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/FixedScalesCalculator;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMultiple ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/github/panpf/zoomimage/zoom/GestureType : java/lang/annotation/Annotation {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/GestureType$Companion;
+	public static final field DOUBLE_TAP_SCALE I
+	public static final field KEYBOARD_DRAG I
+	public static final field KEYBOARD_SCALE I
+	public static final field MOUSE_WHEEL_SCALE I
+	public static final field ONE_FINGER_DRAG I
+	public static final field ONE_FINGER_SCALE I
+	public static final field TWO_FINGER_SCALE I
+}
+
+public final class com/github/panpf/zoomimage/zoom/GestureType$Companion {
+	public static final field DOUBLE_TAP_SCALE I
+	public static final field KEYBOARD_DRAG I
+	public static final field KEYBOARD_SCALE I
+	public static final field MOUSE_WHEEL_SCALE I
+	public static final field ONE_FINGER_DRAG I
+	public static final field ONE_FINGER_SCALE I
+	public static final field TWO_FINGER_SCALE I
+	public final fun getValues ()Ljava/util/List;
+	public final fun name (I)Ljava/lang/String;
+	public final fun parse (I)Ljava/util/List;
+}
+
+public final class com/github/panpf/zoomimage/zoom/OneFingerScaleSpec {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/github/panpf/zoomimage/zoom/PanToScaleTransformer;)V
+	public synthetic fun <init> (Lcom/github/panpf/zoomimage/zoom/PanToScaleTransformer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/github/panpf/zoomimage/zoom/PanToScaleTransformer;
+	public final fun copy (Lcom/github/panpf/zoomimage/zoom/PanToScaleTransformer;)Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;Lcom/github/panpf/zoomimage/zoom/PanToScaleTransformer;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPanToScaleTransformer ()Lcom/github/panpf/zoomimage/zoom/PanToScaleTransformer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/OneFingerScaleSpec$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/PanToScaleTransformer {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/PanToScaleTransformer$Companion;
+	public abstract fun transform (F)F
+}
+
+public final class com/github/panpf/zoomimage/zoom/PanToScaleTransformer$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/zoom/DefaultPanToScaleTransformer;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ReadMode {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/ReadMode$Companion;
+	public static final field SIZE_TYPE_HORIZONTAL I
+	public static final field SIZE_TYPE_VERTICAL I
+	public fun <init> ()V
+	public fun <init> (ILcom/github/panpf/zoomimage/zoom/ReadMode$Decider;)V
+	public synthetic fun <init> (ILcom/github/panpf/zoomimage/zoom/ReadMode$Decider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun accept-MEmoHmQ (JJ)Z
+	public final fun component1 ()I
+	public final fun component2 ()Lcom/github/panpf/zoomimage/zoom/ReadMode$Decider;
+	public final fun copy (ILcom/github/panpf/zoomimage/zoom/ReadMode$Decider;)Lcom/github/panpf/zoomimage/zoom/ReadMode;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/ReadMode;ILcom/github/panpf/zoomimage/zoom/ReadMode$Decider;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/ReadMode;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDecider ()Lcom/github/panpf/zoomimage/zoom/ReadMode$Decider;
+	public final fun getSizeType ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ReadMode$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/zoom/ReadMode;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/ReadMode$Decider {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/ReadMode$Decider$Companion;
+	public abstract fun should-MEmoHmQ (JJ)Z
+}
+
+public final class com/github/panpf/zoomimage/zoom/ReadMode$Decider$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/zoom/ReadMode$LongImageDecider;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ReadMode$LongImageDecider : com/github/panpf/zoomimage/zoom/ReadMode$Decider {
+	public fun <init> ()V
+	public fun <init> (FF)V
+	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNotSameDirectionMultiple ()F
+	public final fun getSameDirectionMultiple ()F
+	public fun hashCode ()I
+	public fun should-MEmoHmQ (JJ)Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/ScalesCalculator {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Companion;
+	public static final field MULTIPLE F
+	public abstract fun calculate-HBVGv-w (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;FF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+	public fun calculateWithBase-HBVGv-w (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;FF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ScalesCalculator$Companion {
+	public static final field MULTIPLE F
+	public final fun dynamic (F)Lcom/github/panpf/zoomimage/zoom/DynamicScalesCalculator;
+	public static synthetic fun dynamic$default (Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Companion;FILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/DynamicScalesCalculator;
+	public final fun fixed (F)Lcom/github/panpf/zoomimage/zoom/FixedScalesCalculator;
+	public static synthetic fun fixed$default (Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Companion;FILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/FixedScalesCalculator;
+	public final fun getDynamic ()Lcom/github/panpf/zoomimage/zoom/DynamicScalesCalculator;
+	public final fun getFixed ()Lcom/github/panpf/zoomimage/zoom/FixedScalesCalculator;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ScalesCalculator$DefaultImpls {
+	public static fun calculateWithBase-HBVGv-w (Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;FF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ScalesCalculator$Result {
+	public fun <init> (FFF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun copy (FFF)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;FFFILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/ScalesCalculator$Result;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaxScale ()F
+	public final fun getMediumScale ()F
+	public final fun getMinScale ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ScrollEdge {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/ScrollEdge$Companion;
+	public fun <init> (Lcom/github/panpf/zoomimage/zoom/Edge;Lcom/github/panpf/zoomimage/zoom/Edge;)V
+	public final fun component1 ()Lcom/github/panpf/zoomimage/zoom/Edge;
+	public final fun component2 ()Lcom/github/panpf/zoomimage/zoom/Edge;
+	public final fun copy (Lcom/github/panpf/zoomimage/zoom/Edge;Lcom/github/panpf/zoomimage/zoom/Edge;)Lcom/github/panpf/zoomimage/zoom/ScrollEdge;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/ScrollEdge;Lcom/github/panpf/zoomimage/zoom/Edge;Lcom/github/panpf/zoomimage/zoom/Edge;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/ScrollEdge;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHorizontal ()Lcom/github/panpf/zoomimage/zoom/Edge;
+	public final fun getVertical ()Lcom/github/panpf/zoomimage/zoom/Edge;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ScrollEdge$Companion {
+	public final fun getDefault ()Lcom/github/panpf/zoomimage/zoom/ScrollEdge;
+}
+
+public final class com/github/panpf/zoomimage/zoom/ScrollEdgeKt {
+	public static final fun toShortString (Lcom/github/panpf/zoomimage/zoom/ScrollEdge;)Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/zoom/internal/AnimationAdapter {
+	public abstract fun isFlingRunning ()Z
+	public abstract fun isRunning ()Z
+	public abstract fun startAnimation (Lcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun startFlingAnimation-SNtY3pk (JLcom/github/panpf/zoomimage/util/RectCompat;JLjava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun startFlingAnimation-SNtY3pk$default (Lcom/github/panpf/zoomimage/zoom/internal/AnimationAdapter;JLcom/github/panpf/zoomimage/util/RectCompat;JLjava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun stopAnimation (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun stopFlingAnimation (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/AnimationAdapter$DefaultImpls {
+	public static synthetic fun startFlingAnimation-SNtY3pk$default (Lcom/github/panpf/zoomimage/zoom/internal/AnimationAdapter;JLcom/github/panpf/zoomimage/util/RectCompat;JLjava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/InitialZoom {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/internal/InitialZoom$Companion;
+	public fun <init> (FFFLcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public final fun component5 ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public final fun copy (FFFLcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;)Lcom/github/panpf/zoomimage/zoom/internal/InitialZoom;
+	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/internal/InitialZoom;FFFLcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/internal/InitialZoom;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBaseTransform ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public final fun getMaxScale ()F
+	public final fun getMediumScale ()F
+	public final fun getMinScale ()F
+	public final fun getUserTransform ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/InitialZoom$Companion {
+	public final fun getOrigin ()Lcom/github/panpf/zoomimage/zoom/internal/InitialZoom;
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/ResetParams {
+	public synthetic fun <init> (JJJILcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZLcom/github/panpf/zoomimage/zoom/ReadMode;Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;ZFLcom/github/panpf/zoomimage/zoom/ContainerWhitespace;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-wTLXMmk ()J
+	public final fun component10 ()Z
+	public final fun component11 ()F
+	public final fun component12 ()Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public final fun component2-wTLXMmk ()J
+	public final fun component3-wTLXMmk ()J
+	public final fun component4 ()I
+	public final fun component5 ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun component6 ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun component7 ()Z
+	public final fun component8 ()Lcom/github/panpf/zoomimage/zoom/ReadMode;
+	public final fun component9 ()Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;
+	public final fun copy-3XCRb0Q (JJJILcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZLcom/github/panpf/zoomimage/zoom/ReadMode;Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;ZFLcom/github/panpf/zoomimage/zoom/ContainerWhitespace;)Lcom/github/panpf/zoomimage/zoom/internal/ResetParams;
+	public static synthetic fun copy-3XCRb0Q$default (Lcom/github/panpf/zoomimage/zoom/internal/ResetParams;JJJILcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZLcom/github/panpf/zoomimage/zoom/ReadMode;Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;ZFLcom/github/panpf/zoomimage/zoom/ContainerWhitespace;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/internal/ResetParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlignment ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getContainerSize-wTLXMmk ()J
+	public final fun getContainerWhitespace ()Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public final fun getContainerWhitespaceMultiple ()F
+	public final fun getContentOriginSize-wTLXMmk ()J
+	public final fun getContentScale ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getContentSize-wTLXMmk ()J
+	public final fun getLimitOffsetWithinBaseVisibleRect ()Z
+	public final fun getReadMode ()Lcom/github/panpf/zoomimage/zoom/ReadMode;
+	public final fun getRotation ()I
+	public final fun getRtlLayoutDirection ()Z
+	public final fun getScalesCalculator ()Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/ResetParamsDiffResult {
+	public static final field Companion Lcom/github/panpf/zoomimage/zoom/internal/ResetParamsDiffResult$Companion;
+	public static final field FLAG_ALIGNMENT I
+	public static final field FLAG_CONTAINER_SIZE I
+	public static final field FLAG_CONTAINER_WHITESPACE I
+	public static final field FLAG_CONTAINER_WHITESPACE_MULTIPLE I
+	public static final field FLAG_CONTENT_ORIGIN_SIZE I
+	public static final field FLAG_CONTENT_SCALE I
+	public static final field FLAG_CONTENT_SIZE I
+	public static final field FLAG_LIMIT_OFFSET_WITHIN_BASE_VISIBLE_RECT I
+	public static final field FLAG_READ_MODE I
+	public static final field FLAG_ROTATION I
+	public static final field FLAG_RTL_LAYOUT_DIRECTION I
+	public static final field FLAG_SCALES_CALCULATOR I
+	public fun <init> (I)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResult ()I
+	public fun hashCode ()I
+	public final fun isAlignmentChanged ()Z
+	public final fun isContainerSizeChanged ()Z
+	public final fun isContainerWhitespaceChanged ()Z
+	public final fun isContainerWhitespaceMultipleChanged ()Z
+	public final fun isContentOriginSizeChanged ()Z
+	public final fun isContentScaleChanged ()Z
+	public final fun isContentSizeChanged ()Z
+	public final fun isLimitOffsetWithinBaseVisibleRectChanged ()Z
+	public final fun isNotChanged ()Z
+	public final fun isOnlyContainerSizeChanged ()Z
+	public final fun isOnlyContentOriginSizeChanged ()Z
+	public final fun isOnlyContentSizeChanged ()Z
+	public final fun isOnlyContentSizeOrContentOriginSizeChanged ()Z
+	public final fun isReadModeChanged ()Z
+	public final fun isRotationChanged ()Z
+	public final fun isRtlLayoutDirectionChanged ()Z
+	public final fun isScalesCalculatorChanged ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/ResetParamsDiffResult$Companion {
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/ResetParamsKt {
+	public static final fun diff (Lcom/github/panpf/zoomimage/zoom/internal/ResetParams;Lcom/github/panpf/zoomimage/zoom/internal/ResetParams;)Lcom/github/panpf/zoomimage/zoom/internal/ResetParamsDiffResult;
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/ZoomableCore {
+	public fun <init> (Lcom/github/panpf/zoomimage/util/Logger;Ljava/lang/String;Lcom/github/panpf/zoomimage/zoom/internal/AnimationAdapter;Lkotlin/jvm/functions/Function1;)V
+	public final fun canScroll (ZI)Z
+	public final fun checkSupportGestureType (II)Z
+	public final fun fling-8T1cGlI (JLjava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun gestureTransform-5drO4Cg (JJFFLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getAlignment ()Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;
+	public final fun getAnimationAdapter ()Lcom/github/panpf/zoomimage/zoom/internal/AnimationAdapter;
+	public final fun getAnimationSpec ()Lcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;
+	public final fun getBaseTransform ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public final fun getContainerSize-wTLXMmk ()J
+	public final fun getContainerWhitespace ()Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;
+	public final fun getContainerWhitespaceMultiple ()F
+	public final fun getContentBaseDisplayRect ()Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun getContentBaseVisibleRect ()Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun getContentDisplayRect ()Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun getContentOriginSize-wTLXMmk ()J
+	public final fun getContentScale ()Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;
+	public final fun getContentSize-wTLXMmk ()J
+	public final fun getContentVisibleRect ()Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun getContinuousTransformType ()I
+	public final fun getKeepTransformWhenSameAspectRatioContentSizeChanged ()Z
+	public final fun getLimitOffsetWithinBaseVisibleRect ()Z
+	public final fun getLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	public final fun getMaxScale ()F
+	public final fun getMediumScale ()F
+	public final fun getMinScale ()F
+	public final fun getModule ()Ljava/lang/String;
+	public final fun getNextStepScale ()F
+	public final fun getOnTransformChanged ()Lkotlin/jvm/functions/Function1;
+	public final fun getOneFingerScaleSpec ()Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;
+	public final fun getReadMode ()Lcom/github/panpf/zoomimage/zoom/ReadMode;
+	public final fun getRotation ()I
+	public final fun getRtlLayoutDirection ()Z
+	public final fun getRubberBandScale ()Z
+	public final fun getScalesCalculator ()Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;
+	public final fun getScrollEdge ()Lcom/github/panpf/zoomimage/zoom/ScrollEdge;
+	public final fun getSourceScaleFactor-QskSSCQ ()J
+	public final fun getSourceVisibleRect ()Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun getThreeStepScale ()Z
+	public final fun getTransform ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public final fun getUserOffsetBoundsRect ()Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun getUserTransform ()Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public final fun locate--qkMY-k (JFZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun locate--qkMY-k$default (Lcom/github/panpf/zoomimage/zoom/internal/ZoomableCore;JFZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun offset-rO0kd_k (JZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun offset-rO0kd_k$default (Lcom/github/panpf/zoomimage/zoom/internal/ZoomableCore;JZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun reset (Ljava/lang/String;Z)V
+	public static synthetic fun reset$default (Lcom/github/panpf/zoomimage/zoom/internal/ZoomableCore;Ljava/lang/String;ZILjava/lang/Object;)V
+	public final fun rollback-7dmqgnk (Lcom/github/panpf/zoomimage/util/OffsetCompat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun rollback-7dmqgnk$default (Lcom/github/panpf/zoomimage/zoom/internal/ZoomableCore;Lcom/github/panpf/zoomimage/util/OffsetCompat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun rollbackScale-7dmqgnk (Lcom/github/panpf/zoomimage/util/OffsetCompat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun rollbackScale-7dmqgnk$default (Lcom/github/panpf/zoomimage/zoom/internal/ZoomableCore;Lcom/github/panpf/zoomimage/util/OffsetCompat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun rotate (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun scale-Lzh1PLw (FJZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun scale-Lzh1PLw$default (Lcom/github/panpf/zoomimage/zoom/internal/ZoomableCore;FJZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun setAlignment (Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;)V
+	public final fun setAnimationSpec (Lcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;)V
+	public final fun setContainerSize-grz_zgQ (J)V
+	public final fun setContainerWhitespace (Lcom/github/panpf/zoomimage/zoom/ContainerWhitespace;)V
+	public final fun setContainerWhitespaceMultiple (F)V
+	public final fun setContentOriginSize-grz_zgQ (J)V
+	public final fun setContentScale (Lcom/github/panpf/zoomimage/zoom/ContentScaleCompat;)V
+	public final fun setContentSize-grz_zgQ (J)V
+	public final fun setContinuousTransformType (I)V
+	public final fun setKeepTransformWhenSameAspectRatioContentSizeChanged (Z)V
+	public final fun setLimitOffsetWithinBaseVisibleRect (Z)V
+	public final fun setOneFingerScaleSpec (Lcom/github/panpf/zoomimage/zoom/OneFingerScaleSpec;)V
+	public final fun setReadMode (Lcom/github/panpf/zoomimage/zoom/ReadMode;)V
+	public final fun setRtlLayoutDirection (Z)V
+	public final fun setRubberBandScale (Z)V
+	public final fun setScalesCalculator (Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;)V
+	public final fun setThreeStepScale (Z)V
+	public final fun sourceToDraw (Lcom/github/panpf/zoomimage/util/RectCompat;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public final fun sourceToDraw-0C4J9Gs (J)J
+	public final fun stopAllAnimation (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun switchScale-rO0kd_k (JZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun switchScale-rO0kd_k$default (Lcom/github/panpf/zoomimage/zoom/internal/ZoomableCore;JZLcom/github/panpf/zoomimage/zoom/BaseZoomAnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun touchPointToContentPoint-0C4J9Gs (J)J
+}
+
+public final class com/github/panpf/zoomimage/zoom/internal/ZoomsKt {
+	public static final fun calculateBaseTransform-el1PlfY (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZI)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun calculateContentBaseDisplayRect-el1PlfY (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZI)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun calculateContentBaseVisibleRect-el1PlfY (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZI)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun calculateContentDisplayRect-yMz6B8k (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZIFJ)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun calculateContentRotateOrigin-MEmoHmQ (JJ)J
+	public static final fun calculateContentVisibleRect-yMz6B8k (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZIFJ)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun calculateInitialZoom-T04Tlys (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZILcom/github/panpf/zoomimage/zoom/ReadMode;Lcom/github/panpf/zoomimage/zoom/ScalesCalculator;)Lcom/github/panpf/zoomimage/zoom/internal/InitialZoom;
+	public static final fun calculateLocateUserOffset-VShuuIQ (JJF)J
+	public static final fun calculateMinScale (FF)F
+	public static final fun calculateNextStepScale ([FFF)F
+	public static synthetic fun calculateNextStepScale$default ([FFFILjava/lang/Object;)F
+	public static final fun calculateNextStepScaleWithRatio ([FFF)F
+	public static final fun calculateReadModeTransform-vrBAy3w (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZILcom/github/panpf/zoomimage/zoom/ReadMode;)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun calculateRestoreContentBaseTransformTransform-o0jXvmc (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;Z)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun calculateRestoreContentVisibleCenterUserTransform-yMz6B8k (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ILcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;J)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun calculateRestoreVisibleCenterTransformWhenOnlyContainerSizeChanged-N0MDnyE (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZILcom/github/panpf/zoomimage/util/TransformCompat;)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun calculateRestoreVisibleRectTransformWhenOnlyContentSizeChanged-kjLh3nM (JJLcom/github/panpf/zoomimage/util/TransformCompat;)Lcom/github/panpf/zoomimage/util/TransformCompat;
+	public static final fun calculateRotatedContentMoveToTopLeftOffset-kjLh3nM (JJI)J
+	public static final fun calculateRotatedContentRect-kjLh3nM (JJI)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun calculateScaleUserOffset-pNnZAaM (FJFJ)J
+	public static final fun calculateScales-XAxOREs (JJJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;IFLcom/github/panpf/zoomimage/zoom/ScalesCalculator;)[F
+	public static final fun calculateScrollEdge-dVOAzB8 (Lcom/github/panpf/zoomimage/util/RectCompat;J)Lcom/github/panpf/zoomimage/zoom/ScrollEdge;
+	public static final fun calculateSourceScaleFactor-pwpGKOw (JJJ)J
+	public static final fun calculateSourceVisibleRect-kjLh3nM (JJLcom/github/panpf/zoomimage/util/RectCompat;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun calculateTransformOffset-9zyfAic (FJFJJF)J
+	public static final fun calculateUserOffsetBounds-Kjo0FkA (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZIFZLcom/github/panpf/zoomimage/zoom/ContainerWhitespace;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun canScrollByEdge (Lcom/github/panpf/zoomimage/zoom/ScrollEdge;ZI)Z
+	public static final fun containerPointToContentPoint-aHVBATo (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZIJ)J
+	public static final fun containerPointToTouchPoint-yCSJ7vU (JFJJ)J
+	public static final fun contentPointToContainerPoint-aHVBATo (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZIJ)J
+	public static final fun contentPointToTouchPoint-_9VaS4o (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZIFJJ)J
+	public static final fun limitScaleWithRubberBand (FFFFF)F
+	public static final fun rotateInCoordinate (Lcom/github/panpf/zoomimage/util/RectCompat;Lcom/github/panpf/zoomimage/util/RectCompat;I)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun rotateInCoordinate-8T1cGlI (JLcom/github/panpf/zoomimage/util/RectCompat;I)J
+	public static final fun sourceToDraw-gceZHbg (JJIJJJ)J
+	public static final fun sourceToDraw-wfB4bo4 (JJIJJLcom/github/panpf/zoomimage/util/RectCompat;)Lcom/github/panpf/zoomimage/util/RectCompat;
+	public static final fun touchPointToContainerPoint-yCSJ7vU (JFJJ)J
+	public static final fun touchPointToContentPoint-_9VaS4o (JJLcom/github/panpf/zoomimage/zoom/ContentScaleCompat;Lcom/github/panpf/zoomimage/zoom/AlignmentCompat;ZIFJJ)J
+	public static final fun transformAboutEquals (Lcom/github/panpf/zoomimage/util/TransformCompat;Lcom/github/panpf/zoomimage/util/TransformCompat;)Z
+}
+
