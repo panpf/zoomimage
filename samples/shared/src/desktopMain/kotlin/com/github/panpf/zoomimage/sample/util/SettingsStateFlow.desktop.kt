@@ -31,6 +31,6 @@ import com.russhwolf.settings.Settings
 //}
 
 actual fun createSettings(context: PlatformContext): Settings {
-    val delegate = java.util.prefs.Preferences.userRoot().node("com.github.panpf.sketch4.sample")
+    val delegate = java.util.prefs.Preferences.userRoot().node("com.github.panpf.zoomimage.sample")
     return PreferencesSettings(delegate)
 }

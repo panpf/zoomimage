@@ -4,7 +4,6 @@ import coil3.ImageLoader
 import coil3.util.DebugLogger
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.util.Logger
 import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsApi
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListViewModel
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListViewModel
@@ -20,6 +19,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
+import org.koin.mp.KoinPlatform
 
 expect fun initialApp(context: PlatformContext, koinAppDeclaration: KoinAppDeclaration? = null)
 
@@ -39,12 +39,12 @@ expect fun platformModule(context: PlatformContext): Module
 private fun newSketch(context: PlatformContext, appSettings: AppSettings): Sketch {
     return Sketch(context) {
         // For print the Sketch initialization log
-        val loggerLevel = if (appSettings.debugLog.value) Logger.Level.Debug else Logger.Level.Info
-        val logger = Logger(level = loggerLevel).apply {
+        val loggerLevel = appSettings.imageLoaderLogLevel.value
+        val logger = com.github.panpf.sketch.util.Logger(level = loggerLevel).apply {
             @Suppress("OPT_IN_USAGE")
             GlobalScope.launch {
-                appSettings.debugLog.ignoreFirst().collect { debugLog ->
-                    level = if (debugLog) Logger.Level.Debug else Logger.Level.Info
+                appSettings.imageLoaderLogLevel.ignoreFirst().collect {
+                    level = it
                 }
             }
         }
@@ -57,9 +57,18 @@ private fun newSketch(context: PlatformContext, appSettings: AppSettings): Sketc
 expect fun Sketch.Builder.platformSketchInitial(context: PlatformContext)
 
 fun newCoil(context: coil3.PlatformContext): ImageLoader {
+    val appSettings: AppSettings = KoinPlatform.getKoin().get()
     return ImageLoader.Builder(context).apply {
         platformCoilInitial(context)
-        logger(DebugLogger())
+        val loggerLevel = appSettings.imageLoaderLogLevel.value
+        logger(DebugLogger(loggerLevel.toCoilLogLevel()).apply {
+            @Suppress("OPT_IN_USAGE")
+            GlobalScope.launch {
+                appSettings.imageLoaderLogLevel.ignoreFirst().collect {
+                    minLevel = it.toCoilLogLevel()
+                }
+            }
+        })
     }.build()
 }
 
@@ -74,5 +83,16 @@ private fun newHttpClient(): HttpClient {
                 isLenient = true
             })
         }
+    }
+}
+
+fun com.github.panpf.sketch.util.Logger.Level.toCoilLogLevel(): coil3.util.Logger.Level {
+    return when (this) {
+        com.github.panpf.sketch.util.Logger.Level.Verbose -> coil3.util.Logger.Level.Verbose
+        com.github.panpf.sketch.util.Logger.Level.Debug -> coil3.util.Logger.Level.Debug
+        com.github.panpf.sketch.util.Logger.Level.Info -> coil3.util.Logger.Level.Info
+        com.github.panpf.sketch.util.Logger.Level.Warn -> coil3.util.Logger.Level.Warn
+        com.github.panpf.sketch.util.Logger.Level.Error -> coil3.util.Logger.Level.Error
+        com.github.panpf.sketch.util.Logger.Level.Assert -> coil3.util.Logger.Level.Error
     }
 }

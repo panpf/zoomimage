@@ -204,7 +204,7 @@ fun <T : ZoomState> BaseZoomImageSample(
 
 @Composable
 private fun ZoomState.BindSettings(appSettings: AppSettings) {
-    val logLevel by appSettings.logLevel.collectAsState()
+    val logLevel by appSettings.zoomImageLogLevel.collectAsState()
     logger.level = logLevel
 
     val threeStepScale by appSettings.threeStepScaleEnabled.collectAsState()

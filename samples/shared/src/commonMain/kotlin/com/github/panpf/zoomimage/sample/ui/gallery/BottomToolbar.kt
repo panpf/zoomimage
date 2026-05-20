@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,39 +24,39 @@ import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
 import com.github.panpf.zoomimage.sample.ic_layout_grid
 import com.github.panpf.zoomimage.sample.ic_layout_grid_staggered
+import com.github.panpf.zoomimage.sample.ic_settings
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoader
 import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsList
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsPage
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
 @Composable
 fun BottomToolbar(modifier: Modifier) {
-    val appSettings: AppSettings = koinInject()
     Row(
         modifier
             .clip(RoundedCornerShape(50))
             .background(colorScheme.tertiaryContainer)
     ) {
+        val appSettings: AppSettings = koinInject()
+
         val staggeredGridMode by appSettings.staggeredGridMode.collectAsState()
         val staggeredGridModeIcon = if (!staggeredGridMode) {
             painterResource(Res.drawable.ic_layout_grid_staggered)
         } else {
             painterResource(Res.drawable.ic_layout_grid)
         }
-
-        Box(
+        Icon(
+            painter = staggeredGridModeIcon,
+            contentDescription = null,
+            tint = colorScheme.onTertiaryContainer,
             modifier = Modifier
                 .size(40.dp)
-                .clickable { appSettings.staggeredGridMode.value = !staggeredGridMode },
-        ) {
-            Icon(
-                painter = staggeredGridModeIcon,
-                contentDescription = null,
-                tint = colorScheme.onTertiaryContainer,
-                modifier = Modifier.size(20.dp).align(Alignment.Center)
-            )
-        }
+                .clickable { appSettings.staggeredGridMode.value = !staggeredGridMode }
+                .padding(10.dp)
+        )
 
         val switchImageLoaderDialogState = rememberMyDialogState()
         Box(
@@ -76,6 +77,21 @@ fun BottomToolbar(modifier: Modifier) {
             SwitchImageLoader {
                 switchImageLoaderDialogState.dismiss()
             }
+        }
+
+        val settingsDialogState = rememberMyDialogState()
+        Icon(
+            painter = painterResource(Res.drawable.ic_settings),
+            contentDescription = null,
+            modifier = Modifier.size(40.dp)
+                .clickable {
+                    settingsDialogState.show()
+                }
+                .padding(10.dp),
+            tint = colorScheme.onTertiaryContainer
+        )
+        MyDialog(settingsDialogState) {
+            AppSettingsList(AppSettingsPage.LIST)
         }
     }
 }

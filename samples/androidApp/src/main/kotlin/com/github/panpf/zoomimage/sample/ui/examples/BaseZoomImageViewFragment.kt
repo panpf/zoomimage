@@ -115,7 +115,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
                 }.show(childFragmentManager, null)
             }
-            appSettings.logLevel.collectWithLifecycle(viewLifecycleOwner) {
+            appSettings.zoomImageLogLevel.collectWithLifecycle(viewLifecycleOwner) {
                 logger.level = it
             }
             appSettings.scrollBarEnabled.collectWithLifecycle(viewLifecycleOwner) {

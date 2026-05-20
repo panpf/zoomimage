@@ -353,9 +353,9 @@ class ZoomImageSettingsViewModel(
                     Logger.Level.Error,
                     Logger.Level.Assert,
                 ).map { it.name },
-                getValue = { appSettings.logLevelName.value },
+                getValue = { appSettings.zoomImageLogLevelName.value },
                 onSelected = { _, value ->
-                    appSettings.logLevelName.value = value
+                    appSettings.zoomImageLogLevelName.value = value
                 }
             )
         )

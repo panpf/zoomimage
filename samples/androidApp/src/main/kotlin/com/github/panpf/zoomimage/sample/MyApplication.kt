@@ -41,14 +41,16 @@ class MyApplication : Application(), SingletonImageLoader.Factory {
         }
 
         val context = this@MyApplication
+        val appSettings: AppSettings = KoinPlatform.getKoin().get()
+        val logLevel = appSettings.imageLoaderLogLevel.value.toLogLevel()
+
         Picasso.setSingletonInstance(Picasso.Builder(context).apply {
             addRequestHandler(PicassoComposeResourceRequestHandler())
-            loggingEnabled(true)
+            loggingEnabled(logLevel <= Log.DEBUG)
         }.build())
 
-        Glide.init(context, GlideBuilder().setLogLevel(Log.DEBUG))
+        Glide.init(context, GlideBuilder().setLogLevel(logLevel))
 
-        val appSettings: AppSettings = KoinPlatform.getKoin().get()
         val sketch: Sketch = KoinPlatform.getKoin().get()
         @Suppress("OPT_IN_USAGE")
         GlobalScope.launch(Dispatchers.Main) {
@@ -154,5 +156,16 @@ class MyApplication : Application(), SingletonImageLoader.Factory {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+}
+
+fun com.github.panpf.sketch.util.Logger.Level.toLogLevel(): Int {
+    return when (this) {
+        com.github.panpf.sketch.util.Logger.Level.Verbose -> Log.VERBOSE
+        com.github.panpf.sketch.util.Logger.Level.Debug -> Log.DEBUG
+        com.github.panpf.sketch.util.Logger.Level.Info -> Log.INFO
+        com.github.panpf.sketch.util.Logger.Level.Warn -> Log.WARN
+        com.github.panpf.sketch.util.Logger.Level.Error -> Log.ERROR
+        com.github.panpf.sketch.util.Logger.Level.Assert -> Log.ASSERT
     }
 }

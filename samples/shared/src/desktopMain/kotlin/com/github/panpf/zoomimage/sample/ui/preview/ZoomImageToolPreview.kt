@@ -1,10 +1,10 @@
 package com.github.panpf.zoomimage.sample.ui.preview
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newComposeResourceUri
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.sample.Res

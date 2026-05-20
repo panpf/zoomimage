@@ -45,6 +45,8 @@ import com.github.panpf.zoomimage.sample.ui.LocalNavBackStack
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoader
 import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsList
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsPage
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
@@ -142,7 +144,7 @@ fun PhotoPagerHeaders(
                 )
             }
             MyDialog(zoomImageSettingsListDialogState) {
-                ZoomImageSettingList()
+                AppSettingsList(AppSettingsPage.VIEWER)
             }
 
             Spacer(modifier = Modifier.size(10.dp))

@@ -10,6 +10,7 @@ import com.github.panpf.sketch.request.RequestContext
 import com.github.panpf.sketch.util.MimeTypeMap
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.sketch.util.toUri
+import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.image.photoUri2PhotoInfo
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.md5
@@ -19,6 +20,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.sink
+import org.koin.mp.KoinPlatform
 import java.io.File
 import java.util.Locale
 
@@ -53,11 +55,10 @@ actual class PhotoService actual constructor(val sketch: Sketch) {
     private fun loadLocalPhotos(context: PlatformContext): List<String> {
         val userHomeDir = File(System.getProperty("user.home"))
         val userPicturesDir = File(userHomeDir, "Pictures")
-//        val appSettings: AppSettings = KoinPlatform.getKoin().get()
-//        val localPhotosDir = appSettings.localPhotosDirPath.value
-//            .takeIf { it.isNotEmpty() }?.let { File(it) }
-//        return listOfNotNull(userPicturesDir, localPhotosDir) // TODO localPhotosDir
-        return listOfNotNull(userPicturesDir)
+        val appSettings: AppSettings = KoinPlatform.getKoin().get()
+        val localPhotosDir = appSettings.localPhotosDirPath.value
+            .takeIf { it.isNotEmpty() }?.let { File(it) }
+        return listOfNotNull(userPicturesDir, localPhotosDir)
             .flatMap { dir ->
                 dir.walkTopDown()
                     .filter { it.isFile }
