@@ -31,29 +31,21 @@ fun AppSettingsList(page: AppSettingsPage) {
             .verticalScroll(rememberScrollState())
     ) {
         if (page == AppSettingsPage.VIEWER) {
-            DividerSettingItem("Arrange")
             ArrangeSettingsList(appSettings)
-
-            DividerSettingItem("Zoom")
             ZoomSettingsList(appSettings)
-
-            DividerSettingItem("Scale")
             ScaleSettingsList(appSettings)
-
-            DividerSettingItem("Offset")
             OffsetSettingsList(appSettings)
-
-            DividerSettingItem("Subsampling")
             SubsamplingSettingsList(appSettings)
         }
 
-        DividerSettingItem("Other")
         OtherSettingsList(appSettings, page)
     }
 }
 
 @Composable
 fun ArrangeSettingsList(appSettings: AppSettings) {
+    DividerSettingItem("Arrange")
+
     val contentScaleValues = remember {
         listOf(
             ContentScale.Fit,
@@ -101,6 +93,8 @@ fun ArrangeSettingsList(appSettings: AppSettings) {
 
 @Composable
 fun ZoomSettingsList(appSettings: AppSettings) {
+    DividerSettingItem("Zoom")
+
     SwitchSettingItem(
         title = "Animate",
         desc = null,
@@ -165,6 +159,8 @@ fun ZoomSettingsList(appSettings: AppSettings) {
 
 @Composable
 fun ScaleSettingsList(appSettings: AppSettings) {
+    DividerSettingItem("Scale")
+
     SwitchSettingItem(
         title = "Rubber Band Scale",
         desc = null,
@@ -209,6 +205,8 @@ fun ScaleSettingsList(appSettings: AppSettings) {
 
 @Composable
 fun OffsetSettingsList(appSettings: AppSettings) {
+    DividerSettingItem("Offset")
+
     SwitchSettingItem(
         title = "Limit Offset Within Base Visible Rect",
         desc = null,
@@ -233,6 +231,8 @@ fun OffsetSettingsList(appSettings: AppSettings) {
 
 @Composable
 fun SubsamplingSettingsList(appSettings: AppSettings) {
+    DividerSettingItem("Subsampling")
+
     SwitchSettingItem(
         title = "Subsampling",
         desc = null,
@@ -300,6 +300,8 @@ fun SubsamplingSettingsList(appSettings: AppSettings) {
 
 @Composable
 fun OtherSettingsList(appSettings: AppSettings, page: AppSettingsPage) {
+    DividerSettingItem("Other")
+
     val imageLoaderLogLevelValues = remember {
         listOf(
             com.github.panpf.sketch.util.Logger.Level.Verbose,

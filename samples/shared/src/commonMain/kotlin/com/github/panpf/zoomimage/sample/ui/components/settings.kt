@@ -81,7 +81,8 @@ fun SwitchSettingItem(
     title: String,
     state: MutableStateFlow<Boolean>,
     desc: String? = null,
-    onLongClick: (() -> Unit)? = null,
+    onClick: (suspend () -> Unit)? = null,
+    onLongClick: (suspend () -> Unit)? = null,
     enabledState: Flow<Boolean>? = null,
 ) {
     if (enabledState != null) {
@@ -89,14 +90,24 @@ fun SwitchSettingItem(
         if (enabled) return
     }
 
+    val coroutineScope = rememberCoroutineScope()
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = menuItemHeight)
             .pointerInput(state) {
                 detectTapGestures(
-                    onTap = { state.value = !state.value },
-                    onLongPress = { onLongClick?.invoke() },
+                    onTap = {
+                        state.value = !state.value
+                        coroutineScope.launch {
+                            onClick?.invoke()
+                        }
+                    },
+                    onLongPress = {
+                        coroutineScope.launch {
+                            onLongClick?.invoke()
+                        }
+                    },
                 )
             }
             .padding(horizontal = 20.dp, vertical = 12.dp),
@@ -225,7 +236,7 @@ fun MultiChooseSettingItem(
     title: String,
     values: List<String>,
     checkedList: List<Boolean>,
-    onSelected: (which: Int, isChecked: Boolean) -> Unit,
+    onSelected: suspend (which: Int, isChecked: Boolean) -> Unit,
     enabledState: Flow<Boolean>? = null,
 ) {
     if (enabledState != null) {
@@ -233,6 +244,7 @@ fun MultiChooseSettingItem(
         if (enabled) return
     }
 
+    val coroutineScope = rememberCoroutineScope()
     var expanded by remember { mutableStateOf(false) }
     val checkedCount = remember(key1 = checkedList) {
         checkedList.count { it }.toString()
@@ -290,12 +302,16 @@ fun MultiChooseSettingItem(
                     trailingIcon = {
                         Checkbox(checked = checkedList[index], onCheckedChange = {
 //                            expanded = !expanded
-                            onSelected(index, !checkedList[index])
+                            coroutineScope.launch {
+                                onSelected(index, !checkedList[index])
+                            }
                         })
                     },
                     onClick = {
 //                        expanded = !expanded
-                        onSelected(index, !checkedList[index])
+                        coroutineScope.launch {
+                            onSelected(index, !checkedList[index])
+                        }
                     }
                 )
             }
