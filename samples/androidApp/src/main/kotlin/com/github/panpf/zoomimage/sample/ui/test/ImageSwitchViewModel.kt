@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class ImageSwitchViewModel : ViewModel() {
-    val imageUris = imageSwitchTestResources.map { it.uri }
+    val imageUris = imageSwitchTestResourcesWithAsset.map { it.uri }
 
     private val _currentImageUri = MutableStateFlow(imageUris.first())
     val currentImageUri: StateFlow<String> = _currentImageUri

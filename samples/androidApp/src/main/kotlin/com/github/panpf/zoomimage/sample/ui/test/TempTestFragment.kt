@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.sample.databinding.FragmentTempTestBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.util.Logger
@@ -39,10 +39,10 @@ class TempTestFragment : BaseToolbarBindingFragment<FragmentTempTestBinding>() {
         binding.glideZoomImageView.logger.level = Logger.Level.Verbose
 
         Glide.with(binding.glideZoomImageView)
-            .load(ComposeResImageFiles.hugeChina.uri)
+            .load(AssetImageFiles.hugeChina.uri)
             .thumbnail(
                 Glide.with(binding.glideZoomImageView)
-                    .load(ComposeResImageFiles.hugeChinaThumbnail.uri)
+                    .load(AssetImageFiles.hugeChinaThumbnail.uri)
                     .override(120, 120)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
             )

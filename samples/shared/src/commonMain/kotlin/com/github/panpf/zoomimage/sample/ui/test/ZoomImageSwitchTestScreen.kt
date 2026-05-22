@@ -53,7 +53,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
-val imageSwitchTestResources = arrayOf(
+val imageSwitchTestResourcesWithCompose = arrayOf(
     ComposeResImageFiles.hugeChinaThumbnail,
     ComposeResImageFiles.hugeChina,
     ComposeResImageFiles.hugeLongComicThumbnail,
@@ -78,7 +78,7 @@ fun ZoomImageSwitchTestScreen() {
                     .background(Color.Black)
                     .windowInsetsPadding(WindowInsets.navigationBars)
             ) {
-                val imageUris = remember { imageSwitchTestResources.map { it.uri } }
+                val imageUris = remember { imageSwitchTestResourcesWithCompose.map { it.uri } }
                 var currentImageUri by remember { mutableStateOf(imageUris.first()) }
                 Box(Modifier.fillMaxWidth().weight(1f)) {
                     SketchZoomAsyncImage(

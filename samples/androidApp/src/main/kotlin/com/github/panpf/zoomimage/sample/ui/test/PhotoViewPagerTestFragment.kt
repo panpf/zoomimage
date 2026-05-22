@@ -6,7 +6,7 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.sample.databinding.FragmentTabPagerBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.google.android.material.tabs.TabLayoutMediator
@@ -22,7 +22,7 @@ class PhotoViewPagerTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBi
     ) {
         toolbar.title = "PhotoView (Pager)"
 
-        val images = ComposeResImageFiles.values
+        val images = AssetImageFiles.values
 
         binding.pager.apply {
             setBackgroundColor(Color.BLACK)

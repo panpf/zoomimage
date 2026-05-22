@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.AsyncImage
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
@@ -36,6 +37,19 @@ import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
 import me.saket.telephoto.zoomable.rememberZoomableImageState
 import me.saket.telephoto.zoomable.rememberZoomableState
 import kotlin.math.roundToInt
+
+val imageSwitchTestResourcesWithAsset = arrayOf(
+    AssetImageFiles.hugeChinaThumbnail,
+    AssetImageFiles.hugeChina,
+    AssetImageFiles.hugeLongComicThumbnail,
+    AssetImageFiles.hugeLongComic,
+    AssetImageFiles.hugeLongQmshtThumbnail,
+    AssetImageFiles.hugeLongQmsht,
+    AssetImageFiles.cat,
+    AssetImageFiles.dog,
+    AssetImageFiles.longEnd,
+    AssetImageFiles.longWhale,
+)
 
 @Composable
 fun TelephotoSwitchTestScreen() {
@@ -47,7 +61,7 @@ fun TelephotoSwitchTestScreen() {
                     .fillMaxSize()
                     .background(Color.Black)
             ) {
-                val imageUris = remember { imageSwitchTestResources.map { it.uri } }
+                val imageUris = remember { imageSwitchTestResourcesWithAsset.map { it.uri } }
                 var currentImageUri by remember { mutableStateOf(imageUris.first()) }
                 Box(
                     Modifier

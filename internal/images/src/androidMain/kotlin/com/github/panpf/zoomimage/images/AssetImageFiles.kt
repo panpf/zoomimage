@@ -3,14 +3,28 @@ package com.github.panpf.zoomimage.images
 import com.github.panpf.zoomimage.util.IntSizeCompat
 
 object AssetImageFiles {
-    val cat: AssetImageFile = AssetImageFile(
-        name = "cat.jpg",
-        size = IntSizeCompat(width = 1100, height = 1650)
-    )
-    val longEnd: AssetImageFile = AssetImageFile(
-        name = "long_end.jpg",
-        size = IntSizeCompat(width = 2000, height = 618),
-        exifOrientation = ExifOrientation.NORMAL
+    val cat: AssetImageFile = ComposeResImageFiles.cat.toAssetImageFile()
+    val dog: AssetImageFile = ComposeResImageFiles.dog.toAssetImageFile()
+    val hugeChina: AssetImageFile = ComposeResImageFiles.hugeChina.toAssetImageFile()
+    val hugeChinaThumbnail: AssetImageFile =
+        ComposeResImageFiles.hugeChinaThumbnail.toAssetImageFile()
+    val hugeLongComic: AssetImageFile = ComposeResImageFiles.hugeLongComic.toAssetImageFile()
+    val hugeLongComicThumbnail: AssetImageFile =
+        ComposeResImageFiles.hugeLongComicThumbnail.toAssetImageFile()
+    val hugeLongQmsht: AssetImageFile = ComposeResImageFiles.hugeLongQmsht.toAssetImageFile()
+    val hugeLongQmshtThumbnail: AssetImageFile =
+        ComposeResImageFiles.hugeLongQmshtThumbnail.toAssetImageFile()
+    val longEnd: AssetImageFile = ComposeResImageFiles.longEnd.toAssetImageFile()
+    val longWhale: AssetImageFile = ComposeResImageFiles.longWhale.toAssetImageFile()
+
+    val values: Array<AssetImageFile> = arrayOf(
+        cat,
+        dog,
+        longEnd,
+        longWhale,
+        hugeChina,
+        hugeLongComic,
+        hugeLongQmsht,
     )
 }
 
@@ -25,3 +39,9 @@ class AssetImageFile(
     override fun toString(): String =
         "AssetImageFile(name='$name', size=$size, exifOrientation=$exifOrientation)"
 }
+
+fun ComposeResImageFile.toAssetImageFile(): AssetImageFile = AssetImageFile(
+    name = this.name,
+    size = this.size,
+    exifOrientation = this.exifOrientation
+)

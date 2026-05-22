@@ -14,7 +14,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.tools4k.lang.asOrThrow
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.sample.databinding.FragmentTestImageMatrixBinding
 import com.github.panpf.zoomimage.sample.image.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
@@ -88,7 +88,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
             }
             setOnClickListener {
                 AlertDialog.Builder(requireActivity()).apply {
-                    val scaleTypes = ScaleType.values()
+                    val scaleTypes = ScaleType.entries.toTypedArray()
                     setItems(scaleTypes.map { it.name }.toTypedArray()) { _, which ->
                         scaleType = scaleTypes[which]
                         setName()
@@ -255,7 +255,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
 
     private fun updateImage(binding: FragmentTestImageMatrixBinding) {
         val imageUri =
-            if (horImage) ComposeResImageFiles.longEnd.uri else ComposeResImageFiles.longWhale.uri
+            if (horImage) AssetImageFiles.longEnd.uri else AssetImageFiles.longWhale.uri
         binding.imageView.loadImage(imageUri) {
             memoryCachePolicy(CachePolicy.DISABLED)
             val resources = requireContext().resources
