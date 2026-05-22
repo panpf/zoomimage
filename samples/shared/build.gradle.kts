@@ -73,7 +73,6 @@ kotlin {
             api(libs.kotlinx.collections.immutable)
             api(libs.kotlinx.coroutines.core)
             api(libs.multiplatform.settings)
-            api(libs.panpf.sketch4.animated.gif)
             api(libs.panpf.sketch4.compose.resources)
             api(libs.panpf.sketch4.extensions.compose)
             api(libs.panpf.sketch4.http.ktor3)
@@ -94,6 +93,7 @@ kotlin {
             api(libs.glide.compose)
             api(libs.google.material)
             api(libs.koin.android)
+            api(libs.panpf.sketch4.animated.gif.koral)
             api(libs.panpf.tools4a.activity)
             api(libs.panpf.tools4a.device)
             api(libs.panpf.tools4a.dimen)
@@ -103,6 +103,9 @@ kotlin {
             api(libs.panpf.tools4a.toast)
             api(libs.panpf.tools4k)
             api(libs.telephoto.coil3)
+        }
+        nonAndroidMain.dependencies {
+            api(libs.panpf.sketch4.animated.gif)
         }
         desktopMain.dependencies {
             api(compose.desktop.currentOs)
