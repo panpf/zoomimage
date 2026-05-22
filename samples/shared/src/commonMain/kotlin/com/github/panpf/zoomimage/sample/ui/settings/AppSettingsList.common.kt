@@ -302,23 +302,6 @@ fun SubsamplingSettingsList(appSettings: AppSettings) {
 fun OtherSettingsList(appSettings: AppSettings, page: AppSettingsPage) {
     DividerSettingItem("Other")
 
-    val imageLoaderLogLevelValues = remember {
-        listOf(
-            com.github.panpf.sketch.util.Logger.Level.Verbose,
-            com.github.panpf.sketch.util.Logger.Level.Debug,
-            com.github.panpf.sketch.util.Logger.Level.Info,
-            com.github.panpf.sketch.util.Logger.Level.Warn,
-            com.github.panpf.sketch.util.Logger.Level.Error,
-            com.github.panpf.sketch.util.Logger.Level.Assert,
-        ).map { it.name }
-    }
-    DropdownSettingItem(
-        title = "ImageLoader Log Level",
-        desc = null,
-        values = imageLoaderLogLevelValues,
-        state = appSettings.imageLoaderLogLevelName,
-    )
-
     if (page == AppSettingsPage.VIEWER) {
         SwitchSettingItem(
             title = "Delayed loading of images from local",
@@ -337,12 +320,29 @@ fun OtherSettingsList(appSettings: AppSettings, page: AppSettingsPage) {
             ).map { it.name }
         }
         DropdownSettingItem(
-            title = "Zoom Log Level",
+            title = "ZoomImage Log Level",
             desc = null,
             values = zoomImageLogLevelValues,
             state = appSettings.zoomImageLogLevelName,
         )
     }
+
+    val imageLoaderLogLevelValues = remember {
+        listOf(
+            com.github.panpf.sketch.util.Logger.Level.Verbose,
+            com.github.panpf.sketch.util.Logger.Level.Debug,
+            com.github.panpf.sketch.util.Logger.Level.Info,
+            com.github.panpf.sketch.util.Logger.Level.Warn,
+            com.github.panpf.sketch.util.Logger.Level.Error,
+            com.github.panpf.sketch.util.Logger.Level.Assert,
+        ).map { it.name }
+    }
+    DropdownSettingItem(
+        title = "ImageLoader Log Level",
+        desc = null,
+        values = imageLoaderLogLevelValues,
+        state = appSettings.imageLoaderLogLevelName,
+    )
 
     PlatformOtherSettingsList(appSettings, page)
 }

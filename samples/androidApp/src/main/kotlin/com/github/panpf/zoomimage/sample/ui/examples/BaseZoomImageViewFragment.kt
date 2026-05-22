@@ -27,13 +27,14 @@ import android.view.animation.Animation
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.components.CaptureDialogFragment
 import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
@@ -289,7 +290,8 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 .limitTo(zoomImageView.zoomable.containerSizeState.value)
             val croppedBitmap = bitmap.crop(cropRect.toAndroidRect())
             captureViewModel.capturedBitmap = croppedBitmap
-            CaptureDialogFragment().show(childFragmentManager, null)
+            findNavController()
+                .navigate(NavMainDirections.actionCaptureDialogFragment())
         }
 
         binding.info.setOnClickListener {

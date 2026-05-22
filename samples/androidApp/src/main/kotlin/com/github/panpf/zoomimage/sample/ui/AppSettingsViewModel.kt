@@ -16,14 +16,14 @@
 
 package com.github.panpf.zoomimage.sample.ui
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.ui.common.menu.DropdownMenu
 import com.github.panpf.zoomimage.sample.ui.common.menu.MenuDivider
 import com.github.panpf.zoomimage.sample.ui.common.menu.MultiChooseMenu
 import com.github.panpf.zoomimage.sample.ui.common.menu.SwitchMenuFlow
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsPage
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
@@ -35,23 +35,30 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 
-class ZoomImageSettingsViewModel(
-    application: Application,
-) : AndroidViewModel(application) {
+class AppSettingsViewModel(val page: AppSettingsPage) : ViewModel() {
 
+    private val appSettings: AppSettings = KoinPlatform.getKoin().get()
     private val _data = MutableStateFlow<List<Any>>(emptyList())
     val data: StateFlow<List<Any>> = _data
-    val appSettings: AppSettings = KoinPlatform.getKoin().get()
 
     init {
         viewModelScope.launch {
             appSettings.viewImageLoader.collect {
-                _data.value = buildData()
+                _data.value = buildList {
+                    if (page == AppSettingsPage.VIEWER) {
+                        addAll(arrangeSettingsList())
+                        addAll(zoomSettingsList())
+                        addAll(scaleSettingsList())
+                        addAll(offsetSettingsList())
+                        addAll(subsamplingSettingsList())
+                    }
+                    addAll(otherSettingsList())
+                }
             }
         }
     }
 
-    private fun buildData(): List<Any> = buildList {
+    private fun arrangeSettingsList(): List<Any> = buildList {
         add(MenuDivider("Arrange"))
 
         val contentScales = listOf(
@@ -106,7 +113,9 @@ class ZoomImageSettingsViewModel(
                 data = appSettings.rtlLayoutDirectionEnabled,
             )
         )
+    }
 
+    private fun zoomSettingsList(): List<Any> = buildList {
         add(MenuDivider("Zoom"))
 
         add(
@@ -178,7 +187,9 @@ class ZoomImageSettingsViewModel(
                 }
             )
         )
+    }
 
+    private fun scaleSettingsList(): List<Any> = buildList {
         add(MenuDivider("Scale"))
 
         add(
@@ -228,7 +239,9 @@ class ZoomImageSettingsViewModel(
                 }
             )
         )
+    }
 
+    private fun offsetSettingsList(): List<Any> = buildList {
         add(MenuDivider("Offset"))
 
         add(
@@ -258,7 +271,9 @@ class ZoomImageSettingsViewModel(
                 }
             )
         )
+    }
 
+    private fun subsamplingSettingsList(): List<Any> = buildList {
         add(MenuDivider("Subsampling"))
 
         add(
@@ -330,32 +345,55 @@ class ZoomImageSettingsViewModel(
                 }
             )
         )
+    }
 
+    private fun otherSettingsList(): List<Any> = buildList {
         add(MenuDivider("Other"))
 
-        add(
-            SwitchMenuFlow(
-                title = "Delayed loading of images from local",
-                desc = "Only for Sketch ImageLoader",
-                data = appSettings.delayImageLoadEnabled,
+        if (page == AppSettingsPage.VIEWER) {
+            add(
+                SwitchMenuFlow(
+                    title = "Delayed loading of images from local",
+                    desc = "Only for Sketch ImageLoader",
+                    data = appSettings.delayImageLoadEnabled,
+                )
             )
-        )
+
+            add(
+                DropdownMenu(
+                    title = "ZoomImage Level",
+                    desc = null,
+                    values = listOf(
+                        Logger.Level.Verbose,
+                        Logger.Level.Debug,
+                        Logger.Level.Info,
+                        Logger.Level.Warn,
+                        Logger.Level.Error,
+                        Logger.Level.Assert,
+                    ).map { it.name },
+                    getValue = { appSettings.zoomImageLogLevelName.value },
+                    onSelected = { _, value ->
+                        appSettings.zoomImageLogLevelName.value = value
+                    }
+                )
+            )
+        }
 
         add(
             DropdownMenu(
-                title = "Log Level",
+                title = "ImageLoader Log Level",
                 desc = null,
                 values = listOf(
-                    Logger.Level.Verbose,
-                    Logger.Level.Debug,
-                    Logger.Level.Info,
-                    Logger.Level.Warn,
-                    Logger.Level.Error,
-                    Logger.Level.Assert,
+                    com.github.panpf.sketch.util.Logger.Level.Verbose,
+                    com.github.panpf.sketch.util.Logger.Level.Debug,
+                    com.github.panpf.sketch.util.Logger.Level.Info,
+                    com.github.panpf.sketch.util.Logger.Level.Warn,
+                    com.github.panpf.sketch.util.Logger.Level.Error,
+                    com.github.panpf.sketch.util.Logger.Level.Assert,
                 ).map { it.name },
-                getValue = { appSettings.zoomImageLogLevelName.value },
+                getValue = { appSettings.imageLoaderLogLevelName.value },
                 onSelected = { _, value ->
-                    appSettings.zoomImageLogLevelName.value = value
+                    appSettings.imageLoaderLogLevelName.value = value
                 }
             )
         )

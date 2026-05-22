@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.sample.ui
 import android.os.Bundle
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle.State
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
@@ -30,12 +31,17 @@ import com.github.panpf.zoomimage.sample.ui.common.menu.DropdownMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.menu.MenuDividerItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.menu.MultiChooseMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.menu.SwitchMenuItemFactory
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsPage
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
-class ZoomImageSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
+class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
 
-    private val zoomImageSettingsViewModel by viewModel<ZoomImageSettingsViewModel>()
+    private val args by navArgs<AppSettingsDialogFragmentArgs>()
+    private val appSettingsViewModel by viewModel<AppSettingsViewModel> {
+        parametersOf(AppSettingsPage.valueOf(args.page))
+    }
 
     override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {
         val recyclerAdapter = AssemblyRecyclerAdapter(
@@ -54,7 +60,7 @@ class ZoomImageSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecycl
             adapter = recyclerAdapter
         }
 
-        zoomImageSettingsViewModel.data.repeatCollectWithLifecycle(
+        appSettingsViewModel.data.repeatCollectWithLifecycle(
             viewLifecycleOwner,
             State.CREATED
         ) { dataList ->

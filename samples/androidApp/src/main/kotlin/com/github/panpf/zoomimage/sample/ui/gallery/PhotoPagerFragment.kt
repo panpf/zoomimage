@@ -37,16 +37,16 @@ import com.github.panpf.sketch.resize.Precision.LESS_PIXELS
 import com.github.panpf.sketch.transform.BlurTransformation
 import com.github.panpf.tools4a.display.ktx.getScreenSize
 import com.github.panpf.tools4k.lang.asOrThrow
+import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PaletteInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.simplePalette
-import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
-import com.github.panpf.zoomimage.sample.ui.ZoomImageSettingsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsPage
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.launch
@@ -110,7 +110,8 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
         }
 
         binding.imageLoaderLayout.setOnClickListener {
-            SwitchImageLoaderDialogFragment().show(childFragmentManager, null)
+            findNavController()
+                .navigate(NavMainDirections.actionSwitchImageLoaderDialogFragment())
         }
 
         binding.imageLoaderImage.apply {
@@ -122,7 +123,8 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
         }
 
         binding.settingsImage.setOnClickListener {
-            ZoomImageSettingsDialogFragment().show(childFragmentManager, null)
+            findNavController()
+                .navigate(NavMainDirections.actionSettingsDialogFragment(AppSettingsPage.VIEWER.name))
         }
 
         binding.pager.apply {

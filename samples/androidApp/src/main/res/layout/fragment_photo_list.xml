@@ -39,6 +39,14 @@
             android:padding="10dp"
             app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
             app:srcCompat="@drawable/logo_sketch" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/settingsImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_settings"
+            app:tint="@color/md_theme_onBackground" />
     </LinearLayout>
 
     <com.github.panpf.zoomimage.sample.ui.components.StateView

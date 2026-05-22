@@ -10,7 +10,7 @@ import com.bumptech.glide.GlideBuilder
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.image.PicassoComposeResourceRequestHandler
-import com.github.panpf.zoomimage.sample.ui.ZoomImageSettingsViewModel
+import com.github.panpf.zoomimage.sample.ui.AppSettingsViewModel
 import com.github.panpf.zoomimage.sample.ui.gallery.CaptureViewModel
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
 import com.github.panpf.zoomimage.sample.ui.test.ImageSwitchViewModel
@@ -80,7 +80,7 @@ class MyApplication : Application(), SingletonImageLoader.Factory {
 
     private fun viewModule(): Module = module {
         viewModelOf(::PhotoPaletteViewModel)
-        viewModelOf(::ZoomImageSettingsViewModel)
+        viewModelOf(::AppSettingsViewModel)
         viewModelOf(::CaptureViewModel)
         viewModelOf(::ImageSwitchViewModel)
     }

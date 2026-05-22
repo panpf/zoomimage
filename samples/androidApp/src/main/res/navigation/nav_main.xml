@@ -248,4 +248,33 @@
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
+
+    <dialog
+        android:id="@+id/settingsDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment"
+        android:label="SettingsDialogFragment">
+        <argument
+            android:name="page"
+            app:argType="string"
+            app:nullable="false" />
+    </dialog>
+    <action
+        android:id="@+id/action_settingsDialogFragment"
+        app:destination="@id/settingsDialogFragment" />
+
+    <dialog
+        android:id="@+id/switchImageLoaderDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment"
+        android:label="SettingsDialogFragment" />
+    <action
+        android:id="@+id/action_switchImageLoaderDialogFragment"
+        app:destination="@id/switchImageLoaderDialogFragment" />
+
+    <dialog
+        android:id="@+id/captureDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.components.CaptureDialogFragment"
+        android:label="SettingsDialogFragment" />
+    <action
+        android:id="@+id/action_captureDialogFragment"
+        app:destination="@id/captureDialogFragment" />
 </navigation>

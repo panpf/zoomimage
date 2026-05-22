@@ -25,7 +25,6 @@ import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoListBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
-import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingPermissionFragment
 import com.github.panpf.zoomimage.sample.ui.common.list.LoadStateItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.list.MyLoadStateAdapter
@@ -36,6 +35,7 @@ import com.github.panpf.zoomimage.sample.ui.examples.PicassoPhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.SketchPhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.model.PhotoDiffCallback
+import com.github.panpf.zoomimage.sample.ui.settings.AppSettingsPage
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.Job
@@ -70,7 +70,8 @@ abstract class BasePhotoListFragment : BaseBindingPermissionFragment<FragmentPho
 
         binding.imageLoader.apply {
             setOnClickListener {
-                SwitchImageLoaderDialogFragment().show(childFragmentManager, null)
+                findNavController()
+                    .navigate(NavMainDirections.actionSwitchImageLoaderDialogFragment())
             }
 
             viewLifecycleOwner.lifecycleScope.launch {
@@ -78,6 +79,11 @@ abstract class BasePhotoListFragment : BaseBindingPermissionFragment<FragmentPho
                     setImageDrawable(getViewImageLoaderIcon(requireContext(), viewImageLoaderName))
                 }
             }
+        }
+
+        binding.settingsImage.setOnClickListener {
+            findNavController()
+                .navigate(NavMainDirections.actionSettingsDialogFragment(AppSettingsPage.LIST.name))
         }
 
         binding.recycler.apply {
