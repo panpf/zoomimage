@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView.ScaleType
 import androidx.appcompat.app.AlertDialog
@@ -49,6 +50,10 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
     private var rotation = 0
     private var horImage = true
     private var userTransform = TransformCompat.Origin
+
+    override fun getNavigationBarInsetsView(binding: FragmentTestImageMatrixBinding): View {
+        return binding.root
+    }
 
     override fun onViewCreated(
         toolbar: Toolbar,

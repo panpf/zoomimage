@@ -48,6 +48,10 @@ class OverlayTestFragment : BaseToolbarBindingFragment<FragmentOverlayTestBindin
 
     private val overlayTestViewModel: OverlayTestViewModel by viewModel()
 
+    override fun getNavigationBarInsetsView(binding: FragmentOverlayTestBinding): View {
+        return binding.root
+    }
+
     override fun onViewCreated(
         toolbar: Toolbar,
         binding: FragmentOverlayTestBinding,
