@@ -73,6 +73,7 @@ dependencies {
     implementation(projects.zoomimageViewPicasso)
     implementation(projects.zoomimageViewSketch4Koin)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.swiperefreshlayout)

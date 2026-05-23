@@ -5,6 +5,7 @@ androidx-appcompat = "1.7.1"
 androidx-compose = "1.10.5" # sync with jetbrains-compose
 androidx-constraintlayout = "2.2.1"
 androidx-constraintlayout-compose = "1.1.1"
+androidx-core-splashscreen = "1.2.0"
 androidx-exifinterface = "1.4.2"
 androidx-lifecycle = "2.10.0" # sync with jetbrains-lifecycle
 androidx-navigation = "2.9.8"
@@ -90,6 +91,7 @@ androidx-compose-ui-test-junit4-android = { module = "androidx.compose.ui:ui-tes
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout-compose" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "androidx-exifinterface" }
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }

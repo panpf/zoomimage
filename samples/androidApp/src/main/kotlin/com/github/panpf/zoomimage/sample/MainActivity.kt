@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.sample
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.github.panpf.zoomimage.sample.ui.ComposeMainActivity
 import com.github.panpf.zoomimage.sample.ui.ViewMainActivity
 import com.github.panpf.zoomimage.sample.ui.base.BaseActivity
@@ -9,6 +10,7 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseActivity
 class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         if (appSettings.composePage.value) {
