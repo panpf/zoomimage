@@ -25,7 +25,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 interface MyNavKey : NavKey {
-    val lightStatusAndNavigationBar: Boolean
+    val lightModeSystemBars: Boolean
         get() = true
 }
 
@@ -70,7 +70,7 @@ data object TempTestRoute : Route
 
 @Serializable
 data class PhotoPagerRoute(val params: PhotoPagerScreenParams) : Route {
-    override val lightStatusAndNavigationBar: Boolean
+    override val lightModeSystemBars: Boolean
         get() = false
 }
 

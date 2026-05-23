@@ -17,23 +17,19 @@
 package com.github.panpf.zoomimage.sample.ui.base
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import com.github.panpf.tools4a.toast.ktx.showLongToast
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.ui.util.getWindowBackgroundColor
 import com.github.panpf.zoomimage.sample.ui.util.isDarkTheme
-import com.google.android.material.internal.EdgeToEdgeUtils
 import com.google.android.material.internal.ViewUtils
 import org.koin.android.ext.android.inject
 
 abstract class BaseFragment : Fragment() {
 
     protected val appSettings: AppSettings by inject()
-
     private var resumeCount = 0
 
     var screenMode: Boolean = true
@@ -42,12 +38,12 @@ abstract class BaseFragment : Fragment() {
             field = value
         }
 
-    var lightStatusAndNavigationBar: Boolean? = null
+    var lightModeSystemBars: Boolean = true
         set(value) {
             if (value != field) {
                 field = value
                 if (isResumed) {
-                    setupLightStatusAndNavigationBar()
+                    setupLightModeSystemBars()
                 }
             }
         }
@@ -57,6 +53,24 @@ abstract class BaseFragment : Fragment() {
         setupScreenMode(view)
         setupWindowInsets()
     }
+
+    override fun onResume() {
+        super.onResume()
+        setupLightModeSystemBars()
+
+        resumeCount++
+        if (resumeCount == 1) {
+            onFirstResume()
+        }
+    }
+
+    protected open fun onFirstResume() {
+
+    }
+
+    open fun getStatusBarInsetsView(): View? = null
+
+    open fun getNavigationBarInsetsView(): View? = null
 
     private fun setupScreenMode(view: View) {
         if (screenMode) {
@@ -89,54 +103,13 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
-    open fun getStatusBarInsetsView(): View? = null
-
-    open fun getNavigationBarInsetsView(): View? = null
-
-    @SuppressLint("RestrictedApi")
-    private fun setupLightStatusAndNavigationBar() {
+    private fun setupLightModeSystemBars() {
         if (screenMode) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                EdgeToEdgeUtils.setLightStatusBar(
-                    /* window = */ requireActivity().window,
-                    /* isLight = */
-                    lightStatusAndNavigationBar != false && !requireContext().isDarkTheme()
-                )
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                EdgeToEdgeUtils.setLightNavigationBar(
-                    /* window = */ requireActivity().window,
-                    /* isLight = */
-                    lightStatusAndNavigationBar != false && !requireContext().isDarkTheme()
-                )
-            }
+            val window = requireActivity().window
+            val darkTheme = requireContext().isDarkTheme()
+            val isLightMode = lightModeSystemBars && !darkTheme
+            EdgeToEdgeController.setStatusBarStyle(window = window, isLightMode = isLightMode)
+            EdgeToEdgeController.setNavigationBarStyle(window = window, isLightMode = isLightMode)
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        setupLightStatusAndNavigationBar()
-
-        resumeCount++
-        if (resumeCount == 1) {
-            onFirstResume()
-        }
-    }
-
-    protected open fun onFirstResume() {
-
-    }
-
-    fun handleActionResult(result: ActionResult): Boolean =
-        when (result) {
-            is ActionResult.Success -> {
-                result.message?.let { showLongToast(it) }
-                true
-            }
-
-            is ActionResult.Error -> {
-                showLongToast(result.message)
-                false
-            }
-        }
 }
