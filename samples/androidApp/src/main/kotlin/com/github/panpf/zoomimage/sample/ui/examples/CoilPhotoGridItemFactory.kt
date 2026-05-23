@@ -43,6 +43,7 @@ class CoilPhotoGridItemFactory(val fragmentManager: FragmentManager) : BasePhoto
         binding.image.setOnLongClickListener {
             val result = binding.image.result
             if (result != null) {
+                // TODO navigation
                 InfoItemsDialogFragment().apply {
                     val infoItems = buildImageInfos(result)
                     arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()

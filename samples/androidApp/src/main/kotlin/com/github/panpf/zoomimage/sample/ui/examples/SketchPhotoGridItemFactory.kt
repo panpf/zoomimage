@@ -42,6 +42,7 @@ class SketchPhotoGridItemFactory(val fragmentManager: FragmentManager) :
         binding.image.setOnLongClickListener {
             val result = binding.image.imageResult
             if (result != null) {
+                // TODO navigation
                 InfoItemsDialogFragment().apply {
                     val infoItems = buildImageInfos(result)
                     arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()

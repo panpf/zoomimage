@@ -111,6 +111,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 zoomable.setRtlLayoutDirection(it)
             }
             onViewLongPressListener = OnViewLongPressListener { _, _ ->
+                // TODO navigation
                 InfoItemsDialogFragment().apply {
                     val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
                     arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
@@ -295,6 +296,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         }
 
         binding.info.setOnClickListener {
+            // TODO navigation
             InfoItemsDialogFragment().apply {
                 val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
                 arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()

@@ -63,6 +63,8 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScrollEdge
 import com.github.panpf.zoomimage.zoom.internal.ZoomableCore
 
+// TODO Support mac windows trackpad zoom and move
+
 /**
  * Creates and remember a [ZoomableState] that can be used to control the scale, pan, rotation of the content.
  *
