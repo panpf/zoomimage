@@ -50,15 +50,6 @@ class InfoItemsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBindin
             clipToPadding = false
         }
     }
-
-    companion object {
-
-        fun buildArgs(infoItems: List<InfoItem>): InfoItemsDialogFragmentArgs {
-            return InfoItemsDialogFragmentArgs(
-                infoItems = Json.encodeToString(infoItems),
-            )
-        }
-    }
 }
 
 fun buildZoomImageViewInfos(

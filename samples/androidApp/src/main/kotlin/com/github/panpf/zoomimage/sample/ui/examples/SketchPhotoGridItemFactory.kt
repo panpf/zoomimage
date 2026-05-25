@@ -18,19 +18,21 @@ package com.github.panpf.zoomimage.sample.ui.examples
 
 import android.content.Context
 import android.widget.ImageView
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.github.panpf.sketch.imageResult
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.resize.LongImagePrecisionDecider
 import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.state.IconDrawableStateImage
+import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
-import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import kotlinx.serialization.json.Json
 
-class SketchPhotoGridItemFactory(val fragmentManager: FragmentManager) :
+class SketchPhotoGridItemFactory(val fragment: Fragment) :
     BasePhotoGridItemFactory() {
 
     override fun initItem(
@@ -42,11 +44,10 @@ class SketchPhotoGridItemFactory(val fragmentManager: FragmentManager) :
         binding.image.setOnLongClickListener {
             val result = binding.image.imageResult
             if (result != null) {
-                // TODO navigation
-                InfoItemsDialogFragment().apply {
-                    val infoItems = buildImageInfos(result)
-                    arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
-                }.show(fragmentManager, null)
+                val infoItems = buildImageInfos(result)
+                val jsonInfoItems = Json.encodeToString(infoItems)
+                fragment.findNavController()
+                    .navigate(NavMainDirections.actionInfoItemsDialogFragment(jsonInfoItems))
             }
             true
         }

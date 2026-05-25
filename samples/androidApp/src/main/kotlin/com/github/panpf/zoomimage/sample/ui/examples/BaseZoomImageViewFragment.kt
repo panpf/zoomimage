@@ -35,7 +35,6 @@ import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.components.buildZoomImageViewInfos
@@ -57,6 +56,7 @@ import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import kotlin.math.roundToInt
 import com.github.panpf.zoomimage.sample.R as CommonR
@@ -111,11 +111,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 zoomable.setRtlLayoutDirection(it)
             }
             onViewLongPressListener = OnViewLongPressListener { _, _ ->
-                // TODO navigation
-                InfoItemsDialogFragment().apply {
-                    val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
-                    arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
-                }.show(childFragmentManager, null)
+                val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
+                val jsonInfoItems = Json.encodeToString(infoItems)
+                findNavController()
+                    .navigate(NavMainDirections.actionInfoItemsDialogFragment(jsonInfoItems))
             }
             appSettings.zoomImageLogLevel.collectWithLifecycle(viewLifecycleOwner) {
                 logger.level = it
@@ -296,11 +295,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         }
 
         binding.info.setOnClickListener {
-            // TODO navigation
-            InfoItemsDialogFragment().apply {
-                val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
-                arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
-            }.show(childFragmentManager, null)
+            val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
+            val jsonInfoItems = Json.encodeToString(infoItems)
+            findNavController()
+                .navigate(NavMainDirections.actionInfoItemsDialogFragment(jsonInfoItems))
         }
 
         binding.linearScaleSlider.apply {

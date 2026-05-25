@@ -20,19 +20,21 @@ import android.content.Context
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toDrawable
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
 import coil3.result
+import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
-import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.model.Photo
+import kotlinx.serialization.json.Json
 
-class CoilPhotoGridItemFactory(val fragmentManager: FragmentManager) : BasePhotoGridItemFactory() {
+class CoilPhotoGridItemFactory(val fragment: Fragment) : BasePhotoGridItemFactory() {
 
     override fun initItem(
         context: Context,
@@ -43,11 +45,10 @@ class CoilPhotoGridItemFactory(val fragmentManager: FragmentManager) : BasePhoto
         binding.image.setOnLongClickListener {
             val result = binding.image.result
             if (result != null) {
-                // TODO navigation
-                InfoItemsDialogFragment().apply {
-                    val infoItems = buildImageInfos(result)
-                    arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
-                }.show(fragmentManager, null)
+                val infoItems = buildImageInfos(result)
+                val jsonInfoItems = Json.encodeToString(infoItems)
+                fragment.findNavController()
+                    .navigate(NavMainDirections.actionInfoItemsDialogFragment(jsonInfoItems))
             }
             true
         }

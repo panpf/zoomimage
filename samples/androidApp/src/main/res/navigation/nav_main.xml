@@ -218,14 +218,17 @@
             app:nullable="false" />
     </fragment>
 
-    <fragment
+    <dialog
         android:id="@+id/infoItemsDialogFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment">
         <argument
             android:name="infoItems"
             app:argType="string"
             app:nullable="false" />
-    </fragment>
+    </dialog>
+    <action
+        android:id="@+id/action_infoItemsDialogFragment"
+        app:destination="@id/infoItemsDialogFragment" />
 
     <fragment
         android:id="@+id/tempTestFragment"
