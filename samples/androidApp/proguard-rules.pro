@@ -82,3 +82,7 @@
 -keep class * implements androidx.viewbinding.ViewBinding{
     public *;
 }
+
+
+# ----------------------------------------- Glide -------------------------------------------- #
+-keep public class * extends com.bumptech.glide.module.AppGlideModule

@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("org.jetbrains.kotlinx.atomicfu")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.devtools.ksp")
 }
 
 androidApplication(
@@ -84,6 +85,8 @@ dependencies {
     implementation(libs.panpf.tools4a.view)
     implementation(libs.photoview)
     implementation(libs.subsamplingscaleimageview)
+
+    ksp(libs.glide.ksp)
 
     debugImplementation(libs.leakcanary)
 }

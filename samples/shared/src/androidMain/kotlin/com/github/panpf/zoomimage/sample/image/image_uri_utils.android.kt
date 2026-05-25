@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.sample.image
 
 import android.content.Context
 import coil3.PlatformContext
-import com.github.panpf.sketch.fetch.isComposeResourceUri
 import com.github.panpf.sketch.util.toUri
 
 actual fun sketchUri2CoilModel(context: PlatformContext, sketchImageUri: String): Any? {
@@ -38,10 +37,10 @@ fun sketchUri2GlideModel(context: Context, sketchImageUri: String): Any {
             "file://$sketchImageUri"
         }
 
-        isComposeResourceUri(uri) -> {
-            val resourceName = uri.pathSegments.lastOrNull()
-            "file:///android_asset/$resourceName"
-        }
+//        isComposeResourceUri(uri) -> {
+//            val resourceName = uri.pathSegments.lastOrNull()
+//            "file:///android_asset/$resourceName"
+//        }
 
         else -> {
             sketchImageUri

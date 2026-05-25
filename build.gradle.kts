@@ -30,6 +30,7 @@ buildscript {
         classpath(libs.gradlePlugin.kotlinxAtomicfu)
         classpath(libs.gradlePlugin.kotlinxCover)
         classpath(libs.gradlePlugin.mavenPublish)
+        classpath(libs.gradlePlugin.ksp)
     }
 }
 

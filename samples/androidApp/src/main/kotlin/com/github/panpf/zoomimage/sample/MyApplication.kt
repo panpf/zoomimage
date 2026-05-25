@@ -49,7 +49,6 @@ class MyApplication : Application(), SingletonImageLoader.Factory {
             loggingEnabled(logLevel <= Log.DEBUG)
         }.build())
 
-        // TODO Glide support compose resources
         Glide.init(context, GlideBuilder().setLogLevel(logLevel))
 
         val sketch: Sketch = KoinPlatform.getKoin().get()
