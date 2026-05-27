@@ -35,6 +35,8 @@ import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.EdgeToEdgeController
+import com.github.panpf.zoomimage.sample.ui.base.parentViewModelWith
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.components.buildZoomImageViewInfos
@@ -42,7 +44,6 @@ import com.github.panpf.zoomimage.sample.ui.gallery.CaptureViewModel
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
 import com.github.panpf.zoomimage.sample.ui.util.capture
 import com.github.panpf.zoomimage.sample.ui.util.crop
-import com.github.panpf.zoomimage.sample.ui.util.parentViewModel
 import com.github.panpf.zoomimage.sample.ui.util.toAndroidRect
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
@@ -67,7 +68,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     abstract val sketchImageUri: String
 
     private var zoomView: ZOOM_VIEW? = null
-    private val photoPaletteViewModel by parentViewModel<PhotoPaletteViewModel>()
+    private val photoPaletteViewModel by parentViewModelWith<PhotoPaletteViewModel, PhotoPagerFragment>()
     private val captureViewModel by activityViewModel<CaptureViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
