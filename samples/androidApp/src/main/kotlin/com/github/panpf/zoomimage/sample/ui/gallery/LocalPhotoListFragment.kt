@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
+import android.Manifest
+import android.os.Build
 import androidx.paging.PagingData
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.Flow
@@ -7,7 +9,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LocalPhotoListFragment : BasePhotoListFragment() {
 
-    override val permission: String = "android.Manifest.permission.READ_EXTERNAL_STORAGE"
+    override val permissions: Array<String> =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+        } else {
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
 
     private val localPhotoListViewModel by viewModel<LocalPhotoListViewModel>()
 

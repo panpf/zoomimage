@@ -35,12 +35,12 @@ import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.base.EdgeToEdgeController
 import com.github.panpf.zoomimage.sample.ui.base.parentViewModelWith
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.components.buildZoomImageViewInfos
 import com.github.panpf.zoomimage.sample.ui.gallery.CaptureViewModel
+import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerFragment
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
 import com.github.panpf.zoomimage.sample.ui.util.capture
 import com.github.panpf.zoomimage.sample.ui.util.crop
@@ -426,6 +426,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             binding.moveKeyboard.thumbView.drawable.setTint(photoPalette.containerColorInt)
         }
 
+        onViewCreated(binding, zoomImageView, savedInstanceState)
         loadData()
     }
 

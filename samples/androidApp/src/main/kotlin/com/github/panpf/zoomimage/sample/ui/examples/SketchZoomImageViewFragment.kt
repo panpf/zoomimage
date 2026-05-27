@@ -69,8 +69,6 @@ class SketchZoomImageViewFragment : BaseZoomImageViewFragment<SketchZoomImageVie
                     binding.stateView.gone()
                 }
             }
-
-        super.onViewCreated(binding, savedInstanceState)
     }
 
     override fun loadImage(zoomView: SketchZoomImageView, stateView: StateView) {
