@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,7 +38,6 @@ import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.windowInsetsPaddingWithScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
@@ -58,9 +55,9 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun OverlayTestScreen() {
     BaseScreen {
-        ToolbarScaffold(title = "Overlay") {
+        ToolbarScaffold(title = "Overlay", addNavigationBarWindowInsets = true) {
             val zoomState = rememberSketchZoomState()
-            val scrollBarSpec = ScrollBarSpec.DefaultAndWindowInsets
+            val scrollBarSpec = ScrollBarSpec.MediumAndWindowInsets
             SketchZoomAsyncImage(
                 request = ComposableImageRequest(ComposeResImageFiles.woodpile.uri) {
                     size(500, 500)
@@ -80,13 +77,12 @@ fun OverlayTestScreen() {
             Box(
                 Modifier.fillMaxWidth()
                     .align(Alignment.BottomStart)
-                    .windowInsetsPaddingWithScrollBar(WindowInsets.navigationBars, scrollBarSpec)
             ) {
                 val coroutineScope = rememberCoroutineScope()
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(20.dp)
+                        .padding(25.dp)
                         .alpha(0.8f)
                         .clip(RoundedCornerShape(50))
                         .background(colorScheme.tertiaryContainer)
@@ -108,7 +104,7 @@ fun OverlayTestScreen() {
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(20.dp)
+                        .padding(25.dp)
                         .alpha(0.8f)
                 ) {
                     Row(

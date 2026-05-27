@@ -52,9 +52,18 @@ sketchImageView.scrollBar = ScrollBarSpec(
 
 ScrollBarSpec 还有提供了一些常用配置如下：
 
-* ScrollBarSpec.Default：默认配置，颜色为灰色，尺寸为 3 dp，距离边缘为 6 dp，不启用 WindowInsets
-* ScrollBarSpec.DefaultAndWindowInsets：默认配置，颜色为灰色，尺寸为 3 dp，距离边缘为 6 dp，启用
+* ScrollBarSpec.Default：默认配置，颜色为灰色，尺寸为 3 dp，距离屏幕侧边边缘为 6 dp，两头距离屏幕边缘为
+  12 dp，不启用 WindowInsets
+* ScrollBarSpec.DefaultAndWindowInsets：默认配置，颜色为灰色，尺寸为 3 dp，距离屏幕侧边边缘为 6
+  dp，两头距离屏幕边缘为 12 dp，启用 WindowInsets
+* ScrollBarSpec.Medium：颜色为灰色，尺寸为 5 dp，距离屏幕侧边边缘为 10 dp，两头距离屏幕边缘为 20 dp，不启用
   WindowInsets
+* ScrollBarSpec.MediumAndWindowInsets：颜色为灰色，尺寸为 5 dp，距离屏幕侧边边缘为 10 dp，两头距离屏幕边缘为
+  20 dp，启用 WindowInsets
+* ScrollBarSpec.Large：颜色为灰色，尺寸为 7 dp，距离屏幕侧边边缘为 14 dp，两头距离屏幕边缘为 28 dp，不启用
+  WindowInsets
+* ScrollBarSpec.LargeAndWindowInsets：颜色为灰色，尺寸为 7 dp，距离屏幕侧边边缘为 14 dp，两头距离屏幕边缘为
+  28 dp，启用 WindowInsets
 
 如果你想要在导航 WindowInsets 的基础上再增加滚动条的距离，如下：
 

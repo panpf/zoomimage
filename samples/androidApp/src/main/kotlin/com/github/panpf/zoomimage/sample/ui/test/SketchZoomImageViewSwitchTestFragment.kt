@@ -31,6 +31,7 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.list.ImageThumbnailItemFactory
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,10 +54,13 @@ class SketchZoomImageViewSwitchTestFragment :
     ) {
         toolbar.title = "SketchZoomImageView (Switch)"
 
-        binding.zoomImageView.zoomable.transformState
-            .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.CREATED) {
-                updateInfo(binding)
-            }
+        binding.zoomImageView.apply {
+            scrollBar = ScrollBarSpec.Medium
+            zoomable.transformState
+                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.CREATED) {
+                    updateInfo(binding)
+                }
+        }
 
         binding.images.apply {
             layoutManager = LinearLayoutManager(

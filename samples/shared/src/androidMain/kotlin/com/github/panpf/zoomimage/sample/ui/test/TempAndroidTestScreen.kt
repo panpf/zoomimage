@@ -32,7 +32,7 @@ fun GlideThumbnailSample() {
         model = ComposeResImageFiles.hugeChina.uri,
         modifier = Modifier.fillMaxSize(),
         contentDescription = null,
-        scrollBar = ScrollBarSpec.DefaultAndWindowInsets,
+        scrollBar = ScrollBarSpec.MediumAndWindowInsets,
         requestBuilderTransform = {
             it.thumbnail(
                 Glide.with(context)

@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.sample.databinding.FragmentTempTestBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 
 class TempTestFragment : BaseToolbarBindingFragment<FragmentTempTestBinding>() {
 
@@ -36,7 +37,10 @@ class TempTestFragment : BaseToolbarBindingFragment<FragmentTempTestBinding>() {
     ) {
         toolbar.title = "Temp"
 
-        binding.glideZoomImageView.logger.level = Logger.Level.Verbose
+        binding.glideZoomImageView.apply {
+            logger.level = Logger.Level.Verbose
+            scrollBar = ScrollBarSpec.MediumAndWindowInsets
+        }
 
         Glide.with(binding.glideZoomImageView)
             .load(AssetImageFiles.hugeChina.uri)

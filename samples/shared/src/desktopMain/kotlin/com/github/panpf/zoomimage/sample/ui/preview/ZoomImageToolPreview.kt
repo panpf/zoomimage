@@ -33,6 +33,6 @@ fun ZoomImageToolPreview() {
         infoDialogState = rememberMyDialogState(),
         capturableState = rememberCapturableState(),
         photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) },
-        scrollBar = ScrollBarSpec.DefaultAndWindowInsets
+        scrollBar = ScrollBarSpec.MediumAndWindowInsets
     )
 }

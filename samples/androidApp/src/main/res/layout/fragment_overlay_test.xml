@@ -19,7 +19,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
+        android:layout_margin="25dp"
         android:alpha="0.8"
         android:background="@drawable/bg_container_oval_tertiary"
         android:padding="10dp"
@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_margin="20dp"
+        android:layout_margin="25dp"
         android:orientation="vertical">
 
         <LinearLayout

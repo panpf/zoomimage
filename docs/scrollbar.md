@@ -55,10 +55,19 @@ sketchImageView.scrollBar = ScrollBarSpec(
 
 ScrollBarSpec also provides some common configurations, as follows:
 
-* ScrollBarSpec.Default: Default configuration, color gray, size 3 dp, 6 dp from edge, no
-  WindowInsets enabled
-* ScrollBarSpec.DefaultAndWindowInsets: Default configuration, color gray, size 3 dp, 6 dp from
-  edge, WindowInsets enabled
+* ScrollBarSpec.Default: Default configuration, color is gray, size is 3 dp, 6 dp from the side edge
+  of the screen, 12 dp from the edge of the screen at both ends, WindowInsets is not enabled
+* ScrollBarSpec.DefaultAndWindowInsets: Default configuration, color is gray, size is 3 dp, 6 dp
+  from the side edge of the screen, 12 dp from the edge of the screen at both ends, WindowInsets is
+  enabled
+* ScrollBarSpec.Medium: Color is gray, size is 5 dp, 10 dp from the side edge of the screen, 20 dp
+  from the edge of the screen at both ends, WindowInsets is not enabled
+* ScrollBarSpec.MediumAndWindowInsets: Color is gray, size is 5 dp, 10 dp from the side edge of the
+  screen, 20 dp from the edge of the screen at both ends, WindowInsets enabled
+* ScrollBarSpec.Large: Color is gray, size is 7 dp, 14 dp from the side edge of the screen, 28 dp
+  from the edge of the screen at both ends, WindowInsets is not enabled
+* ScrollBarSpec.LargeAndWindowInsets: Color is gray, size is 7 dp, 14 dp from side edge of screen,
+  28 dp from edge of screen at both ends, WindowInsets enabled
 
 If you want to increase the distance of the scroll bar based on navigation WindowInsets, as follows:
 

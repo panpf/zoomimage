@@ -32,14 +32,19 @@ data class ScrollBarSpec(
     val color: Int = DEFAULT_COLOR,
 
     /**
-     * Scroll bar size, default to 3 dp
+     * Scroll bar size
      */
-    val size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,  // TODO Split into four attributes: leftMargin, topMargin, rightMargin, bottomMargin
+    val size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
 
     /**
-     * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
+     * The distance from the side of the scroll bar to the edge of the screen
      */
-    val margin: Float = DEFAULT_MARGIN * Resources.getSystem().displayMetrics.density,
+    val sideMargin: Float = DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+
+    /**
+     * The distance from the scroll bar head and tail to the edge of the screen
+     */
+    val endsMargin: Float = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
 
     /**
      * Whether to enable the scroll bar to avoid being covered by system window insets, which defaults to false
@@ -48,6 +53,10 @@ data class ScrollBarSpec(
 ) {
 
     // For keep binary compatibility
+    @Deprecated(
+        message = "This constructor is only for binary compatibility, please use the primary constructor instead",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         /**
          * Scroll bar color, which defaults to translucent gray
@@ -63,21 +72,53 @@ data class ScrollBarSpec(
          * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
          */
         margin: Float = DEFAULT_MARGIN * Resources.getSystem().displayMetrics.density,
-    ) : this(color = color, size = size, margin = margin, enabledWindowInsets = false)
+    ) : this(
+        color = color,
+        size = size,
+        sideMargin = margin,
+        endsMargin = margin * 2,
+        enabledWindowInsets = false
+    )
 
     companion object {
         const val DEFAULT_COLOR = 0xB2888888.toInt()
         const val DEFAULT_SIZE = 3f
         const val DEFAULT_MARGIN = 6f
-        val Default = ScrollBarSpec()
-        val DefaultAndWindowInsets = ScrollBarSpec(enabledWindowInsets = true)
-        // TODO Add Large presets
+        const val DEFAULT_SIDE_MARGIN = 6f
+        const val DEFAULT_ENDS_MARGIN = 12f
+
+        val Default = ScrollBarSpec(
+            color = DEFAULT_COLOR,
+            size = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+            sideMargin = DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+            endsMargin = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+            enabledWindowInsets = false
+        )
+        val DefaultAndWindowInsets = Default.copy(enabledWindowInsets = true)
+
+        val Medium = ScrollBarSpec(
+            color = DEFAULT_COLOR,
+            size = 5 * Resources.getSystem().displayMetrics.density,
+            sideMargin = 10 * Resources.getSystem().displayMetrics.density,
+            endsMargin = 20 * Resources.getSystem().displayMetrics.density,
+            enabledWindowInsets = false
+        )
+        val MediumAndWindowInsets = Medium.copy(enabledWindowInsets = true)
+
+        val Large = ScrollBarSpec(
+            color = DEFAULT_COLOR,
+            size = 7 * Resources.getSystem().displayMetrics.density,
+            sideMargin = 14 * Resources.getSystem().displayMetrics.density,
+            endsMargin = 28 * Resources.getSystem().displayMetrics.density,
+            enabledWindowInsets = false
+        )
+        val LargeAndWindowInsets = Large.copy(enabledWindowInsets = true)
     }
 }
 
 fun ScrollBarSpec.toInsets(): Insets = Insets.of(
     /* left = */ 0,
     /* top = */ 0,
-    /* right = */ ((margin * 2) + size).roundToInt(),  // TODO No more multiplying by 2
-    /* bottom = */ ((margin * 2) + size).roundToInt()  // TODO No more multiplying by 2
+    /* right = */ ((sideMargin * 2) + size).roundToInt(),
+    /* bottom = */ ((sideMargin * 2) + size).roundToInt(),
 )

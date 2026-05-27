@@ -123,7 +123,7 @@ fun <T : ZoomState> BaseZoomImageSample(
         val scrollBarSpec by remember {
             derivedStateOf {
                 if (scrollBarEnabled)
-                    ScrollBarSpec.DefaultAndWindowInsets.copy(color = photoPaletteState.value.containerColor) else null
+                    ScrollBarSpec.MediumAndWindowInsets.copy(color = photoPaletteState.value.containerColor) else null
             }
         }
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {

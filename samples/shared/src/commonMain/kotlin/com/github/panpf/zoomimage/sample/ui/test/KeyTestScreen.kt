@@ -28,7 +28,7 @@ fun KeyTestScreen() {
                 uri = ComposeResImageFiles.hugeChina.uri,
                 contentDescription = "",
                 zoomState = zoomState,
-                scrollBar = ScrollBarSpec.DefaultAndWindowInsets,
+                scrollBar = ScrollBarSpec.MediumAndWindowInsets,
                 modifier = Modifier.fillMaxSize()
                     .focusRequester(focusRequester)
                     .focusable()

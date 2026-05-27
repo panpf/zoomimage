@@ -90,17 +90,17 @@ internal class ScrollBarHelper(
         val insets = if (scrollBarSpec.enabledWindowInsets) this.insets else null
         if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
             val horScrollBarRectF = cacheRectF.apply {
-                val leftSpace = (insets?.left ?: 0) + scrollBarSpec.margin * 2
-                val rightSpace = (insets?.right ?: 0) + scrollBarSpec.margin * 2
-                val bottomSpace = (insets?.bottom ?: 0) + scrollBarSpec.margin
+                val leftSpace = (insets?.left ?: 0) + scrollBarSpec.endsMargin
+                val rightSpace = (insets?.right ?: 0) + scrollBarSpec.endsMargin
+                val bottomSpace = (insets?.bottom ?: 0) + scrollBarSpec.sideMargin
                 val validContainerWidth = containerSize.width - leftSpace - rightSpace
                 val widthScale = validContainerWidth / rotatedContentSize.width
                 val mappedRotatedContentVisibleLeft = rotatedContentVisibleRect.left * widthScale
                 val mappedRotatedContentVisibleWidth =
                     (rotatedContentVisibleRect.width * widthScale).coerceAtLeast(minLength)
                 val left = leftSpace + mappedRotatedContentVisibleLeft
-                val right = left + mappedRotatedContentVisibleWidth
                 val top = containerSize.height - bottomSpace - scrollBarSpec.size
+                val right = left + mappedRotatedContentVisibleWidth
                 val bottom = top + scrollBarSpec.size
                 set(/* left = */ left,/* top = */ top,/* right = */ right,/* bottom = */ bottom)
             }
@@ -113,18 +113,18 @@ internal class ScrollBarHelper(
         }
         if (rotatedContentVisibleRect.height < rotatedContentSize.height) {
             val verScrollBarRectF = cacheRectF.apply {
-                val topSpace = (insets?.top ?: 0) + scrollBarSpec.margin * 2
-                val bottomSpace = (insets?.bottom ?: 0) + scrollBarSpec.margin * 2
-                val rightSpace = (insets?.right ?: 0) + scrollBarSpec.margin
+                val topSpace = (insets?.top ?: 0) + scrollBarSpec.endsMargin
+                val bottomSpace = (insets?.bottom ?: 0) + scrollBarSpec.endsMargin
+                val rightSpace = (insets?.right ?: 0) + scrollBarSpec.sideMargin
                 val validContainerHeight = containerSize.height - topSpace - bottomSpace
                 val heightScale = validContainerHeight / rotatedContentSize.height
                 val mappedRotatedContentVisibleTop = rotatedContentVisibleRect.top * heightScale
                 val mappedRotatedContentVisibleHeight =
                     (rotatedContentVisibleRect.height * heightScale).coerceAtLeast(minLength)
-                val top = topSpace + mappedRotatedContentVisibleTop
-                val bottom = top + mappedRotatedContentVisibleHeight
                 val left = containerSize.width - rightSpace - scrollBarSpec.size
+                val top = topSpace + mappedRotatedContentVisibleTop
                 val right = left + scrollBarSpec.size
+                val bottom = top + mappedRotatedContentVisibleHeight
                 set(/* left = */ left,/* top = */ top,/* right = */ right,/* bottom = */ bottom)
             }
             canvas.drawRoundRect(

@@ -56,7 +56,7 @@ fun CoilBigStartCrossfadeTestScreen() {
                         .crossfade(durationMillis = 300)
                         .build(),
                     zoomState = rememberCoilZoomState(logLevel = Logger.Level.Debug),
-                    scrollBar = ScrollBarSpec.DefaultAndWindowInsets,
+                    scrollBar = ScrollBarSpec.MediumAndWindowInsets,
                     contentDescription = null,
                 )
             }

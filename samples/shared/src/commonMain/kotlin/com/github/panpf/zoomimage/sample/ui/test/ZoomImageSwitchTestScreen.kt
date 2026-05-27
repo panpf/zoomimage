@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.AppEvents
@@ -85,6 +86,7 @@ fun ZoomImageSwitchTestScreen() {
                         uri = currentImageUri,
                         contentDescription = "Image",
                         modifier = Modifier.fillMaxSize(),
+                        scrollBar = ScrollBarSpec.MediumAndWindowInsets,
                         zoomState = zoomState,
                     )
 

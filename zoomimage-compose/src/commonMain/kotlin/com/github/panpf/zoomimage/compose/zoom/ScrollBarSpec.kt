@@ -32,17 +32,22 @@ data class ScrollBarSpec(
     /**
      * Scroll bar color, which defaults to translucent gray
      */
-    val color: Color = Color(0xB2888888),
+    val color: Color = DEFAULT_COLOR,
 
     /**
-     * Scroll bar size, default to 3 dp
+     * Scroll bar size
      */
-    val size: Dp = 3.dp,
+    val size: Dp = DEFAULT_SIZE,
 
     /**
-     * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
+     * The distance from the side of the scroll bar to the edge of the screen
      */
-    val margin: Dp = 6.dp,  // TODO Split into four attributes: leftMargin, topMargin, rightMargin, bottomMargin
+    val sideMargin: Dp = DEFAULT_SIDE_MARGIN,
+
+    /**
+     * The distance from the scroll bar head and tail to the edge of the screen
+     */
+    val endsMargin: Dp = DEFAULT_ENDS_MARGIN,
 
     /**
      * Whether to enable the scroll bar to avoid being covered by system window insets, which defaults to false
@@ -51,35 +56,72 @@ data class ScrollBarSpec(
 ) {
 
     // For keep binary compatibility
+    @Deprecated(
+        message = "This constructor is only for binary compatibility, please use the primary constructor instead",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         /**
          * Scroll bar color, which defaults to translucent gray
          */
-        color: Color = Color(0xB2888888),
+        color: Color = DEFAULT_COLOR,
 
         /**
          * Scroll bar size, default to 3 dp
          */
-        size: Dp = 3.dp,
+        size: Dp = DEFAULT_SIZE,
 
         /**
          * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
          */
-        margin: Dp = 6.dp,
-    ) : this(color = color, size = size, margin = margin, enabledWindowInsets = false)
+        margin: Dp = DEFAULT_MARGIN,
+    ) : this(
+        color = color,
+        size = size,
+        sideMargin = margin,
+        endsMargin = margin * 2,
+        enabledWindowInsets = false
+    )
 
     companion object {
-        val Default = ScrollBarSpec()
-        val DefaultAndWindowInsets = ScrollBarSpec(enabledWindowInsets = true)
-        // TODO Add Large presets
-//        val Large = ScrollBarSpec(size = 6.dp, margin = 12.dp)
-//        val LargeAndWindowInsets = ScrollBarSpec(size = 6.dp, margin = 12.dp, enabledWindowInsets = true)
+        val DEFAULT_COLOR = Color(0xB2888888.toInt())
+        val DEFAULT_SIZE = 3f.dp
+        val DEFAULT_MARGIN = 6f.dp
+        val DEFAULT_SIDE_MARGIN = 6f.dp
+        val DEFAULT_ENDS_MARGIN = 12f.dp
+
+        val Default = ScrollBarSpec(
+            color = DEFAULT_COLOR,
+            size = DEFAULT_SIZE,
+            sideMargin = DEFAULT_SIDE_MARGIN,
+            endsMargin = DEFAULT_ENDS_MARGIN,
+            enabledWindowInsets = false,
+        )
+        val DefaultAndWindowInsets = Default.copy(enabledWindowInsets = true)
+
+        val Medium = ScrollBarSpec(
+            color = DEFAULT_COLOR,
+            size = 5.dp,
+            sideMargin = 10.dp,
+            endsMargin = 20.dp,
+            enabledWindowInsets = false,
+        )
+        val MediumAndWindowInsets = Medium.copy(enabledWindowInsets = true)
+
+        val Large = ScrollBarSpec(
+            color = DEFAULT_COLOR,
+            size = 7.dp,
+            sideMargin = 14.dp,
+            endsMargin = 28.dp,
+            enabledWindowInsets = false,
+        )
+        val LargeAndWindowInsets = Large.copy(enabledWindowInsets = true)
     }
 }
 
 fun ScrollBarSpec.toWindowInsets(): WindowInsets = WindowInsets(
     left = 0.dp,
     top = 0.dp,
-    right = ((margin * 2) + size),  // TODO No more multiplying by 2
-    bottom = ((margin * 2) + size),  // TODO No more multiplying by 2
+    right = ((sideMargin * 2) + size),
+    bottom = ((sideMargin * 2) + size),
 )

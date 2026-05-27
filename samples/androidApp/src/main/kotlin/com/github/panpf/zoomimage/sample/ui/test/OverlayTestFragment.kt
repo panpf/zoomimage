@@ -36,6 +36,7 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.subsampling.internal.withZooming
+import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,9 +60,12 @@ class OverlayTestFragment : BaseToolbarBindingFragment<FragmentOverlayTestBindin
     ) {
         toolbar.title = "Overlay"
 
-        binding.sketchZoomImageView.logger.level = Logger.Level.Verbose
-        binding.sketchZoomImageView.loadImage(ComposeResImageFiles.woodpile.uri) {
-            size(500, 500)
+        binding.sketchZoomImageView.apply {
+            logger.level = Logger.Level.Verbose
+            scrollBar = ScrollBarSpec.Medium
+            loadImage(ComposeResImageFiles.woodpile.uri) {
+                size(500, 500)
+            }
         }
         binding.overlayView.setZoomableEngine(binding.sketchZoomImageView.zoomable)
 
