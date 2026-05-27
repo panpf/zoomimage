@@ -255,6 +255,7 @@ fun SketchZoomAsyncImage(
                 Modifier
                     .matchParentSize()
                     .let {
+                        // TODO WindowInsets.systemBars, WindowInsets.statusBars, WindowInsets.navigationBars should be optional here, controlled by parameters provided by ScrollBarSpec
                         if (scrollBar.enabledWindowInsets)
                             it.windowInsetsPadding(WindowInsets.safeDrawing) else it
                     }

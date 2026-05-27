@@ -88,7 +88,7 @@ open class ZoomImageView @JvmOverloads constructor(
     private val cacheImageMatrix = Matrix()
     private var wrappedScaleType: ScaleType
     private var scrollBarHelper: ScrollBarHelper? = null
-    private var navigationBarInsets: Insets? = null
+    private var scrollBarInsets: Insets? = null
 
     val logger = newLogger()
 
@@ -152,8 +152,9 @@ open class ZoomImageView @JvmOverloads constructor(
         this.touchHelper = TouchHelper(this, zoomableEngine)
 
         ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
+            // TODO WindowInsets.systemBars, WindowInsets.statusBars, WindowInsets.navigationBars should be optional here, controlled by parameters provided by ScrollBarSpec
             val windowInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            this@ZoomImageView.navigationBarInsets = windowInsets
+            this@ZoomImageView.scrollBarInsets = windowInsets
             scrollBarHelper?.setInsets(windowInsets)
             insets
         }
@@ -398,7 +399,7 @@ open class ZoomImageView @JvmOverloads constructor(
         val scrollBarSpec = this.scrollBar
         if (scrollBarSpec != null) {
             scrollBarHelper = ScrollBarHelper(this, scrollBarSpec, zoomable)
-            scrollBarHelper?.setInsets(navigationBarInsets)
+            scrollBarHelper?.setInsets(scrollBarInsets)
         }
         invalidate()
     }
