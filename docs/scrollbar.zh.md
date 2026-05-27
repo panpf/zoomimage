@@ -60,11 +60,14 @@ ScrollBarSpec 还有提供了一些常用配置如下：
 
 ```kotlin
 val scrollBarSpec = ScrollBarSpec.Default
+
 // compose
+val scrollBarInsets = scrollBarSpec?.toWindowInsets() ?: WindowInsets()
+val windowInsets = NavigationBarDefaults.windowInsets.add(scrollBarInsets)
 Box(
   modifier = Modifier
     .fillMaxSize()
-    .windowInsetsPaddingWithScrollBar(NavigationBarDefaults.windowInsets, scrollBarSpec)
+    .windowInsetsPadding(windowInsets)
 ) {
 
 }

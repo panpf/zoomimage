@@ -64,11 +64,14 @@ If you want to increase the distance of the scroll bar based on navigation Windo
 
 ```kotlin
 val scrollBarSpec = ScrollBarSpec.Default
+
 // compose
+val scrollBarInsets = scrollBarSpec?.toWindowInsets() ?: WindowInsets()
+val windowInsets = NavigationBarDefaults.windowInsets.add(scrollBarInsets)
 Box(
   modifier = Modifier
     .fillMaxSize()
-    .windowInsetsPaddingWithScrollBar(NavigationBarDefaults.windowInsets, scrollBarSpec)
+    .windowInsetsPadding(windowInsets)
 ) {
 
 }

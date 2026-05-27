@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -66,7 +68,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
-import com.github.panpf.zoomimage.compose.zoom.windowInsetsPaddingWithScrollBar
+import com.github.panpf.zoomimage.compose.zoom.toWindowInsets
 import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.Res
@@ -330,10 +332,12 @@ fun ZoomImageTool(
     scrollBar: ScrollBarSpec?,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val scrollBarInsets = scrollBar?.toWindowInsets() ?: WindowInsets()
+    val windowInsets = NavigationBarDefaults.windowInsets.add(scrollBarInsets)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPaddingWithScrollBar(NavigationBarDefaults.windowInsets, scrollBar)
+            .windowInsetsPadding(windowInsets)
     ) {
         ZoomImageMinimap(
             imageUri = photo.listThumbnailUrl,

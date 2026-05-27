@@ -19,10 +19,6 @@ package com.github.panpf.zoomimage.compose.zoom
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.add
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -56,48 +52,6 @@ fun Modifier.zoomScrollBar(
     scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
 ): Modifier = this
     .then(ZoomScrollBarElement(zoomable, scrollBarSpec))
-
-/**
- * The padding of the scroll bar is added to the original insets, so that the content will not be covered by the scroll bar.
- */
-@Stable
-fun Modifier.windowInsetsPaddingWithScrollBar(
-    insets: WindowInsets,
-    scrollBarSpec: ScrollBarSpec?
-): Modifier {
-    val padding = if (scrollBarSpec != null) {
-        Modifier.windowInsetsPadding(insets.add(scrollBarSpec.toWindowInsets()))
-    } else {
-        Modifier.windowInsetsPadding(insets)
-    }
-    return this then padding
-}
-
-///**
-// * Calculate the space occupied by the scroll bar based on the [ScrollBarSpec] and use it as
-// * a new [WindowInsets] to correctly add padding to the scroll bar when using [windowInsetsPaddingWithScrollBar].
-// */
-//@Immutable
-//data class ScrollBarWindowInsets(val scrollBarSpec: ScrollBarSpec) : WindowInsets {
-//
-//    override fun getLeft(
-//        density: Density,
-//        layoutDirection: LayoutDirection
-//    ): Int = 0
-//
-//    override fun getTop(density: Density): Int = 0
-//
-//    override fun getRight(
-//        density: Density,
-//        layoutDirection: LayoutDirection
-//    ): Int = with(density) {
-//        ((scrollBarSpec.margin.toPx() * 2) + scrollBarSpec.size.toPx()).roundToInt()
-//    }
-//
-//    override fun getBottom(density: Density): Int = with(density) {
-//        ((scrollBarSpec.margin.toPx() * 2) + scrollBarSpec.size.toPx()).roundToInt()
-//    }
-//}
 
 internal data class ZoomScrollBarElement(
     val zoomable: ZoomableState,
@@ -137,6 +91,7 @@ internal class ZoomScrollBarNode(
         invalidateDraw()
     }
 
+    @Suppress("UnnecessaryVariable")
     override fun ContentDrawScope.draw() {
         drawContent()
 
@@ -161,7 +116,8 @@ internal class ZoomScrollBarNode(
         val rotation = zoomable.transform.rotation
         val density = currentValueOf(LocalDensity)
         val scrollBarSize = with(density) { scrollBarSpec.size.toPx() }
-        val marginPx = with(density) { scrollBarSpec.margin.toPx() }
+        val sideMarginPx = with(density) { scrollBarSpec.sideMargin.toPx() }
+        val endsMarginPx = with(density) { scrollBarSpec.endsMargin.toPx() }
         val cornerRadius = CornerRadius(scrollBarSize / 2f, scrollBarSize / 2f)
         val minLength = with(density) { 10.dp.toPx() }
         val alpha = alphaAnimatable.value
@@ -169,39 +125,42 @@ internal class ZoomScrollBarNode(
             .rotateInSpace(contentSize, rotation.roundToInt())
         val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
         val drawSize = this.size
-        val drawHorScrollBar = rotatedContentVisibleRect.width < rotatedContentSize.width
-        val drawVerScrollBar = rotatedContentVisibleRect.height < rotatedContentSize.height
-        if (drawHorScrollBar) {
-            val widthScale = (drawSize.width - marginPx * 4) / rotatedContentSize.width
+        if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
+            val leftSpace = endsMarginPx
+            val rightSpace = endsMarginPx
+            val bottomSpace = sideMarginPx
+            val validDrawWidth = drawSize.width - leftSpace - rightSpace
+            val widthScale = validDrawWidth / rotatedContentSize.width
+            val mappedRotatedContentVisibleLeft = rotatedContentVisibleRect.left * widthScale
+            val mappedRotatedContentVisibleWidth = (rotatedContentVisibleRect.width * widthScale)
+                .coerceAtLeast(minLength)
+            val left = leftSpace + mappedRotatedContentVisibleLeft
+            val top = drawSize.height - bottomSpace - scrollBarSize
             drawRoundRect(
                 color = scrollBarSpec.color,
-                topLeft = Offset(
-                    x = (marginPx * 2) + (rotatedContentVisibleRect.left * widthScale),
-                    y = drawSize.height - marginPx - scrollBarSize
-                ),
-                size = Size(
-                    width = (rotatedContentVisibleRect.width * widthScale)
-                        .coerceAtLeast(minLength),
-                    height = scrollBarSize
-                ),
+                topLeft = Offset(x = left, y = top),
+                size = Size(width = mappedRotatedContentVisibleWidth, height = scrollBarSize),
                 cornerRadius = cornerRadius,
                 style = Fill,
                 alpha = alpha
             )
         }
-        if (drawVerScrollBar) {
-            val heightScale = (drawSize.height - marginPx * 4) / rotatedContentSize.height
+
+        if (rotatedContentVisibleRect.height < rotatedContentSize.height) {
+            val topSpace = endsMarginPx
+            val bottomSpace = endsMarginPx
+            val rightSpace = sideMarginPx
+            val validDrawHeight = drawSize.height - topSpace - bottomSpace
+            val heightScale = validDrawHeight / rotatedContentSize.height
+            val mappedRotatedContentVisibleTop = rotatedContentVisibleRect.top * heightScale
+            val mappedRotatedContentVisibleHeight = (rotatedContentVisibleRect.height * heightScale)
+                .coerceAtLeast(minLength)
+            val left = drawSize.width - rightSpace - scrollBarSize
+            val top = topSpace + mappedRotatedContentVisibleTop
             drawRoundRect(
                 color = scrollBarSpec.color,
-                topLeft = Offset(
-                    x = drawSize.width - marginPx - scrollBarSize,
-                    y = (marginPx * 2) + (rotatedContentVisibleRect.top * heightScale)
-                ),
-                size = Size(
-                    width = scrollBarSize,
-                    height = (rotatedContentVisibleRect.height * heightScale)
-                        .coerceAtLeast(minLength)
-                ),
+                topLeft = Offset(x = left, y = top),
+                size = Size(width = scrollBarSize, height = mappedRotatedContentVisibleHeight),
                 cornerRadius = cornerRadius,
                 style = Fill,
                 alpha = alpha
