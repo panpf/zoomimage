@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -39,7 +38,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.windowInsetsPaddingWithScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
@@ -59,11 +60,13 @@ fun OverlayTestScreen() {
     BaseScreen {
         ToolbarScaffold(title = "Overlay") {
             val zoomState = rememberSketchZoomState()
+            val scrollBarSpec = ScrollBarSpec.DefaultAndWindowInsets
             SketchZoomAsyncImage(
                 request = ComposableImageRequest(ComposeResImageFiles.woodpile.uri) {
                     size(500, 500)
                 },
                 contentDescription = "Woodpile",
+                scrollBar = scrollBarSpec,
                 modifier = Modifier.fillMaxSize(),
                 zoomState = zoomState,
             )
@@ -77,7 +80,7 @@ fun OverlayTestScreen() {
             Box(
                 Modifier.fillMaxWidth()
                     .align(Alignment.BottomStart)
-                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .windowInsetsPaddingWithScrollBar(WindowInsets.navigationBars, scrollBarSpec)
             ) {
                 val coroutineScope = rememberCoroutineScope()
                 Box(

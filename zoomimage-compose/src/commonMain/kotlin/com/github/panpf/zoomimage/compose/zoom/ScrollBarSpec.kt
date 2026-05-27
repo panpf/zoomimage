@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.compose.zoom
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -41,9 +42,44 @@ data class ScrollBarSpec(
     /**
      * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
      */
-    val margin: Dp = 6.dp
+    val margin: Dp = 6.dp,  // TODO Split into four attributes: leftMargin, topMargin, rightMargin, bottomMargin
+
+    /**
+     * Whether to enable the scroll bar to avoid being covered by system window insets, which defaults to false
+     */
+    val enabledWindowInsets: Boolean = false,
 ) {
+
+    // For keep binary compatibility
+    constructor(
+        /**
+         * Scroll bar color, which defaults to translucent gray
+         */
+        color: Color = Color(0xB2888888),
+
+        /**
+         * Scroll bar size, default to 3 dp
+         */
+        size: Dp = 3.dp,
+
+        /**
+         * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
+         */
+        margin: Dp = 6.dp,
+    ) : this(color = color, size = size, margin = margin, enabledWindowInsets = false)
+
     companion object {
         val Default = ScrollBarSpec()
+        val DefaultAndWindowInsets = ScrollBarSpec(enabledWindowInsets = true)
+        // TODO Add Large presets
+//        val Large = ScrollBarSpec(size = 6.dp, margin = 12.dp)
+//        val LargeAndWindowInsets = ScrollBarSpec(size = 6.dp, margin = 12.dp, enabledWindowInsets = true)
     }
 }
+
+fun ScrollBarSpec.toWindowInsets(): WindowInsets = WindowInsets(
+    left = 0.dp,
+    top = 0.dp,
+    right = ((margin * 2) + size),  // TODO No more multiplying by 2
+    bottom = ((margin * 2) + size),  // TODO No more multiplying by 2
+)

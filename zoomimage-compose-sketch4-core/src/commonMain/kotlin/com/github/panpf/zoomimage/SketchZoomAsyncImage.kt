@@ -18,6 +18,9 @@ package com.github.panpf.zoomimage
 
 import androidx.annotation.MainThread
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.remember
@@ -251,7 +254,10 @@ fun SketchZoomAsyncImage(
             Box(
                 Modifier
                     .matchParentSize()
-//                    .windowInsetsPadding(WindowInsets.safeDrawing)    // TODO scroll bar window inset
+                    .let {
+                        if (scrollBar.enabledWindowInsets)
+                            it.windowInsetsPadding(WindowInsets.safeDrawing) else it
+                    }
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }

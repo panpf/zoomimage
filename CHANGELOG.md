@@ -4,6 +4,12 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 # new
 
+## Multiplatform
+
+* new: The scroll bar now supports WindowInsets, which can be turned on through the
+  enabledWindowInsets parameter of ScrollBarSpec. Please refer to the documentation for
+  details. [scrollbar.md](docs/scrollbar.md)
+
 ## Android
 
 * The minimum version of all compose modules has been upgraded to 23

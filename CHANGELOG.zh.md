@@ -4,6 +4,11 @@
 
 # new
 
+## Multiplatform
+
+* new: 现在滚动条支持 WindowInsets，通过 ScrollBarSpec 的 enabledWindowInsets
+  参数开启即可，详情请参考文档 [scrollbar.zh.md](docs/scrollbar.zh.md)
+
 ## Android
 
 * 所有 compose 模块最低版本升级到 23

@@ -20,6 +20,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -204,6 +207,10 @@ fun GlideZoomAsyncImage(
             Box(
                 Modifier
                     .matchParentSize()
+                    .let {
+                        if (scrollBar.enabledWindowInsets)
+                            it.windowInsetsPadding(WindowInsets.safeDrawing) else it
+                    }
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }

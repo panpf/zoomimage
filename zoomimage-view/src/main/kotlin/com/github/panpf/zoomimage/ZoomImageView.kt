@@ -25,6 +25,9 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -85,6 +88,7 @@ open class ZoomImageView @JvmOverloads constructor(
     private val cacheImageMatrix = Matrix()
     private var wrappedScaleType: ScaleType
     private var scrollBarHelper: ScrollBarHelper? = null
+    private var navigationBarInsets: Insets? = null
 
     val logger = newLogger()
 
@@ -146,6 +150,13 @@ open class ZoomImageView @JvmOverloads constructor(
         this._zoomableEngine = zoomableEngine
         this.tileDrawHelper = TileDrawHelper(logger, this, zoomableEngine, subsamplingEngine)
         this.touchHelper = TouchHelper(this, zoomableEngine)
+
+        ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
+            val windowInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            this@ZoomImageView.navigationBarInsets = windowInsets
+            scrollBarHelper?.setInsets(windowInsets)
+            insets
+        }
 
         resetScrollBarHelper()
         parseAttrs(attrs)
@@ -387,7 +398,9 @@ open class ZoomImageView @JvmOverloads constructor(
         val scrollBarSpec = this.scrollBar
         if (scrollBarSpec != null) {
             scrollBarHelper = ScrollBarHelper(this, scrollBarSpec, zoomable)
+            scrollBarHelper?.setInsets(navigationBarInsets)
         }
+        invalidate()
     }
 
     override fun setImageDrawable(drawable: Drawable?) {

@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +36,7 @@ import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.buildScalesCalculator
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.EdgeToEdgeController
 import com.github.panpf.zoomimage.sample.ui.base.parentViewModelWith
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
@@ -53,6 +55,7 @@ import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.view.zoom.toInsets
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.flow.merge
@@ -62,6 +65,7 @@ import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import kotlin.math.roundToInt
 import com.github.panpf.zoomimage.sample.R as CommonR
 
+// TODO There will be a memory leak as soon as the screen is rotated
 abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     BaseBindingFragment<FragmentZoomViewBinding>() {
 
@@ -88,10 +92,6 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
 
     override fun getStatusBarInsetsView(binding: FragmentZoomViewBinding): View {
         return binding.topBarInsetsLayout
-    }
-
-    override fun getNavigationBarInsetsView(binding: FragmentZoomViewBinding): View {
-        return binding.bottomBarInsetsLayout
     }
 
     final override fun onViewCreated(
@@ -121,7 +121,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 logger.level = it
             }
             appSettings.scrollBarEnabled.collectWithLifecycle(viewLifecycleOwner) {
-                scrollBar = if (it) ScrollBarSpec.Default else null
+                updateScrollBar(zoomImageView, binding.bottomBarInsetsLayout)
             }
             zoomable.apply {
                 appSettings.contentScale.collectWithLifecycle(viewLifecycleOwner) {
@@ -412,11 +412,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             ).forEach {
                 it.background.asOrThrow<GradientDrawable>().setColor(photoPalette.containerColorInt)
             }
-            zoomImageView.scrollBar = if (appSettings.scrollBarEnabled.value) {
-                ScrollBarSpec.Default.copy(photoPalette.containerColorInt)
-            } else {
-                null
-            }
+            updateScrollBar(zoomImageView, binding.bottomBarInsetsLayout)
             binding.linearScaleSlider.thumbTintList =
                 ColorStateList.valueOf(photoPalette.accentColorInt)
             binding.linearScaleSlider.trackTintList =
@@ -468,6 +464,20 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 ${rotation.roundToInt()}
             """.trimIndent()
             }
+    }
+
+    private fun updateScrollBar(zoomImageView: ZoomImageView, bottomBarInsetsLayout: View) {
+        zoomImageView.scrollBar = if (appSettings.scrollBarEnabled.value) {
+            val color = photoPaletteViewModel.photoPaletteState.value.containerColorInt
+            ScrollBarSpec.DefaultAndWindowInsets.copy(color = color)
+        } else {
+            null
+        }
+        EdgeToEdgeController.applyWindowInsets(
+            view = bottomBarInsetsLayout,
+            typeMask = WindowInsetsCompat.Type.navigationBars(),
+            addedInsets = zoomImageView.scrollBar?.toInsets()
+        )
     }
 
     override fun onDestroy() {

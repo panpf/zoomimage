@@ -17,6 +17,7 @@ import coil3.request.SuccessResult
 import coil3.request.crossfade
 import coil3.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
@@ -55,6 +56,7 @@ fun CoilBigStartCrossfadeTestScreen() {
                         .crossfade(durationMillis = 300)
                         .build(),
                     zoomState = rememberCoilZoomState(logLevel = Logger.Level.Debug),
+                    scrollBar = ScrollBarSpec.DefaultAndWindowInsets,
                     contentDescription = null,
                 )
             }

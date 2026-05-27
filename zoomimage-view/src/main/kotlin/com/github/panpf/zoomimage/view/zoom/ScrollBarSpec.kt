@@ -17,6 +17,8 @@
 package com.github.panpf.zoomimage.view.zoom
 
 import android.content.res.Resources
+import androidx.core.graphics.Insets
+import kotlin.math.roundToInt
 
 /**
  * Used to configure the style of the scroll bar
@@ -32,17 +34,50 @@ data class ScrollBarSpec(
     /**
      * Scroll bar size, default to 3 dp
      */
-    val size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+    val size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,  // TODO Split into four attributes: leftMargin, topMargin, rightMargin, bottomMargin
 
     /**
      * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
      */
-    val margin: Float = DEFAULT_MARGIN * Resources.getSystem().displayMetrics.density
+    val margin: Float = DEFAULT_MARGIN * Resources.getSystem().displayMetrics.density,
+
+    /**
+     * Whether to enable the scroll bar to avoid being covered by system window insets, which defaults to false
+     */
+    val enabledWindowInsets: Boolean = false,
 ) {
+
+    // For keep binary compatibility
+    constructor(
+        /**
+         * Scroll bar color, which defaults to translucent gray
+         */
+        color: Int = DEFAULT_COLOR,
+
+        /**
+         * Scroll bar size, default to 3 dp
+         */
+        size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+
+        /**
+         * The distance of the scroll bar from the edge of the container, which defaults to 6 dp
+         */
+        margin: Float = DEFAULT_MARGIN * Resources.getSystem().displayMetrics.density,
+    ) : this(color = color, size = size, margin = margin, enabledWindowInsets = false)
+
     companion object {
         const val DEFAULT_COLOR = 0xB2888888.toInt()
         const val DEFAULT_SIZE = 3f
         const val DEFAULT_MARGIN = 6f
         val Default = ScrollBarSpec()
+        val DefaultAndWindowInsets = ScrollBarSpec(enabledWindowInsets = true)
+        // TODO Add Large presets
     }
 }
+
+fun ScrollBarSpec.toInsets(): Insets = Insets.of(
+    /* left = */ 0,
+    /* top = */ 0,
+    /* right = */ ((margin * 2) + size).roundToInt(),  // TODO No more multiplying by 2
+    /* bottom = */ ((margin * 2) + size).roundToInt()  // TODO No more multiplying by 2
+)

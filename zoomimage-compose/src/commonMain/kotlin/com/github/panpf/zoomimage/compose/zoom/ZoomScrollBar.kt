@@ -19,6 +19,10 @@ package com.github.panpf.zoomimage.compose.zoom
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -52,6 +56,48 @@ fun Modifier.zoomScrollBar(
     scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
 ): Modifier = this
     .then(ZoomScrollBarElement(zoomable, scrollBarSpec))
+
+/**
+ * The padding of the scroll bar is added to the original insets, so that the content will not be covered by the scroll bar.
+ */
+@Stable
+fun Modifier.windowInsetsPaddingWithScrollBar(
+    insets: WindowInsets,
+    scrollBarSpec: ScrollBarSpec?
+): Modifier {
+    val padding = if (scrollBarSpec != null) {
+        Modifier.windowInsetsPadding(insets.add(scrollBarSpec.toWindowInsets()))
+    } else {
+        Modifier.windowInsetsPadding(insets)
+    }
+    return this then padding
+}
+
+///**
+// * Calculate the space occupied by the scroll bar based on the [ScrollBarSpec] and use it as
+// * a new [WindowInsets] to correctly add padding to the scroll bar when using [windowInsetsPaddingWithScrollBar].
+// */
+//@Immutable
+//data class ScrollBarWindowInsets(val scrollBarSpec: ScrollBarSpec) : WindowInsets {
+//
+//    override fun getLeft(
+//        density: Density,
+//        layoutDirection: LayoutDirection
+//    ): Int = 0
+//
+//    override fun getTop(density: Density): Int = 0
+//
+//    override fun getRight(
+//        density: Density,
+//        layoutDirection: LayoutDirection
+//    ): Int = with(density) {
+//        ((scrollBarSpec.margin.toPx() * 2) + scrollBarSpec.size.toPx()).roundToInt()
+//    }
+//
+//    override fun getBottom(density: Density): Int = with(density) {
+//        ((scrollBarSpec.margin.toPx() * 2) + scrollBarSpec.size.toPx()).roundToInt()
+//    }
+//}
 
 internal data class ZoomScrollBarElement(
     val zoomable: ZoomableState,

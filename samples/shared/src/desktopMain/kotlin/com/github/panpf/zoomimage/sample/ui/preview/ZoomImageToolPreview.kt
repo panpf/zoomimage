@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newComposeResourceUri
 import com.github.panpf.zoomimage.compose.rememberZoomState
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
@@ -31,6 +32,7 @@ fun ZoomImageToolPreview() {
         subsamplingState = zoomState.subsampling,
         infoDialogState = rememberMyDialogState(),
         capturableState = rememberCapturableState(),
-        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
+        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) },
+        scrollBar = ScrollBarSpec.DefaultAndWindowInsets
     )
 }

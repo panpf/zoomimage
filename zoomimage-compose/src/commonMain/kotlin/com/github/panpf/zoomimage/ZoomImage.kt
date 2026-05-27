@@ -18,6 +18,9 @@ package com.github.panpf.zoomimage
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -148,6 +151,10 @@ fun ZoomImage(
             Box(
                 Modifier
                     .matchParentSize()
+                    .let {
+                        if (scrollBar.enabledWindowInsets)
+                            it.windowInsetsPadding(WindowInsets.safeDrawing) else it
+                    }
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }

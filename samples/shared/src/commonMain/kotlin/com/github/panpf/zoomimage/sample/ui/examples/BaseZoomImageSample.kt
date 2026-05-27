@@ -66,6 +66,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
+import com.github.panpf.zoomimage.compose.zoom.windowInsetsPaddingWithScrollBar
 import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.Res
@@ -116,18 +117,24 @@ fun <T : ZoomState> BaseZoomImageSample(
         val rtlLayoutDirectionEnabled by appSettings.rtlLayoutDirectionEnabled.collectAsState()
         val layoutDirection =
             if (rtlLayoutDirectionEnabled) LayoutDirection.Rtl else LocalLayoutDirection.current
+        val scrollBarEnabled by appSettings.scrollBarEnabled.collectAsState()
+        val scrollBarSpec by remember {
+            derivedStateOf {
+                if (scrollBarEnabled)
+                    ScrollBarSpec.DefaultAndWindowInsets.copy(color = photoPaletteState.value.containerColor) else null
+            }
+        }
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
             val contentScale by appSettings.contentScale.collectAsState()
             val alignment by appSettings.alignment.collectAsState()
-            val scrollBarEnabled by appSettings.scrollBarEnabled.collectAsState()
             val contentScope =
-                remember(zoomState, contentScale, alignment, capturableState, scrollBarEnabled) {
+                remember(zoomState, contentScale, alignment, capturableState, scrollBarSpec) {
                     ContentScope(
                         zoomState = zoomState,
                         contentScale = contentScale.toPlatform(),
                         alignment = alignment.toPlatform(),
                         capturableState = capturableState,
-                        scrollBar = if (scrollBarEnabled) ScrollBarSpec.Default.copy(color = photoPaletteState.value.containerColor) else null,
+                        scrollBar = scrollBarSpec,
                         onLongClick = { infoDialogState.show() },
                     )
                 }
@@ -191,6 +198,7 @@ fun <T : ZoomState> BaseZoomImageSample(
             capturableState = capturableState,
             infoDialogState = infoDialogState,
             photoPaletteState = photoPaletteState,
+            scrollBar = scrollBarSpec
         )
 
         MyDialog(infoDialogState) {
@@ -319,9 +327,14 @@ fun ZoomImageTool(
     capturableState: CapturableState,
     infoDialogState: MyDialogState,
     photoPaletteState: MutableState<PhotoPalette>,
+    scrollBar: ScrollBarSpec?,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    Box(modifier = Modifier.fillMaxSize().windowInsetsPadding(NavigationBarDefaults.windowInsets)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPaddingWithScrollBar(NavigationBarDefaults.windowInsets, scrollBar)
+    ) {
         ZoomImageMinimap(
             imageUri = photo.listThumbnailUrl,
             zoomableState = zoomableState,

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.keyZoom
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
@@ -19,7 +20,7 @@ import com.github.panpf.zoomimage.util.Logger
 @Composable
 fun KeyTestScreen() {
     BaseScreen {
-        ToolbarScaffold("Key") {
+        ToolbarScaffold("KeyZoom") {
             val focusRequester = remember { FocusRequester() }
             val zoomState = rememberSketchZoomState()
             zoomState.logger.level = Logger.Level.Debug
@@ -27,6 +28,7 @@ fun KeyTestScreen() {
                 uri = ComposeResImageFiles.hugeChina.uri,
                 contentDescription = "",
                 zoomState = zoomState,
+                scrollBar = ScrollBarSpec.DefaultAndWindowInsets,
                 modifier = Modifier.fillMaxSize()
                     .focusRequester(focusRequester)
                     .focusable()

@@ -20,6 +20,7 @@ Auto-hide after 800 milliseconds and automatically displayed when the user takes
   horizontal
   scroll bar and the width for the vertical scroll bar.
 * `margin: Dp = 6.dp`: The distance of the scroll bar from the edge, which defaults to 6 dp.
+* `enabledWindowInsets: Boolean = false`: Whether to enable WindowInsets, default is false
 
 compose:
 
@@ -29,6 +30,7 @@ val scrollBar = remember {
         color = androidx.compose.ui.graphics.Color.Red,
         size = 6.dp,
         margin = 12.dp,
+      enabledWindowInsets = true,
     )
 }
 SketchZoomAsyncImage(
@@ -47,7 +49,41 @@ sketchImageView.scrollBar = ScrollBarSpec(
     color = androidx.compose.ui.graphics.Color.Red,
     size = 6.dp,
     margin = 12.dp,
+  enabledWindowInsets = true,
 )
+```
+
+ScrollBarSpec also provides some common configurations, as follows:
+
+* ScrollBarSpec.Default: Default configuration, color gray, size 3 dp, 6 dp from edge, no
+  WindowInsets enabled
+* ScrollBarSpec.DefaultAndWindowInsets: Default configuration, color gray, size 3 dp, 6 dp from
+  edge, WindowInsets enabled
+
+If you want to increase the distance of the scroll bar based on navigation WindowInsets, as follows:
+
+```kotlin
+val scrollBarSpec = ScrollBarSpec.Default
+// compose
+Box(
+  modifier = Modifier
+    .fillMaxSize()
+    .windowInsetsPaddingWithScrollBar(NavigationBarDefaults.windowInsets, scrollBarSpec)
+) {
+
+}
+
+// view
+val view = ...
+ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+  val windowInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+  val scrollBarInsets = scrollBarSpec.toInsets()
+  view.updatePadding(
+    right = windowInsets.right + scrollBarInsets.right,
+    bottom = windowInsets.bottom + scrollBarInsets.bottom
+  )
+  insets
+}
 ```
 
 ### Close the scroll bar
