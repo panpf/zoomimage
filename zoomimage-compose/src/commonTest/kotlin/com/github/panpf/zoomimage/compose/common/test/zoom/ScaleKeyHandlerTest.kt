@@ -242,7 +242,7 @@ class ScaleKeyHandlerTest {
     }
 
     @Test
-    fun testEqualsAndCode() {
+    fun testEqualsAndHashCode() {
         val scaleKeyHandler1 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = true,

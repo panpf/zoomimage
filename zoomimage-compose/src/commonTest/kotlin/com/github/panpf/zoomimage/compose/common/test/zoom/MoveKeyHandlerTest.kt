@@ -394,7 +394,7 @@ class MoveKeyHandlerTest {
     }
 
     @Test
-    fun testEqualsAndCode() {
+    fun testEqualsAndHashCode() {
         val moveKeyHandler1 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
             moveArrow = MoveArrow.Up,
