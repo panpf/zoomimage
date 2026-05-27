@@ -59,7 +59,7 @@ abstract class BaseToolbarFragment : BaseFragment() {
 
     }
 
-    override fun getStatusBarInsetsView(): View? {
+    final override fun getStatusBarInsetsView(): View {
         return toolbarPageBinding!!.root
     }
 
