@@ -7,10 +7,10 @@ Translations: [简体中文](CHANGELOG.zh.md)
 ## Multiplatform
 
 * new: The scroll bar now supports WindowInsets, which can be turned on through the
-  enabledWindowInsets parameter of ScrollBarSpec. Please refer to the documentation for
+  windowInsets or windowInsetsTypeMask parameter of ScrollBarSpec. Please refer to the documentation
+  for
   details. [scrollbar.md](docs/scrollbar.md)
-* new: ScrollBarSpec adds DefaultAndWindowInsets, Medium, MediumAndWindowInsets, Large,
-  LargeAndWindowInsets configuration templates
+* new: ScrollBarSpec adds Medium, Large, configuration templates
 
 ## Android
 

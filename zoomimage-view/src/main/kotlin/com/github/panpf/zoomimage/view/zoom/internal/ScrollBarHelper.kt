@@ -33,7 +33,7 @@ import kotlin.math.roundToInt
 
 internal class ScrollBarHelper(
     private val view: View,
-    private val scrollBarSpec: ScrollBarSpec,
+    val scrollBarSpec: ScrollBarSpec,
     private val zoomableEngine: ZoomableEngine,
 ) {
 
@@ -87,7 +87,7 @@ internal class ScrollBarHelper(
         val rotatedContentVisibleRect = contentVisibleRect.rotateInSpace(contentSize, rotation)
         val rotatedContentSize = contentSize.rotate(rotation)
         val minLength = 10f * Resources.getSystem().displayMetrics.density
-        val insets = if (scrollBarSpec.enabledWindowInsets) this.insets else null
+        val insets = this.insets
         if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
             val horScrollBarRectF = cacheRectF.apply {
                 val leftSpace = (insets?.left ?: 0) + scrollBarSpec.endsMargin

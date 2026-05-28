@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -120,10 +121,13 @@ fun <T : ZoomState> BaseZoomImageSample(
         val layoutDirection =
             if (rtlLayoutDirectionEnabled) LayoutDirection.Rtl else LocalLayoutDirection.current
         val scrollBarEnabled by appSettings.scrollBarEnabled.collectAsState()
+        val windowInsets = WindowInsets.systemBars
         val scrollBarSpec by remember {
             derivedStateOf {
-                if (scrollBarEnabled)
-                    ScrollBarSpec.MediumAndWindowInsets.copy(color = photoPaletteState.value.containerColor) else null
+                if (scrollBarEnabled) {
+                    val containerColor = photoPaletteState.value.containerColor
+                    ScrollBarSpec.Medium.copy(color = containerColor, windowInsets = windowInsets)
+                } else null
             }
         }
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {

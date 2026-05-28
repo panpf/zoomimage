@@ -6,10 +6,9 @@
 
 ## Multiplatform
 
-* new: 现在滚动条支持 WindowInsets，通过 ScrollBarSpec 的 enabledWindowInsets
+* new: 现在滚动条支持 WindowInsets，通过 ScrollBarSpec 的 windowInsets 或 windowInsetsTypeMask
   参数开启即可，详情请参考文档 [scrollbar.zh.md](docs/scrollbar.zh.md)
-* new: ScrollBarSpec 增加
-  DefaultAndWindowInsets、Medium、MediumAndWindowInsets、Large、LargeAndWindowInsets 配置模板
+* new: ScrollBarSpec 增加 Medium、Large 配置模板
 
 ## Android
 

@@ -1,7 +1,9 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -28,7 +30,7 @@ fun KeyTestScreen() {
                 uri = ComposeResImageFiles.hugeChina.uri,
                 contentDescription = "",
                 zoomState = zoomState,
-                scrollBar = ScrollBarSpec.MediumAndWindowInsets,
+                scrollBar = ScrollBarSpec.Medium.copy(windowInsets = WindowInsets.navigationBars),
                 modifier = Modifier.fillMaxSize()
                     .focusRequester(focusRequester)
                     .focusable()

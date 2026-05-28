@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.view.zoom
 
 import android.content.res.Resources
 import androidx.core.graphics.Insets
+import androidx.core.view.WindowInsetsCompat
 import kotlin.math.roundToInt
 
 /**
@@ -47,9 +48,10 @@ data class ScrollBarSpec(
     val endsMargin: Float = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
 
     /**
-     * Whether to enable the scroll bar to avoid being covered by system window insets, which defaults to false
+     * Add the system bars insets, the scroll bar will avoid the position of the system bar
      */
-    val enabledWindowInsets: Boolean = false,
+    @property:WindowInsetsCompat.Type.InsetsType
+    val windowInsetsTypeMask: Int? = null,
 ) {
 
     // For keep binary compatibility
@@ -77,7 +79,7 @@ data class ScrollBarSpec(
         size = size,
         sideMargin = margin,
         endsMargin = margin * 2,
-        enabledWindowInsets = false
+        windowInsetsTypeMask = null,
     )
 
     companion object {
@@ -92,27 +94,24 @@ data class ScrollBarSpec(
             size = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
             sideMargin = DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
             endsMargin = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
-            enabledWindowInsets = false
+            windowInsetsTypeMask = null,
         )
-        val DefaultAndWindowInsets = Default.copy(enabledWindowInsets = true)
 
         val Medium = ScrollBarSpec(
             color = DEFAULT_COLOR,
             size = 5 * Resources.getSystem().displayMetrics.density,
             sideMargin = 10 * Resources.getSystem().displayMetrics.density,
             endsMargin = 20 * Resources.getSystem().displayMetrics.density,
-            enabledWindowInsets = false
+            windowInsetsTypeMask = null,
         )
-        val MediumAndWindowInsets = Medium.copy(enabledWindowInsets = true)
 
         val Large = ScrollBarSpec(
             color = DEFAULT_COLOR,
             size = 7 * Resources.getSystem().displayMetrics.density,
             sideMargin = 14 * Resources.getSystem().displayMetrics.density,
             endsMargin = 28 * Resources.getSystem().displayMetrics.density,
-            enabledWindowInsets = false
+            windowInsetsTypeMask = null,
         )
-        val LargeAndWindowInsets = Large.copy(enabledWindowInsets = true)
     }
 }
 

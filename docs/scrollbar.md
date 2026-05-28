@@ -17,10 +17,12 @@ Auto-hide after 800 milliseconds and automatically displayed when the user takes
 
 * `color: Color = Color(0xB2888888)`: The color of the scroll bar, which defaults to gray.
 * `size: Dp = 3.dp`: The size of the scroll bar, which defaults to 3 dp. The height for the
-  horizontal
-  scroll bar and the width for the vertical scroll bar.
+  horizontal scroll bar and the width for the vertical scroll bar.
 * `margin: Dp = 6.dp`: The distance of the scroll bar from the edge, which defaults to 6 dp.
-* `enabledWindowInsets: Boolean = false`: Whether to enable WindowInsets, default is false
+* `windowInsets: WindowInsets? = null`: Applies to Compose. Sets the WindowInsets for the scrollbar,
+  defaults to null
+* `windowInsetsTypeMask: Int? = null`: Applies to Android View. Sets the WindowInsets type of the
+  scroll bar, defaults to null
 
 compose:
 
@@ -30,7 +32,7 @@ val scrollBar = remember {
         color = androidx.compose.ui.graphics.Color.Red,
         size = 6.dp,
         margin = 12.dp,
-      enabledWindowInsets = true,
+      windowInsets = WindowInsets.navigationBars,
     )
 }
 SketchZoomAsyncImage(
@@ -49,7 +51,7 @@ sketchImageView.scrollBar = ScrollBarSpec(
     color = androidx.compose.ui.graphics.Color.Red,
     size = 6.dp,
     margin = 12.dp,
-  enabledWindowInsets = true,
+  windowInsetsTypeMask = WindowInsetsCompat.Type.navigationBars(),
 )
 ```
 
@@ -57,17 +59,10 @@ ScrollBarSpec also provides some common configurations, as follows:
 
 * ScrollBarSpec.Default: Default configuration, color is gray, size is 3 dp, 6 dp from the side edge
   of the screen, 12 dp from the edge of the screen at both ends, WindowInsets is not enabled
-* ScrollBarSpec.DefaultAndWindowInsets: Default configuration, color is gray, size is 3 dp, 6 dp
-  from the side edge of the screen, 12 dp from the edge of the screen at both ends, WindowInsets is
-  enabled
 * ScrollBarSpec.Medium: Color is gray, size is 5 dp, 10 dp from the side edge of the screen, 20 dp
   from the edge of the screen at both ends, WindowInsets is not enabled
-* ScrollBarSpec.MediumAndWindowInsets: Color is gray, size is 5 dp, 10 dp from the side edge of the
-  screen, 20 dp from the edge of the screen at both ends, WindowInsets enabled
 * ScrollBarSpec.Large: Color is gray, size is 7 dp, 14 dp from the side edge of the screen, 28 dp
   from the edge of the screen at both ends, WindowInsets is not enabled
-* ScrollBarSpec.LargeAndWindowInsets: Color is gray, size is 7 dp, 14 dp from side edge of screen,
-  28 dp from edge of screen at both ends, WindowInsets enabled
 
 If you want to increase the distance of the scroll bar based on navigation WindowInsets, as follows:
 

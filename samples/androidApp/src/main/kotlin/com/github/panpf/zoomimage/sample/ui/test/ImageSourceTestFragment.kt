@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
@@ -22,12 +21,11 @@ class ImageSourceTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBindi
             val testItems = getImageSourceTestItems(requireContext())
 
             binding.pager.apply {
-                setBackgroundColor(Color.BLACK)
                 offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
                 orientation = ViewPager2.ORIENTATION_HORIZONTAL
                 adapter = AssemblyFragmentStateAdapter(
                     fragment = this@ImageSourceTestFragment,
-                    itemFactoryList = listOf(ImageSourceFragment.ItemFactory()),
+                    itemFactoryList = listOf(SimpleZoomImageViewFragment.ItemFactory()),
                     initDataList = testItems.map { it.second }
                 )
             }

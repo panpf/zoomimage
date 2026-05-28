@@ -228,7 +228,8 @@
                 android:id="@+id/horizontalButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hor" />
+                android:text="Hor"
+                android:textSize="10dp" />
 
             <View
                 android:layout_width="12dp"
@@ -238,7 +239,8 @@
                 android:id="@+id/scaleTypeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="FIT_CENTER" />
+                android:text="FIT_CENTER"
+                android:textSize="10dp" />
 
             <View
                 android:layout_width="12dp"
@@ -248,7 +250,8 @@
                 android:id="@+id/rtlButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RTL" />
+                android:text="RTL"
+                android:textSize="10dp" />
 
             <View
                 android:layout_width="12dp"
@@ -258,7 +261,8 @@
                 android:id="@+id/resetButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reset" />
+                android:text="Reset"
+                android:textSize="10dp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

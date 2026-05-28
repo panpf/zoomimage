@@ -19,8 +19,6 @@ package com.github.panpf.zoomimage
 
 import androidx.annotation.MainThread
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -318,8 +316,9 @@ private fun CoilZoomAsyncImage(
                 Modifier
                     .matchParentSize()
                     .let {
-                        if (scrollBar.enabledWindowInsets)
-                            it.windowInsetsPadding(WindowInsets.safeDrawing) else it
+                        val windowInsets = scrollBar.windowInsets
+                        if (windowInsets != null)
+                            it.windowInsetsPadding(windowInsets) else it
                     }
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )

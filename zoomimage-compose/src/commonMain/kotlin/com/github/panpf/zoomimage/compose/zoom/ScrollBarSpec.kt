@@ -50,9 +50,9 @@ data class ScrollBarSpec(
     val endsMargin: Dp = DEFAULT_ENDS_MARGIN,
 
     /**
-     * Whether to enable the scroll bar to avoid being covered by system window insets, which defaults to false
+     * Add the system bars insets, the scroll bar will avoid the position of the system bar
      */
-    val enabledWindowInsets: Boolean = false,
+    val windowInsets: WindowInsets? = null,
 ) {
 
     // For keep binary compatibility
@@ -80,7 +80,7 @@ data class ScrollBarSpec(
         size = size,
         sideMargin = margin,
         endsMargin = margin * 2,
-        enabledWindowInsets = false
+        windowInsets = null
     )
 
     companion object {
@@ -95,27 +95,24 @@ data class ScrollBarSpec(
             size = DEFAULT_SIZE,
             sideMargin = DEFAULT_SIDE_MARGIN,
             endsMargin = DEFAULT_ENDS_MARGIN,
-            enabledWindowInsets = false,
+            windowInsets = null,
         )
-        val DefaultAndWindowInsets = Default.copy(enabledWindowInsets = true)
 
         val Medium = ScrollBarSpec(
             color = DEFAULT_COLOR,
             size = 5.dp,
             sideMargin = 10.dp,
             endsMargin = 20.dp,
-            enabledWindowInsets = false,
+            windowInsets = null,
         )
-        val MediumAndWindowInsets = Medium.copy(enabledWindowInsets = true)
 
         val Large = ScrollBarSpec(
             color = DEFAULT_COLOR,
             size = 7.dp,
             sideMargin = 14.dp,
             endsMargin = 28.dp,
-            enabledWindowInsets = false,
+            windowInsets = null,
         )
-        val LargeAndWindowInsets = Large.copy(enabledWindowInsets = true)
     }
 }
 

@@ -1,6 +1,8 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,7 +34,7 @@ fun GlideThumbnailSample() {
         model = ComposeResImageFiles.hugeChina.uri,
         modifier = Modifier.fillMaxSize(),
         contentDescription = null,
-        scrollBar = ScrollBarSpec.MediumAndWindowInsets,
+        scrollBar = ScrollBarSpec.Medium.copy(windowInsets = WindowInsets.navigationBars),
         requestBuilderTransform = {
             it.thumbnail(
                 Glide.with(context)

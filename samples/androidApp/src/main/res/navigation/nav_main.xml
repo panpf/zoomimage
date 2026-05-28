@@ -210,8 +210,8 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/imageSourceFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.ImageSourceFragment">
+        android:id="@+id/simpleZoomImageViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.SimpleZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"

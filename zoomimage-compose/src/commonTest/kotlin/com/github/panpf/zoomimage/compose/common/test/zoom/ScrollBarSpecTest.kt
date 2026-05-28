@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.compose.common.test.zoom
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -32,8 +33,8 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = false,
-                actual = enabledWindowInsets
+                expected = null,
+                actual = windowInsets
             )
         }
 
@@ -42,7 +43,7 @@ class ScrollBarSpecTest {
             size = 150.dp,
             sideMargin = 110.dp,
             endsMargin = 120.dp,
-            enabledWindowInsets = true
+            windowInsets = WindowInsets(10.dp, 20.dp, 30.dp, 40.dp)
         ).apply {
             assertEquals(
                 expected = Color.Blue,
@@ -61,12 +62,18 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = true,
-                actual = enabledWindowInsets
+                expected = WindowInsets(10.dp, 20.dp, 30.dp, 40.dp),
+                actual = windowInsets
             )
         }
 
-        ScrollBarSpec(Color.Red, 140.dp, 10.dp, 20.dp, true).apply {
+        ScrollBarSpec(
+            Color.Red,
+            140.dp,
+            10.dp,
+            20.dp,
+            WindowInsets(10.dp, 20.dp, 30.dp, 40.dp)
+        ).apply {
             assertEquals(
                 expected = Color.Red,
                 actual = color
@@ -84,8 +91,8 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = true,
-                actual = enabledWindowInsets
+                expected = WindowInsets(10.dp, 20.dp, 30.dp, 40.dp),
+                actual = windowInsets
             )
         }
 
@@ -111,8 +118,8 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = false,
-                actual = enabledWindowInsets
+                expected = null,
+                actual = windowInsets
             )
         }
 
@@ -134,8 +141,8 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = false,
-                actual = enabledWindowInsets
+                expected = null,
+                actual = windowInsets
             )
         }
     }
@@ -148,7 +155,8 @@ class ScrollBarSpecTest {
         val element3 = ScrollBarSpec.Default.copy(size = 150.dp)
         val element4 = ScrollBarSpec.Default.copy(sideMargin = 110.dp)
         val element5 = ScrollBarSpec.Default.copy(endsMargin = 120.dp)
-        val element6 = ScrollBarSpec.Default.copy(enabledWindowInsets = true)
+        val element6 =
+            ScrollBarSpec.Default.copy(windowInsets = WindowInsets(10.dp, 20.dp, 30.dp, 40.dp))
 
         assertEquals(expected = element1, actual = element11)
         assertNotEquals(illegal = element1, actual = element2)
@@ -196,7 +204,7 @@ class ScrollBarSpecTest {
                     "size=${scrollBarSpec.size}, " +
                     "sideMargin=${scrollBarSpec.sideMargin}, " +
                     "endsMargin=${scrollBarSpec.endsMargin}, " +
-                    "enabledWindowInsets=false)",
+                    "windowInsets=null)",
             actual = scrollBarSpec.toString()
         )
     }
@@ -227,30 +235,8 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = false,
-                actual = enabledWindowInsets
-            )
-        }
-        ScrollBarSpec.DefaultAndWindowInsets.apply {
-            assertEquals(
-                expected = ScrollBarSpec.DEFAULT_COLOR,
-                actual = color
-            )
-            assertEquals(
-                expected = ScrollBarSpec.DEFAULT_SIZE,
-                actual = size
-            )
-            assertEquals(
-                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
-                actual = sideMargin
-            )
-            assertEquals(
-                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
-                actual = endsMargin
-            )
-            assertEquals(
-                expected = true,
-                actual = enabledWindowInsets
+                expected = null,
+                actual = windowInsets
             )
         }
 
@@ -272,30 +258,8 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = false,
-                actual = enabledWindowInsets
-            )
-        }
-        ScrollBarSpec.MediumAndWindowInsets.apply {
-            assertEquals(
-                expected = ScrollBarSpec.DEFAULT_COLOR,
-                actual = color
-            )
-            assertEquals(
-                expected = 5.dp,
-                actual = size
-            )
-            assertEquals(
-                expected = 10.dp,
-                actual = sideMargin
-            )
-            assertEquals(
-                expected = 20.dp,
-                actual = endsMargin
-            )
-            assertEquals(
-                expected = true,
-                actual = enabledWindowInsets
+                expected = null,
+                actual = windowInsets
             )
         }
 
@@ -317,30 +281,8 @@ class ScrollBarSpecTest {
                 actual = endsMargin
             )
             assertEquals(
-                expected = false,
-                actual = enabledWindowInsets
-            )
-        }
-        ScrollBarSpec.LargeAndWindowInsets.apply {
-            assertEquals(
-                expected = ScrollBarSpec.DEFAULT_COLOR,
-                actual = color
-            )
-            assertEquals(
-                expected = 7.dp,
-                actual = size
-            )
-            assertEquals(
-                expected = 14.dp,
-                actual = sideMargin
-            )
-            assertEquals(
-                expected = 28.dp,
-                actual = endsMargin
-            )
-            assertEquals(
-                expected = true,
-                actual = enabledWindowInsets
+                expected = null,
+                actual = windowInsets
             )
         }
     }

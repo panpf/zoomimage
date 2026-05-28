@@ -1,8 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
@@ -13,32 +11,31 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class PhotoViewPagerTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBinding>() {
 
-    override fun getNavigationBarInsetsView(binding: FragmentTabPagerBinding): View {
-        return binding.root
-    }
-
     override fun onViewCreated(
         toolbar: Toolbar, binding: FragmentTabPagerBinding, savedInstanceState: Bundle?
     ) {
         toolbar.title = "PhotoView (Pager)"
 
         val images = AssetImageFiles.values
+        val dataList = images.map { it.uri }
+        val tabTitles = images.map {
+            it.name.substring(0, it.name.indexOf(".")).uppercase()
+        }
 
         binding.pager.apply {
-            setBackgroundColor(Color.BLACK)
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@PhotoViewPagerTestFragment,
                 itemFactoryList = listOf(PhotoViewFragment.ItemFactory()),
-                initDataList = images.map { it.uri }
+                initDataList = dataList
             )
         }
         TabLayoutMediator(
             binding.tabLayout,
             binding.pager
         ) { tab, position ->
-            tab.text = images[position].name
+            tab.text = tabTitles[position]
         }.attach()
     }
 }

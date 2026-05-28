@@ -469,7 +469,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     private fun updateScrollBar(zoomImageView: ZoomImageView, bottomBarInsetsLayout: View) {
         zoomImageView.scrollBar = if (appSettings.scrollBarEnabled.value) {
             val color = photoPaletteViewModel.photoPaletteState.value.containerColorInt
-            ScrollBarSpec.MediumAndWindowInsets.copy(color = color)
+            ScrollBarSpec.Medium.copy(
+                color = color,
+                windowInsetsTypeMask = WindowInsetsCompat.Type.systemBars()
+            )
         } else {
             null
         }

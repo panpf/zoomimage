@@ -1,6 +1,8 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,7 +58,7 @@ fun CoilBigStartCrossfadeTestScreen() {
                         .crossfade(durationMillis = 300)
                         .build(),
                     zoomState = rememberCoilZoomState(logLevel = Logger.Level.Debug),
-                    scrollBar = ScrollBarSpec.MediumAndWindowInsets,
+                    scrollBar = ScrollBarSpec.Medium.copy(windowInsets = WindowInsets.navigationBars),
                     contentDescription = null,
                 )
             }

@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.test
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DecodeFormat
@@ -39,7 +40,9 @@ class TempTestFragment : BaseToolbarBindingFragment<FragmentTempTestBinding>() {
 
         binding.glideZoomImageView.apply {
             logger.level = Logger.Level.Verbose
-            scrollBar = ScrollBarSpec.MediumAndWindowInsets
+            scrollBar = ScrollBarSpec.Medium.copy(
+                windowInsetsTypeMask = WindowInsetsCompat.Type.navigationBars()
+            )
         }
 
         Glide.with(binding.glideZoomImageView)

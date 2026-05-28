@@ -86,7 +86,7 @@ fun ZoomImageSwitchTestScreen() {
                         uri = currentImageUri,
                         contentDescription = "Image",
                         modifier = Modifier.fillMaxSize(),
-                        scrollBar = ScrollBarSpec.MediumAndWindowInsets,
+                        scrollBar = ScrollBarSpec.Medium,
                         zoomState = zoomState,
                     )
 

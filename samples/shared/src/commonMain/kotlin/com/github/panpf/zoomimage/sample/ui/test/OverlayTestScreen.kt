@@ -57,13 +57,12 @@ fun OverlayTestScreen() {
     BaseScreen {
         ToolbarScaffold(title = "Overlay", addNavigationBarWindowInsets = true) {
             val zoomState = rememberSketchZoomState()
-            val scrollBarSpec = ScrollBarSpec.MediumAndWindowInsets
             SketchZoomAsyncImage(
                 request = ComposableImageRequest(ComposeResImageFiles.woodpile.uri) {
                     size(500, 500)
                 },
                 contentDescription = "Woodpile",
-                scrollBar = scrollBarSpec,
+                scrollBar = ScrollBarSpec.Medium,
                 modifier = Modifier.fillMaxSize(),
                 zoomState = zoomState,
             )

@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.preview
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +35,6 @@ fun ZoomImageToolPreview() {
         infoDialogState = rememberMyDialogState(),
         capturableState = rememberCapturableState(),
         photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) },
-        scrollBar = ScrollBarSpec.MediumAndWindowInsets
+        scrollBar = ScrollBarSpec.Medium.copy(windowInsets = WindowInsets.systemBars)
     )
 }
