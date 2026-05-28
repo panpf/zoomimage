@@ -56,6 +56,13 @@ data class ScrollBarSpec(
 
     // For keep binary compatibility
     @Deprecated(
+        message = "This property is only for binary compatibility, please use sideMargin instead",
+        level = DeprecationLevel.WARNING
+    )
+    val margin: Float = sideMargin
+
+    // For keep binary compatibility
+    @Deprecated(
         message = "This constructor is only for binary compatibility, please use the primary constructor instead",
         level = DeprecationLevel.WARNING
     )
@@ -80,6 +87,18 @@ data class ScrollBarSpec(
         sideMargin = margin,
         endsMargin = margin * 2,
         windowInsetsTypeMask = null,
+    )
+
+    // For keep binary compatibility
+    @Deprecated("This function is only for binary compatibility, please use the copy function with sideMargin and endsMargin parameters instead")
+    fun copy(
+        color: Int = this.color,
+        size: Float = this.size,
+        margin: Float = this.margin,
+    ) = ScrollBarSpec(
+        color = color,
+        size = size,
+        margin = margin,
     )
 
     companion object {
