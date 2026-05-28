@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,65 +33,69 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_github
-import com.github.panpf.zoomimage.sample.ui.CoilBigStartCrossfadeTestRoute
-import com.github.panpf.zoomimage.sample.ui.ExifOrientationTestRoute
-import com.github.panpf.zoomimage.sample.ui.GraphicsLayerTestRoute
-import com.github.panpf.zoomimage.sample.ui.ImageSourceTestRoute
-import com.github.panpf.zoomimage.sample.ui.KeyTestRoute
 import com.github.panpf.zoomimage.sample.ui.LocalNavBackStack
-import com.github.panpf.zoomimage.sample.ui.ModifierZoomTestRoute
-import com.github.panpf.zoomimage.sample.ui.MouseTestRoute
-import com.github.panpf.zoomimage.sample.ui.OverlayTestRoute
-import com.github.panpf.zoomimage.sample.ui.TempTestRoute
-import com.github.panpf.zoomimage.sample.ui.ZoomImageSwitchTestRoute
 import com.github.panpf.zoomimage.sample.ui.components.AutoLinkText
 import com.github.panpf.zoomimage.sample.util.Platform
 import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
 import org.jetbrains.compose.resources.painterResource
 
-fun testItems(): List<TestItem> = listOf(
-    TestItem("ImageSource", ImageSourceTestRoute),
-    TestItem("Exif Orientation", ExifOrientationTestRoute),
-    TestItem("Graphics Layer", GraphicsLayerTestRoute),
-    TestItem("Modifier.zoom()", ModifierZoomTestRoute),
-    TestItem("Mouse", MouseTestRoute),
-    TestItem("KeyZoom", KeyTestRoute),
-    TestItem("ZoomImage (Switch)", ZoomImageSwitchTestRoute),
-    TestItem("CoilBigStartCrossfade", CoilBigStartCrossfadeTestRoute),
-    TestItem("Overlay", OverlayTestRoute),
-    TestItem("Temp", TempTestRoute),
-).plus(platformTestItems())
-
-expect fun platformTestItems(): List<TestItem>
+expect fun platformTestItems(): List<Any>
 
 @Composable
 fun TestPage() {
-    val testItems = remember { testItems() }
+    val testItems = remember { platformTestItems() }
     val gridState = rememberLazyGridState()
     Column(modifier = Modifier.fillMaxSize()) {
         LazyVerticalGrid(
             modifier = Modifier.fillMaxWidth().weight(1f),
             columns = GridCells.Fixed(if (Platform.current.isMobile()) 2 else 4),
             state = gridState,
-            contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 96.dp),
+            contentPadding = PaddingValues(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items(
                 count = testItems.size,
-                key = { testItems[it].title },
-                contentType = { 1 },
+                key = {
+                    when (val data = testItems[it]) {
+                        is TestItem -> data.title
+                        is TestGroup -> data.title
+                        is ProjectInfo -> data.toString()
+                        else -> throw IllegalArgumentException("Unknown data type: $data")
+                    }
+                },
+                span = {
+                    when (val data = testItems[it]) {
+                        is TestItem -> GridItemSpan(1)
+                        is TestGroup -> GridItemSpan(maxLineSpan)
+                        is ProjectInfo -> GridItemSpan(maxLineSpan)
+                        else -> throw IllegalArgumentException("Unknown data type: $data")
+                    }
+                },
+                contentType = {
+                    when (val data = testItems[it]) {
+                        is TestItem -> 1
+                        is TestGroup -> 2
+                        is ProjectInfo -> 3
+                        else -> throw IllegalArgumentException("Unknown data type: $data")
+                    }
+                },
             ) { index ->
-                TestGridItem(testItems[index])
+                when (val data = testItems[index]) {
+                    is TestItem -> TestGridItem(data)
+                    is TestGroup -> TestGroupItem(data)
+                    is ProjectInfo -> ProjectInfoItem()
+                    else -> throw IllegalArgumentException("Unknown data type: $data")
+                }
             }
         }
-
-        ProjectInfoItem()
     }
 }
 
 data class TestItem(val title: String, val navKey: NavKey)
+
+data class TestGroup(val title: String)
 
 @Composable
 fun TestGridItem(item: TestItem) {
@@ -116,12 +121,28 @@ fun TestGridItem(item: TestItem) {
 }
 
 @Composable
+fun TestGroupItem(group: TestGroup) {
+    Text(
+        text = group.title,
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = 18.sp,
+        modifier = Modifier.padding(top = 16.dp)
+    )
+}
+
+data object ProjectInfo {
+    override fun toString(): String {
+        return "ProjectInfo"
+    }
+}
+
+@Composable
 fun ProjectInfoItem() {
     val colorScheme = MaterialTheme.colorScheme
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 14.dp, horizontal = 16.dp)
+            .padding(top = 50.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(colorScheme.tertiaryContainer)
             .padding(16.dp),

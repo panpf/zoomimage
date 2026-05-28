@@ -17,27 +17,29 @@
 package com.github.panpf.zoomimage.sample.ui.common.list
 
 import android.content.Context
-import com.github.panpf.zoomimage.sample.databinding.ListItemLinkBinding
+import com.github.panpf.zoomimage.sample.databinding.ListItemTestItemBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory
-import com.github.panpf.zoomimage.sample.ui.model.Link
+import com.github.panpf.zoomimage.sample.ui.model.ViewTestItem
 
-class LinkItemFactory : BaseBindingItemFactory<Link, ListItemLinkBinding>(Link::class) {
+class TestItemItemFactory : BaseBindingItemFactory<ViewTestItem, ListItemTestItemBinding>(
+    ViewTestItem::class
+) {
 
     override fun initItem(
         context: Context,
-        binding: ListItemLinkBinding,
-        item: BindingItem<Link, ListItemLinkBinding>
+        binding: ListItemTestItemBinding,
+        item: BindingItem<ViewTestItem, ListItemTestItemBinding>
     ) {
     }
 
     override fun bindItemData(
         context: Context,
-        binding: ListItemLinkBinding,
-        item: BindingItem<Link, ListItemLinkBinding>,
+        binding: ListItemTestItemBinding,
+        item: BindingItem<ViewTestItem, ListItemTestItemBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
-        data: Link
+        data: ViewTestItem
     ) {
-        binding.linkTitleText.text = data.title
+        binding.titleText.text = data.title
     }
 }

@@ -9,7 +9,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerScreen
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerScreenParams
-import com.github.panpf.zoomimage.sample.ui.test.CoilBigStartCrossfadeTestScreen
 import com.github.panpf.zoomimage.sample.ui.test.ExifOrientationTestScreen
 import com.github.panpf.zoomimage.sample.ui.test.GraphicsLayerTestScreen
 import com.github.panpf.zoomimage.sample.ui.test.ImageSourceTestScreen
@@ -60,9 +59,6 @@ data object KeyTestRoute : Route
 data object ZoomImageSwitchTestRoute : Route
 
 @Serializable
-data object CoilBigStartCrossfadeTestRoute : Route
-
-@Serializable
 data object OverlayTestRoute : Route
 
 @Serializable
@@ -88,10 +84,6 @@ val navSavedStateConfig = SavedStateConfiguration {
             subclass(MouseTestRoute::class, MouseTestRoute.serializer())
             subclass(KeyTestRoute::class, KeyTestRoute.serializer())
             subclass(ZoomImageSwitchTestRoute::class, ZoomImageSwitchTestRoute.serializer())
-            subclass(
-                CoilBigStartCrossfadeTestRoute::class,
-                CoilBigStartCrossfadeTestRoute.serializer()
-            )
             subclass(OverlayTestRoute::class, OverlayTestRoute.serializer())
             subclass(TempTestRoute::class, TempTestRoute.serializer())
 
@@ -114,7 +106,6 @@ val navEntryProvider = entryProvider<NavKey> {
     entry<MouseTestRoute> { MouseTestScreen() }
     entry<KeyTestRoute> { KeyTestScreen() }
     entry<ZoomImageSwitchTestRoute> { ZoomImageSwitchTestScreen() }
-    entry<CoilBigStartCrossfadeTestRoute> { CoilBigStartCrossfadeTestScreen() }
     entry<OverlayTestRoute> { OverlayTestScreen() }
     entry<TempTestRoute> { TempTestScreen() }
 

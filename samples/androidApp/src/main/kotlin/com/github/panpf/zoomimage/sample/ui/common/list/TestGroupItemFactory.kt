@@ -32,27 +32,27 @@
 package com.github.panpf.zoomimage.sample.ui.common.list
 
 import android.content.Context
-import com.github.panpf.zoomimage.sample.databinding.GridItemSeparatorBinding
+import com.github.panpf.zoomimage.sample.databinding.ListItemTestGroupBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory
-import com.github.panpf.zoomimage.sample.ui.model.ListSeparator
+import com.github.panpf.zoomimage.sample.ui.model.ViewTestGroup
 
-class GridSeparatorItemFactory :
-    BaseBindingItemFactory<ListSeparator, GridItemSeparatorBinding>(ListSeparator::class) {
+class TestGroupItemFactory :
+    BaseBindingItemFactory<ViewTestGroup, ListItemTestGroupBinding>(ViewTestGroup::class) {
 
     override fun initItem(
         context: Context,
-        binding: GridItemSeparatorBinding,
-        item: BindingItem<ListSeparator, GridItemSeparatorBinding>
+        binding: ListItemTestGroupBinding,
+        item: BindingItem<ViewTestGroup, ListItemTestGroupBinding>
     ) {
     }
 
     override fun bindItemData(
         context: Context,
-        binding: GridItemSeparatorBinding,
-        item: BindingItem<ListSeparator, GridItemSeparatorBinding>,
+        binding: ListItemTestGroupBinding,
+        item: BindingItem<ViewTestGroup, ListItemTestGroupBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
-        data: ListSeparator
+        data: ViewTestGroup
     ) {
         binding.titleText.text = data.title
     }

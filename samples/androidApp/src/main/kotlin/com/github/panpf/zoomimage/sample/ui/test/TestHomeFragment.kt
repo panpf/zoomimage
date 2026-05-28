@@ -1,9 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
-import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
 import com.github.panpf.assemblyadapter.recycler.AssemblyGridLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
@@ -12,41 +9,35 @@ import com.github.panpf.assemblyadapter.recycler.divider.AssemblyGridDividerItem
 import com.github.panpf.assemblyadapter.recycler.divider.Divider
 import com.github.panpf.tools4a.dimen.ktx.dp2px
 import com.github.panpf.zoomimage.sample.NavMainDirections
-import com.github.panpf.zoomimage.sample.databinding.FragmentTestHomeBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.common.list.GridSeparatorItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.list.LinkItemFactory
-import com.github.panpf.zoomimage.sample.ui.model.Link
+import com.github.panpf.zoomimage.sample.ui.common.list.ProjectInfoItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.list.TestGroupItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.list.TestItemItemFactory
+import com.github.panpf.zoomimage.sample.ui.model.ViewTestGroup
+import com.github.panpf.zoomimage.sample.ui.model.ViewTestItem
 
-class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
-
-    private var pendingStartLink: Link? = null
-    private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grantedMap ->
-            val pendingStartLink = pendingStartLink ?: return@registerForActivityResult
-            this@TestHomeFragment.pendingStartLink = null
-            requestLinkPermissionsResult(grantedMap, pendingStartLink)
-        }
+class TestHomeFragment : BaseBindingFragment<FragmentRecyclerBinding>() {
 
     override fun onViewCreated(
-        binding: FragmentTestHomeBinding,
+        binding: FragmentRecyclerBinding,
         savedInstanceState: Bundle?
     ) {
         binding.recycler.apply {
-            setPadding(0, 0, 0, 80.dp2px)
-            clipToPadding = false
-
             layoutManager = AssemblyGridLayoutManager.Builder(requireContext(), 2).apply {
                 itemSpanByItemFactory(
-                    GridSeparatorItemFactory::class to ItemSpan.fullSpan(),
+                    TestGroupItemFactory::class to ItemSpan.fullSpan(),
+                    ProjectInfoItemFactory::class to ItemSpan.fullSpan(),
                 )
             }.build()
             adapter = AssemblyRecyclerAdapter(
                 itemFactoryList = listOf(
-                    LinkItemFactory().setOnItemClickListener { _, _, _, _, data ->
-                        startLink(data)
-                    },
-                    GridSeparatorItemFactory(),
+                    TestItemItemFactory()
+                        .setOnItemClickListener { _, _, _, _, data ->
+                            this@TestHomeFragment.findNavController().navigate(data.navDirections)
+                        },
+                    TestGroupItemFactory(),
+                    ProjectInfoItemFactory(),
                 ),
                 initDataList = pageList()
             )
@@ -60,80 +51,56 @@ class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
     }
 
     private fun pageList(): List<Any> = listOf(
-        Link(
+        ViewTestGroup("Functions"),
+        ViewTestItem(
             title = "ImageSource",
             navDirections = NavMainDirections.actionGlobalImageSourceTestFragment(),
-            minSdk = 21
         ),
-        Link(
+        ViewTestItem(
             title = "Exif Orientation",
             navDirections = NavMainDirections.actionGlobalExifOrientationTestFragment(),
-            minSdk = 21
         ),
-        Link(
+
+        ViewTestGroup("UI"),
+        ViewTestItem(
+            title = "Overlay",
+            navDirections = NavMainDirections.actionGlobalOverlayTestFragment(),
+        ),
+        ViewTestItem(
             title = "Image Matrix",
             navDirections = NavMainDirections.actionGlobalImageMatrixFragment(),
         ),
-        Link(
-            title = "ZoomImageView (Switch)",
-            navDirections = NavMainDirections.actionGlobalZoomImageViewSwitchTestFragment(),
-            minSdk = 21,
-        ),
-        Link(
-            title = "PhotoView (Pager)",
-            navDirections = NavMainDirections.actionGlobalPhotoViewPagerTestFragment(),
-            minSdk = 21,
-        ),
-        Link(
+
+        ViewTestGroup("Switch"),
+        ViewTestItem(
             title = "PhotoView (Switch)",
             navDirections = NavMainDirections.actionGlobalPhotoViewSwitchTestFragment(),
-            minSdk = 21,
         ),
-        Link(
-            title = "SubsamplingScaleImageView (Pager)",
-            navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewPagerTestFragment(),
-            minSdk = 21,
-        ),
-        Link(
+        ViewTestItem(
             title = "SubsamplingScaleImageView (Switch)",
             navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewSwitchTestFragment(),
-            minSdk = 21,
         ),
-        Link(
-            title = "Overlay",
-            navDirections = NavMainDirections.actionGlobalOverlayTestFragment(),
-            minSdk = 21,
+        ViewTestItem(
+            title = "ZoomImageView (Switch)",
+            navDirections = NavMainDirections.actionGlobalZoomImageViewSwitchTestFragment(),
         ),
-        Link(
+
+        ViewTestGroup("Pager"),
+        ViewTestItem(
+            title = "PhotoView (Pager)",
+            navDirections = NavMainDirections.actionGlobalPhotoViewPagerTestFragment(),
+        ),
+        ViewTestItem(
+            title = "SubsamplingScaleImageView (Pager)",
+            navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewPagerTestFragment(),
+        ),
+
+        ViewTestGroup("Other"),
+        ViewTestItem(
             title = "Temp",
             navDirections = NavMainDirections.actionGlobalTempTestFragment(),
-            minSdk = 21,
         ),
+
+        "ProjectInfo"
     )
-
-    private fun startLink(data: Link) {
-        if (data.minSdk == null || Build.VERSION.SDK_INT >= data.minSdk) {
-            val permissions = data.permissions
-            if (permissions != null) {
-                pendingStartLink = data
-                permissionLauncher.launch(permissions.toTypedArray())
-            } else {
-                data.navDirections?.let { findNavController().navigate(it) }
-            }
-        } else {
-            Toast.makeText(
-                context,
-                "Must be API ${data.minSdk} or above",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    private fun requestLinkPermissionsResult(grantedMap: Map<String, Boolean>, data: Link) {
-        if (grantedMap.values.all { it }) {
-            data.navDirections?.let { findNavController().navigate(it) }
-        } else {
-            Toast.makeText(context, "Please grant permission", Toast.LENGTH_LONG).show()
-        }
-    }
 }
