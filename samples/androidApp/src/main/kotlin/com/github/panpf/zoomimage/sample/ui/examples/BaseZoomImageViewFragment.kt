@@ -55,7 +55,7 @@ import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
-import com.github.panpf.zoomimage.view.zoom.toInsets
+import com.github.panpf.zoomimage.view.zoom.toInsetsOnlyBottom
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.flow.merge
@@ -479,7 +479,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         EdgeToEdgeController.applyWindowInsets(
             view = bottomBarInsetsLayout,
             typeMask = WindowInsetsCompat.Type.navigationBars(),
-            addedInsets = zoomImageView.scrollBar?.toInsets()
+            addedInsets = zoomImageView.scrollBar?.toInsetsOnlyBottom()
         )
     }
 

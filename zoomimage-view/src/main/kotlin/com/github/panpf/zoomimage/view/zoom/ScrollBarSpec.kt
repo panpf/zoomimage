@@ -121,3 +121,17 @@ fun ScrollBarSpec.toInsets(): Insets = Insets.of(
     /* right = */ ((sideMargin * 2) + size).roundToInt(),
     /* bottom = */ ((sideMargin * 2) + size).roundToInt(),
 )
+
+fun ScrollBarSpec.toInsetsOnlyBottom(): Insets = Insets.of(
+    /* left = */ 0,
+    /* top = */ 0,
+    /* right = */ 0,
+    /* bottom = */ ((sideMargin * 2) + size).roundToInt(),
+)
+
+fun ScrollBarSpec.toInsetsOnlyRight(): Insets = Insets.of(
+    /* left = */ 0,
+    /* top = */ 0,
+    /* right = */ ((sideMargin * 2) + size).roundToInt(),
+    /* bottom = */ 0,
+)

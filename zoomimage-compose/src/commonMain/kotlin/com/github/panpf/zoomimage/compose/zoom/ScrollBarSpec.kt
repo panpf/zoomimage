@@ -122,3 +122,17 @@ fun ScrollBarSpec.toWindowInsets(): WindowInsets = WindowInsets(
     right = ((sideMargin * 2) + size),
     bottom = ((sideMargin * 2) + size),
 )
+
+fun ScrollBarSpec.toWindowInsetsOnlyBottom(): WindowInsets = WindowInsets(
+    left = 0.dp,
+    top = 0.dp,
+    right = 0.dp,
+    bottom = ((sideMargin * 2) + size),
+)
+
+fun ScrollBarSpec.toWindowInsetsOnlyRight(): WindowInsets = WindowInsets(
+    left = 0.dp,
+    top = 0.dp,
+    right = ((sideMargin * 2) + size),
+    bottom = 0.dp,
+)

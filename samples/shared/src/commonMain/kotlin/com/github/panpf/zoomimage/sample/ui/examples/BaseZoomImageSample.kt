@@ -69,7 +69,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
-import com.github.panpf.zoomimage.compose.zoom.toWindowInsets
+import com.github.panpf.zoomimage.compose.zoom.toWindowInsetsOnlyBottom
 import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.Res
@@ -336,7 +336,7 @@ fun ZoomImageTool(
     scrollBar: ScrollBarSpec?,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val scrollBarInsets = scrollBar?.toWindowInsets() ?: WindowInsets()
+    val scrollBarInsets = scrollBar?.toWindowInsetsOnlyBottom() ?: WindowInsets()
     val windowInsets = NavigationBarDefaults.windowInsets.add(scrollBarInsets)
     Box(
         modifier = Modifier

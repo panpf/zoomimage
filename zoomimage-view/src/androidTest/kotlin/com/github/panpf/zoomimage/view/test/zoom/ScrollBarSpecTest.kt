@@ -5,6 +5,8 @@ import android.graphics.Color
 import androidx.core.view.WindowInsetsCompat
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.toInsets
+import com.github.panpf.zoomimage.view.zoom.toInsetsOnlyBottom
+import com.github.panpf.zoomimage.view.zoom.toInsetsOnlyRight
 import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -283,16 +285,38 @@ class ScrollBarSpecTest {
     @Test
     fun testToInsets() {
         val scrollBarSpec = ScrollBarSpec.Default
-        val insets = scrollBarSpec.toInsets()
-        assertEquals(expected = 0, actual = insets.left)
-        assertEquals(expected = 0, actual = insets.top)
-        assertEquals(
-            expected = ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToInt(),
-            actual = insets.right
-        )
-        assertEquals(
-            expected = ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToInt(),
-            actual = insets.bottom
-        )
+
+        scrollBarSpec.toInsets().apply {
+            assertEquals(expected = 0, actual = left)
+            assertEquals(expected = 0, actual = top)
+            assertEquals(
+                expected = ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToInt(),
+                actual = right
+            )
+            assertEquals(
+                expected = ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToInt(),
+                actual = bottom
+            )
+        }
+
+        scrollBarSpec.toInsetsOnlyBottom().apply {
+            assertEquals(expected = 0, actual = left)
+            assertEquals(expected = 0, actual = top)
+            assertEquals(expected = 0, actual = right)
+            assertEquals(
+                expected = ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToInt(),
+                actual = bottom
+            )
+        }
+
+        scrollBarSpec.toInsetsOnlyRight().apply {
+            assertEquals(expected = 0, actual = left)
+            assertEquals(expected = 0, actual = top)
+            assertEquals(
+                expected = ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToInt(),
+                actual = right
+            )
+            assertEquals(expected = 0, actual = bottom)
+        }
     }
 }

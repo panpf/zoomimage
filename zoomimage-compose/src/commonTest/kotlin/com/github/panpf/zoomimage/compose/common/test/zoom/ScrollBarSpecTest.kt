@@ -7,6 +7,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.toWindowInsets
+import com.github.panpf.zoomimage.compose.zoom.toWindowInsetsOnlyBottom
+import com.github.panpf.zoomimage.compose.zoom.toWindowInsetsOnlyRight
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -292,16 +294,38 @@ class ScrollBarSpecTest {
         val density = Density(3f)
         val layoutDirection = LayoutDirection.Ltr
         val scrollBarSpec = ScrollBarSpec.Default
-        val insets = scrollBarSpec.toWindowInsets()
-        assertEquals(expected = 0, actual = insets.getLeft(density, layoutDirection))
-        assertEquals(expected = 0, actual = insets.getTop(density))
-        assertEquals(
-            expected = with(density) { ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToPx() },
-            actual = insets.getRight(density, layoutDirection)
-        )
-        assertEquals(
-            expected = with(density) { ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToPx() },
-            actual = insets.getBottom(density)
-        )
+
+        scrollBarSpec.toWindowInsets().apply {
+            assertEquals(expected = 0, actual = getLeft(density, layoutDirection))
+            assertEquals(expected = 0, actual = getTop(density))
+            assertEquals(
+                expected = with(density) { ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToPx() },
+                actual = getRight(density, layoutDirection)
+            )
+            assertEquals(
+                expected = with(density) { ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToPx() },
+                actual = getBottom(density)
+            )
+        }
+
+        scrollBarSpec.toWindowInsetsOnlyBottom().apply {
+            assertEquals(expected = 0, actual = getLeft(density, layoutDirection))
+            assertEquals(expected = 0, actual = getTop(density))
+            assertEquals(expected = 0, actual = getRight(density, layoutDirection))
+            assertEquals(
+                expected = with(density) { ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToPx() },
+                actual = getBottom(density)
+            )
+        }
+
+        scrollBarSpec.toWindowInsetsOnlyRight().apply {
+            assertEquals(expected = 0, actual = getLeft(density, layoutDirection))
+            assertEquals(expected = 0, actual = getTop(density))
+            assertEquals(
+                expected = with(density) { ((scrollBarSpec.sideMargin * 2) + scrollBarSpec.size).roundToPx() },
+                actual = getRight(density, layoutDirection)
+            )
+            assertEquals(expected = 0, actual = getBottom(density))
+        }
     }
 }
