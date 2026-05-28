@@ -25,6 +25,7 @@ import com.github.panpf.zoomimage.sample.ui.model.ImageLoaderSettingItem
 import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
+import com.github.panpf.zoomimage.sample.util.enumSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.floatSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.stateMap
@@ -140,7 +141,15 @@ expect class AppSettings(context: PlatformContext) {
 
     val zoomImageLogLevelName: SettingsStateFlow<String>
     val zoomImageLogLevel: StateFlow<Logger.Level>
+
+    val darkMode: SettingsStateFlow<DarkMode>
 }
+
+enum class DarkMode {
+    SYSTEM, LIGHT, DARK
+}
+
+expect fun platformSupportedDarkModes(): List<DarkMode>
 
 fun buildScalesCalculator(scalesCalculatorName: String, scalesMultiple: Float): ScalesCalculator {
     return if (scalesCalculatorName == "Dynamic") {
@@ -321,4 +330,13 @@ abstract class BaseAppSettings(val context: PlatformContext) {
     }
     val zoomImageLogLevel: StateFlow<Logger.Level> =
         zoomImageLogLevelName.stateMap { Logger.Level.valueOf(it) }
+
+    val darkMode: SettingsStateFlow<DarkMode> by lazy {
+        enumSettingsStateFlow(
+            context = context,
+            key = "darkMode",
+            initialize = platformSupportedDarkModes().first(),
+            convert = DarkMode::valueOf
+        )
+    }
 }

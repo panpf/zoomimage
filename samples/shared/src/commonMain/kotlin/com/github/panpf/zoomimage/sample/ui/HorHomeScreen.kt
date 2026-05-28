@@ -4,6 +4,7 @@ package com.github.panpf.zoomimage.sample.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.logo_zoomimage
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
+import com.github.panpf.zoomimage.sample.ui.components.DarkModeSwitch
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
@@ -51,40 +53,48 @@ fun HorHomeScreen() {
                 }
             }
 
-            NavigationRail(
-                modifier = Modifier.fillMaxHeight(),
-                header = {
-                    Image(
-                        painter = painterResource(Res.drawable.logo_zoomimage),
-                        contentDescription = "Logo",
-                        modifier = Modifier
-                            .padding(top = 20.dp, bottom = 50.dp)
-                            .size(40.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .padding(10.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
+            Box(Modifier.fillMaxHeight()) {
+
+                NavigationRail(
+                    modifier = Modifier.fillMaxHeight(),
+                    header = {
+                        Image(
+                            painter = painterResource(Res.drawable.logo_zoomimage),
+                            contentDescription = "Logo",
+                            modifier = Modifier
+                                .padding(top = 20.dp, bottom = 50.dp)
+                                .size(40.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .padding(10.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
+                    }
+                ) {
+                    homeTabs.forEachIndexed { index, homeTab ->
+                        NavigationRailItem(
+                            icon = {
+                                Icon(
+                                    painter = painterResource(homeTab.icon),
+                                    contentDescription = homeTab.title,
+                                    modifier = Modifier.size(24.dp)
+                                        .padding(homeTab.padding)
+                                )
+                            },
+                            label = { Text(homeTab.title) },
+                            selected = pagerState.currentPage == index,
+                            onClick = { coroutineScope.launch { pagerState.scrollToPage(index) } },
+                            modifier = Modifier.padding(vertical = 14.dp)
+                        )
+                    }
                 }
-            ) {
-                homeTabs.forEachIndexed { index, homeTab ->
-                    NavigationRailItem(
-                        icon = {
-                            Icon(
-                                painter = painterResource(homeTab.icon),
-                                contentDescription = homeTab.title,
-                                modifier = Modifier.size(24.dp)
-                                    .padding(homeTab.padding)
-                            )
-                        },
-                        label = { Text(homeTab.title) },
-                        selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.scrollToPage(index) } },
-                        modifier = Modifier.padding(vertical = 14.dp)
-                    )
-                }
+
+                DarkModeSwitch(
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                        .padding(top = 20.dp, bottom = 20.dp)
+                )
             }
 
             VerticalPager(

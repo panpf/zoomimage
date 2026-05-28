@@ -20,8 +20,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.ArrayFragmentStateAdapter
+import com.github.panpf.zoomimage.sample.DarkMode
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.applyDarkMode
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
+import com.github.panpf.zoomimage.sample.platformSupportedDarkModes
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListFragment
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListFragment
@@ -44,6 +47,31 @@ class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
 
         binding.composePageIconLayout.setOnClickListener {
             appSettings.composePage.value = true
+        }
+
+        binding.darkModeIcon.apply {
+            val nextDarkMode: () -> DarkMode = {
+                val darkMode = appSettings.darkMode.value
+                val platformSupportedDarkModes = platformSupportedDarkModes()
+                val index = platformSupportedDarkModes.indexOf(darkMode)
+                val nextDarkModeIndex = (index + 1) % platformSupportedDarkModes.size
+                platformSupportedDarkModes[nextDarkModeIndex]
+            }
+            val setIcon: (DarkMode) -> Unit = {
+                val icon = when (it) {
+                    DarkMode.SYSTEM -> R.drawable.ic_auto_mode
+                    DarkMode.LIGHT -> R.drawable.ic_light_mode
+                    DarkMode.DARK -> R.drawable.ic_dark_mode
+                }
+                setImageResource(icon)
+            }
+            setIcon(nextDarkMode())
+
+            setOnClickListener {
+                appSettings.darkMode.value = nextDarkMode()
+                setIcon(nextDarkMode())
+                applyDarkMode(appSettings)
+            }
         }
 
         binding.pager.apply {

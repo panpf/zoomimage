@@ -13,6 +13,7 @@ class MainActivity : BaseActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
+        applyDarkMode(appSettings)
         if (appSettings.composePage.value) {
             startActivity(Intent(this, ComposeMainActivity::class.java))
         } else {

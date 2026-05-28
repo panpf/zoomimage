@@ -1,5 +1,8 @@
 package com.github.panpf.zoomimage.sample
 
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import com.github.panpf.sketch.PlatformContext
@@ -45,4 +48,21 @@ actual class AppSettings actual constructor(context: PlatformContext) : BaseAppS
     val viewImageLoader: SettingsStateFlow<String> by lazy {
         stringSettingsStateFlow(context, "viewImageLoader", "Sketch")
     }
+}
+
+actual fun platformSupportedDarkModes(): List<DarkMode> {
+    return if (VERSION.SDK_INT >= VERSION_CODES.O) {
+        DarkMode.entries
+    } else {
+        listOf(DarkMode.LIGHT, DarkMode.DARK)
+    }
+}
+
+fun applyDarkMode(appSettings: AppSettings) {
+    val mode = when (appSettings.darkMode.value) {
+        DarkMode.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        DarkMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+        DarkMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
+    }
+    AppCompatDelegate.setDefaultNightMode(mode)
 }

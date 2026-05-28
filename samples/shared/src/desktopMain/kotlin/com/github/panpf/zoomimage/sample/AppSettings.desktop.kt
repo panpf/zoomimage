@@ -11,3 +11,5 @@ actual class AppSettings actual constructor(context: PlatformContext) : BaseAppS
         stringSettingsStateFlow(context, "localPhotosDirPath", "")
     }
 }
+
+actual fun platformSupportedDarkModes(): List<DarkMode> = DarkMode.entries

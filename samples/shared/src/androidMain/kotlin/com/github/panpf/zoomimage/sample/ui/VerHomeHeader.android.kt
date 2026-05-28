@@ -1,14 +1,16 @@
 package com.github.panpf.zoomimage.sample.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.compose.R
+import com.github.panpf.zoomimage.sample.ui.components.DarkModeSwitch
 import org.koin.compose.koinInject
 
 @Composable
@@ -38,20 +41,28 @@ actual fun VerHomeHeader() {
 
         val appSettings: AppSettings = koinInject()
         val top = with(LocalDensity.current) { TopAppBarDefaults.windowInsets.getTop(this).toDp() }
-        Box(
+        Row(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(top = top)
                 .height(50.dp)
-                .clickable { appSettings.composePage.value = false }
                 .padding(start = 16.dp, end = 16.dp),
-            contentAlignment = Alignment.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_android),
-                contentDescription = "Android Page",
-                modifier = Modifier.size(20.dp)
-            )
+            DarkModeSwitch()
+
+            IconButton(
+                onClick = {
+                    appSettings.composePage.value = false
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_android),
+                    tint = NavigationRailItemDefaults.colors().unselectedIconColor,
+                    contentDescription = "Android Page",
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
 }
