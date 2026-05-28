@@ -37,7 +37,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
-class SketchZoomImageViewSwitchTestFragment :
+class ZoomImageViewSwitchTestFragment :
     BaseToolbarBindingFragment<FragmentZoomViewSwitchBinding>() {
 
     private val imageSwitchViewModel by viewModel<ImageSwitchViewModel>()
@@ -52,7 +52,7 @@ class SketchZoomImageViewSwitchTestFragment :
         binding: FragmentZoomViewSwitchBinding,
         savedInstanceState: Bundle?
     ) {
-        toolbar.title = "SketchZoomImageView (Switch)"
+        toolbar.title = "ZoomImageView (Switch)"
 
         binding.zoomImageView.apply {
             scrollBar = ScrollBarSpec.Medium

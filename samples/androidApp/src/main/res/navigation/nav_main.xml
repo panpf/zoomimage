@@ -188,11 +188,11 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/sketchZoomImageViewSwitchTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.SketchZoomImageViewSwitchTestFragment" />
+        android:id="@+id/zoomImageViewSwitchTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.ZoomImageViewSwitchTestFragment" />
     <action
-        android:id="@+id/action_global_sketchZoomImageViewSwitchTestFragment"
-        app:destination="@id/sketchZoomImageViewSwitchTestFragment"
+        android:id="@+id/action_global_zoomImageViewSwitchTestFragment"
+        app:destination="@id/zoomImageViewSwitchTestFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"

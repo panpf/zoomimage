@@ -46,6 +46,7 @@ import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_rotate_right
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
+import com.github.panpf.zoomimage.sample.ui.theme.md_theme_dark_background
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ReadMode
@@ -76,8 +77,8 @@ fun ZoomImageSwitchTestScreen() {
             zoomState.logger.level = Logger.Level.Debug
             Column(
                 Modifier.fillMaxSize()
-                    .background(Color.Black)
                     .windowInsetsPadding(WindowInsets.navigationBars)
+                    .background(md_theme_dark_background)
             ) {
                 val imageUris = remember { imageSwitchTestResourcesWithCompose.map { it.uri } }
                 var currentImageUri by remember { mutableStateOf(imageUris.first()) }

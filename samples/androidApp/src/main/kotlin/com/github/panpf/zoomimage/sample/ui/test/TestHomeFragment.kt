@@ -75,8 +75,8 @@ class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
             navDirections = NavMainDirections.actionGlobalImageMatrixFragment(),
         ),
         Link(
-            title = "SketchZoomImageView (Switch)",
-            navDirections = NavMainDirections.actionGlobalSketchZoomImageViewSwitchTestFragment(),
+            title = "ZoomImageView (Switch)",
+            navDirections = NavMainDirections.actionGlobalZoomImageViewSwitchTestFragment(),
             minSdk = 21,
         ),
         Link(

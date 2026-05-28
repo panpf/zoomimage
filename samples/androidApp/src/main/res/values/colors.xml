@@ -32,6 +32,8 @@
     <color name="md_theme_outlineVariant">#C9C5D0</color>
     <color name="md_theme_scrim">#000000</color>
 
+    <color name="md_theme_background_dark">#1C1B1F</color>
+
     <color name="divider">#676767</color>
     <color name="placeholder_bg">@color/md_theme_primaryContainer</color>
     <color name="placeholder_icon">@color/md_theme_onPrimaryContainer</color>

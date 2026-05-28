@@ -35,6 +35,7 @@ import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
+import com.github.panpf.zoomimage.sample.ui.theme.md_theme_dark_background
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
 import me.saket.telephoto.zoomable.rememberZoomableImageState
@@ -62,8 +63,8 @@ fun TelephotoSwitchTestScreen() {
             Column(
                 Modifier
                     .fillMaxSize()
-                    .background(Color.Black)
                     .windowInsetsPadding(WindowInsets.navigationBars)
+                    .background(md_theme_dark_background)
             ) {
                 val imageUris = remember { imageSwitchTestResourcesWithAsset.map { it.uri } }
                 var currentImageUri by remember { mutableStateOf(imageUris.first()) }

@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
     android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@color/md_theme_background_dark">
 
         <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/photoView"
@@ -51,5 +51,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/images"
         android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:background="@color/md_theme_background_dark" />
 </LinearLayout>
