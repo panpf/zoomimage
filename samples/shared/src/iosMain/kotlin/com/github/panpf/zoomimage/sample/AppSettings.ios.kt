@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.sample
 
 import com.github.panpf.sketch.PlatformContext
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class AppSettings actual constructor(context: PlatformContext) : BaseAppSettings(context)
 
 actual fun platformSupportedDarkModes(): List<DarkMode> = DarkMode.entries

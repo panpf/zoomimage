@@ -30,7 +30,6 @@ import com.github.panpf.zoomimage.subsampling.TileImageCache
  *
  * @see com.github.panpf.zoomimage.core.coil3.android.test.CoilTileImageCacheTest
  */
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class CoilTileImageCache actual constructor(
     private val imageLoader: ImageLoader
 ) : TileImageCache {

@@ -11,7 +11,6 @@ import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class CoilComposeResourceSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
@@ -24,6 +23,7 @@ actual class CoilComposeResourceSubsamplingImageGenerator :
         val uri = when (val model = result.request.data) {
             is String -> model.toUri()
             is coil3.Uri -> model.toString().toUri()
+            is platform.Foundation.NSURL -> model.toString().toUri()
             else -> null
         }
         if (uri != null && isComposeResourceUri(uri)) {

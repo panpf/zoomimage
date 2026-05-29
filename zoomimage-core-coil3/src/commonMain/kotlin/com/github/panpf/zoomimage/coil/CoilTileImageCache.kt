@@ -24,7 +24,6 @@ import com.github.panpf.zoomimage.subsampling.TileImageCache
 /**
  * Implement [TileImageCache] based on Sketch
  */
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class CoilTileImageCache(imageLoader: ImageLoader) : TileImageCache {
 
     override fun get(key: String): TileImage?

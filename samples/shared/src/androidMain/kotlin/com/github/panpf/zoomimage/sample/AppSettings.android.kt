@@ -38,7 +38,6 @@ val viewImageLoaders: List<ImageLoaderSettingItem> = listOf(
     ImageLoaderSettingItem("Basic", "List: ImageView + Sketch\nDetail: ZoomImageView + Sketch"),
 )
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class AppSettings actual constructor(context: PlatformContext) : BaseAppSettings(context) {
 
     val composePage: SettingsStateFlow<Boolean> by lazy {

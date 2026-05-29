@@ -20,7 +20,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual data class Photo actual constructor(
     @SerialName("originalUrl") actual val originalUrl: String,
     @SerialName("mediumUrl") actual val mediumUrl: String?,

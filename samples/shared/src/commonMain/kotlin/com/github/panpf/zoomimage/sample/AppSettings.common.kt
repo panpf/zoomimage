@@ -43,7 +43,6 @@ expect val composeImageLoaders: List<ImageLoaderSettingItem>
 @Composable
 expect fun getComposeImageLoaderIcon(composeImageLoader: String): Painter
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class AppSettings(context: PlatformContext) {
 
     /* ------------------------------------------ Content Arrange -------------------------------------------- */

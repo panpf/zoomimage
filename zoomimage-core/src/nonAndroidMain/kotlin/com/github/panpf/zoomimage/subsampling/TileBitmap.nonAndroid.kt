@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.util.toLogString
