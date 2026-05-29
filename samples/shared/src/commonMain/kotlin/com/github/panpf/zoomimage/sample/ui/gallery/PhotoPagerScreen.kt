@@ -24,6 +24,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
+import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
 import com.github.panpf.zoomimage.sample.util.Platform
 import com.github.panpf.zoomimage.sample.util.current
@@ -33,79 +34,81 @@ import org.koin.compose.koinInject
 
 @Composable
 fun PhotoPagerScreen(params: PhotoPagerScreenParams) {
-    val appEvents: AppEvents = koinInject()
-    val coroutineScope = rememberCoroutineScope()
-    val focusRequest = remember { androidx.compose.ui.focus.FocusRequester() }
-    Box(
-        Modifier.fillMaxSize()
-            .focusable()
-            .focusRequester(focusRequest)
-            .onKeyEvent {
-                coroutineScope.launch {
-                    appEvents.keyEvent.emit(it)
-                }
-                true
-            }
-    ) {
-        val initialPage = remember { params.initialPosition - params.startPosition }
-        val pagerState = rememberPagerState(initialPage = initialPage) {
-            params.photos.size
-        }
-
-        val photo = params.photos[pagerState.currentPage]
-        val colorScheme = MaterialTheme.colorScheme
-        val photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
-        PhotoPagerBackground(photo.listThumbnailUrl, photoPaletteState)
-
-        val appSettings: AppSettings = koinInject()
-        val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
-        if (horizontalLayout) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { index ->
-                val pageSelected by remember {
-                    derivedStateOf {
-                        pagerState.currentPage == index
+    BaseScreen {
+        val appEvents: AppEvents = koinInject()
+        val coroutineScope = rememberCoroutineScope()
+        val focusRequest = remember { androidx.compose.ui.focus.FocusRequester() }
+        Box(
+            Modifier.fillMaxSize()
+                .focusable()
+                .focusRequester(focusRequest)
+                .onKeyEvent {
+                    coroutineScope.launch {
+                        appEvents.keyEvent.emit(it)
                     }
+                    true
                 }
-                val photo1 = params.photos[index]
-                PhotoDetail(
-                    photo = photo1,
-                    photoPaletteState = photoPaletteState,
-                    pageSelected = pageSelected,
-                )
+        ) {
+            val initialPage = remember { params.initialPosition - params.startPosition }
+            val pagerState = rememberPagerState(initialPage = initialPage) {
+                params.photos.size
             }
-        } else {
-            VerticalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { index ->
-                val pageSelected by remember {
-                    derivedStateOf {
-                        pagerState.currentPage == index
+
+            val photo = params.photos[pagerState.currentPage]
+            val colorScheme = MaterialTheme.colorScheme
+            val photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
+            PhotoPagerBackground(photo.listThumbnailUrl, photoPaletteState)
+
+            val appSettings: AppSettings = koinInject()
+            val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
+            if (horizontalLayout) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) { index ->
+                    val pageSelected by remember {
+                        derivedStateOf {
+                            pagerState.currentPage == index
+                        }
                     }
+                    val photo1 = params.photos[index]
+                    PhotoDetail(
+                        photo = photo1,
+                        photoPaletteState = photoPaletteState,
+                        pageSelected = pageSelected,
+                    )
                 }
-                val photo1 = params.photos[index]
-                PhotoDetail(
-                    photo = photo1,
-                    photoPaletteState = photoPaletteState,
-                    pageSelected = pageSelected,
-                )
+            } else {
+                VerticalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) { index ->
+                    val pageSelected by remember {
+                        derivedStateOf {
+                            pagerState.currentPage == index
+                        }
+                    }
+                    val photo1 = params.photos[index]
+                    PhotoDetail(
+                        photo = photo1,
+                        photoPaletteState = photoPaletteState,
+                        pageSelected = pageSelected,
+                    )
+                }
+            }
+
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+                PhotoPagerHeaders(params, pagerState, horizontalLayout, photoPaletteState)
+
+                TurnPageIndicator(pagerState, photoPaletteState)
+
+                if (!Platform.current.isMobile()) {
+                    PhotoPagerGesturePromptDialog(appSettings)
+                }
             }
         }
-
-        Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
-            PhotoPagerHeaders(params, pagerState, horizontalLayout, photoPaletteState)
-
-            TurnPageIndicator(pagerState, photoPaletteState)
-
-            if (!Platform.current.isMobile()) {
-                PhotoPagerGesturePromptDialog(appSettings)
-            }
+        LaunchedEffect(Unit) {
+            focusRequest.requestFocus()
         }
-    }
-    LaunchedEffect(Unit) {
-        focusRequest.requestFocus()
     }
 }
