@@ -30,6 +30,7 @@ import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.GlideZoomImageView
 import com.github.panpf.zoomimage.sample.compose.R
+import com.github.panpf.zoomimage.sample.image.ComposeResourceGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
@@ -43,7 +44,9 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>
         get() = args.imageUri
 
     override fun createZoomImageView(context: Context): GlideZoomImageView {
-        return GlideZoomImageView(context)
+        return GlideZoomImageView(context).apply {
+            setSubsamplingImageGenerators(listOf(ComposeResourceGlideSubsamplingImageGenerator()))
+        }
     }
 
     override fun loadImage(zoomView: GlideZoomImageView, stateView: StateView) {

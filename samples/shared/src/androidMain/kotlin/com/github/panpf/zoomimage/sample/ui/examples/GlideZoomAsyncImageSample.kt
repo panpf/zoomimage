@@ -18,11 +18,13 @@ import com.github.panpf.zoomimage.GlideZoomAsyncImage
 import com.github.panpf.zoomimage.compose.glide.CrossFade
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.rememberGlideZoomState
+import com.github.panpf.zoomimage.sample.image.ComposeResourceGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.capturable
+import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -34,7 +36,12 @@ fun GlideZoomAsyncImageSample(
     BaseZoomImageSample(
         photo = photo,
         photoPaletteState = photoPaletteState,
-        createZoomState = { rememberGlideZoomState() },
+        createZoomState = {
+            val extends = remember {
+                listOf(ComposeResourceGlideSubsamplingImageGenerator()).toImmutableList()
+            }
+            rememberGlideZoomState(extends)
+        },
         pageSelected = pageSelected,
     ) {
         val context = LocalContext.current
