@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import com.bumptech.glide.integration.compose.CrossFade
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.panpf.zoomimage.sample.compose.R
@@ -37,7 +36,6 @@ fun GlidePhotoGridItem(
             },
         contentScale = ContentScale.Crop,
         contentDescription = "photo",
-        transition = CrossFade
     ) {
         it.placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)

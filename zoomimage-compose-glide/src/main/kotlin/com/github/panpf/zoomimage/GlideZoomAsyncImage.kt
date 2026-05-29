@@ -44,7 +44,6 @@ import com.github.panpf.zoomimage.compose.glide.BaseZoomGlideImage
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.compose.glide.Placeholder
 import com.github.panpf.zoomimage.compose.glide.RequestBuilderTransform
-import com.github.panpf.zoomimage.compose.glide.Transition
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -144,7 +143,6 @@ fun GlideZoomAsyncImage(
     // See http://shortn/_x79pjkMZIH for an internal discussion.
     loading: Placeholder? = null,
     failure: Placeholder? = null,
-    transition: Transition.Factory? = null,
     // TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
@@ -171,7 +169,6 @@ fun GlideZoomAsyncImage(
             keepContentNoneStartOnDraw = true,
             loading = loading,
             failure = failure,
-            transition = transition,
             requestBuilderTransform = { requestBuilder ->
                 requestBuilderTransform(requestBuilder)
                     .centerInside()

@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.bumptech.glide.integration.compose.CrossFade
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
@@ -21,6 +20,5 @@ fun GlideZoomImageMinimapContent(sketchImageUri: String) {
         model = glideModel,
         modifier = Modifier.fillMaxSize(),
         contentDescription = "Minimap",
-        transition = CrossFade
     )
 }
