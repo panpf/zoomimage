@@ -25,7 +25,7 @@ import coil3.request.crossfade
 import coil3.size.Precision
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.CoilZoomImageView
-import com.github.panpf.zoomimage.sample.image.CoilViewResourceComposeSubsamplingImageGenerator
+import com.github.panpf.zoomimage.sample.image.ComposeResourceCoilViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
@@ -41,7 +41,7 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
 
     override fun createZoomImageView(context: Context): CoilZoomImageView {
         return CoilZoomImageView(context).apply {
-            setSubsamplingImageGenerators(CoilViewResourceComposeSubsamplingImageGenerator())
+            setSubsamplingImageGenerators(ComposeResourceCoilViewSubsamplingImageGenerator())
         }
     }
 

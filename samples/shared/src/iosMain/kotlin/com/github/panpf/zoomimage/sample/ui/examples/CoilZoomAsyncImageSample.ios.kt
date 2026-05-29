@@ -15,9 +15,9 @@ import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.subsampling.toFactory
 
 actual fun platformCoilComposeSubsamplingImageGenerator(): List<CoilComposeSubsamplingImageGenerator>? =
-    listOf(CoilKotlinResourceComposeSubsamplingImageGenerator())
+    listOf(KotlinResourceCoilComposeSubsamplingImageGenerator())
 
-class CoilKotlinResourceComposeSubsamplingImageGenerator :
+class KotlinResourceCoilComposeSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
@@ -50,6 +50,6 @@ class CoilKotlinResourceComposeSubsamplingImageGenerator :
     }
 
     override fun toString(): String {
-        return "CoilKotlinResourceComposeSubsamplingImageGenerator"
+        return "KotlinResourceCoilComposeSubsamplingImageGenerator"
     }
 }

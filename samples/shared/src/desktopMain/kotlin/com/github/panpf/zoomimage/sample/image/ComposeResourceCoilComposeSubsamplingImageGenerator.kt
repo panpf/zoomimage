@@ -11,7 +11,7 @@ import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 
-actual class CoilComposeResourceSubsamplingImageGenerator :
+actual class ComposeResourceCoilComposeSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
     actual override suspend fun generateImage(
@@ -33,16 +33,16 @@ actual class CoilComposeResourceSubsamplingImageGenerator :
         return null
     }
 
-    override fun equals(other: Any?): Boolean {
+    actual override fun equals(other: Any?): Boolean {
         if (this === other) return true
         return other != null && this::class == other::class
     }
 
-    override fun hashCode(): Int {
+    actual override fun hashCode(): Int {
         return this::class.hashCode()
     }
 
-    override fun toString(): String {
-        return "CoilComposeResourceSubsamplingImageGenerator"
+    actual override fun toString(): String {
+        return "ComposeResourceCoilComposeSubsamplingImageGenerator"
     }
 }

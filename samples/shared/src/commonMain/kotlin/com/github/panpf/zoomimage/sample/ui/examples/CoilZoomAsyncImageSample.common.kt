@@ -17,7 +17,7 @@ import coil3.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.rememberCoilZoomState
-import com.github.panpf.zoomimage.sample.image.CoilComposeResourceSubsamplingImageGenerator
+import com.github.panpf.zoomimage.sample.image.ComposeResourceCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.PageState
@@ -40,7 +40,7 @@ fun CoilZoomAsyncImageSample(
         createZoomState = {
             val extensionsModelToImageSources = remember {
                 platformCoilComposeSubsamplingImageGenerator().orEmpty()
-                    .plus(CoilComposeResourceSubsamplingImageGenerator())
+                    .plus(ComposeResourceCoilComposeSubsamplingImageGenerator())
                     .toImmutableList()
             }
             rememberCoilZoomState(subsamplingImageGenerators = extensionsModelToImageSources)

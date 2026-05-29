@@ -35,7 +35,6 @@ import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
-
 class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>() {
 
     private val args by navArgs<GlideZoomImageViewFragmentArgs>()

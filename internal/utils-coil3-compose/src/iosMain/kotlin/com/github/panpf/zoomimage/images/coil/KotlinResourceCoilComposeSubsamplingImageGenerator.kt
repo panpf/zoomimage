@@ -13,8 +13,7 @@ import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.subsampling.toFactory
 
-class CoilKotlinResourceComposeSubsamplingImageGenerator :
-    CoilComposeSubsamplingImageGenerator {
+class KotlinResourceCoilComposeSubsamplingImageGenerator : CoilComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
         context: PlatformContext,
@@ -25,6 +24,7 @@ class CoilKotlinResourceComposeSubsamplingImageGenerator :
         val uri = when (val model = result.request.data) {
             is String -> model.toUri()
             is coil3.Uri -> model.toString().toUri()
+            is platform.Foundation.NSURL -> model.toString().toUri()
             else -> null
         }
         if (uri != null && isKotlinResourceUri(uri)) {
@@ -45,6 +45,6 @@ class CoilKotlinResourceComposeSubsamplingImageGenerator :
     }
 
     override fun toString(): String {
-        return "CoilKotlinResourceComposeSubsamplingImageGenerator"
+        return "KotlinResourceCoilComposeSubsamplingImageGenerator"
     }
 }
