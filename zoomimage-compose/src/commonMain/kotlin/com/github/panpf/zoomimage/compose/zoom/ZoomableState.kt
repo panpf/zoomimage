@@ -63,7 +63,7 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScrollEdge
 import com.github.panpf.zoomimage.zoom.internal.ZoomableCore
 
-// TODO Support mac windows trackpad zoom and move
+// TODO Support mac windows trackpad zoom and move. Waiting for official support. https://youtrack.jetbrains.com/issue/CMP-1610
 
 /**
  * Creates and remember a [ZoomableState] that can be used to control the scale, pan, rotation of the content.
