@@ -14,15 +14,12 @@ import com.github.panpf.zoomimage.GlideZoomAsyncImage
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
-import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 
 @Composable
 fun TempAndroidTestScreen() {
-    BaseScreen {
-        ToolbarScaffold("Temp (Android)") {
-            GlideThumbnailSample()
-        }
+    ToolbarScaffold("Temp (Android)") {
+        GlideThumbnailSample()
     }
 }
 

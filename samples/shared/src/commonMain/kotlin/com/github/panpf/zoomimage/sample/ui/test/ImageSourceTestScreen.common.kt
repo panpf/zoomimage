@@ -20,7 +20,6 @@ import com.github.panpf.sketch.request.RequestContext
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.components.HorizontalTabPager
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
@@ -47,7 +46,7 @@ expect suspend fun sketchFetcherToZoomImageImageSource(
 
 @Composable
 fun ImageSourceTestScreen() {
-    BaseScreen {
+    ToolbarScaffold("ImageSource") {
         val context = LocalPlatformContext.current
         var imageSourceTestItems by remember { mutableStateOf<List<Pair<String, String>>?>(null) }
         LaunchedEffect(Unit) {
@@ -55,30 +54,28 @@ fun ImageSourceTestScreen() {
         }
         val imageSourceTestItems1 = imageSourceTestItems
         if (imageSourceTestItems1 != null) {
-            ToolbarScaffold("ImageSource") {
-                val pagerItems = remember {
-                    imageSourceTestItems1.map { pair ->
-                        PagerItem(
-                            data = pair,
-                            titleFactory = { data ->
-                                data.first
-                            },
-                            contentFactory = { data, _, _ ->
-                                SketchZoomAsyncImage(
-                                    uri = data.second,
-                                    contentDescription = "view image",
-                                    modifier = Modifier.fillMaxSize(),
-                                    scrollBar = ScrollBarSpec.Medium.copy(
-                                        windowInsets = WindowInsets.navigationBars
-                                    ),
-                                )
-                            }
-                        )
-                    }.toTypedArray()
-                }
-                Box(Modifier.fillMaxSize()) {
-                    HorizontalTabPager(pagerItems = pagerItems)
-                }
+            val pagerItems = remember {
+                imageSourceTestItems1.map { pair ->
+                    PagerItem(
+                        data = pair,
+                        titleFactory = { data ->
+                            data.first
+                        },
+                        contentFactory = { data, _, _ ->
+                            SketchZoomAsyncImage(
+                                uri = data.second,
+                                contentDescription = "view image",
+                                modifier = Modifier.fillMaxSize(),
+                                scrollBar = ScrollBarSpec.Medium.copy(
+                                    windowInsets = WindowInsets.navigationBars
+                                ),
+                            )
+                        }
+                    )
+                }.toTypedArray()
+            }
+            Box(Modifier.fillMaxSize()) {
+                HorizontalTabPager(pagerItems = pagerItems)
             }
         }
     }

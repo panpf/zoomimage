@@ -15,31 +15,28 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.keyZoom
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
-import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.util.Logger
 
 @Composable
 fun KeyTestScreen() {
-    BaseScreen {
-        ToolbarScaffold("KeyZoom") {
-            val focusRequester = remember { FocusRequester() }
-            val zoomState = rememberSketchZoomState()
-            zoomState.logger.level = Logger.Level.Debug
-            SketchZoomAsyncImage(
-                uri = ComposeResImageFiles.hugeChina.uri,
-                contentDescription = "",
-                zoomState = zoomState,
-                scrollBar = ScrollBarSpec.Medium.copy(windowInsets = WindowInsets.navigationBars),
-                modifier = Modifier.fillMaxSize()
-                    .focusRequester(focusRequester)
-                    .focusable()
-                    .keyZoom(zoomState.zoomable),
-            )
+    ToolbarScaffold("KeyZoom") {
+        val focusRequester = remember { FocusRequester() }
+        val zoomState = rememberSketchZoomState()
+        zoomState.logger.level = Logger.Level.Debug
+        SketchZoomAsyncImage(
+            uri = ComposeResImageFiles.hugeChina.uri,
+            contentDescription = "",
+            zoomState = zoomState,
+            scrollBar = ScrollBarSpec.Medium.copy(windowInsets = WindowInsets.navigationBars),
+            modifier = Modifier.fillMaxSize()
+                .focusRequester(focusRequester)
+                .focusable()
+                .keyZoom(zoomState.zoomable),
+        )
 
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
-            }
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
         }
     }
 }

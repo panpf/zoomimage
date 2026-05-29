@@ -44,7 +44,6 @@ import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.AppEvents
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_rotate_right
-import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.theme.md_theme_dark_background
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
@@ -70,119 +69,117 @@ val imageSwitchTestResourcesWithCompose = arrayOf(
 
 @Composable
 fun ZoomImageSwitchTestScreen() {
-    BaseScreen {
-        ToolbarScaffold("ZoomImage (Switch)") {
-            val zoomState = rememberSketchZoomState()
-            zoomState.zoomable.setReadMode(ReadMode.Default)
-            zoomState.logger.level = Logger.Level.Debug
-            Column(
-                Modifier.fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.navigationBars)
-                    .background(md_theme_dark_background)
-            ) {
-                val imageUris = remember { imageSwitchTestResourcesWithCompose.map { it.uri } }
-                var currentImageUri by remember { mutableStateOf(imageUris.first()) }
-                Box(Modifier.fillMaxWidth().weight(1f)) {
-                    SketchZoomAsyncImage(
-                        uri = currentImageUri,
-                        contentDescription = "Image",
-                        modifier = Modifier.fillMaxSize(),
-                        scrollBar = ScrollBarSpec.Medium,
-                        zoomState = zoomState,
-                    )
+    ToolbarScaffold("ZoomImage (Switch)") {
+        val zoomState = rememberSketchZoomState()
+        zoomState.zoomable.setReadMode(ReadMode.Default)
+        zoomState.logger.level = Logger.Level.Debug
+        Column(
+            Modifier.fillMaxSize()
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .background(md_theme_dark_background)
+        ) {
+            val imageUris = remember { imageSwitchTestResourcesWithCompose.map { it.uri } }
+            var currentImageUri by remember { mutableStateOf(imageUris.first()) }
+            Box(Modifier.fillMaxWidth().weight(1f)) {
+                SketchZoomAsyncImage(
+                    uri = currentImageUri,
+                    contentDescription = "Image",
+                    modifier = Modifier.fillMaxSize(),
+                    scrollBar = ScrollBarSpec.Medium,
+                    zoomState = zoomState,
+                )
 
-                    Row(Modifier.padding(20.dp)) {
-                        val headerInfo = remember {
-                            """
+                Row(Modifier.padding(20.dp)) {
+                    val headerInfo = remember {
+                        """
                                 scale: 
                                 offset: 
                                 rotation: 
                             """.trimIndent()
-                        }
-                        Text(
-                            text = headerInfo,
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            lineHeight = 16.sp,
-                            style = LocalTextStyle.current.copy(
-                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                            ),
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        val transformInfo = remember(zoomState.zoomable.transform) {
-                            val transform = zoomState.zoomable.transform
-                            """
+                    }
+                    Text(
+                        text = headerInfo,
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        lineHeight = 16.sp,
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                        ),
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    val transformInfo = remember(zoomState.zoomable.transform) {
+                        val transform = zoomState.zoomable.transform
+                        """
                                 ${transform.scale.toShortString()}
                                 ${transform.offset.round().toShortString()}
                                 ${transform.rotation.roundToInt()}
                             """.trimIndent()
-                        }
-                        Text(
-                            text = transformInfo,
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            lineHeight = 16.sp,
-                            style = LocalTextStyle.current.copy(
-                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                            ),
-                            overflow = TextOverflow.Ellipsis,
-                        )
                     }
-
-                    val coroutineScope = rememberCoroutineScope()
-                    Row(
-                        modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Keep: ",
-                            style = LocalTextStyle.current.copy(
-                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                            ),
-                            color = Color.White
-                        )
-                        val appEvents: AppEvents = koinInject()
-                        Switch(
-                            checked = zoomState.zoomable.keepTransformWhenSameAspectRatioContentSizeChanged,
-                            onCheckedChange = { isChecked ->
-                                zoomState.zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(
-                                    isChecked
-                                )
-                                if (isChecked) {
-                                    coroutineScope.launch {
-                                        appEvents.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
-                                    }
-                                }
-                            }
-                        )
-
-                        Spacer(Modifier.weight(1f))
-
-                        FilledIconButton(onClick = {
-                            coroutineScope.launch {
-                                zoomState.zoomable.rotateBy(90)
-                            }
-                        }) {
-                            androidx.compose.material3.Icon(
-                                painter = painterResource(Res.drawable.ic_rotate_right),
-                                contentDescription = "Rotate",
-                            )
-                        }
-                    }
+                    Text(
+                        text = transformInfo,
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        lineHeight = 16.sp,
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                        ),
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
 
-                LazyRow(Modifier.fillMaxWidth().height(100.dp)) {
-                    items(imageUris) { uri ->
-                        AsyncImage(
-                            uri = uri,
-                            contentDescription = "ThumbnailImage",
-                            contentScale = ContentScale.Inside,
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .size(80.dp)
-                                .clickable { currentImageUri = uri }
+                val coroutineScope = rememberCoroutineScope()
+                Row(
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Keep: ",
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                        ),
+                        color = Color.White
+                    )
+                    val appEvents: AppEvents = koinInject()
+                    Switch(
+                        checked = zoomState.zoomable.keepTransformWhenSameAspectRatioContentSizeChanged,
+                        onCheckedChange = { isChecked ->
+                            zoomState.zoomable.setKeepTransformWhenSameAspectRatioContentSizeChanged(
+                                isChecked
+                            )
+                            if (isChecked) {
+                                coroutineScope.launch {
+                                    appEvents.toastFlow.emit("Keep Transform only when pictures with the same aspect ratio switch")
+                                }
+                            }
+                        }
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    FilledIconButton(onClick = {
+                        coroutineScope.launch {
+                            zoomState.zoomable.rotateBy(90)
+                        }
+                    }) {
+                        androidx.compose.material3.Icon(
+                            painter = painterResource(Res.drawable.ic_rotate_right),
+                            contentDescription = "Rotate",
                         )
                     }
+                }
+            }
+
+            LazyRow(Modifier.fillMaxWidth().height(100.dp)) {
+                items(imageUris) { uri ->
+                    AsyncImage(
+                        uri = uri,
+                        contentDescription = "ThumbnailImage",
+                        contentScale = ContentScale.Inside,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(80.dp)
+                            .clickable { currentImageUri = uri }
+                    )
                 }
             }
         }

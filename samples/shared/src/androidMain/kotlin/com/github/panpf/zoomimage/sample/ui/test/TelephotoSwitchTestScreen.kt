@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.zoomimage.images.AssetImageFiles
-import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.theme.md_theme_dark_background
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
@@ -57,85 +56,83 @@ val imageSwitchTestResourcesWithAsset = arrayOf(
 
 @Composable
 fun TelephotoSwitchTestScreen() {
-    BaseScreen {
-        ToolbarScaffold("Telephoto (Switch)") {
-            val zoomState = rememberZoomableImageState(rememberZoomableState())
-            Column(
+    ToolbarScaffold("Telephoto (Switch)") {
+        val zoomState = rememberZoomableImageState(rememberZoomableState())
+        Column(
+            Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .background(md_theme_dark_background)
+        ) {
+            val imageUris = remember { imageSwitchTestResourcesWithAsset.map { it.uri } }
+            var currentImageUri by remember { mutableStateOf(imageUris.first()) }
+            Box(
                 Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.navigationBars)
-                    .background(md_theme_dark_background)
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
-                val imageUris = remember { imageSwitchTestResourcesWithAsset.map { it.uri } }
-                var currentImageUri by remember { mutableStateOf(imageUris.first()) }
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    ZoomableAsyncImage(
-                        model = currentImageUri,
-                        contentDescription = "Image",
-                        modifier = Modifier.fillMaxSize(),
-                        state = zoomState,
-                    )
+                ZoomableAsyncImage(
+                    model = currentImageUri,
+                    contentDescription = "Image",
+                    modifier = Modifier.fillMaxSize(),
+                    state = zoomState,
+                )
 
-                    Row(Modifier.padding(20.dp)) {
-                        val headerInfo = remember {
-                            """
+                Row(Modifier.padding(20.dp)) {
+                    val headerInfo = remember {
+                        """
                                 scale:
                                 offset:
                                 rotation:
                             """.trimIndent()
-                        }
-                        Text(
-                            text = headerInfo,
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            lineHeight = 16.sp,
-                            style = LocalTextStyle.current.copy(
-                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                            ),
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        val transformInfo =
-                            remember(zoomState.zoomableState.contentTransformation) {
-                                val transform = zoomState.zoomableState.contentTransformation
-                                """
+                    }
+                    Text(
+                        text = headerInfo,
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        lineHeight = 16.sp,
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                        ),
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    val transformInfo =
+                        remember(zoomState.zoomableState.contentTransformation) {
+                            val transform = zoomState.zoomableState.contentTransformation
+                            """
                                     ${transform.scale.toShortString()}
                                     ${transform.offset.round().toShortString()}
                                     ${transform.rotationZ.roundToInt()}
                                 """.trimIndent()
-                            }
-                        Text(
-                            text = transformInfo,
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            lineHeight = 16.sp,
-                            style = LocalTextStyle.current.copy(
-                                shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                            ),
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+                        }
+                    Text(
+                        text = transformInfo,
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        lineHeight = 16.sp,
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                        ),
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
+            }
 
-                LazyRow(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                ) {
-                    items(imageUris) { uri ->
-                        AsyncImage(
-                            uri = uri,
-                            contentDescription = "ThumbnailImage",
-                            contentScale = ContentScale.Inside,
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .size(80.dp)
-                                .clickable { currentImageUri = uri }
-                        )
-                    }
+            LazyRow(
+                Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                items(imageUris) { uri ->
+                    AsyncImage(
+                        uri = uri,
+                        contentDescription = "ThumbnailImage",
+                        contentScale = ContentScale.Inside,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(80.dp)
+                            .clickable { currentImageUri = uri }
+                    )
                 }
             }
         }

@@ -30,35 +30,37 @@ fun ToolbarScaffold(
     addNavigationBarWindowInsets: Boolean = false,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val navBackStack = LocalNavBackStack.current
-    Column(Modifier.fillMaxSize()) {
-        TopAppBar(
-            title = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            },
-            navigationIcon = {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clickable { navBackStack.removeLastOrNull() }
-                        .padding(14.dp),
-                )
-            }
-        )
-        Box(
-            Modifier.fillMaxWidth()
-                .weight(1f)
-                .let {
-                    if (addNavigationBarWindowInsets)
-                        it.windowInsetsPadding(WindowInsets.navigationBars) else it
+    BaseScreen {
+        val navBackStack = LocalNavBackStack.current
+        Column(Modifier.fillMaxSize()) {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clickable { navBackStack.removeLastOrNull() }
+                            .padding(14.dp),
+                    )
                 }
-        ) {
-            content()
+            )
+            Box(
+                Modifier.fillMaxWidth()
+                    .weight(1f)
+                    .let {
+                        if (addNavigationBarWindowInsets)
+                            it.windowInsetsPadding(WindowInsets.navigationBars) else it
+                    }
+            ) {
+                content()
+            }
         }
     }
 }

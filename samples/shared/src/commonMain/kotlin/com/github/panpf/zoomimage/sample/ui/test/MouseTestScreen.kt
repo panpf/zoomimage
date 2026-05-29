@@ -16,35 +16,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
-import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.util.onPointerEvent
 
 @Composable
 @OptIn(ExperimentalComposeUiApi::class)
 fun MouseTestScreen() {
-    BaseScreen {
-        ToolbarScaffold("Mouse") {
-            var number by remember { mutableStateOf(0f) }
-            var color by remember { mutableStateOf(Color(0, 0, 0)) }
-            var pointerPosition by remember { mutableStateOf(Offset(0f, 0f)) }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = color)
-                    .onPointerEvent(PointerEventType.Scroll) {
-                        number += it.changes.first().scrollDelta.y
-                    }
-                    .onPointerEvent(PointerEventType.Move) {
-                        val position = it.changes.first().position
-                        pointerPosition = position
-                        color = Color(position.x.toInt() % 256, position.y.toInt() % 256, 0)
-                    }
-            ) {
-                Column(modifier = Modifier.align(Alignment.Center)) {
-                    Text(text = "scroll: $number")
-                    Text(text = "pointerPosition: $pointerPosition")
+    ToolbarScaffold("Mouse") {
+        var number by remember { mutableStateOf(0f) }
+        var color by remember { mutableStateOf(Color(0, 0, 0)) }
+        var pointerPosition by remember { mutableStateOf(Offset(0f, 0f)) }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = color)
+                .onPointerEvent(PointerEventType.Scroll) {
+                    number += it.changes.first().scrollDelta.y
                 }
+                .onPointerEvent(PointerEventType.Move) {
+                    val position = it.changes.first().position
+                    pointerPosition = position
+                    color = Color(position.x.toInt() % 256, position.y.toInt() % 256, 0)
+                }
+        ) {
+            Column(modifier = Modifier.align(Alignment.Center)) {
+                Text(text = "scroll: $number")
+                Text(text = "pointerPosition: $pointerPosition")
             }
         }
     }

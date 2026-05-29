@@ -43,7 +43,6 @@ import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_rotate_right
-import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.util.isEmpty
 import com.github.panpf.zoomimage.sample.ui.util.toPx
@@ -54,93 +53,91 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun OverlayTestScreen() {
-    BaseScreen {
-        ToolbarScaffold(title = "Overlay", addNavigationBarWindowInsets = true) {
-            val zoomState = rememberSketchZoomState()
-            SketchZoomAsyncImage(
-                request = ComposableImageRequest(ComposeResImageFiles.woodpile.uri) {
-                    size(500, 500)
-                },
-                contentDescription = "Woodpile",
-                scrollBar = ScrollBarSpec.Medium,
-                modifier = Modifier.fillMaxSize(),
-                zoomState = zoomState,
-            )
+    ToolbarScaffold(title = "Overlay", addNavigationBarWindowInsets = true) {
+        val zoomState = rememberSketchZoomState()
+        SketchZoomAsyncImage(
+            request = ComposableImageRequest(ComposeResImageFiles.woodpile.uri) {
+                size(500, 500)
+            },
+            contentDescription = "Woodpile",
+            scrollBar = ScrollBarSpec.Medium,
+            modifier = Modifier.fillMaxSize(),
+            zoomState = zoomState,
+        )
 
-            val viewModel: OverlayTestViewModel = koinViewModel()
-            Overlay(
-                zoomable = zoomState.zoomable,
-                viewModel = viewModel,
-            )
+        val viewModel: OverlayTestViewModel = koinViewModel()
+        Overlay(
+            zoomable = zoomState.zoomable,
+            viewModel = viewModel,
+        )
 
+        Box(
+            Modifier.fillMaxWidth()
+                .align(Alignment.BottomStart)
+        ) {
+            val coroutineScope = rememberCoroutineScope()
             Box(
-                Modifier.fillMaxWidth()
-                    .align(Alignment.BottomStart)
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(25.dp)
+                    .alpha(0.8f)
+                    .clip(RoundedCornerShape(50))
+                    .background(colorScheme.tertiaryContainer)
+                    .size(50.dp)
+                    .clickable {
+                        coroutineScope.launch {
+                            zoomState.zoomable.rotateBy(90)
+                        }
+                    },
             ) {
-                val coroutineScope = rememberCoroutineScope()
-                Box(
+                Icon(
+                    painter = painterResource(Res.drawable.ic_rotate_right),
+                    contentDescription = null,
+                    tint = colorScheme.onTertiaryContainer,
+                    modifier = Modifier.size(30.dp).align(Alignment.Center)
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(25.dp)
+                    .alpha(0.8f)
+            ) {
+                Row(
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(25.dp)
-                        .alpha(0.8f)
+                        .height(50.dp)
                         .clip(RoundedCornerShape(50))
                         .background(colorScheme.tertiaryContainer)
-                        .size(50.dp)
-                        .clickable {
-                            coroutineScope.launch {
-                                zoomState.zoomable.rotateBy(90)
-                            }
-                        },
+                        .padding(horizontal = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_rotate_right),
-                        contentDescription = null,
-                        tint = colorScheme.onTertiaryContainer,
-                        modifier = Modifier.size(30.dp).align(Alignment.Center)
-                    )
+                    val rectMode by viewModel.rectMode.collectAsState()
+                    Text("Point")
+                    Spacer(Modifier.size(4.dp))
+                    Switch(checked = rectMode, onCheckedChange = { viewModel.setRectMode(it) })
+                    Spacer(Modifier.size(4.dp))
+                    Text("Rect")
                 }
 
-                Column(
+                Spacer(Modifier.size(10.dp))
+
+                Row(
                     modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(25.dp)
-                        .alpha(0.8f)
+                        .height(50.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(colorScheme.tertiaryContainer)
+                        .padding(horizontal = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .height(50.dp)
-                            .clip(RoundedCornerShape(50))
-                            .background(colorScheme.tertiaryContainer)
-                            .padding(horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val rectMode by viewModel.rectMode.collectAsState()
-                        Text("Point")
-                        Spacer(Modifier.size(4.dp))
-                        Switch(checked = rectMode, onCheckedChange = { viewModel.setRectMode(it) })
-                        Spacer(Modifier.size(4.dp))
-                        Text("Rect")
-                    }
-
-                    Spacer(Modifier.size(10.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .height(50.dp)
-                            .clip(RoundedCornerShape(50))
-                            .background(colorScheme.tertiaryContainer)
-                            .padding(horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val partitionMode by viewModel.partitionMode.collectAsState()
-                        Text("Overall")
-                        Spacer(Modifier.size(4.dp))
-                        Switch(
-                            checked = partitionMode,
-                            onCheckedChange = { viewModel.setPartitionMode(it) })
-                        Spacer(Modifier.size(4.dp))
-                        Text("Partition")
-                    }
+                    val partitionMode by viewModel.partitionMode.collectAsState()
+                    Text("Overall")
+                    Spacer(Modifier.size(4.dp))
+                    Switch(
+                        checked = partitionMode,
+                        onCheckedChange = { viewModel.setPartitionMode(it) })
+                    Spacer(Modifier.size(4.dp))
+                    Text("Partition")
                 }
             }
         }
