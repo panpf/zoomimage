@@ -1108,7 +1108,7 @@ fun limitScaleWithRubberBand(
         if (targetScale < rubberBandMaxScale) {
             val overScale = targetScale - maxScale
             val overMaxScale = rubberBandMaxScale - maxScale
-            val progress = overScale / overMaxScale   // TODO progress adds interpolation
+            val progress = overScale / overMaxScale
             // Multiplying by 0.5f is to be a little slower
             val limitedAddScale = addScale * (1 - progress) * 0.5f
             currentScale + limitedAddScale
@@ -1123,7 +1123,7 @@ fun limitScaleWithRubberBand(
         if (targetScale > rubberBandMinScale) {
             val overScale = targetScale - minScale
             val overMinScale = rubberBandMinScale - minScale
-            val progress = overScale / overMinScale   // TODO progress adds interpolation
+            val progress = overScale / overMinScale
             // Multiplying by 0.5f is to be a little slower
             val limitedAddScale = addScale * (1 - progress) * 0.5f
             currentScale + limitedAddScale

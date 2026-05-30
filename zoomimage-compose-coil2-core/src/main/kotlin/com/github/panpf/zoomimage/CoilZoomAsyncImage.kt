@@ -55,6 +55,7 @@ import com.github.panpf.zoomimage.compose.coil.internal.bindConstraintsSizeResol
 import com.github.panpf.zoomimage.compose.coil.internal.computeIntrinsicSize
 import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
 import com.github.panpf.zoomimage.compose.coil.internal.requestOfWithSizeResolver
+import com.github.panpf.zoomimage.compose.coil.internal.toShortString
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
 import com.github.panpf.zoomimage.compose.internal.BaseZoomImage
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
@@ -347,7 +348,7 @@ private suspend fun updateZoom(
             is State.Error -> "Error"
             is State.Empty -> "Empty"
         }
-        "CoilZoomAsyncImage. $stateName. contentSize=$painterSize. data='${finaData}'"
+        "CoilZoomAsyncImage. $stateName. contentSize=${painterSize.toShortString()}. data='${finaData}'"
     }
     zoomState.zoomable.setContentSize(painterSize)
 

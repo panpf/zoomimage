@@ -106,11 +106,12 @@ class Tile(
         return "Tile(" +
                 "coordinate=${coordinate.toShortString()}," +
                 "srcRect=${srcRect.toShortString()}," +
-                "srcSize=${srcRect.width}x${srcRect.height}," +
-                "state=${TileState.name(state)}," +
-                "from=${TileImageFrom.name(from)}," +
                 "sampleSize=$sampleSize," +
-                "bitmap=${tileImage})"
+                "srcSize=${srcRect.size.toShortString()}," +
+                "state=${TileState.name(state)}," +
+                "image=${tileImage}," +
+                "from=${TileImageFrom.name(from)}" +
+                ")"
     }
 
     class AnimationState {

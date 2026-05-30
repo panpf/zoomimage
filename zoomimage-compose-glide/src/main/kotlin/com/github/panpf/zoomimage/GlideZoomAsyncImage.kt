@@ -44,6 +44,7 @@ import com.github.panpf.zoomimage.compose.glide.BaseZoomGlideImage
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.compose.glide.Placeholder
 import com.github.panpf.zoomimage.compose.glide.RequestBuilderTransform
+import com.github.panpf.zoomimage.compose.glide.toShortString
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -254,7 +255,7 @@ private class ResetListener(
             ?: IntSize.Zero
         logger.d {
             val state = if (ready) "Ready" else "Failed"
-            "GlideZoomAsyncImage. $state. contentSize=$drawableSize. model='$model'"
+            "GlideZoomAsyncImage. $state. contentSize=${drawableSize.toShortString()}. model='$model'"
         }
         zoomState.zoomable.setContentSize(drawableSize)
 

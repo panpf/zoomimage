@@ -46,6 +46,7 @@ import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.zoomimage.compose.internal.BaseZoomImage
+import com.github.panpf.zoomimage.compose.sketch.internal.toShortString
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
@@ -277,7 +278,7 @@ private suspend fun updateZoom(
         ?.takeIf { it.width > 0 && it.height > 0 }
         ?: IntSize.Zero
     zoomState.zoomable.logger.d {
-        "SketchZoomAsyncImage. ${painterState.name}. contentSize=${painterSize}. uri='${request.uri}'"
+        "SketchZoomAsyncImage. ${painterState.name}. contentSize=${painterSize.toShortString()}. uri='${request.uri}'"
     }
     zoomState.zoomable.setContentSize(painterSize)
 

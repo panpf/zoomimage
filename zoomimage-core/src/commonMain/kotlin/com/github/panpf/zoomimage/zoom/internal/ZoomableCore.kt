@@ -464,7 +464,7 @@ class ZoomableCore constructor(
         requiredMainThread()
         if (this.containerSize != containerSize) {
             this.containerSize = containerSize
-            logger.d { "$module. containerSize=$containerSize" }
+            logger.d { "$module. containerSize=${containerSize.toShortString()}" }
             reset("containerSizeChanged")
         }
     }
@@ -473,7 +473,7 @@ class ZoomableCore constructor(
         requiredMainThread()
         if (this.contentSize != contentSize) {
             this.contentSize = contentSize
-            logger.d { "$module. contentSize=$contentSize" }
+            logger.d { "$module. contentSize=${contentSize.toShortString()}" }
             reset("contentSizeChanged")
         }
     }
@@ -482,7 +482,7 @@ class ZoomableCore constructor(
         requiredMainThread()
         if (this.contentOriginSize != contentOriginSize) {
             this.contentOriginSize = contentOriginSize
-            logger.d { "$module. contentOriginSize=$contentOriginSize" }
+            logger.d { "$module. contentOriginSize=${contentOriginSize.toShortString()}" }
             reset("contentOriginSizeChanged")
         }
     }

@@ -29,6 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
@@ -190,3 +191,9 @@ internal fun computeIntrinsicSize(
     }
     return Size.Unspecified
 }
+
+/**
+ * Return short string descriptions, for example: '100x200'
+ */
+@Stable
+internal fun IntSize.toShortString(): String = "${width}x${height}"

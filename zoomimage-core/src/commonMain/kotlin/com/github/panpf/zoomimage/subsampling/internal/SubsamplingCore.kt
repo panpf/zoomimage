@@ -343,7 +343,7 @@ class SubsamplingCore constructor(
     private fun updateContentSize(contentSize: IntSizeCompat) {
         if (this.contentSize != contentSize) {
             this.contentSize = contentSize
-            logger.d { "$module. contentSize=$contentSize. '$logKey'" }
+            logger.d { "$module. contentSize=${contentSize.toShortString()}. '$logKey'" }
             resetTileDecoder("contentSizeChanged")
         }
     }

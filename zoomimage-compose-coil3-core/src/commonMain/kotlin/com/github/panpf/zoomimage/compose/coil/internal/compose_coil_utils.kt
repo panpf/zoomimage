@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImageModelEqualityDelegate
@@ -170,3 +171,11 @@ internal fun Modifier.bindConstraintsSizeResolver(sizeResolver: SizeResolver?): 
         this
     }
 }
+
+/**
+ * Return short string descriptions, for example: '100x200'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.ComposePlatformUtilsIntSizeTest.testToShortString
+ */
+@Stable
+internal fun IntSize.toShortString(): String = "${width}x${height}"

@@ -19,4 +19,8 @@ class TestTileImage constructor(
     override fun setIsDisplayed(displayed: Boolean) {
         this.displayed = displayed
     }
+
+    override fun toString(): String {
+        return "TestTileImage(${width}x$height)"
+    }
 }

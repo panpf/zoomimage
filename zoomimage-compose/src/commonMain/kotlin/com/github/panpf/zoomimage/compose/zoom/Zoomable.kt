@@ -35,6 +35,7 @@ import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.util.ifLet
 import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.util.toCompat
+import com.github.panpf.zoomimage.compose.util.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.subsampling.internal.calculateOriginToThumbnailScaleFactor
@@ -124,8 +125,8 @@ fun Modifier.zooming(zoomable: ZoomableState, firstScaleByContentSize: Boolean =
                 zoomable.logger.v {
                     "ZoomableState. graphicsLayer. " +
                             "scaleByContentSize. " +
-                            "contentOriginSize=$contentOriginSize, " +
-                            "contentSize=$contentSize, " +
+                            "contentOriginSize=${contentOriginSize.toShortString()}, " +
+                            "contentSize=${contentSize.toShortString()}, " +
                             "scaleFactor=$scaleFactor"
                 }
                 scaleX = scaleFactor.scaleX

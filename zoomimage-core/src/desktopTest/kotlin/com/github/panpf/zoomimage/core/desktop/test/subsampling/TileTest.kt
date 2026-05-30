@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.core.desktop.test.subsampling
 
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileImageFrom
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.test.TestTileImage
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -172,5 +173,30 @@ class TileTest {
         assertNotEquals(illegal = tile2.hashCode(), actual = tile3.hashCode())
         assertNotEquals(illegal = tile2.hashCode(), actual = tile4.hashCode())
         assertNotEquals(illegal = tile3.hashCode(), actual = tile4.hashCode())
+    }
+
+    @Test
+    fun testToString() {
+        val tileImage1 = TestTileImage()
+        val tile = Tile(
+            coordinate = IntOffsetCompat(9, 7),
+            srcRect = IntRectCompat(335, 687, 10526, 5610),
+            sampleSize = 2
+        ).apply {
+            state = TileState.STATE_LOADING
+            setTileImage(tileImage1, TileImageFrom.LOCAL, true)
+        }
+        assertEquals(
+            expected = "Tile(" +
+                    "coordinate=9x7," +
+                    "srcRect=[335x687,10526x5610]," +
+                    "sampleSize=2," +
+                    "srcSize=10191x4923," +
+                    "state=LOADING," +
+                    "image=$tileImage1," +
+                    "from=LOCAL" +
+                    ")",
+            actual = tile.toString()
+        )
     }
 }

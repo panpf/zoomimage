@@ -29,6 +29,7 @@ import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.height
 import com.github.panpf.zoomimage.subsampling.recycle
+import com.github.panpf.zoomimage.subsampling.toLogString
 import com.github.panpf.zoomimage.subsampling.toSnapshot
 import com.github.panpf.zoomimage.subsampling.width
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -473,7 +474,7 @@ class TileManager(
                     tile.sampleSize == 1 && (tile.srcRect.width != tileBitmap.width || tile.srcRect.height != tileBitmap.height) -> {
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
-                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileBitmap. '${subsamplingImage.key}'")
+                        logger.e("TileManager. loadTile. failed, size is different. $tile. ${tileBitmap.toLogString()}. '${subsamplingImage.key}'")
                         tileBitmap.recycle()
                         updateTileSnapshotList("loadTile:failed")
                     }
@@ -500,7 +501,7 @@ class TileManager(
 
                     else -> {
                         logger.d {
-                            "TileManager. loadTile. canceled. bitmap=${tileBitmap}, $tile. '${subsamplingImage.key}'"
+                            "TileManager. loadTile. canceled. bitmap=${tileBitmap.toLogString()}, $tile. '${subsamplingImage.key}'"
                         }
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
