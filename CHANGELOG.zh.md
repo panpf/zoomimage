@@ -11,6 +11,7 @@
 * new: ScrollBarSpec 增加 Medium、Large 配置模板
 * improve: 解码 tile 后 simpleSize 为 1 验证尺寸时误差放宽 1
   个像素。[#114](https://github.com/panpf/zoomimage/issues/114)
+* fix: 修复 Float.isInRangeWithScale() 没有对 min 和 max 应用 scale 的 bug
 
 ## Android
 

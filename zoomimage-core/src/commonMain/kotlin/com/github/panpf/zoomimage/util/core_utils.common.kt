@@ -293,8 +293,9 @@ internal fun isThumbnailWithSize(
  */
 internal fun Float.isInRangeWithScale(min: Float, max: Float, scale: Int? = null): Boolean {
     val valueFormatted = if (scale != null) this.format(scale) else this
-    val maxFormatted = if (scale != null) max.format(2) else max
-    val minFormatted = if (scale != null) min.format(2) else min
+    val maxFormatted = if (scale != null) max.format(scale) else max
+    val minFormatted = if (scale != null) min.format(scale) else min
+    @Suppress("ConvertTwoComparisonsToRangeCheck")
     return valueFormatted >= minFormatted && valueFormatted <= maxFormatted
 }
 

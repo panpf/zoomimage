@@ -7,6 +7,7 @@ import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.compareVersions
 import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.isInRangeWithScale
 import com.github.panpf.zoomimage.util.isSimilarSize
 import com.github.panpf.zoomimage.util.isThumbnailWithSize
 import com.github.panpf.zoomimage.util.plus
@@ -320,7 +321,20 @@ class CoreUtilsTest {
         }
     }
 
-    // TODO test isInRange
+    @Test
+    fun isInRangeWithScale() {
+        assertFalse(0.945f.isInRangeWithScale(0.93f, 0.94f, scale = null))
+        assertTrue(0.945f.isInRangeWithScale(0.93f, 0.94f, scale = 2))
+
+        assertFalse(0.944f.isInRangeWithScale(0.93f, 0.94f, scale = null))
+        assertTrue(0.944f.isInRangeWithScale(0.93f, 0.94f, scale = 2))
+
+        assertFalse(0.925f.isInRangeWithScale(0.93f, 0.94f, scale = null))
+        assertTrue(0.925f.isInRangeWithScale(0.93f, 0.94f, scale = 2))
+
+        assertFalse(0.924f.isInRangeWithScale(0.93f, 0.94f, scale = null))
+        assertFalse(0.924f.isInRangeWithScale(0.93f, 0.94f, scale = 2))
+    }
 
     @Test
     fun testIsSimilarSize() {
