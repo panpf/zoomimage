@@ -305,3 +305,18 @@ internal fun Float.isInRangeWithScale(min: Float, max: Float, scale: Int? = null
  */
 internal fun Float.isInRangeWithScale(range: ClosedRange<Float>, scale: Int? = null): Boolean =
     isInRangeWithScale(range.start, range.endInclusive, scale)
+
+/**
+ * Determine whether the two sizes are similar in size, that is, the width and height of the two sizes are within [epsilonPixels] pixels.
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testIsSimilarSize
+ */
+fun isSimilarSize(
+    size: IntSizeCompat,
+    otherSize: IntSizeCompat,
+    epsilonPixels: Int = 1
+): Boolean {
+    val widthDiff = abs(size.width - otherSize.width)
+    val heightDiff = abs(size.height - otherSize.height)
+    return widthDiff <= epsilonPixels && heightDiff <= epsilonPixels
+}

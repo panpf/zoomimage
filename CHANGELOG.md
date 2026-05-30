@@ -11,6 +11,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
   for
   details. [scrollbar.md](docs/scrollbar.md)
 * new: ScrollBarSpec adds Medium, Large, configuration templates
+* improve: After decoding the tile, simpleSize is 1 and the error is relaxed by 1 pixel when
+  verifying the size. [#114](https://github.com/panpf/zoomimage/issues/114)
 
 ## Android
 

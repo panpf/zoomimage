@@ -7,6 +7,7 @@ import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.compareVersions
 import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.isSimilarSize
 import com.github.panpf.zoomimage.util.isThumbnailWithSize
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.toHexString
@@ -320,6 +321,15 @@ class CoreUtilsTest {
     }
 
     // TODO test isInRange
+
+    @Test
+    fun testIsSimilarSize() {
+        assertTrue(isSimilarSize(IntSizeCompat(100, 200), IntSizeCompat(100, 200)))
+        assertTrue(isSimilarSize(IntSizeCompat(100, 200), IntSizeCompat(101, 201)))
+        assertTrue(isSimilarSize(IntSizeCompat(100, 200), IntSizeCompat(99, 199)))
+        assertFalse(isSimilarSize(IntSizeCompat(100, 200), IntSizeCompat(102, 202)))
+        assertFalse(isSimilarSize(IntSizeCompat(100, 200), IntSizeCompat(98, 198)))
+    }
 
     private class MyCloseable : okio.Closeable {
 

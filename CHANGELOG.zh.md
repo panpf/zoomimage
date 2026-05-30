@@ -9,6 +9,8 @@
 * new: 现在滚动条支持 WindowInsets，通过 ScrollBarSpec 的 windowInsets 或 windowInsetsTypeMask
   参数开启即可，详情请参考文档 [scrollbar.zh.md](docs/scrollbar.zh.md)
 * new: ScrollBarSpec 增加 Medium、Large 配置模板
+* improve: 解码 tile 后 simpleSize 为 1 验证尺寸时误差放宽 1
+  个像素。[#114](https://github.com/panpf/zoomimage/issues/114)
 
 ## Android
 

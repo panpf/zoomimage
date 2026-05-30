@@ -27,16 +27,16 @@ import com.github.panpf.zoomimage.subsampling.TileImage
 import com.github.panpf.zoomimage.subsampling.TileImageFrom
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
-import com.github.panpf.zoomimage.subsampling.height
 import com.github.panpf.zoomimage.subsampling.recycle
+import com.github.panpf.zoomimage.subsampling.size
 import com.github.panpf.zoomimage.subsampling.toLogString
 import com.github.panpf.zoomimage.subsampling.toSnapshot
-import com.github.panpf.zoomimage.subsampling.width
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import com.github.panpf.zoomimage.util.isSimilarSize
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toShortString2
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -471,7 +471,11 @@ class TileManager(
                         updateTileSnapshotList("loadTile:failed")
                     }
 
-                    tile.sampleSize == 1 && (tile.srcRect.width != tileBitmap.width || tile.srcRect.height != tileBitmap.height) -> {
+                    tile.sampleSize == 1 && !isSimilarSize(
+                        size = tile.srcRect.size,
+                        otherSize = tileBitmap.size,
+                        epsilonPixels = 1
+                    ) -> {
                         tile.cleanTileImage()
                         tile.state = TileState.STATE_ERROR
                         logger.e("TileManager. loadTile. failed, size is different. $tile. ${tileBitmap.toLogString()}. '${subsamplingImage.key}'")
