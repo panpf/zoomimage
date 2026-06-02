@@ -19,7 +19,7 @@ androidx-vectordrawable = "1.2.0"
 
 appdirs = "1.5.0"
 
-buildkonfig = "0.21.2"  # Version 0.17.1 will cause an error when the zoomimimage-compose-glide module is compiled 'Multiple values are not allowed for plugin option androidx.compose.compiler.plugins.kotlin:sourceInformation'
+buildkonfig = "0.21.2"
 
 dokka = "2.2.0"
 
