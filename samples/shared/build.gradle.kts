@@ -49,11 +49,7 @@ kotlin {
             api(projects.zoomimageComposeResources)
             api(projects.zoomimageComposeSketch4Koin)
             api(libs.androidx.paging.compose)
-            api(
-                libs.coil3.network.ktor.get().let { "${it.group}:${it.name}:${it.version}" }) {
-                // See libs.versions.toml#ktor
-                exclude(group = "io.ktor", module = "ktor-client-core")
-            }
+            api(libs.coil3.network.ktor)
             api(libs.jetbrains.compose.components.resources)
             api(libs.jetbrains.compose.material)    // pull refresh
             api(libs.jetbrains.compose.material.icons.core)
@@ -63,7 +59,7 @@ kotlin {
             api(libs.jetbrains.lifecycle.viewmodel)
             api(libs.jetbrains.lifecycle.viewmodelNavigation3)
             api(libs.jetbrains.navigation3.ui)
-            api(libs.ktor.http.cio)  // See libs.versions.toml#ktor
+            api(libs.ktor.http.cio)
             api(libs.koin.core)
             api(libs.koin.compose)
             api(libs.koin.compose.viewmodel)
@@ -119,10 +115,6 @@ kotlin {
             api(libs.moko.permissions)
             api(libs.moko.permissions.storage)
             api(libs.moko.permissions.gallery)
-        }
-        wasmJsMain.dependencies {
-            // https://youtrack.jetbrains.com/issue/KTOR-7934/JS-WASM-fails-with-IllegalStateException-Content-Length-mismatch-on-requesting-gzipped-content
-            api(libs.ktor31.client.wasmJs)
         }
     }
 }
