@@ -19,6 +19,8 @@ package com.github.panpf.zoomimage.subsampling
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import okio.Source
 
+// TODO The ios platform supports PhotoAssets and avif heif format images
+
 /**
  * Image source for subsampling.
  */
