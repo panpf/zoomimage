@@ -1,27 +1,19 @@
-package com.github.panpf.zoomimage.sample.ui.examples
+package com.github.panpf.zoomimage.sample.image
 
 import androidx.compose.ui.graphics.painter.Painter
 import coil3.ImageLoader
 import coil3.PlatformContext
-import coil3.pathSegments
 import coil3.request.SuccessResult
-import coil3.toUri
+import com.github.panpf.sketch.fetch.parseLocalIdentifier
+import com.github.panpf.sketch.util.toUri
 import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
-import com.github.panpf.zoomimage.images.coil.isKotlinResourceUri
-import com.github.panpf.zoomimage.sample.image.PhotoAssetCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
-import com.github.panpf.zoomimage.subsampling.fromKotlinResource
-import com.github.panpf.zoomimage.subsampling.toFactory
+import com.github.panpf.zoomimage.subsampling.fromPhotoAsset
+import platform.Foundation.NSURL
 
-actual fun platformCoilComposeSubsamplingImageGenerator(): List<CoilComposeSubsamplingImageGenerator>? =
-    listOf(
-        KotlinResourceCoilComposeSubsamplingImageGenerator(),
-        PhotoAssetCoilComposeSubsamplingImageGenerator()
-    )
-
-class KotlinResourceCoilComposeSubsamplingImageGenerator :
+class PhotoAssetCoilComposeSubsamplingImageGenerator :
     CoilComposeSubsamplingImageGenerator {
 
     override suspend fun generateImage(
@@ -33,12 +25,16 @@ class KotlinResourceCoilComposeSubsamplingImageGenerator :
         val uri = when (val model = result.request.data) {
             is String -> model.toUri()
             is coil3.Uri -> model.toString().toUri()
-            is platform.Foundation.NSURL -> model.toString().toUri()
+            is NSURL -> model.toString().toUri()
             else -> null
         }
-        if (uri != null && isKotlinResourceUri(uri)) {
-            val resourcePath = uri.pathSegments.drop(1).joinToString("/")
-            val imageSource = ImageSource.fromKotlinResource(resourcePath).toFactory()
+        val localIdentifier = uri?.let { parseLocalIdentifier(it) }
+        if (uri != null && localIdentifier != null) {
+            val imageSource = ImageSource.fromPhotoAsset(
+                localIdentifier = localIdentifier,
+                preferredThumbnail = false,
+                allowNetworkAccess = false
+            )
             return SubsamplingImageGenerateResult.Success(SubsamplingImage(imageSource, null))
         }
         return null
@@ -54,6 +50,6 @@ class KotlinResourceCoilComposeSubsamplingImageGenerator :
     }
 
     override fun toString(): String {
-        return "KotlinResourceCoilComposeSubsamplingImageGenerator"
+        return "PhotoAssetCoilComposeSubsamplingImageGenerator"
     }
 }

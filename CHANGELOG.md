@@ -22,6 +22,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 ## iOS
 
 * change: iosX64 platform is no longer supported
+* new: Added PhotoAssetImageSource to support decoding images from PhotoAsset
 
 ## Dependencies
 

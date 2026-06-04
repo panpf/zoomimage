@@ -6,6 +6,7 @@ import com.github.panpf.sketch.fetch.Fetcher
 import com.github.panpf.sketch.fetch.FileUriFetcher
 import com.github.panpf.sketch.fetch.HttpUriFetcher
 import com.github.panpf.sketch.fetch.KotlinResourceUriFetcher
+import com.github.panpf.sketch.fetch.PhotosAssetUriFetcher
 import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
@@ -18,6 +19,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromByteArray
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource
+import com.github.panpf.zoomimage.subsampling.fromPhotoAsset
 import com.github.panpf.zoomimage.subsampling.toFactory
 import kotlinx.coroutines.withContext
 import okio.buffer
@@ -68,6 +70,14 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
 
         is ComposeResourceUriFetcher -> {
             ComposeResourceImageSource.Factory(fetcher.resourcePath)
+        }
+
+        is PhotosAssetUriFetcher -> {
+            ImageSource.fromPhotoAsset(
+                localIdentifier = fetcher.localIdentifier,
+                preferredThumbnail = fetcher.preferredThumbnail,
+                allowNetworkAccess = fetcher.allowNetworkAccess
+            )
         }
 
         else -> null

@@ -20,6 +20,7 @@
 ## iOS
 
 * change: 不再支持 iosX64 平台
+* new: 新增 PhotoAssetImageSource 支持从 PhotoAsset 解码图片
 
 ## Dependencies
 

@@ -95,6 +95,8 @@ follows:
   platforms. [ImageSource.fromKotlinResource("huge_world.jpeg")][KotlinResourceImageSource]
 * [ResourceImageSource]: Load images from Android's res
   directory. [ImageSource.fromResource(context, R.raw.huge_world)][ResourceImageSource]
+* [PhotoAssetImageSource]: Load images from iOS
+  PhotoAsset. [ImageSource.fromPhotoAsset(photoAsset)][PhotoAssetImageSource]
 
 ### \*SubsamplingImageGenerator
 
@@ -544,3 +546,5 @@ Interactive methods:
 [SubsamplingState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 
 [SubsamplingEngine]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt
+
+[PhotoAssetImageSource]: ../zoomimage-core/src/iosMain/kotlin/com/github/panpf/zoomimage/subsampling/PhotoAssetImageSource.kt

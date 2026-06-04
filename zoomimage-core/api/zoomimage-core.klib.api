@@ -1834,7 +1834,51 @@ final class com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource : c
 }
 
 // Targets: [ios]
+final class com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource : com.github.panpf.zoomimage.subsampling/ImageSource { // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource|null[0]
+    constructor <init>(kotlin/String, kotlin/Boolean, kotlin/Boolean, kotlin/String?, kotlin/ByteArray) // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.<init>|<init>(kotlin.String;kotlin.Boolean;kotlin.Boolean;kotlin.String?;kotlin.ByteArray){}[0]
+
+    final val allowNetworkAccess // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.allowNetworkAccess|{}allowNetworkAccess[0]
+        final fun <get-allowNetworkAccess>(): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.allowNetworkAccess.<get-allowNetworkAccess>|<get-allowNetworkAccess>(){}[0]
+    final val data // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.data|{}data[0]
+        final fun <get-data>(): kotlin/ByteArray // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.data.<get-data>|<get-data>(){}[0]
+    final val key // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.key.<get-key>|<get-key>(){}[0]
+    final val localIdentifier // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.localIdentifier|{}localIdentifier[0]
+        final fun <get-localIdentifier>(): kotlin/String // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.localIdentifier.<get-localIdentifier>|<get-localIdentifier>(){}[0]
+    final val mimeType // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.mimeType|{}mimeType[0]
+        final fun <get-mimeType>(): kotlin/String? // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.mimeType.<get-mimeType>|<get-mimeType>(){}[0]
+    final val preferredThumbnail // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.preferredThumbnail|{}preferredThumbnail[0]
+        final fun <get-preferredThumbnail>(): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.preferredThumbnail.<get-preferredThumbnail>|<get-preferredThumbnail>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.hashCode|hashCode(){}[0]
+    final fun openSource(): okio/Source // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.openSource|openSource(){}[0]
+    final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.toString|toString(){}[0]
+
+    final class Factory : com.github.panpf.zoomimage.subsampling/ImageSource.Factory { // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory|null[0]
+        constructor <init>(kotlin/String, kotlin/Boolean = ..., kotlin/Boolean = ...) // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.<init>|<init>(kotlin.String;kotlin.Boolean;kotlin.Boolean){}[0]
+
+        final val allowNetworkAccess // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.allowNetworkAccess|{}allowNetworkAccess[0]
+            final fun <get-allowNetworkAccess>(): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.allowNetworkAccess.<get-allowNetworkAccess>|<get-allowNetworkAccess>(){}[0]
+        final val key // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.key|{}key[0]
+            final fun <get-key>(): kotlin/String // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.key.<get-key>|<get-key>(){}[0]
+        final val localIdentifier // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.localIdentifier|{}localIdentifier[0]
+            final fun <get-localIdentifier>(): kotlin/String // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.localIdentifier.<get-localIdentifier>|<get-localIdentifier>(){}[0]
+        final val preferredThumbnail // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.preferredThumbnail|{}preferredThumbnail[0]
+            final fun <get-preferredThumbnail>(): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.preferredThumbnail.<get-preferredThumbnail>|<get-preferredThumbnail>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.toString|toString(){}[0]
+        final suspend fun create(): com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource // com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory.create|create(){}[0]
+    }
+}
+
+// Targets: [ios]
 final fun (com.github.panpf.zoomimage.subsampling/ImageSource.Companion).com.github.panpf.zoomimage.subsampling/fromKotlinResource(kotlin/String): com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource // com.github.panpf.zoomimage.subsampling/fromKotlinResource|fromKotlinResource@com.github.panpf.zoomimage.subsampling.ImageSource.Companion(kotlin.String){}[0]
+
+// Targets: [ios]
+final fun (com.github.panpf.zoomimage.subsampling/ImageSource.Companion).com.github.panpf.zoomimage.subsampling/fromPhotoAsset(kotlin/String, kotlin/Boolean = ..., kotlin/Boolean = ...): com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory // com.github.panpf.zoomimage.subsampling/fromPhotoAsset|fromPhotoAsset@com.github.panpf.zoomimage.subsampling.ImageSource.Companion(kotlin.String;kotlin.Boolean;kotlin.Boolean){}[0]
 
 // Targets: [ios]
 final fun com.github.panpf.zoomimage.util/requiredWorkThread() // com.github.panpf.zoomimage.util/requiredWorkThread|requiredWorkThread(){}[0]

@@ -82,6 +82,8 @@ zoomImageView.setSubsamplingImage(imageSource)
   资源目录加载图片。[ImageSource.fromKotlinResource("huge_world.jpeg")][KotlinResourceImageSource]
 * [ResourceImageSource]：从 Android 的 res 目录加载图片。[ImageSource.fromResource(context,
   R.raw.huge_world)][ResourceImageSource]
+* [PhotoAssetImageSource]: 从 iOS 的 PhotoAsset
+  加载图片。[ImageSource.fromPhotoAsset(photoAsset)][PhotoAssetImageSource]
 
 ### \*SubsamplingImageGenerator
 
@@ -494,3 +496,5 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [SubsamplingState]: ../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 
 [SubsamplingEngine]: ../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt
+
+[PhotoAssetImageSource]: ../zoomimage-core/src/iosMain/kotlin/com/github/panpf/zoomimage/subsampling/PhotoAssetImageSource.kt
