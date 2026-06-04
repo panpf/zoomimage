@@ -8,10 +8,7 @@ import coil3.toUri
 class CoilKotlinResourceUriKeyer : Keyer<Uri> {
 
     override fun key(data: Uri, options: Options): String? {
-        if (isKotlinResourceUri(data.toString().toUri())) {
-            return data.toString()
-        } else {
-            return null
-        }
+        val uriString = data.toString()
+        return if (isKotlinResourceUri(uriString.toUri())) uriString else null
     }
 }

@@ -9,10 +9,7 @@ import com.github.panpf.sketch.util.toUri
 class CoilComposeResourceUriKeyer : Keyer<Uri> {
 
     override fun key(data: Uri, options: Options): String? {
-        if (isComposeResourceUri(data.toString().toUri())) {
-            return data.toString()
-        } else {
-            return null
-        }
+        val uriString = data.toString()
+        return if (isComposeResourceUri(uriString.toUri())) uriString else null
     }
 }

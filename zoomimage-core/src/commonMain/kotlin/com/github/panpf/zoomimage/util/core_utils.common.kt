@@ -312,7 +312,7 @@ internal fun Float.isInRangeWithScale(range: ClosedRange<Float>, scale: Int? = n
  *
  * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testIsSimilarSize
  */
-fun isSimilarSize(
+internal fun isSimilarSize(
     size: IntSizeCompat,
     otherSize: IntSizeCompat,
     epsilonPixels: Int = 1
