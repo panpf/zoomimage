@@ -85,6 +85,7 @@ public final class com/github/panpf/zoomimage/subsampling/ImageSource$WrapperFac
 }
 
 public final class com/github/panpf/zoomimage/subsampling/ImageSourceKt {
+	public static final fun toByteArray (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)[B
 	public static final fun toFactory (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
 }
 
