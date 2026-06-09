@@ -33,7 +33,7 @@
 * 升级 kotlinx collections immutable 0.4.0
 * 升级 kotlinx coroutines 1.11.0
 * 升级 okio 3.17.0
-* 升级 sketch 4.5.0-beta01
+* 升级 sketch 4.5.0-beta03
 * 升级 glide 5.0.7
 
 # 1.4.0
