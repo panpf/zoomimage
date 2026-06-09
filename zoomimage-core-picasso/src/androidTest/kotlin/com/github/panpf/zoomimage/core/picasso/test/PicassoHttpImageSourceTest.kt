@@ -3,9 +3,9 @@ package com.github.panpf.zoomimage.core.picasso.test
 import android.graphics.BitmapFactory
 import androidx.core.net.toUri
 import com.github.panpf.zoomimage.picasso.PicassoHttpImageSource
+import com.github.panpf.zoomimage.subsampling.toByteArray
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.squareup.picasso.Picasso
-import okio.buffer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -81,7 +81,7 @@ class PicassoHttpImageSourceTest {
             "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=640&auto=jpeg&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D".toUri()
 
         val imageSource = PicassoHttpImageSource(picasso, imageUri)
-        val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
+        val bytes = imageSource.toByteArray()
         val bitmap = BitmapFactory.decodeStream(bytes.inputStream())
         val imageSize = bitmap.let { IntSizeCompat(it.width, it.height) }
         assertEquals(expected = IntSizeCompat(640, 958), actual = imageSize)

@@ -6,9 +6,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.internalDiskCache
 import com.bumptech.glide.load.model.GlideUrl
 import com.github.panpf.zoomimage.glide.GlideHttpImageSource
+import com.github.panpf.zoomimage.subsampling.toByteArray
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.runBlocking
-import okio.buffer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -103,7 +103,7 @@ class GlideHttpImageSourceTest {
         val imageSource = runBlocking {
             imageSourceFactory.create()
         }
-        val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
+        val bytes = imageSource.toByteArray()
         val bitmap = BitmapFactory.decodeStream(bytes.inputStream())
         val imageSize = bitmap.let { IntSizeCompat(it.width, it.height) }
         assertEquals(expected = IntSizeCompat(640, 958), actual = imageSize)

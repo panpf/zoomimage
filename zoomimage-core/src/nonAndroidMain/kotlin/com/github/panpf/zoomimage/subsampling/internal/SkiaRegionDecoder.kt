@@ -21,12 +21,11 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.toByteArray
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.compareVersions
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.toSkiaRect
-import okio.buffer
-import okio.use
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Codec
@@ -51,7 +50,7 @@ class SkiaRegionDecoder(
 ) : RegionDecoder {
 
     private val bytes: ByteArray by lazy {
-        bytes ?: imageSource.openSource().buffer().use { it.readByteArray() }
+        bytes ?: imageSource.toByteArray()
     }
 
     private val image: Image by lazy { Image.makeFromEncoded(this.bytes) }

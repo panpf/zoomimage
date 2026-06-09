@@ -20,6 +20,8 @@ import com.github.panpf.zoomimage.annotation.WorkerThread
 import okio.Source
 
 // TODO The ios platform supports avif heif format images
+import okio.buffer
+import okio.use
 
 /**
  * Image source for subsampling.
@@ -84,3 +86,11 @@ interface ImageSource {
  * @see com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testToFactory
  */
 fun ImageSource.toFactory(): ImageSource.Factory = ImageSource.WrapperFactory(this)
+
+/**
+ * Get the bytes of the ImageSource, if the ImageSource is ByteArrayImageSource, return the byte array directly, otherwise read the byte array from the source
+ */
+fun ImageSource.toByteArray(): ByteArray {
+    if (this is ByteArrayImageSource) return byteArray
+    return openSource().buffer().use { it.readByteArray() }
+}
