@@ -153,7 +153,7 @@ class SkiaRegionDecoder(
             }
         }
 
-        override fun create(
+        override suspend fun create(
             subsamplingImage: SubsamplingImage,
             imageSource: ImageSource,
         ): SkiaRegionDecoder = SkiaRegionDecoder(

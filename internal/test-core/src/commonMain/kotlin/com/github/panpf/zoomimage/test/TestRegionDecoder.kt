@@ -62,15 +62,15 @@ class TestRegionDecoder(
         override fun checkSupport(mimeType: String): Boolean? {
             actions?.add("checkSupport")
             return if (supportMimeTypes?.contains(mimeType) == true) {
-                return true
+                true
             } else if (unsupportedMimeTypes?.contains(mimeType) == true) {
-                return false
+                false
             } else {
                 null
             }
         }
 
-        override fun create(
+        override suspend fun create(
             subsamplingImage: SubsamplingImage,
             imageSource: ImageSource
         ): RegionDecoder {

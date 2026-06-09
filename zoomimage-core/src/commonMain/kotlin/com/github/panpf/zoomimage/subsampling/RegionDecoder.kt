@@ -72,7 +72,7 @@ interface RegionDecoder : AutoCloseable {
          */
         fun checkSupport(mimeType: String): Boolean?
 
-        fun create(
+        suspend fun create(
             subsamplingImage: SubsamplingImage,
             imageSource: ImageSource,
         ): RegionDecoder

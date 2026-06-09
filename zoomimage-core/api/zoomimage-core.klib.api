@@ -200,11 +200,11 @@ abstract interface com.github.panpf.zoomimage.subsampling/RegionDecoder : kotlin
 
     abstract interface Factory { // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory|null[0]
         abstract fun checkSupport(kotlin/String): kotlin/Boolean? // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory.checkSupport|checkSupport(kotlin.String){}[0]
-        abstract fun create(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory.create|create(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource){}[0]
         abstract fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory.equals|equals(kotlin.Any?){}[0]
         abstract fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory.hashCode|hashCode(){}[0]
         abstract fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory.toString|toString(){}[0]
         abstract suspend fun accept(com.github.panpf.zoomimage.subsampling/SubsamplingImage): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory.accept|accept(com.github.panpf.zoomimage.subsampling.SubsamplingImage){}[0]
+        abstract suspend fun create(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory.create|create(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource){}[0]
     }
 }
 
@@ -363,11 +363,11 @@ final class com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder : 
         constructor <init>() // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.<init>|<init>(){}[0]
 
         final fun checkSupport(kotlin/String): kotlin/Boolean? // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.checkSupport|checkSupport(kotlin.String){}[0]
-        final fun create(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource): com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.create|create(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource){}[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.toString|toString(){}[0]
         final suspend fun accept(com.github.panpf.zoomimage.subsampling/SubsamplingImage): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.accept|accept(com.github.panpf.zoomimage.subsampling.SubsamplingImage){}[0]
+        final suspend fun create(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource): com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.Factory.create|create(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource){}[0]
     }
 }
 

@@ -146,7 +146,7 @@ class AndroidRegionDecoder(
             }
         }
 
-        override fun create(
+        override suspend fun create(
             subsamplingImage: SubsamplingImage,
             imageSource: ImageSource,
         ): AndroidRegionDecoder = AndroidRegionDecoder(

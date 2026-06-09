@@ -4,6 +4,7 @@ import com.github.panpf.zoomimage.images.ComposeResImageFile
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
@@ -515,10 +516,16 @@ class TileManagerTest {
     ): TileManagerHolder {
         val imageSource = composeResImageFile.toImageSource()
         val imageInfo = imageSource.decodeImageInfo()
-        return TileManagerHolder(imageSource, imageInfo)
+        val regionDecoder =
+            defaultRegionDecoder().create(SubsamplingImage(imageSource.toFactory()), imageSource)
+        return TileManagerHolder(imageSource, imageInfo, regionDecoder)
     }
 
-    private class TileManagerHolder(imageSource: ImageSource, val imageInfo: ImageInfo) :
+    private class TileManagerHolder(
+        imageSource: ImageSource,
+        val imageInfo: ImageInfo,
+        regionDecoder: RegionDecoder
+    ) :
         Closeable {
         private val logger = Logger("Test").apply {
             level = Logger.Level.Debug
@@ -527,10 +534,7 @@ class TileManagerTest {
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
-        val tileDecoder = TileDecoder(
-            logger,
-            defaultRegionDecoder().create(SubsamplingImage(imageSource.toFactory()), imageSource)
-        )
+        val tileDecoder = TileDecoder(logger, regionDecoder)
         val backgroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val foregroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val sampleSizeChangedList = mutableListOf<Int>()

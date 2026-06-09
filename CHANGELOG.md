@@ -14,6 +14,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * improve: After decoding the tile, simpleSize is 1 and the error is relaxed by 1 pixel when
   verifying the size. [#114](https://github.com/panpf/zoomimage/issues/114)
 * fix: Fixed the bug that Float.isInRangeWithScale() did not apply scale to min and max
+* break: The suspend modifier should be added to the RegionDecoder.Factory.create() function
 
 ## Android
 

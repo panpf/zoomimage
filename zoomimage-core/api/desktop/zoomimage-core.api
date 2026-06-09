@@ -122,7 +122,7 @@ public abstract interface class com/github/panpf/zoomimage/subsampling/RegionDec
 public abstract interface class com/github/panpf/zoomimage/subsampling/RegionDecoder$Factory {
 	public abstract fun accept (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun checkSupport (Ljava/lang/String;)Ljava/lang/Boolean;
-	public abstract fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;
+	public abstract fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun hashCode ()I
 	public abstract fun toString ()Ljava/lang/String;
@@ -355,8 +355,7 @@ public final class com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDec
 	public fun <init> ()V
 	public fun accept (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun checkSupport (Ljava/lang/String;)Ljava/lang/Boolean;
-	public synthetic fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;
-	public fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder;
+	public fun create (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
