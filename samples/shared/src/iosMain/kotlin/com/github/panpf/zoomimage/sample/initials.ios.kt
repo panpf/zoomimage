@@ -34,7 +34,6 @@ actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
 }
 
 actual fun ImageLoader.Builder.platformCoilInitial(context: coil3.PlatformContext) {
-    // TODO The ios platform coil supports avif heif format images
     components {
         add(CoilComposeResourceUriFetcher.Factory())
         add(CoilComposeResourceUriKeyer())

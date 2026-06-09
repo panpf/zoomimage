@@ -18,8 +18,6 @@ package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import okio.Source
-
-// TODO The ios platform supports avif heif format images
 import okio.buffer
 import okio.use
 
