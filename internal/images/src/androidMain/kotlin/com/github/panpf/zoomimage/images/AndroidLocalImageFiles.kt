@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.images
 
 import android.content.Context
 import android.os.Environment
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -103,8 +104,13 @@ class AndroidLocalImageFile(
     override val name: String,
     override val uri: String,
     override val size: IntSizeCompat,
+    override val length: Long,
+    override val mimeType: String,
+    override val animated: Boolean = false,
     override val exifOrientation: Int = ExifOrientation.UNDEFINED,
 ) : ImageFile {
+
+    override val imageInfo: ImageInfo = ImageInfo(size = size, mimeType = mimeType)
 
     override fun toString(): String =
         "AndroidLocalImageFile(name='$name', uri='$uri', size=$size, exifOrientation=$exifOrientation)"
@@ -116,5 +122,8 @@ fun ComposeResImageFile.toLocalImageFile(
     name = this.name,
     uri = File(cacheDir, this.name).path,
     size = this.size,
+    length = this.length,
+    mimeType = this.mimeType,
+    animated = this.animated,
     exifOrientation = this.exifOrientation
 )

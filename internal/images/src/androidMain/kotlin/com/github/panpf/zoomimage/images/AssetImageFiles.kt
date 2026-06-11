@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.images
 
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 
 object AssetImageFiles {
@@ -31,8 +32,13 @@ object AssetImageFiles {
 class AssetImageFile(
     override val name: String,
     override val size: IntSizeCompat,
+    override val length: Long,
+    override val mimeType: String,
+    override val animated: Boolean = false,
     override val exifOrientation: Int = ExifOrientation.UNDEFINED,
 ) : ImageFile {
+
+    override val imageInfo: ImageInfo = ImageInfo(size = size, mimeType = mimeType)
 
     override val uri = "file:///android_asset/$name"
 
@@ -43,5 +49,8 @@ class AssetImageFile(
 fun ComposeResImageFile.toAssetImageFile(): AssetImageFile = AssetImageFile(
     name = this.name,
     size = this.size,
+    length = this.length,
+    mimeType = this.mimeType,
+    animated = this.animated,
     exifOrientation = this.exifOrientation
 )

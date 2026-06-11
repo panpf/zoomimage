@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.images
 
 import android.content.Context
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -66,8 +67,13 @@ class ContentImageFile(
     override val name: String,
     override val uri: String,
     override val size: IntSizeCompat,
+    override val length: Long,
+    override val mimeType: String,
+    override val animated: Boolean = false,
     override val exifOrientation: Int = ExifOrientation.UNDEFINED,
 ) : ImageFile {
+
+    override val imageInfo: ImageInfo = ImageInfo(size = size, mimeType = mimeType)
 
     override fun toString(): String =
         "ContentImageFile(name='$name', uri='$uri', size=$size, exifOrientation=$exifOrientation)"
@@ -79,5 +85,8 @@ fun ComposeResImageFile.toContentImageFile(
     name = this.name,
     uri = "content://${context.packageName}.fileprovider/asset_images/${this.name}",
     size = this.size,
+    length = this.length,
+    mimeType = this.mimeType,
+    animated = this.animated,
     exifOrientation = this.exifOrientation
 )
