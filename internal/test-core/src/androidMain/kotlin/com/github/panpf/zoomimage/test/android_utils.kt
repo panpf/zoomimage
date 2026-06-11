@@ -159,3 +159,5 @@ fun Any.toHexString(): String = this.hashCode().toString(16)
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testToLogString
  */
 fun Bitmap.toLogString(): String = "Bitmap@${toHexString()}(${width}x${height},$config)"
+
+fun isVersionAtLeast(api: Int): Boolean = Build.VERSION.SDK_INT >= api
