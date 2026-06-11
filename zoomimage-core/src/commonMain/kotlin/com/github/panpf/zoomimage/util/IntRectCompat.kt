@@ -485,3 +485,24 @@ fun IntRectCompat.flip(spaceSize: IntSizeCompat, vertical: Boolean = false): Int
         )
     }
 }
+
+/**
+ * Returns true iff the specified rectangle r is inside or equal to this
+ * rectangle. An empty rectangle never contains another rectangle.
+ *
+ * @param r The rectangle being tested for containment.
+ * @return true iff the specified rectangle r is inside or equal to this
+ * rectangle
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testContains
+ */
+operator fun IntRectCompat.contains(r: IntRectCompat): Boolean {
+    // check for empty first
+    // now check for containment
+    return this.left < this.right
+            && this.top < this.bottom
+            && this.left <= r.left
+            && this.top <= r.top
+            && this.right >= r.right
+            && this.bottom >= r.bottom
+}

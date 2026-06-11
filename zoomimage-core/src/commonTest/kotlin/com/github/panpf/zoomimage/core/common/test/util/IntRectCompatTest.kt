@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.core.common.test.util
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.contains
 import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.flip
 import com.github.panpf.zoomimage.util.limitTo
@@ -14,7 +15,9 @@ import com.github.panpf.zoomimage.util.toShortString2
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class IntRectCompatTest {
 
@@ -329,5 +332,19 @@ class IntRectCompatTest {
             IntRectCompat(100, 300, 600, 500),
             rect.flip(spaceSize, vertical = true)
         )
+    }
+
+    @Test
+    fun testContains() {
+        val innerRect = IntRectCompat(200, 250, 400, 350)
+        val emptyRect = IntRectCompat(200, 300, 400, 300)
+        val outerRect = IntRectCompat(50, 150, 700, 500)
+
+        assertTrue(IntRectCompat(100, 200, 600, 400).contains(innerRect))
+        assertTrue(IntRectCompat(100, 200, 600, 400).contains(IntRectCompat(100, 200, 600, 400)))
+
+        assertTrue(IntRectCompat(100, 200, 600, 400).contains(emptyRect))
+        assertFalse(IntRectCompat(100, 200, 600, 400).contains(outerRect))
+        assertFalse(emptyRect.contains(IntRectCompat(100, 200, 600, 400)))
     }
 }
