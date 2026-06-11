@@ -36,4 +36,22 @@ data class SubsamplingImage(
     ) : this(ImageSource.WrapperFactory(imageSource), imageInfo)
 
     val key: String by lazy { "${imageSource.key}&imageInfo=$imageInfo" }
+
+    /**
+     * 100 bytes of header
+     */
+    private var _headerBytes: ByteArray? = null
+
+    suspend fun headerBytes(): ByteArray {
+        val headerBytes = _headerBytes
+        if (headerBytes != null) return headerBytes
+        val dataSource = imageSource.create()
+        return (dataSource.read(100) ?: EMPTY_BYTE_ARRAY).apply {
+            _headerBytes = this
+        }
+    }
+
+    companion object {
+        private val EMPTY_BYTE_ARRAY = ByteArray(0)
+    }
 }

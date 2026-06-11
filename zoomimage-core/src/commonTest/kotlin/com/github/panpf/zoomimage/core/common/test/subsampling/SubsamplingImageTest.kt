@@ -1,13 +1,17 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling
 
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.subsampling.ByteArrayImageSource
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.toFactory
 import com.github.panpf.zoomimage.test.TestImageSource
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertSame
 
 class SubsamplingImageTest {
 
@@ -29,6 +33,24 @@ class SubsamplingImageTest {
             expected = "TestImageSource&imageInfo=ImageInfo(size=101x202, mimeType='image/jpeg')",
             actual = SubsamplingImage(TestImageSource(), ImageInfo(101, 202, "image/jpeg")).key
         )
+    }
+
+    @Test
+    fun testHeaderBytes() = runTest {
+        SubsamplingImage(ComposeResImageFiles.dog.toImageSource()).apply {
+            assertEquals(100, headerBytes().size)
+            assertSame(headerBytes(), headerBytes())
+        }
+
+        SubsamplingImage(ByteArrayImageSource(byteArrayOf(1, 2, 3))).apply {
+            assertEquals(3, headerBytes().size)
+            assertSame(headerBytes(), headerBytes())
+        }
+
+        SubsamplingImage(ByteArrayImageSource(byteArrayOf())).apply {
+            assertEquals(0, headerBytes().size)
+            assertSame(headerBytes(), headerBytes())
+        }
     }
 
     @Test
