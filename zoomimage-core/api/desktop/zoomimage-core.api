@@ -85,6 +85,7 @@ public final class com/github/panpf/zoomimage/subsampling/ImageSource$WrapperFac
 }
 
 public final class com/github/panpf/zoomimage/subsampling/ImageSourceKt {
+	public static final fun read (Lcom/github/panpf/zoomimage/subsampling/ImageSource;I)[B
 	public static final fun toByteArray (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)[B
 	public static final fun toFactory (Lcom/github/panpf/zoomimage/subsampling/ImageSource;)Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
 }
@@ -142,6 +143,7 @@ public final class com/github/panpf/zoomimage/subsampling/SamplingTiles {
 }
 
 public final class com/github/panpf/zoomimage/subsampling/SubsamplingImage {
+	public static final field Companion Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage$Companion;
 	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)V
 	public synthetic fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)V
@@ -155,7 +157,11 @@ public final class com/github/panpf/zoomimage/subsampling/SubsamplingImage {
 	public final fun getImageSource ()Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
 	public final fun getKey ()Ljava/lang/String;
 	public fun hashCode ()I
+	public final fun headerBytes (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/subsampling/SubsamplingImage$Companion {
 }
 
 public abstract interface class com/github/panpf/zoomimage/subsampling/SubsamplingImageGenerateResult {
@@ -332,6 +338,10 @@ public final class com/github/panpf/zoomimage/subsampling/Tile_colorKt {
 	public static final fun tileColor (IZZ)I
 }
 
+public final class com/github/panpf/zoomimage/subsampling/internal/Decodes_desktopKt {
+	public static final fun defaultRegionDecoders ()Ljava/util/List;
+}
+
 public final class com/github/panpf/zoomimage/subsampling/internal/Decodes_nonAndroidKt {
 	public static final fun defaultRegionDecoder ()Lcom/github/panpf/zoomimage/subsampling/RegionDecoder$Factory;
 }
@@ -483,6 +493,23 @@ public final class com/github/panpf/zoomimage/util/Coroutines_nonJsCommonKt {
 	public static final fun ioCoroutineDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
 }
 
+public final class com/github/panpf/zoomimage/util/File_typesKt {
+	public static final fun isAnimatedAvifFile ([B)Z
+	public static final fun isAnimatedHeifFile ([B)Z
+	public static final fun isAnimatedWebPFile ([B)Z
+	public static final fun isAvifFile ([B)Z
+	public static final fun isBmpFile ([B)Z
+	public static final fun isGifFile ([B)Z
+	public static final fun isHeifFile ([B)Z
+	public static final fun isJpegFile ([B)Z
+	public static final fun isPngFile ([B)Z
+	public static final fun isStaticsAvifFile ([B)Z
+	public static final fun isStaticsHeifFile ([B)Z
+	public static final fun isStaticsWebPFile ([B)Z
+	public static final fun isSvgFile ([B)Z
+	public static final fun isWebPFile ([B)Z
+}
+
 public final class com/github/panpf/zoomimage/util/IntOffsetCompat {
 	public static final field Companion Lcom/github/panpf/zoomimage/util/IntOffsetCompat$Companion;
 	public static final synthetic fun box-impl (J)Lcom/github/panpf/zoomimage/util/IntOffsetCompat;
@@ -579,6 +606,7 @@ public final class com/github/panpf/zoomimage/util/IntRectCompatKt {
 	public static final fun IntRectCompat-CasTYrg (JJ)Lcom/github/panpf/zoomimage/util/IntRectCompat;
 	public static final fun IntRectCompat-MQWPdpA (JI)Lcom/github/panpf/zoomimage/util/IntRectCompat;
 	public static final fun IntRectCompat-Qhh7jRA (JJ)Lcom/github/panpf/zoomimage/util/IntRectCompat;
+	public static final fun contains (Lcom/github/panpf/zoomimage/util/IntRectCompat;Lcom/github/panpf/zoomimage/util/IntRectCompat;)Z
 	public static final fun div (Lcom/github/panpf/zoomimage/util/IntRectCompat;F)Lcom/github/panpf/zoomimage/util/IntRectCompat;
 	public static final fun div-Msst2mk (Lcom/github/panpf/zoomimage/util/IntRectCompat;J)Lcom/github/panpf/zoomimage/util/IntRectCompat;
 	public static final fun flip-nl2pQ20 (Lcom/github/panpf/zoomimage/util/IntRectCompat;JZ)Lcom/github/panpf/zoomimage/util/IntRectCompat;

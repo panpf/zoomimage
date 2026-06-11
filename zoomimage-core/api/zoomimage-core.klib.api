@@ -587,6 +587,9 @@ final class com.github.panpf.zoomimage.subsampling/SubsamplingImage { // com.git
     final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/SubsamplingImage.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling/SubsamplingImage.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling/SubsamplingImage.toString|toString(){}[0]
+    final suspend fun headerBytes(): kotlin/ByteArray // com.github.panpf.zoomimage.subsampling/SubsamplingImage.headerBytes|headerBytes(){}[0]
+
+    final object Companion // com.github.panpf.zoomimage.subsampling/SubsamplingImage.Companion|null[0]
 }
 
 final class com.github.panpf.zoomimage.subsampling/Tile { // com.github.panpf.zoomimage.subsampling/Tile|null[0]
@@ -1630,6 +1633,7 @@ final val com.github.panpf.zoomimage.zoom/name // com.github.panpf.zoomimage.zoo
 final val com.github.panpf.zoomimage.zoom/name // com.github.panpf.zoomimage.zoom/name|@com.github.panpf.zoomimage.zoom.ContentScaleCompat{}name[0]
     final fun (com.github.panpf.zoomimage.zoom/ContentScaleCompat).<get-name>(): kotlin/String // com.github.panpf.zoomimage.zoom/name.<get-name>|<get-name>@com.github.panpf.zoomimage.zoom.ContentScaleCompat(){}[0]
 
+final fun (com.github.panpf.zoomimage.subsampling/ImageSource).com.github.panpf.zoomimage.subsampling/read(kotlin/Int): kotlin/ByteArray? // com.github.panpf.zoomimage.subsampling/read|read@com.github.panpf.zoomimage.subsampling.ImageSource(kotlin.Int){}[0]
 final fun (com.github.panpf.zoomimage.subsampling/ImageSource).com.github.panpf.zoomimage.subsampling/toByteArray(): kotlin/ByteArray // com.github.panpf.zoomimage.subsampling/toByteArray|toByteArray@com.github.panpf.zoomimage.subsampling.ImageSource(){}[0]
 final fun (com.github.panpf.zoomimage.subsampling/ImageSource).com.github.panpf.zoomimage.subsampling/toFactory(): com.github.panpf.zoomimage.subsampling/ImageSource.Factory // com.github.panpf.zoomimage.subsampling/toFactory|toFactory@com.github.panpf.zoomimage.subsampling.ImageSource(){}[0]
 final fun (com.github.panpf.zoomimage.subsampling/ImageSource.Companion).com.github.panpf.zoomimage.subsampling/fromByteArray(kotlin/ByteArray): com.github.panpf.zoomimage.subsampling/ByteArrayImageSource // com.github.panpf.zoomimage.subsampling/fromByteArray|fromByteArray@com.github.panpf.zoomimage.subsampling.ImageSource.Companion(kotlin.ByteArray){}[0]
@@ -1645,6 +1649,7 @@ final fun (com.github.panpf.zoomimage.util/IntOffsetCompat).com.github.panpf.zoo
 final fun (com.github.panpf.zoomimage.util/IntOffsetCompat).com.github.panpf.zoomimage.util/rotateInSpace(com.github.panpf.zoomimage.util/IntSizeCompat, kotlin/Int): com.github.panpf.zoomimage.util/IntOffsetCompat // com.github.panpf.zoomimage.util/rotateInSpace|rotateInSpace@com.github.panpf.zoomimage.util.IntOffsetCompat(com.github.panpf.zoomimage.util.IntSizeCompat;kotlin.Int){}[0]
 final fun (com.github.panpf.zoomimage.util/IntOffsetCompat).com.github.panpf.zoomimage.util/times(com.github.panpf.zoomimage.util/ScaleFactorCompat): com.github.panpf.zoomimage.util/IntOffsetCompat // com.github.panpf.zoomimage.util/times|times@com.github.panpf.zoomimage.util.IntOffsetCompat(com.github.panpf.zoomimage.util.ScaleFactorCompat){}[0]
 final fun (com.github.panpf.zoomimage.util/IntOffsetCompat).com.github.panpf.zoomimage.util/toShortString(): kotlin/String // com.github.panpf.zoomimage.util/toShortString|toShortString@com.github.panpf.zoomimage.util.IntOffsetCompat(){}[0]
+final fun (com.github.panpf.zoomimage.util/IntRectCompat).com.github.panpf.zoomimage.util/contains(com.github.panpf.zoomimage.util/IntRectCompat): kotlin/Boolean // com.github.panpf.zoomimage.util/contains|contains@com.github.panpf.zoomimage.util.IntRectCompat(com.github.panpf.zoomimage.util.IntRectCompat){}[0]
 final fun (com.github.panpf.zoomimage.util/IntRectCompat).com.github.panpf.zoomimage.util/div(com.github.panpf.zoomimage.util/ScaleFactorCompat): com.github.panpf.zoomimage.util/IntRectCompat // com.github.panpf.zoomimage.util/div|div@com.github.panpf.zoomimage.util.IntRectCompat(com.github.panpf.zoomimage.util.ScaleFactorCompat){}[0]
 final fun (com.github.panpf.zoomimage.util/IntRectCompat).com.github.panpf.zoomimage.util/div(kotlin/Float): com.github.panpf.zoomimage.util/IntRectCompat // com.github.panpf.zoomimage.util/div|div@com.github.panpf.zoomimage.util.IntRectCompat(kotlin.Float){}[0]
 final fun (com.github.panpf.zoomimage.util/IntRectCompat).com.github.panpf.zoomimage.util/flip(com.github.panpf.zoomimage.util/IntSizeCompat, kotlin/Boolean = ...): com.github.panpf.zoomimage.util/IntRectCompat // com.github.panpf.zoomimage.util/flip|flip@com.github.panpf.zoomimage.util.IntRectCompat(com.github.panpf.zoomimage.util.IntSizeCompat;kotlin.Boolean){}[0]
@@ -1747,6 +1752,7 @@ final fun com.github.panpf.zoomimage.subsampling.internal/canUseSubsamplingByAsp
 final fun com.github.panpf.zoomimage.subsampling.internal/checkImageInfo(com.github.panpf.zoomimage.subsampling/ImageInfo, com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory, com.github.panpf.zoomimage.util/IntSizeCompat) // com.github.panpf.zoomimage.subsampling.internal/checkImageInfo|checkImageInfo(com.github.panpf.zoomimage.subsampling.ImageInfo;com.github.panpf.zoomimage.subsampling.RegionDecoder.Factory;com.github.panpf.zoomimage.util.IntSizeCompat){}[0]
 final fun com.github.panpf.zoomimage.subsampling.internal/checkNewPreferredTileSize(com.github.panpf.zoomimage.util/IntSizeCompat, com.github.panpf.zoomimage.util/IntSizeCompat): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/checkNewPreferredTileSize|checkNewPreferredTileSize(com.github.panpf.zoomimage.util.IntSizeCompat;com.github.panpf.zoomimage.util.IntSizeCompat){}[0]
 final fun com.github.panpf.zoomimage.subsampling.internal/defaultRegionDecoder(): com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory // com.github.panpf.zoomimage.subsampling.internal/defaultRegionDecoder|defaultRegionDecoder(){}[0]
+final fun com.github.panpf.zoomimage.subsampling.internal/defaultRegionDecoders(): kotlin.collections/List<com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory> // com.github.panpf.zoomimage.subsampling.internal/defaultRegionDecoders|defaultRegionDecoders(){}[0]
 final fun com.github.panpf.zoomimage.subsampling/tileColor(kotlin/Int, kotlin/Boolean, kotlin/Boolean): kotlin/Int // com.github.panpf.zoomimage.subsampling/tileColor|tileColor(kotlin.Int;kotlin.Boolean;kotlin.Boolean){}[0]
 final fun com.github.panpf.zoomimage.subsampling/tileColor(kotlin/Int, kotlin/Int, kotlin/Boolean): kotlin/Int // com.github.panpf.zoomimage.subsampling/tileColor|tileColor(kotlin.Int;kotlin.Int;kotlin.Boolean){}[0]
 final fun com.github.panpf.zoomimage.util/IntOffsetCompat(kotlin/Int, kotlin/Int): com.github.panpf.zoomimage.util/IntOffsetCompat // com.github.panpf.zoomimage.util/IntOffsetCompat|IntOffsetCompat(kotlin.Int;kotlin.Int){}[0]
@@ -1764,6 +1770,20 @@ final fun com.github.panpf.zoomimage.util/SizeCompat(kotlin/Float, kotlin/Float)
 final fun com.github.panpf.zoomimage.util/TransformOriginCompat(kotlin/Float, kotlin/Float): com.github.panpf.zoomimage.util/TransformOriginCompat // com.github.panpf.zoomimage.util/TransformOriginCompat|TransformOriginCompat(kotlin.Float;kotlin.Float){}[0]
 final fun com.github.panpf.zoomimage.util/defaultLogPipeline(): com.github.panpf.zoomimage.util/Logger.Pipeline // com.github.panpf.zoomimage.util/defaultLogPipeline|defaultLogPipeline(){}[0]
 final fun com.github.panpf.zoomimage.util/ioCoroutineDispatcher(): kotlinx.coroutines/CoroutineDispatcher // com.github.panpf.zoomimage.util/ioCoroutineDispatcher|ioCoroutineDispatcher(){}[0]
+final fun com.github.panpf.zoomimage.util/isAnimatedAvifFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isAnimatedAvifFile|isAnimatedAvifFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isAnimatedHeifFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isAnimatedHeifFile|isAnimatedHeifFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isAnimatedWebPFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isAnimatedWebPFile|isAnimatedWebPFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isAvifFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isAvifFile|isAvifFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isBmpFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isBmpFile|isBmpFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isGifFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isGifFile|isGifFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isHeifFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isHeifFile|isHeifFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isJpegFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isJpegFile|isJpegFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isPngFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isPngFile|isPngFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isStaticsAvifFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isStaticsAvifFile|isStaticsAvifFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isStaticsHeifFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isStaticsHeifFile|isStaticsHeifFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isStaticsWebPFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isStaticsWebPFile|isStaticsWebPFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isSvgFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isSvgFile|isSvgFile(kotlin.ByteArray){}[0]
+final fun com.github.panpf.zoomimage.util/isWebPFile(kotlin/ByteArray): kotlin/Boolean // com.github.panpf.zoomimage.util/isWebPFile|isWebPFile(kotlin.ByteArray){}[0]
 final fun com.github.panpf.zoomimage.util/lerp(com.github.panpf.zoomimage.util/IntOffsetCompat, com.github.panpf.zoomimage.util/IntOffsetCompat, kotlin/Float): com.github.panpf.zoomimage.util/IntOffsetCompat // com.github.panpf.zoomimage.util/lerp|lerp(com.github.panpf.zoomimage.util.IntOffsetCompat;com.github.panpf.zoomimage.util.IntOffsetCompat;kotlin.Float){}[0]
 final fun com.github.panpf.zoomimage.util/lerp(com.github.panpf.zoomimage.util/IntRectCompat, com.github.panpf.zoomimage.util/IntRectCompat, kotlin/Float): com.github.panpf.zoomimage.util/IntRectCompat // com.github.panpf.zoomimage.util/lerp|lerp(com.github.panpf.zoomimage.util.IntRectCompat;com.github.panpf.zoomimage.util.IntRectCompat;kotlin.Float){}[0]
 final fun com.github.panpf.zoomimage.util/lerp(com.github.panpf.zoomimage.util/IntSizeCompat, com.github.panpf.zoomimage.util/IntSizeCompat, kotlin/Float): com.github.panpf.zoomimage.util/IntSizeCompat // com.github.panpf.zoomimage.util/lerp|lerp(com.github.panpf.zoomimage.util.IntSizeCompat;com.github.panpf.zoomimage.util.IntSizeCompat;kotlin.Float){}[0]
@@ -1818,6 +1838,50 @@ final inline fun (kotlin/Double).com.github.panpf.zoomimage.util/times(com.githu
 final inline fun (kotlin/Float).com.github.panpf.zoomimage.util/times(com.github.panpf.zoomimage.util/SizeCompat): com.github.panpf.zoomimage.util/SizeCompat // com.github.panpf.zoomimage.util/times|times@kotlin.Float(com.github.panpf.zoomimage.util.SizeCompat){}[0]
 final inline fun (kotlin/Int).com.github.panpf.zoomimage.util/times(com.github.panpf.zoomimage.util/SizeCompat): com.github.panpf.zoomimage.util/SizeCompat // com.github.panpf.zoomimage.util/times|times@kotlin.Int(com.github.panpf.zoomimage.util.SizeCompat){}[0]
 final suspend fun com.github.panpf.zoomimage.subsampling.internal/createTileDecoder(com.github.panpf.zoomimage.util/Logger, com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.util/IntSizeCompat, kotlin.collections/List<com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory>): kotlin/Result<com.github.panpf.zoomimage.subsampling.internal/TileDecoder> // com.github.panpf.zoomimage.subsampling.internal/createTileDecoder|createTileDecoder(com.github.panpf.zoomimage.util.Logger;com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.util.IntSizeCompat;kotlin.collections.List<com.github.panpf.zoomimage.subsampling.RegionDecoder.Factory>){}[0]
+
+// Targets: [ios]
+final class com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder : com.github.panpf.zoomimage.subsampling/RegionDecoder { // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder|null[0]
+    constructor <init>(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource, kotlin/String, com.github.panpf.zoomimage.subsampling/ImageInfo? = ..., kotlin/ByteArray? = ...) // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.<init>|<init>(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource;kotlin.String;com.github.panpf.zoomimage.subsampling.ImageInfo?;kotlin.ByteArray?){}[0]
+
+    final val imageInfo // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageInfo|{}imageInfo[0]
+        final fun <get-imageInfo>(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageInfo.<get-imageInfo>|<get-imageInfo>(){}[0]
+    final val imageSource // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageSource|{}imageSource[0]
+        final fun <get-imageSource>(): com.github.panpf.zoomimage.subsampling/ImageSource // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageSource.<get-imageSource>|<get-imageSource>(){}[0]
+    final val mimeType // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.mimeType|{}mimeType[0]
+        final fun <get-mimeType>(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.mimeType.<get-mimeType>|<get-mimeType>(){}[0]
+    final val subsamplingImage // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.subsamplingImage|{}subsamplingImage[0]
+        final fun <get-subsamplingImage>(): com.github.panpf.zoomimage.subsampling/SubsamplingImage // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.subsamplingImage.<get-subsamplingImage>|<get-subsamplingImage>(){}[0]
+
+    final fun close() // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.close|close(){}[0]
+    final fun copy(): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.copy|copy(){}[0]
+    final fun decodeRegion(com.github.panpf.zoomimage.util/IntRectCompat, kotlin/Int): org.jetbrains.skia/Bitmap // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.decodeRegion|decodeRegion(com.github.panpf.zoomimage.util.IntRectCompat;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.hashCode|hashCode(){}[0]
+    final fun prepare() // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.prepare|prepare(){}[0]
+    final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.toString|toString(){}[0]
+
+    final class Factory : com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory { // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory|null[0]
+        constructor <init>() // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory.<init>|<init>(){}[0]
+
+        final fun checkSupport(kotlin/String): kotlin/Boolean? // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory.checkSupport|checkSupport(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory.toString|toString(){}[0]
+        final suspend fun accept(com.github.panpf.zoomimage.subsampling/SubsamplingImage): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory.accept|accept(com.github.panpf.zoomimage.subsampling.SubsamplingImage){}[0]
+        final suspend fun create(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource): com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.Factory.create|create(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource){}[0]
+    }
+
+    final class SupplementSkiaFactory : com.github.panpf.zoomimage.subsampling/RegionDecoder.Factory { // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory|null[0]
+        constructor <init>() // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory.<init>|<init>(){}[0]
+
+        final fun checkSupport(kotlin/String): kotlin/Boolean? // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory.checkSupport|checkSupport(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory.toString|toString(){}[0]
+        final suspend fun accept(com.github.panpf.zoomimage.subsampling/SubsamplingImage): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory.accept|accept(com.github.panpf.zoomimage.subsampling.SubsamplingImage){}[0]
+        final suspend fun create(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource): com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.SupplementSkiaFactory.create|create(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource){}[0]
+    }
+}
 
 // Targets: [ios]
 final class com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource : com.github.panpf.zoomimage.subsampling/ImageSource { // com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource|null[0]
@@ -1880,6 +1944,18 @@ final fun (com.github.panpf.zoomimage.subsampling/ImageSource.Companion).com.git
 
 // Targets: [ios]
 final fun (com.github.panpf.zoomimage.subsampling/ImageSource.Companion).com.github.panpf.zoomimage.subsampling/fromPhotoAsset(kotlin/String, kotlin/Boolean = ..., kotlin/Boolean = ...): com.github.panpf.zoomimage.subsampling/PhotoAssetImageSource.Factory // com.github.panpf.zoomimage.subsampling/fromPhotoAsset|fromPhotoAsset@com.github.panpf.zoomimage.subsampling.ImageSource.Companion(kotlin.String;kotlin.Boolean;kotlin.Boolean){}[0]
+
+// Targets: [ios]
+final fun (platform.UIKit/UIImage).com.github.panpf.zoomimage.util/intSizeCompat(): com.github.panpf.zoomimage.util/IntSizeCompat // com.github.panpf.zoomimage.util/intSizeCompat|intSizeCompat@platform.UIKit.UIImage(){}[0]
+
+// Targets: [ios]
+final fun (platform.UIKit/UIImage).com.github.panpf.zoomimage.util/toBitmap(): org.jetbrains.skia/Bitmap // com.github.panpf.zoomimage.util/toBitmap|toBitmap@platform.UIKit.UIImage(){}[0]
+
+// Targets: [ios]
+final fun (platform.UIKit/UIImage).com.github.panpf.zoomimage.util/toBitmap(kotlin/Int = ..., com.github.panpf.zoomimage.util/IntRectCompat? = ...): org.jetbrains.skia/Bitmap // com.github.panpf.zoomimage.util/toBitmap|toBitmap@platform.UIKit.UIImage(kotlin.Int;com.github.panpf.zoomimage.util.IntRectCompat?){}[0]
+
+// Targets: [ios]
+final fun com.github.panpf.zoomimage.util/isVersionAtLeast(kotlin/Int, kotlin/Int = ..., kotlin/Int = ...): kotlin/Boolean // com.github.panpf.zoomimage.util/isVersionAtLeast|isVersionAtLeast(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 
 // Targets: [ios]
 final fun com.github.panpf.zoomimage.util/requiredWorkThread() // com.github.panpf.zoomimage.util/requiredWorkThread|requiredWorkThread(){}[0]
