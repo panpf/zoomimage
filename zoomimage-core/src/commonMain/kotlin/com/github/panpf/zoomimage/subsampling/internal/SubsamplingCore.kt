@@ -386,7 +386,7 @@ class SubsamplingCore constructor(
             }
 
             val tileDecoder = tileDecoderResult.getOrThrow()
-            val imageInfo = subsamplingImage.imageInfo ?: tileDecoder.imageInfo
+            val imageInfo = tileDecoder.imageInfo
             this@SubsamplingCore.imageInfo = imageInfo
             this@SubsamplingCore.tileDecoder = tileDecoder
             this@SubsamplingCore.zoomableBridge.setContentOriginSize(imageInfo.size)
