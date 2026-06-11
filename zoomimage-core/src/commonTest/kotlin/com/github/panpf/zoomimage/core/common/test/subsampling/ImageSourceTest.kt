@@ -1,7 +1,11 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling
 
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.subsampling.ByteArrayImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromByteArray
+import com.github.panpf.zoomimage.subsampling.read
+import com.github.panpf.zoomimage.subsampling.toByteArray
 import com.github.panpf.zoomimage.subsampling.toFactory
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -90,5 +94,32 @@ class ImageSourceTest {
             actual = (factory as ImageSource.WrapperFactory).imageSource
         )
         assertSame(expected = imageSource.key, actual = factory.key)
+    }
+
+    @Test
+    fun testToByteArray() = runTest {
+        val imageFile = ComposeResImageFiles.dog
+        val dataSource = imageFile.toImageSource()
+        val byteArray = dataSource.toByteArray()
+        assertEquals(imageFile.length, byteArray.size.toLong())
+
+        val data = byteArrayOf(1, 2, 3)
+        val dataSource2 = ByteArrayImageSource(data)
+        assertSame(data, dataSource2.toByteArray())
+    }
+
+    @Test
+    fun testRead() = runTest {
+        val imageFile = ComposeResImageFiles.dog
+        val dataSource = imageFile.toImageSource()
+        assertEquals(100, dataSource.read(100)!!.size)
+
+        val data = byteArrayOf(1, 2, 3)
+        val dataSource2 = ByteArrayImageSource(data)
+        assertEquals(3, dataSource2.read(100)!!.size)
+
+        val data3 = byteArrayOf()
+        val dataSource3 = ByteArrayImageSource(data3)
+        assertEquals(null, dataSource3.read(100))
     }
 }

@@ -87,8 +87,25 @@ fun ImageSource.toFactory(): ImageSource.Factory = ImageSource.WrapperFactory(th
 
 /**
  * Get the bytes of the ImageSource, if the ImageSource is ByteArrayImageSource, return the byte array directly, otherwise read the byte array from the source
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testToByteArray
  */
 fun ImageSource.toByteArray(): ByteArray {
     if (this is ByteArrayImageSource) return byteArray
     return openSource().buffer().use { it.readByteArray() }
+}
+
+/**
+ * Read up to [maxLength] bytes of data; if the read fails, it returns null
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testRead
+ */
+fun ImageSource.read(maxLength: Int): ByteArray? {
+    val byteArray = ByteArray(maxLength)
+    val readLength = openSource().buffer().use { it.read(byteArray) }
+    return if (readLength != -1) {
+        if (readLength == byteArray.size) byteArray else byteArray.copyOf(readLength)
+    } else {
+        null
+    }
 }
