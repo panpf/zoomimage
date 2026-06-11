@@ -11,6 +11,8 @@ actual suspend fun buildPlatformBuiltinPhotoList(sketch: Sketch): List<String> {
     return listOf(
         ComposeResImageFiles.cat,
         ComposeResImageFiles.dog,
+        ComposeResImageFiles.giraffe,
+        ComposeResImageFiles.horse,
         ComposeResImageFiles.anim,
         ComposeResImageFiles.longEnd,
         ContentImageFiles.create(sketch.context).longWhale,
