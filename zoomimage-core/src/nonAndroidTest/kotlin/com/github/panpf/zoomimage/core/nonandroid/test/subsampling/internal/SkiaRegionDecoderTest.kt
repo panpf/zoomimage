@@ -4,90 +4,110 @@ import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaRegionDecoder
-import com.github.panpf.zoomimage.subsampling.toFactory
+import com.github.panpf.zoomimage.subsampling.size
 import com.github.panpf.zoomimage.test.TestImageSource
-import com.github.panpf.zoomimage.test.hammingDistance
-import com.github.panpf.zoomimage.test.produceFingerPrint
+import com.github.panpf.zoomimage.test.calculateSampledBitmapSize
+import com.github.panpf.zoomimage.test.similarity
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.test.runTest
-import org.jetbrains.skia.Bitmap
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class SkiaRegionDecoderTest {
 
     @Test
     fun testFactoryAccept() = runTest {
-        val factory = SkiaRegionDecoder.Factory()
-        assertEquals(true, factory.accept(SubsamplingImage(TestImageSource())))
+        listOf(
+            ComposeResImageFiles.hugeCard to true,
+            ComposeResImageFiles.anim to true,
+            ComposeResImageFiles.exifRotate90 to true,
+            ComposeResImageFiles.giraffe to true,
+            ComposeResImageFiles.horse to true,
+        ).forEach { (imageFile, exceptedOk) ->
+            val imageSource = imageFile.toImageSource()
+            assertEquals(
+                expected = exceptedOk,
+                actual = SkiaRegionDecoder.Factory()
+                    .accept(SubsamplingImage(imageSource)),
+                message = "Factory should ${if (exceptedOk) "accept" else "not accept"} ${imageFile.name}"
+            )
+        }
     }
 
     @Test
     fun testFactoryCheckSupport() {
-        val factory = SkiaRegionDecoder.Factory()
-        assertEquals(true, factory.checkSupport("image/jpeg"))
-        assertEquals(true, factory.checkSupport("image/png"))
-        assertEquals(true, factory.checkSupport("image/webp"))
-        assertEquals(true, factory.checkSupport("image/bmp"))
-        assertEquals(true, factory.checkSupport("image/gif"))
-        assertEquals(false, factory.checkSupport("image/heic"))
-        assertEquals(false, factory.checkSupport("image/heif"))
-        assertEquals(false, factory.checkSupport("image/avif"))
-        assertEquals(false, factory.checkSupport("video/mp4"))
-        assertEquals(null, factory.checkSupport("image/fake"))
+        listOf(
+            "image/jpeg" to true,
+            "image/png" to true,
+            "image/webp" to true,
+            "image/bmp" to true,
+            "image/gif" to true,
+            "image/svg+xml" to false,
+            "image/heic" to false,
+            "image/heif" to false,
+            "image/avif" to false,
+            "video/mp4" to false,
+            "image/fake" to null,
+        ).forEach { (mimeType, expectedSupport) ->
+            assertEquals(
+                expected = expectedSupport,
+                actual = SkiaRegionDecoder.Factory().checkSupport(mimeType),
+                message = "Factory should ${if (expectedSupport == true) "support" else if (expectedSupport == false) "not support" else "return null for"} MIME type $mimeType"
+            )
+        }
     }
 
     @Test
     fun testFactoryCreate() = runTest {
-        val imageSource1 = TestImageSource()
-        val imageSource2 = TestImageSource()
-        val subsamplingImage1 = SubsamplingImage(imageSource1)
-        val subsamplingImage2 = SubsamplingImage(imageSource2)
-
-        SkiaRegionDecoder.Factory()
-            .create(subsamplingImage1, imageSource1)
-            .apply {
-                assertSame(imageSource1, imageSource)
-                assertSame(subsamplingImage1, subsamplingImage)
+        listOf(
+            ComposeResImageFiles.hugeCard to true,
+            ComposeResImageFiles.anim to true,
+            ComposeResImageFiles.exifRotate90 to true,
+            ComposeResImageFiles.giraffe to true,
+            ComposeResImageFiles.horse to true,
+        ).forEach { (imageFile, exceptedOk) ->
+            val imageSource = imageFile.toImageSource()
+            if (exceptedOk) {
+                SkiaRegionDecoder.Factory()
+                    .create(SubsamplingImage(imageSource), imageSource)
+            } else {
+                assertFailsWith(
+                    exceptionClass = Exception::class,
+                    message = "Factory should throw Exception for ${imageFile.name}"
+                ) {
+                    SkiaRegionDecoder.Factory()
+                        .create(SubsamplingImage(imageSource), imageSource)
+                }
             }
+        }
 
-        SkiaRegionDecoder.Factory()
-            .create(subsamplingImage2, imageSource2)
-            .apply {
-                assertSame(imageSource2, imageSource)
-                assertSame(subsamplingImage2, subsamplingImage)
-            }
-
-        val imageFile = ComposeResImageFiles.exifRotate90
+        val imageFile = ComposeResImageFiles.hugeCard
         val imageSource = imageFile.toImageSource()
-        SkiaRegionDecoder.Factory().create(SubsamplingImage(imageSource), imageSource).apply {
-            assertEquals(expected = imageFile.size, actual = imageInfo.size)
-            assertEquals(expected = "image/jpeg", actual = imageInfo.mimeType)
+        SkiaRegionDecoder.Factory().create(
+            subsamplingImage = SubsamplingImage(imageSource),
+            imageSource = imageSource
+        ).apply {
+            assertEquals(imageFile.imageInfo, this.imageInfo)
         }
 
         SkiaRegionDecoder.Factory().create(
-            SubsamplingImage(imageSource, ImageInfo(imageFile.size * 2, "image/png")),
-            imageSource
+            subsamplingImage = SubsamplingImage(imageSource, ImageInfo(1, 1, "image/fake")),
+            imageSource = imageSource
         ).apply {
-            assertEquals(expected = imageFile.size * 2, actual = imageInfo.size)
-            assertEquals(expected = "image/png", actual = imageInfo.mimeType)
+            assertEquals(imageFile.imageInfo, this.imageInfo)
         }
     }
 
     @Test
     fun testFactoryEqualsAndHashCode() = runTest {
         val element1 = SkiaRegionDecoder.Factory()
-        val element11 = SkiaRegionDecoder.Factory()
         val element2 = SkiaRegionDecoder.Factory()
 
-        assertEquals(element1, element11)
         assertEquals(element1, element2)
-
-        assertEquals(element1.hashCode(), element11.hashCode())
         assertEquals(element1.hashCode(), element2.hashCode())
     }
 
@@ -99,26 +119,56 @@ class SkiaRegionDecoderTest {
 
     @Test
     fun testImageInfo() = runTest {
+        listOf(
+            ComposeResImageFiles.hugeCard to true,
+            ComposeResImageFiles.anim to true,
+            ComposeResImageFiles.exifRotate90 to true,
+            ComposeResImageFiles.giraffe to false,
+            ComposeResImageFiles.horse to false,
+        ).forEach { (imageFile, exceptedOk) ->
+            val imageSource = imageFile.toImageSource()
+            val decoder = SkiaRegionDecoder(
+                subsamplingImage = SubsamplingImage(imageSource),
+                imageSource = imageSource,
+            )
+            if (exceptedOk) {
+                val imageInfo = try {
+                    decoder.imageInfo
+                } catch (e: Exception) {
+                    throw Exception("Decode ImageInfo should succeed: ${imageFile.name}", e)
+                }
+                assertEquals(
+                    expected = imageFile.imageInfo,
+                    actual = imageInfo,
+                    message = imageFile.name
+                )
+            } else {
+                assertFailsWith(exceptionClass = Exception::class, message = imageFile.name) {
+                    decoder.imageInfo
+                }
+            }
+        }
+
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
-        SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource).apply {
-            assertEquals(expected = imageFile.size, actual = imageInfo.size)
-            assertEquals(expected = "image/jpeg", actual = imageInfo.mimeType)
+        SkiaRegionDecoder(
+            subsamplingImage = SubsamplingImage(imageSource),
+            imageSource = imageSource,
+        ).apply {
+            assertEquals(imageFile.imageInfo, this.imageInfo)
         }
 
         SkiaRegionDecoder(
-            SubsamplingImage(
-                imageSource,
-                ImageInfo(imageFile.size * 2, "image/png")
-            ), imageSource
+            subsamplingImage = SubsamplingImage(imageSource),
+            imageSource = imageSource,
+            imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
-            assertEquals(expected = imageFile.size * 2, actual = imageInfo.size)
-            assertEquals(expected = "image/png", actual = imageInfo.mimeType)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
         }
     }
 
     @Test
-    fun testPrepare() = runTest {
+    fun testPrepareAndClose() = runTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource).use {
@@ -133,49 +183,105 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
+    fun testCopy() = runTest {
+        val imageFile = ComposeResImageFiles.exifRotate90
+        val imageSource = imageFile.toImageSource()
+        SkiaRegionDecoder(
+            subsamplingImage = SubsamplingImage(imageSource),
+            imageSource = imageSource,
+        ).apply {
+            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.copy().imageInfo)
+        }
+
+        SkiaRegionDecoder(
+            subsamplingImage = SubsamplingImage(imageSource),
+            imageSource = imageSource,
+            imageInfo = ImageInfo(1, 1, "image/fake2")
+        ).apply {
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.copy().imageInfo)
+        }
+    }
+
+    @Test
     fun testDecodeRegion() = runTest {
-        val imageSource1 = ComposeResImageFiles.exifNormal.toImageSource()
-        val bitmap11: Bitmap
-        SkiaRegionDecoder.Factory()
-            .create(SubsamplingImage(imageSource1.toFactory()), imageSource1).use { decodeHelper1 ->
-                bitmap11 = decodeHelper1.decodeRegion(
-                    region = IntRectCompat(100, 200, 300, 300),
-                    sampleSize = 1
-                )
-                bitmap11.apply {
-                    assertEquals(200, width)
-                    assertEquals(100, height)
-                }
+        val imageFile = ComposeResImageFiles.hugeCard
+        val imageSource = imageFile.toImageSource()
+        val fullRegion = IntRectCompat(0, 0, imageFile.size.width, imageFile.size.height)
+        val region = IntRectCompat(200, 300, 703, 503)
+        SkiaRegionDecoder(
+            subsamplingImage = SubsamplingImage(imageSource),
+            imageSource = imageSource,
+        ).apply {
+            assertEquals(
+                expected = imageFile.size,
+                actual = decodeRegion(sampleSize = 1, region = fullRegion).size
+            )
 
-                val bitmap12 = decodeHelper1.decodeRegion(
-                    region = IntRectCompat(100, 200, 300, 300),
-                    sampleSize = 4
-                )
-                bitmap12.apply {
-                    assertEquals(50, width)
-                    assertEquals(25, height)
-                }
-            }
+            assertEquals(
+                expected = calculateSampledBitmapSize(imageSize = imageFile.size, sampleSize = 2),
+                actual = decodeRegion(sampleSize = 2, region = fullRegion).size
+            )
 
-        val imageSource2 = ComposeResImageFiles.exifRotate90.toImageSource()
-        val bitmap2: Bitmap
-        SkiaRegionDecoder.Factory()
-            .create(SubsamplingImage(imageSource2.toFactory()), imageSource2)
-            .use { tileDecoder2 ->
-                bitmap2 = tileDecoder2
-                    .decodeRegion(
-                        region = IntRectCompat(100, 200, 300, 300),
-                        sampleSize = 1
-                    )
-                bitmap2.apply {
-                    assertEquals(200, width)
-                    assertEquals(100, height)
-                }
-            }
-        val bitmapFinger = bitmap11.produceFingerPrint()
-        val bitmap2Finger = bitmap2.produceFingerPrint()
-        val hanming2 = hammingDistance(bitmapFinger, bitmap2Finger)
-        assertTrue(hanming2 <= 2)
+            assertEquals(
+                expected = calculateSampledBitmapSize(imageSize = imageFile.size, sampleSize = 4),
+                actual = decodeRegion(sampleSize = 4, region = fullRegion).size
+            )
+
+            val regionSize = IntSizeCompat(region.width, region.height)
+            assertEquals(
+                expected = regionSize,
+                actual = decodeRegion(sampleSize = 1, region = region).size
+            )
+
+            assertEquals(
+                expected = calculateSampledBitmapSize(imageSize = regionSize, sampleSize = 2),
+                actual = decodeRegion(sampleSize = 2, region = region).size
+            )
+
+            assertEquals(
+                expected = calculateSampledBitmapSize(imageSize = regionSize, sampleSize = 4),
+                actual = decodeRegion(sampleSize = 4, region = region).size
+            )
+
+            val bitmap1 = decodeRegion(sampleSize = 1, region = region)
+            val region2 = region.translate(200, 200)
+            val bitmap2 = decodeRegion(sampleSize = 1, region = region2)
+            val similarity = bitmap1.similarity(bitmap2)
+            assertTrue(
+                similarity >= 5,
+                "Similarity should be greater than or equal to 5, but was $similarity"
+            )
+        }
+
+        // test exif orientation
+        val bitmap1 = ComposeResImageFiles.exifNormal.let { imageFile ->
+            val imageSource = imageFile.toImageSource()
+            SkiaRegionDecoder(
+                subsamplingImage = SubsamplingImage(imageSource),
+                imageSource = imageSource,
+            )
+        }.decodeRegion(
+            region = IntRectCompat(100, 200, 300, 300),
+            sampleSize = 1
+        )
+        val bitmap2 = ComposeResImageFiles.exifRotate90.let { imageFile ->
+            val imageSource = imageFile.toImageSource()
+            SkiaRegionDecoder(
+                subsamplingImage = SubsamplingImage(imageSource),
+                imageSource = imageSource,
+            )
+        }.decodeRegion(
+            region = IntRectCompat(100, 200, 300, 300),
+            sampleSize = 1
+        )
+        assertEquals(bitmap1.size, bitmap2.size)
+        val similarity = bitmap1.similarity(bitmap2)
+        assertTrue(
+            similarity <= 2,
+            "Similarity should be less than or equal to 2, but was $similarity"
+        )
     }
 
     @Test

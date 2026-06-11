@@ -45,7 +45,7 @@ import kotlin.math.ceil
 class SkiaRegionDecoder(
     override val subsamplingImage: SubsamplingImage,
     val imageSource: ImageSource,
-    imageInfo: ImageInfo? = subsamplingImage.imageInfo,
+    imageInfo: ImageInfo? = null,
     bytes: ByteArray? = null,
 ) : RegionDecoder {
 

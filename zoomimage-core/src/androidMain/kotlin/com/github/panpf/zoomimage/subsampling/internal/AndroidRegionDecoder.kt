@@ -26,8 +26,13 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
 import com.github.panpf.zoomimage.subsampling.SubsamplingImage
+import com.github.panpf.zoomimage.subsampling.read
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.closeQuietly
+import com.github.panpf.zoomimage.util.isAnimatedWebPFile
+import com.github.panpf.zoomimage.util.isAvifFile
+import com.github.panpf.zoomimage.util.isHeifFile
+import okio.IOException
 import okio.buffer
 import java.io.BufferedInputStream
 
@@ -41,7 +46,7 @@ import java.io.BufferedInputStream
 class AndroidRegionDecoder(
     override val subsamplingImage: SubsamplingImage,
     val imageSource: ImageSource,
-    imageInfo: ImageInfo? = subsamplingImage.imageInfo,
+    imageInfo: ImageInfo? = null,
 ) : RegionDecoder {
 
     private val exifOrientationHelper: ExifOrientationHelper by lazy {
@@ -54,6 +59,17 @@ class AndroidRegionDecoder(
     override val imageInfo: ImageInfo by lazy { imageInfo ?: decodeImageInfo() }
 
     private fun decodeImageInfo(): ImageInfo {
+        // Consistent with the format supported by BitmapRegionDecoder
+        val headerBytes = imageSource.read(100) ?: throw IOException("Unable to read image header")
+        val yes = when {
+            isAnimatedWebPFile(headerBytes) -> VERSION.SDK_INT >= 26
+            isHeifFile(headerBytes) -> VERSION.SDK_INT >= 27
+            isAvifFile(headerBytes) -> VERSION.SDK_INT >= 37
+            else -> true
+        }
+        if (!yes) {
+            throw Exception("Unsupported image format")
+        }
         val imageInfo = imageSource.decodeImageInfo()
         val correctedImageInfo = exifOrientationHelper.applyToImageInfo(imageInfo)
         return correctedImageInfo
@@ -131,7 +147,15 @@ class AndroidRegionDecoder(
 
     class Factory : RegionDecoder.Factory {
 
-        override suspend fun accept(subsamplingImage: SubsamplingImage): Boolean = true
+        override suspend fun accept(subsamplingImage: SubsamplingImage): Boolean {
+            val headerBytes = subsamplingImage.headerBytes()
+            return when {
+                isAnimatedWebPFile(headerBytes) -> VERSION.SDK_INT >= 26
+                isHeifFile(headerBytes) -> VERSION.SDK_INT >= 27
+                isAvifFile(headerBytes) -> VERSION.SDK_INT >= 37
+                else -> true
+            }
+        }
 
         override fun checkSupport(mimeType: String): Boolean? {
             if (!mimeType.startsWith("image/")) {
@@ -140,8 +164,8 @@ class AndroidRegionDecoder(
             return when (mimeType) {
                 "image/jpeg", "image/png", "image/webp" -> true
                 "image/gif", "image/bmp", "image/svg+xml" -> false
-                "image/heic", "image/heif" -> VERSION.SDK_INT >= VERSION_CODES.O_MR1
-                "image/avif" -> if (VERSION.SDK_INT <= 35) false else null
+                "image/heic", "image/heif" -> VERSION.SDK_INT >= 27
+                "image/avif" -> VERSION.SDK_INT >= 37
                 else -> null
             }
         }
