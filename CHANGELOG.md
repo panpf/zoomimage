@@ -24,6 +24,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 * change: iosX64 platform is no longer supported
 * new: Added PhotoAssetImageSource to support decoding images from PhotoAsset
+* new: Added UIImageRegionDecoder to support heif and avif images
 
 ## Dependencies
 

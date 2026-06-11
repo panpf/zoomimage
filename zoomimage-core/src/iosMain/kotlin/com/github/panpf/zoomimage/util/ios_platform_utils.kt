@@ -22,18 +22,44 @@ package com.github.panpf.zoomimage.util
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.cValue
 import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
+import org.jetbrains.skia.Bitmap
+import org.jetbrains.skia.ColorAlphaType
+import org.jetbrains.skia.ColorSpace
+import org.jetbrains.skia.ColorType
+import platform.CoreGraphics.CGBitmapContextCreate
+import platform.CoreGraphics.CGColorSpaceCreateDeviceRGB
+import platform.CoreGraphics.CGColorSpaceRelease
+import platform.CoreGraphics.CGContextDrawImage
+import platform.CoreGraphics.CGContextRelease
+import platform.CoreGraphics.CGImageAlphaInfo
+import platform.CoreGraphics.CGImageCreateWithImageInRect
+import platform.CoreGraphics.CGImageGetHeight
+import platform.CoreGraphics.CGImageGetWidth
+import platform.CoreGraphics.CGImageRelease
+import platform.CoreGraphics.CGRectMake
+import platform.CoreGraphics.kCGBitmapByteOrder32Big
 import platform.Foundation.NSData
+import platform.Foundation.NSOperatingSystemVersion
+import platform.Foundation.NSProcessInfo
+import platform.Foundation.create
 import platform.Photos.PHAsset
 import platform.Photos.PHAssetMediaType
 import platform.Photos.PHAssetMediaTypeAudio
 import platform.Photos.PHAssetMediaTypeImage
 import platform.Photos.PHAssetMediaTypeVideo
 import platform.Photos.PHAssetResource
+import platform.UIKit.UIGraphicsImageRenderer
+import platform.UIKit.UIGraphicsImageRendererFormat
+import platform.UIKit.UIImage
+import platform.UIKit.UIImageOrientation
 import platform.UniformTypeIdentifiers.UTType
 import platform.darwin.ByteVar
 import platform.posix.memcpy
+import kotlin.math.ceil
 
 private const val RESOURCE_TYPE_PHOTO = 1L
 private const val RESOURCE_TYPE_VIDEO = 2L
@@ -273,154 +299,154 @@ private fun PHAssetResource.typeCode(): Long = when (val raw: Any = type) {
 //    width = pixelWidth.toInt(),
 //    height = pixelHeight.toInt(),
 //)
-//
-///**
-// * Correct the orientation of a UIImage by checking its imageOrientation property and, if it is not already in the upright orientation, creating a new image with the correct orientation using UIGraphicsImageRenderer.
-// *
-// * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testCorrectExifOrientation
-// */
-//internal fun UIImage.correctExifOrientation(): UIImage {
-//    if (this.imageOrientation == UIImageOrientation.UIImageOrientationUp) return this
-//    val format = UIGraphicsImageRendererFormat.defaultFormat()
-//    val renderer = UIGraphicsImageRenderer(size = this.size, format = format)
-//    val newImage = renderer.imageWithActions {
-//        val width = this.size.useContents { width }
-//        val height = this.size.useContents { height }
-//        this.drawInRect(CGRectMake(x = 0.0, y = 0.0, width = width, height = height))
-//    }
-//    return newImage
-//}
-//
-///**
-// * Convert a UIImage to a Bitmap by creating a bitmap context, drawing the image into it, and then installing the pixel data into a Bitmap object.
-// *
-// * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testUIImageToBitmap
-// */
-//fun UIImage.toBitmap(sampleSize: Int = 1, cropRect: Rect? = null): Bitmap {
-//    require((sampleSize > 0) && ((sampleSize == 1) || ((sampleSize % 2) == 0))) {
-//        "sampleSize must be 1 or a power of 2, but was $sampleSize"
-//    }
-//    val cgImage = this.CGImage ?: throw DecodeException("UIImage has no CGImage")
-//    val originalWidth = CGImageGetWidth(cgImage).toInt()
-//    val originalHeight = CGImageGetHeight(cgImage).toInt()
-//    val fullRect = Rect(left = 0, top = 0, right = originalWidth, bottom = originalHeight)
-//    if (cropRect != null) {
-//        require(value = !cropRect.isEmpty) {
-//            "cropRect invalid: ${cropRect.toShortString()}"
-//        }
-//        require(value = fullRect.contains(cropRect)) {
-//            "cropRect out of bounds: ${cropRect.toShortString()}, originalSize=${originalWidth}x${originalHeight}"
-//        }
-//    }
-//
-//    // Crop CGImage
-//    val finalCropRect = cropRect ?: fullRect
-//    val croppedCGImage = if (finalCropRect != fullRect) {
-//        CGImageCreateWithImageInRect(
-//            image = cgImage,
-//            rect = CGRectMake(
-//                x = finalCropRect.left.toDouble(),
-//                y = finalCropRect.top.toDouble(),
-//                width = finalCropRect.width().toDouble(),
-//                height = finalCropRect.height().toDouble()
-//            )
-//        ) ?: throw DecodeException("Failed to create cropped CGImage")
-//    } else {
-//        cgImage
-//    }
-//
-//    try {
-//        val sampledBitmapSize = calculateSampledBitmapSize(
-//            imageSize = Size(
-//                width = finalCropRect.width(),
-//                height = finalCropRect.height()
-//            ),
-//            sampleSize = sampleSize
-//        )
-//        val bytesPerRow = sampledBitmapSize.width * 4
-//        val pixels = ByteArray(bytesPerRow * sampledBitmapSize.height)
-//        val colorSpace = CGColorSpaceCreateDeviceRGB()
-//            ?: throw DecodeException("Failed to create RGB color space")
-//        try {
-//            pixels.usePinned { pinned ->
-//                val context = CGBitmapContextCreate(
-//                    data = pinned.addressOf(0),
-//                    width = sampledBitmapSize.width.toULong(),
-//                    height = sampledBitmapSize.height.toULong(),
-//                    bitsPerComponent = 8u,
-//                    bytesPerRow = bytesPerRow.toULong(),
-//                    space = colorSpace,
-//                    bitmapInfo = CGImageAlphaInfo.kCGImageAlphaPremultipliedLast.value or kCGBitmapByteOrder32Big,
-//                ) ?: throw DecodeException("Failed to create bitmap context")
-//                try {
-//                    CGContextDrawImage(
-//                        c = context,
-//                        rect = CGRectMake(
-//                            x = 0.0,
-//                            y = 0.0,
-//                            width = sampledBitmapSize.width.toDouble(),
-//                            height = sampledBitmapSize.height.toDouble()
-//                        ),
-//                        image = croppedCGImage,
-//                    )
-//                } finally {
-//                    CGContextRelease(context)
-//                }
-//            }
-//        } finally {
-//            CGColorSpaceRelease(colorSpace)
-//        }
-//
-//        val imageInfo = org.jetbrains.skia.ImageInfo(
-//            width = sampledBitmapSize.width,
-//            height = sampledBitmapSize.height,
-//            colorType = ColorType.RGBA_8888,
-//            alphaType = ColorAlphaType.PREMUL,
-//            colorSpace = ColorSpace.sRGB,
-//        )
-//        val bitmap = Bitmap()
-//        if (!bitmap.installPixels(imageInfo, pixels, bytesPerRow)) {
-//            throw DecodeException("Failed to install RGBA pixels into bitmap")
-//        }
-//        bitmap.setImmutable()
-//        return bitmap
-//    } finally {
-//        if (finalCropRect != fullRect) {
-//            CGImageRelease(croppedCGImage)
-//        }
-//    }
-//}
 
-///**
-// * Convert a UIImage to a Bitmap by creating a bitmap context, drawing the image into it, and then installing the pixel data into a Bitmap object.
-// *
-// * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testUIImageToBitmap
-// */
-//fun UIImage.toBitmap(): Bitmap {
-//    return toBitmap(sampleSize = 1, cropRect = null)
-//}
-//
-///**
-// * Get the size of a UIImage as a Size object, using its size property which contains the width and height in points, and converting them to integers.
-// *
-// * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testSketchSize
-// */
-//fun UIImage.sketchSize(): Size {
-//    return size().useContents {
-//        Size(this.width.toInt(), this.height.toInt())
-//    }
-//}
-//
-///**
-// * Convert a ByteArray to NSData by pinning the byte array and creating an NSData object that references the pinned memory.
-// *
-// * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testByteArrayToNSData
-// */
-//internal fun ByteArray.toNSData(): NSData {
-//    return usePinned { pinned ->
-//        NSData.create(bytes = pinned.addressOf(0), length = size.toULong())
-//    }
-//}
+/**
+ * Correct the orientation of a UIImage by checking its imageOrientation property and, if it is not already in the upright orientation, creating a new image with the correct orientation using UIGraphicsImageRenderer.
+ *
+ * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testCorrectExifOrientation
+ */
+internal fun UIImage.correctExifOrientation(): UIImage {
+    if (this.imageOrientation == UIImageOrientation.UIImageOrientationUp) return this
+    val format = UIGraphicsImageRendererFormat.defaultFormat()
+    val renderer = UIGraphicsImageRenderer(size = this.size, format = format)
+    val newImage = renderer.imageWithActions {
+        val width = this.size.useContents { width }
+        val height = this.size.useContents { height }
+        this.drawInRect(CGRectMake(x = 0.0, y = 0.0, width = width, height = height))
+    }
+    return newImage
+}
+
+/**
+ * Convert a UIImage to a Bitmap by creating a bitmap context, drawing the image into it, and then installing the pixel data into a Bitmap object.
+ *
+ * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testUIImageToBitmap
+ */
+fun UIImage.toBitmap(sampleSize: Int = 1, region: IntRectCompat? = null): Bitmap {
+    require((sampleSize > 0) && ((sampleSize == 1) || ((sampleSize % 2) == 0))) {
+        "sampleSize must be 1 or a power of 2, but was $sampleSize"
+    }
+    val cgImage = this.CGImage ?: throw Exception("UIImage has no CGImage")
+    val originalWidth = CGImageGetWidth(cgImage).toInt()
+    val originalHeight = CGImageGetHeight(cgImage).toInt()
+    val fullRect = IntRectCompat(left = 0, top = 0, right = originalWidth, bottom = originalHeight)
+    if (region != null) {
+        require(value = !region.isEmpty) {
+            "cropRect invalid: ${region.toShortString()}"
+        }
+        require(value = fullRect.contains(region)) {
+            "cropRect out of bounds: ${region.toShortString()}, originalSize=${originalWidth}x${originalHeight}"
+        }
+    }
+
+    // Crop CGImage
+    val finalRegion = region ?: fullRect
+    val croppedCGImage = if (finalRegion != fullRect) {
+        CGImageCreateWithImageInRect(
+            image = cgImage,
+            rect = CGRectMake(
+                x = finalRegion.left.toDouble(),
+                y = finalRegion.top.toDouble(),
+                width = finalRegion.width.toDouble(),
+                height = finalRegion.height.toDouble()
+            )
+        ) ?: throw Exception("Failed to create cropped CGImage")
+    } else {
+        cgImage
+    }
+
+    try {
+        val sampledBitmapSize = calculateSampledBitmapSize(
+            imageSize = IntSizeCompat(
+                width = finalRegion.width,
+                height = finalRegion.height
+            ),
+            sampleSize = sampleSize
+        )
+        val bytesPerRow = sampledBitmapSize.width * 4
+        val pixels = ByteArray(bytesPerRow * sampledBitmapSize.height)
+        val colorSpace = CGColorSpaceCreateDeviceRGB()
+            ?: throw Exception("Failed to create RGB color space")
+        try {
+            pixels.usePinned { pinned ->
+                val context = CGBitmapContextCreate(
+                    data = pinned.addressOf(0),
+                    width = sampledBitmapSize.width.toULong(),
+                    height = sampledBitmapSize.height.toULong(),
+                    bitsPerComponent = 8u,
+                    bytesPerRow = bytesPerRow.toULong(),
+                    space = colorSpace,
+                    bitmapInfo = CGImageAlphaInfo.kCGImageAlphaPremultipliedLast.value or kCGBitmapByteOrder32Big,
+                ) ?: throw Exception("Failed to create bitmap context")
+                try {
+                    CGContextDrawImage(
+                        c = context,
+                        rect = CGRectMake(
+                            x = 0.0,
+                            y = 0.0,
+                            width = sampledBitmapSize.width.toDouble(),
+                            height = sampledBitmapSize.height.toDouble()
+                        ),
+                        image = croppedCGImage,
+                    )
+                } finally {
+                    CGContextRelease(context)
+                }
+            }
+        } finally {
+            CGColorSpaceRelease(colorSpace)
+        }
+
+        val imageInfo = org.jetbrains.skia.ImageInfo(
+            width = sampledBitmapSize.width,
+            height = sampledBitmapSize.height,
+            colorType = ColorType.RGBA_8888,
+            alphaType = ColorAlphaType.PREMUL,
+            colorSpace = ColorSpace.sRGB,
+        )
+        val bitmap = Bitmap()
+        if (!bitmap.installPixels(imageInfo, pixels, bytesPerRow)) {
+            throw Exception("Failed to install RGBA pixels into bitmap")
+        }
+        bitmap.setImmutable()
+        return bitmap
+    } finally {
+        if (finalRegion != fullRect) {
+            CGImageRelease(croppedCGImage)
+        }
+    }
+}
+
+/**
+ * Convert a UIImage to a Bitmap by creating a bitmap context, drawing the image into it, and then installing the pixel data into a Bitmap object.
+ *
+ * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testUIImageToBitmap
+ */
+fun UIImage.toBitmap(): Bitmap {
+    return toBitmap(sampleSize = 1, region = null)
+}
+
+/**
+ * Get the size of a UIImage as a Size object, using its size property which contains the width and height in points, and converting them to integers.
+ *
+ * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testSketchSize
+ */
+fun UIImage.intSizeCompat(): IntSizeCompat {
+    return size().useContents {
+        IntSizeCompat(this.width.toInt(), this.height.toInt())
+    }
+}
+
+/**
+ * Convert a ByteArray to NSData by pinning the byte array and creating an NSData object that references the pinned memory.
+ *
+ * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testByteArrayToNSData
+ */
+internal fun ByteArray.toNSData(): NSData {
+    return usePinned { pinned ->
+        NSData.create(bytes = pinned.addressOf(0), length = size.toULong())
+    }
+}
 
 /**
  * Convert an NSData to ByteArray by creating a new ByteArray of the appropriate size and copying the bytes from the NSData into it using memcpy.
@@ -438,16 +464,32 @@ internal fun NSData.toByteArray(): ByteArray {
     return byteArray
 }
 
-///**
-// * Check if the current iOS version is at least the specified major, minor, and patch version by creating an NSOperatingSystemVersion struct and using NSProcessInfo to compare it against the current system version.
-// *
-// * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testIsIOSVersionAtLeast
-// */
-//fun isIOSVersionAtLeast(major: Int, minor: Int = 0, patch: Int = 0): Boolean {
-//    val version = cValue<NSOperatingSystemVersion> {
-//        majorVersion = major.toLong()
-//        minorVersion = minor.toLong()
-//        patchVersion = patch.toLong()
-//    }
-//    return NSProcessInfo.processInfo.isOperatingSystemAtLeastVersion(version)
-//}
+/**
+ * Check if the current iOS version is at least the specified major, minor, and patch version by creating an NSOperatingSystemVersion struct and using NSProcessInfo to compare it against the current system version.
+ *
+ * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testIsVersionAtLeast
+ */
+fun isVersionAtLeast(major: Int, minor: Int = 0, patch: Int = 0): Boolean {
+    val version = cValue<NSOperatingSystemVersion> {
+        majorVersion = major.toLong()
+        minorVersion = minor.toLong()
+        patchVersion = patch.toLong()
+    }
+    return NSProcessInfo.processInfo.isOperatingSystemAtLeastVersion(version)
+}
+
+/**
+ * Calculate the size of the sampled Bitmap, support for Skia Image
+ *
+ * @see com.github.panpf.sketch.core.nonandroid.test.decode.internal.DecodesNonAndroidTest.testCalculateSampledBitmapSize
+ */
+private fun calculateSampledBitmapSize(
+    imageSize: IntSizeCompat,
+    sampleSize: Int,
+): IntSizeCompat {
+    val widthValue = imageSize.width / sampleSize.toDouble()
+    val heightValue = imageSize.height / sampleSize.toDouble()
+    val width: Int = ceil(widthValue).toInt()
+    val height: Int = ceil(heightValue).toInt()
+    return IntSizeCompat(width, height)
+}

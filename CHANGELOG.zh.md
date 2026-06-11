@@ -22,6 +22,7 @@
 
 * change: 不再支持 iosX64 平台
 * new: 新增 PhotoAssetImageSource 支持从 PhotoAsset 解码图片
+* new: 新增 UIImageRegionDecoder 支持 heif 和 avif 图片
 
 ## Dependencies
 

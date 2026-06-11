@@ -24,5 +24,5 @@ import com.github.panpf.zoomimage.subsampling.RegionDecoder
  * @see com.github.panpf.zoomimage.core.ios.test.subsampling.internal.DecodesIosTest.testDefaultRegionDecoders
  */
 actual fun defaultRegionDecoders(): List<RegionDecoder.Factory> {
-    return listOf(SkiaRegionDecoder.Factory())
+    return listOf(UIImageRegionDecoder.SupplementSkiaFactory(), SkiaRegionDecoder.Factory())
 }
