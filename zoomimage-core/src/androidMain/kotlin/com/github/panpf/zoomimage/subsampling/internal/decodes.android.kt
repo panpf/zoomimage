@@ -36,6 +36,15 @@ actual fun defaultRegionDecoder(): RegionDecoder.Factory {
 }
 
 /**
+ * Get the platform's default RegionDecoder List
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoders
+ */
+actual fun defaultRegionDecoders(): List<RegionDecoder.Factory> {
+    return listOf(AndroidRegionDecoder.Factory())
+}
+
+/**
  * Decode the Exif orientation of the image
  *
  * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeExifOrientation
@@ -64,10 +73,13 @@ internal fun ImageSource.decodeImageInfo(): ImageInfo {
     openSource().buffer().inputStream().use {
         BitmapFactory.decodeStream(it, null, boundOptions)
     }
-    val mimeType = boundOptions.outMimeType.orEmpty()
+    if (boundOptions.outWidth < 0 || boundOptions.outHeight < 0) {
+        throw Exception("Unsupported image format")
+    }
     val imageSize = IntSizeCompat(
         width = boundOptions.outWidth,
         height = boundOptions.outHeight
     )
+    val mimeType = boundOptions.outMimeType.orEmpty()
     return ImageInfo(size = imageSize, mimeType = mimeType)
 }

@@ -47,7 +47,7 @@ suspend fun createTileDecoder(
     regionDecoders: List<RegionDecoder.Factory>,
 ): Result<TileDecoder> = runCatching {
     val regionDecoderFactory = regionDecoders
-        .plus(defaultRegionDecoder())
+        .plus(defaultRegionDecoders())
         .find { it.accept(subsamplingImage) }!!
 
     // Filter out unsupported images via external imageInfo in advance

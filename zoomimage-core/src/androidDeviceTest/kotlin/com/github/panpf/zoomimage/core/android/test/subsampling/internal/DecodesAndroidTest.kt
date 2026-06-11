@@ -9,6 +9,7 @@ import com.github.panpf.zoomimage.subsampling.internal.applyToImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoder
+import com.github.panpf.zoomimage.subsampling.internal.defaultRegionDecoders
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -21,6 +22,14 @@ class DecodesAndroidTest {
     fun testDefaultRegionDecoder() {
         val factory = defaultRegionDecoder()
         assertTrue(factory is AndroidRegionDecoder.Factory)
+    }
+
+    @Test
+    fun testDefaultRegionDecoders() {
+        assertEquals(
+            expected = listOf(AndroidRegionDecoder.Factory()),
+            actual = defaultRegionDecoders()
+        )
     }
 
     @Test

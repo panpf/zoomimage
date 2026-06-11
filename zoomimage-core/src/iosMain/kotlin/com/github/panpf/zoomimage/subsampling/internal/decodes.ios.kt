@@ -19,20 +19,10 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.RegionDecoder
 
 /**
- * Get the platform's default RegionDecoder
- *
- * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoder
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testDefaultRegionDecoder
- */
-@Deprecated("Use defaultRegionDecoders instead")
-expect fun defaultRegionDecoder(): RegionDecoder.Factory
-
-/**
  * Get the platform's default RegionDecoder List
  *
- * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoders
- * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.DecodesDesktopTest.testDefaultRegionDecoders
  * @see com.github.panpf.zoomimage.core.ios.test.subsampling.internal.DecodesIosTest.testDefaultRegionDecoders
- * @see com.github.panpf.zoomimage.core.jscommon.test.subsampling.internal.DecodesJsCommonTest.testDefaultRegionDecoders
  */
-expect fun defaultRegionDecoders(): List<RegionDecoder.Factory>
+actual fun defaultRegionDecoders(): List<RegionDecoder.Factory> {
+    return listOf(SkiaRegionDecoder.Factory())
+}
