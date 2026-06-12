@@ -44,7 +44,6 @@ import java.io.BufferedInputStream
  * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.AndroidRegionDecoderTest
  */
 class AndroidRegionDecoder(
-    override val subsamplingImage: SubsamplingImage,
     val imageSource: ImageSource,
     imageInfo: ImageInfo? = null,
 ) : RegionDecoder {
@@ -116,7 +115,6 @@ class AndroidRegionDecoder(
 
     override fun copy(): RegionDecoder {
         return AndroidRegionDecoder(
-            subsamplingImage = subsamplingImage,
             imageSource = imageSource,
             imageInfo = imageInfo,
         )
@@ -130,19 +128,16 @@ class AndroidRegionDecoder(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as AndroidRegionDecoder
-        if (subsamplingImage != other.subsamplingImage) return false
         if (imageSource != other.imageSource) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = subsamplingImage.hashCode()
-        result = 31 * result + imageSource.hashCode()
-        return result
+        return imageSource.hashCode()
     }
 
     override fun toString(): String {
-        return "AndroidRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource)"
+        return "AndroidRegionDecoder(imageSource=$imageSource)"
     }
 
     class Factory : RegionDecoder.Factory {
@@ -173,10 +168,7 @@ class AndroidRegionDecoder(
         override suspend fun create(
             subsamplingImage: SubsamplingImage,
             imageSource: ImageSource,
-        ): AndroidRegionDecoder = AndroidRegionDecoder(
-            subsamplingImage = subsamplingImage,
-            imageSource = imageSource,
-        )
+        ): AndroidRegionDecoder = AndroidRegionDecoder(imageSource = imageSource)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

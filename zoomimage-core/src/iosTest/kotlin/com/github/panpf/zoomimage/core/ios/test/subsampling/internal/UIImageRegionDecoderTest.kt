@@ -21,6 +21,11 @@ import kotlin.test.assertTrue
 class UIImageRegionDecoderTest {
 
     @Test
+    fun testFactoryConstructor() {
+        UIImageRegionDecoder.Factory()
+    }
+
+    @Test
     fun testFactoryAccept() = runTest {
         listOf(
             ComposeResImageFiles.hugeCard to true,
@@ -220,25 +225,22 @@ class UIImageRegionDecoderTest {
         val imageFile = ComposeResImageFiles.hugeCard
         val imageSource = imageFile.toImageSource()
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = imageFile.mimeType,
-            imageInfo = null,
-            bytes = null,
+            imageInfo = ImageInfo(100, 100, "image/jpeg"),
+            bytes = byteArrayOf(1, 2, 3),
         )
         UIImageRegionDecoder(
-            SubsamplingImage(imageSource),
             imageSource,
             imageFile.mimeType,
-            null,
-            null
+            ImageInfo(100, 100, "image/jpeg"),
+            byteArrayOf(1, 2, 3)
         )
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = imageFile.mimeType,
         )
-        UIImageRegionDecoder(SubsamplingImage(imageSource), imageSource, imageFile.mimeType)
+        UIImageRegionDecoder(imageSource, imageFile.mimeType)
     }
 
     @Test
@@ -252,7 +254,6 @@ class UIImageRegionDecoderTest {
         ).forEach { (imageFile, exceptedOk) ->
             val imageSource = imageFile.toImageSource()
             val decoder = UIImageRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
                 imageSource = imageSource,
                 mimeType = imageFile.mimeType
             )
@@ -277,7 +278,6 @@ class UIImageRegionDecoderTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = imageFile.mimeType
         ).apply {
@@ -285,7 +285,6 @@ class UIImageRegionDecoderTest {
         }
 
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = "image/fake"
         ).apply {
@@ -293,7 +292,6 @@ class UIImageRegionDecoderTest {
         }
 
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = "image/fake",
             imageInfo = ImageInfo(1, 1, "image/fake2")
@@ -307,7 +305,7 @@ class UIImageRegionDecoderTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         val decoder =
-            UIImageRegionDecoder(SubsamplingImage(imageSource), imageSource, imageFile.mimeType)
+            UIImageRegionDecoder(imageSource, imageFile.mimeType)
         decoder.prepare()
         decoder.close()
     }
@@ -317,7 +315,6 @@ class UIImageRegionDecoderTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = imageFile.mimeType
         ).apply {
@@ -326,7 +323,6 @@ class UIImageRegionDecoderTest {
         }
 
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = "image/fake"
         ).apply {
@@ -335,7 +331,6 @@ class UIImageRegionDecoderTest {
         }
 
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = "image/fake",
             imageInfo = ImageInfo(1, 1, "image/fake2")
@@ -352,7 +347,6 @@ class UIImageRegionDecoderTest {
         val fullRegion = IntRectCompat(0, 0, imageFile.size.width, imageFile.size.height)
         val region = IntRectCompat(200, 300, 703, 503)
         UIImageRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             mimeType = imageFile.mimeType
         ).apply {
@@ -401,7 +395,6 @@ class UIImageRegionDecoderTest {
         val bitmap1 = ComposeResImageFiles.exifNormal.let { imageFile ->
             val imageSource = imageFile.toImageSource()
             UIImageRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
                 imageSource = imageSource,
                 mimeType = imageFile.mimeType
             )
@@ -412,7 +405,6 @@ class UIImageRegionDecoderTest {
         val bitmap2 = ComposeResImageFiles.exifRotate90.let { imageFile ->
             val imageSource = imageFile.toImageSource()
             UIImageRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
                 imageSource = imageSource,
                 mimeType = imageFile.mimeType
             )
@@ -432,41 +424,28 @@ class UIImageRegionDecoderTest {
     fun testEqualsAndHashCode() = runTest {
         val imageSource1 = TestImageSource()
         val imageSource2 = TestImageSource()
-        val element1 =
-            UIImageRegionDecoder(SubsamplingImage(imageSource1), imageSource1, "image/jpeg")
-        val element11 =
-            UIImageRegionDecoder(SubsamplingImage(imageSource1), imageSource1, "image/jpeg")
-        val element2 =
-            UIImageRegionDecoder(SubsamplingImage(imageSource2), imageSource1, "image/jpeg")
-        val element3 =
-            UIImageRegionDecoder(SubsamplingImage(imageSource1), imageSource2, "image/jpeg")
-        val element4 =
-            UIImageRegionDecoder(SubsamplingImage(imageSource1), imageSource2, "image/png")
+        val element1 = UIImageRegionDecoder(imageSource1, "image/jpeg")
+        val element11 = UIImageRegionDecoder(imageSource1, "image/jpeg")
+        val element2 = UIImageRegionDecoder(imageSource2, "image/jpeg")
+        val element3 = UIImageRegionDecoder(imageSource2, "image/png")
 
         assertEquals(element1, element11)
         assertNotEquals(element1, element2)
         assertNotEquals(element1, element3)
-        assertNotEquals(element1, element4)
         assertNotEquals(element2, element3)
-        assertNotEquals(element2, element4)
-        assertNotEquals(element3, element4)
 
         assertEquals(element1.hashCode(), element11.hashCode())
         assertNotEquals(element1.hashCode(), element2.hashCode())
         assertNotEquals(element1.hashCode(), element3.hashCode())
-        assertNotEquals(element1.hashCode(), element4.hashCode())
         assertNotEquals(element2.hashCode(), element3.hashCode())
-        assertNotEquals(element2.hashCode(), element4.hashCode())
-        assertNotEquals(element3.hashCode(), element4.hashCode())
     }
 
     @Test
     fun testToString() = runTest {
         val imageSource = TestImageSource()
-        val subsamplingImage = SubsamplingImage(imageSource)
-        val element = UIImageRegionDecoder(subsamplingImage, imageSource, "image/jpeg")
+        val element = UIImageRegionDecoder(imageSource, "image/jpeg")
         assertEquals(
-            "UIImageRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource, mimeType='image/jpeg')",
+            "UIImageRegionDecoder(imageSource=$imageSource, mimeType='image/jpeg')",
             element.toString()
         )
     }

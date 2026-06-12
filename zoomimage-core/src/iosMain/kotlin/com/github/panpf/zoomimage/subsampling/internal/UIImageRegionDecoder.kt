@@ -48,7 +48,6 @@ import platform.UIKit.UIImage
  * @see com.github.panpf.zoomimage.core.ios.test.subsampling.internal.UIImageRegionDecoderTest
  */
 class UIImageRegionDecoder(
-    override val subsamplingImage: SubsamplingImage,
     val imageSource: ImageSource,
     val mimeType: String,
     imageInfo: ImageInfo? = null,
@@ -85,7 +84,6 @@ class UIImageRegionDecoder(
 
     override fun copy(): RegionDecoder {
         return UIImageRegionDecoder(
-            subsamplingImage = subsamplingImage,
             imageSource = imageSource,
             mimeType = mimeType,
             imageInfo = imageInfo,
@@ -97,21 +95,19 @@ class UIImageRegionDecoder(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as UIImageRegionDecoder
-        if (subsamplingImage != other.subsamplingImage) return false
         if (imageSource != other.imageSource) return false
         if (mimeType != other.mimeType) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = subsamplingImage.hashCode()
-        result = 31 * result + imageSource.hashCode()
+        var result = imageSource.hashCode()
         result = 31 * result + mimeType.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "UIImageRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource, mimeType='$mimeType')"
+        return "UIImageRegionDecoder(imageSource=$imageSource, mimeType='$mimeType')"
     }
 
     class Factory : RegionDecoder.Factory {
@@ -162,7 +158,6 @@ class UIImageRegionDecoder(
         ): UIImageRegionDecoder {
             val mimeType = isApplicable(subsamplingImage)
             return UIImageRegionDecoder(
-                subsamplingImage = subsamplingImage,
                 imageSource = imageSource,
                 mimeType = mimeType,
             )
@@ -214,7 +209,6 @@ class UIImageRegionDecoder(
             val mimeType = isApplicable(subsamplingImage)
                 ?: throw IllegalArgumentException("Unsupported image format for subsampling: $subsamplingImage")
             return UIImageRegionDecoder(
-                subsamplingImage = subsamplingImage,
                 imageSource = imageSource,
                 mimeType = mimeType,
             )

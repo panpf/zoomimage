@@ -114,7 +114,6 @@ public abstract interface class com/github/panpf/zoomimage/subsampling/RegionDec
 	public abstract fun decodeRegion (Lcom/github/panpf/zoomimage/util/IntRectCompat;I)Lorg/jetbrains/skia/Bitmap;
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
-	public abstract fun getSubsamplingImage ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
 	public abstract fun hashCode ()I
 	public abstract fun prepare ()V
 	public abstract fun toString ()Ljava/lang/String;
@@ -347,15 +346,14 @@ public final class com/github/panpf/zoomimage/subsampling/internal/Decodes_nonAn
 }
 
 public final class com/github/panpf/zoomimage/subsampling/internal/SkiaRegionDecoder : com/github/panpf/zoomimage/subsampling/RegionDecoder {
-	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;[B)V
-	public synthetic fun <init> (Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;[B)V
+	public synthetic fun <init> (Lcom/github/panpf/zoomimage/subsampling/ImageSource;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun close ()V
 	public fun copy ()Lcom/github/panpf/zoomimage/subsampling/RegionDecoder;
 	public fun decodeRegion (Lcom/github/panpf/zoomimage/util/IntRectCompat;I)Lorg/jetbrains/skia/Bitmap;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getImageInfo ()Lcom/github/panpf/zoomimage/subsampling/ImageInfo;
 	public final fun getImageSource ()Lcom/github/panpf/zoomimage/subsampling/ImageSource;
-	public fun getSubsamplingImage ()Lcom/github/panpf/zoomimage/subsampling/SubsamplingImage;
 	public fun hashCode ()I
 	public fun prepare ()V
 	public fun toString ()Ljava/lang/String;

@@ -43,7 +43,6 @@ import kotlin.math.ceil
  * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.SkiaRegionDecoderTest
  */
 class SkiaRegionDecoder(
-    override val subsamplingImage: SubsamplingImage,
     val imageSource: ImageSource,
     imageInfo: ImageInfo? = null,
     bytes: ByteArray? = null,
@@ -107,7 +106,6 @@ class SkiaRegionDecoder(
 
     override fun copy(): RegionDecoder {
         return SkiaRegionDecoder(
-            subsamplingImage = subsamplingImage,
             imageSource = imageSource,
             imageInfo = imageInfo,
             bytes = bytes,
@@ -118,19 +116,16 @@ class SkiaRegionDecoder(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as SkiaRegionDecoder
-        if (subsamplingImage != other.subsamplingImage) return false
         if (imageSource != other.imageSource) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = subsamplingImage.hashCode()
-        result = 31 * result + imageSource.hashCode()
-        return result
+        return imageSource.hashCode()
     }
 
     override fun toString(): String {
-        return "SkiaRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource)"
+        return "SkiaRegionDecoder(imageSource=$imageSource)"
     }
 
     class Factory : RegionDecoder.Factory {
@@ -156,10 +151,7 @@ class SkiaRegionDecoder(
         override suspend fun create(
             subsamplingImage: SubsamplingImage,
             imageSource: ImageSource,
-        ): SkiaRegionDecoder = SkiaRegionDecoder(
-            subsamplingImage = subsamplingImage,
-            imageSource = imageSource,
-        )
+        ): SkiaRegionDecoder = SkiaRegionDecoder(imageSource = imageSource)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

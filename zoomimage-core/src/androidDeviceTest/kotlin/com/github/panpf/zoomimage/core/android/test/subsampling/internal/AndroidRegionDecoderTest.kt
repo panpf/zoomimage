@@ -23,6 +23,11 @@ import kotlin.test.assertTrue
 class AndroidRegionDecoderTest {
 
     @Test
+    fun testFactoryConstructor() {
+        AndroidRegionDecoder.Factory()
+    }
+
+    @Test
     fun testFactoryAccept() = runTest {
         listOf(
             ComposeResImageFiles.hugeCard to true,
@@ -121,6 +126,22 @@ class AndroidRegionDecoderTest {
     }
 
     @Test
+    fun testConstructor() = runTest {
+        val imageFile = ComposeResImageFiles.hugeCard
+        val imageSource = imageFile.toImageSource()
+        AndroidRegionDecoder(
+            imageSource = imageSource,
+            imageInfo = ImageInfo(100, 100, "image/jpeg"),
+        )
+        AndroidRegionDecoder(
+            imageSource,
+            ImageInfo(100, 100, "image/jpeg"),
+        )
+        AndroidRegionDecoder(imageSource = imageSource)
+        AndroidRegionDecoder(imageSource)
+    }
+
+    @Test
     fun testImageInfo() = runTest {
         listOf(
             ComposeResImageFiles.hugeCard to true,
@@ -131,7 +152,6 @@ class AndroidRegionDecoderTest {
         ).forEach { (imageFile, exceptedOk) ->
             val imageSource = imageFile.toImageSource()
             val decoder = AndroidRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
                 imageSource = imageSource,
             )
             val exceptedError = imageFile == ComposeResImageFiles.giraffe
@@ -157,14 +177,12 @@ class AndroidRegionDecoderTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         AndroidRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
         ).apply {
             assertEquals(imageFile.imageInfo, this.imageInfo)
         }
 
         AndroidRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
@@ -176,12 +194,12 @@ class AndroidRegionDecoderTest {
     fun testPrepareAndClose() = runTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
-        AndroidRegionDecoder(SubsamplingImage(imageSource), imageSource).use {
+        AndroidRegionDecoder(imageSource).use {
             it.prepare()
         }
 
         assertFailsWith(UnsupportedOperationException::class) {
-            AndroidRegionDecoder(SubsamplingImage(TestImageSource()), TestImageSource()).use {
+            AndroidRegionDecoder(TestImageSource()).use {
                 it.prepare()
             }
         }
@@ -191,16 +209,12 @@ class AndroidRegionDecoderTest {
     fun testCopy() = runTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
-        AndroidRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
-            imageSource = imageSource,
-        ).apply {
+        AndroidRegionDecoder(imageSource = imageSource).apply {
             assertEquals(imageFile.imageInfo, this.imageInfo)
             assertEquals(imageFile.imageInfo, this.copy().imageInfo)
         }
 
         AndroidRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
@@ -215,10 +229,7 @@ class AndroidRegionDecoderTest {
         val imageSource = imageFile.toImageSource()
         val fullRegion = IntRectCompat(0, 0, imageFile.size.width, imageFile.size.height)
         val region = IntRectCompat(200, 300, 703, 503)
-        AndroidRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
-            imageSource = imageSource,
-        ).apply {
+        AndroidRegionDecoder(imageSource = imageSource).apply {
             assertSizeEquals(
                 expected = imageFile.size,
                 actual = decodeRegion(sampleSize = 1, region = fullRegion).size,
@@ -269,20 +280,14 @@ class AndroidRegionDecoderTest {
         // test exif orientation
         val bitmap1 = ComposeResImageFiles.exifNormal.let { imageFile ->
             val imageSource = imageFile.toImageSource()
-            AndroidRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
-                imageSource = imageSource,
-            )
+            AndroidRegionDecoder(imageSource = imageSource)
         }.decodeRegion(
             region = IntRectCompat(100, 200, 300, 300),
             sampleSize = 1
         )
         val bitmap2 = ComposeResImageFiles.exifRotate90.let { imageFile ->
             val imageSource = imageFile.toImageSource()
-            AndroidRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
-                imageSource = imageSource,
-            )
+            AndroidRegionDecoder(imageSource = imageSource)
         }.decodeRegion(
             region = IntRectCompat(100, 200, 300, 300),
             sampleSize = 1
@@ -299,29 +304,23 @@ class AndroidRegionDecoderTest {
     fun testEqualsAndHashCode() = runTest {
         val imageSource1 = TestImageSource()
         val imageSource2 = TestImageSource()
-        val element1 = AndroidRegionDecoder(SubsamplingImage(imageSource1), imageSource1)
-        val element11 = AndroidRegionDecoder(SubsamplingImage(imageSource1), imageSource1)
-        val element2 = AndroidRegionDecoder(SubsamplingImage(imageSource2), imageSource1)
-        val element3 = AndroidRegionDecoder(SubsamplingImage(imageSource1), imageSource2)
+        val element1 = AndroidRegionDecoder(imageSource1)
+        val element11 = AndroidRegionDecoder(imageSource1)
+        val element2 = AndroidRegionDecoder(imageSource2)
 
         assertEquals(element1, element11)
         assertNotEquals(element1, element2)
-        assertNotEquals(element1, element3)
-        assertNotEquals(element2, element3)
 
         assertEquals(element1.hashCode(), element11.hashCode())
         assertNotEquals(element1.hashCode(), element2.hashCode())
-        assertNotEquals(element1.hashCode(), element3.hashCode())
-        assertNotEquals(element2.hashCode(), element3.hashCode())
     }
 
     @Test
     fun testToString() = runTest {
         val imageSource = TestImageSource()
-        val subsamplingImage = SubsamplingImage(imageSource)
-        val element = AndroidRegionDecoder(subsamplingImage, imageSource)
+        val element = AndroidRegionDecoder(imageSource)
         assertEquals(
-            "AndroidRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource)",
+            "AndroidRegionDecoder(imageSource=$imageSource)",
             element.toString()
         )
     }

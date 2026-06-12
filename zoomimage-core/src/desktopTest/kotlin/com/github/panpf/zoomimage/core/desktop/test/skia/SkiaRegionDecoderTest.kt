@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.core.desktop.test.skia
 
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
-import com.github.panpf.zoomimage.subsampling.SubsamplingImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaRegionDecoder
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -21,7 +20,7 @@ class SkiaRegionDecoderTest {
         val imageSource = imageFile.toImageSource()
         var decoder: SkiaRegionDecoder? = null
         try {
-            decoder = SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource)
+            decoder = SkiaRegionDecoder(imageSource)
             val srcRect = IntRectCompat(
                 left = imageSize.width - tileSize.width,
                 top = imageSize.height - tileSize.height,
@@ -48,7 +47,7 @@ class SkiaRegionDecoderTest {
         val imageSource = imageFile.toImageSource()
         var decoder: SkiaRegionDecoder? = null
         try {
-            decoder = SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource)
+            decoder = SkiaRegionDecoder(imageSource)
             val srcRect = IntRectCompat(
                 left = imageSize.width - tileSize.width,
                 top = imageSize.height - tileSize.height,
@@ -75,7 +74,7 @@ class SkiaRegionDecoderTest {
         val imageSource = imageFile.toImageSource()
         var decoder: SkiaRegionDecoder? = null
         try {
-            decoder = SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource)
+            decoder = SkiaRegionDecoder(imageSource)
             val srcRect = IntRectCompat(
                 imageSize.width - tileSize.width,
                 imageSize.height - tileSize.height,

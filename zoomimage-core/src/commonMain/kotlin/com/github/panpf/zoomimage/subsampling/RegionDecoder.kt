@@ -26,11 +26,6 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 interface RegionDecoder : AutoCloseable {
 
     /**
-     * The [SubsamplingImage] object that created this [RegionDecoder]
-     */
-    val subsamplingImage: SubsamplingImage
-
-    /**
      * Image size, mimeType information
      */
     val imageInfo: ImageInfo

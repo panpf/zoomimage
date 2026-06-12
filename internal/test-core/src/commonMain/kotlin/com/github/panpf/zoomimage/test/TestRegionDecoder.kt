@@ -8,7 +8,6 @@ import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 
 class TestRegionDecoder(
-    override val subsamplingImage: SubsamplingImage,
     override val imageInfo: ImageInfo,
 ) : RegionDecoder {
 
@@ -25,26 +24,23 @@ class TestRegionDecoder(
     }
 
     override fun copy(): RegionDecoder {
-        return TestRegionDecoder(subsamplingImage, imageInfo)
+        return TestRegionDecoder(imageInfo)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         other as TestRegionDecoder
-        if (subsamplingImage != other.subsamplingImage) return false
         if (imageInfo != other.imageInfo) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = subsamplingImage.hashCode()
-        result = 31 * result + imageInfo.hashCode()
-        return result
+        return imageInfo.hashCode()
     }
 
     override fun toString(): String {
-        return "TestRegionDecoder(subsamplingImage=$subsamplingImage, imageInfo=$imageInfo)"
+        return "TestRegionDecoder(imageInfo=$imageInfo)"
     }
 
     class Factory(
@@ -75,7 +71,7 @@ class TestRegionDecoder(
             imageSource: ImageSource
         ): RegionDecoder {
             actions?.add("create")
-            return TestRegionDecoder(subsamplingImage, imageInfo)
+            return TestRegionDecoder(imageInfo)
         }
 
         override fun equals(other: Any?): Boolean {

@@ -20,6 +20,11 @@ import kotlin.test.assertTrue
 class SkiaRegionDecoderTest {
 
     @Test
+    fun testFactoryConstructor() {
+        SkiaRegionDecoder.Factory()
+    }
+
+    @Test
     fun testFactoryAccept() = runTest {
         listOf(
             ComposeResImageFiles.hugeCard to true,
@@ -118,6 +123,24 @@ class SkiaRegionDecoderTest {
     }
 
     @Test
+    fun testConstructor() = runTest {
+        val imageFile = ComposeResImageFiles.hugeCard
+        val imageSource = imageFile.toImageSource()
+        SkiaRegionDecoder(
+            imageSource = imageSource,
+            imageInfo = ImageInfo(100, 100, "image/jpeg"),
+            bytes = byteArrayOf(1, 2, 3),
+        )
+        SkiaRegionDecoder(
+            imageSource,
+            ImageInfo(100, 100, "image/jpeg"),
+            byteArrayOf(1, 2, 3)
+        )
+        SkiaRegionDecoder(imageSource = imageSource)
+        SkiaRegionDecoder(imageSource)
+    }
+
+    @Test
     fun testImageInfo() = runTest {
         listOf(
             ComposeResImageFiles.hugeCard to true,
@@ -127,10 +150,7 @@ class SkiaRegionDecoderTest {
             ComposeResImageFiles.horse to false,
         ).forEach { (imageFile, exceptedOk) ->
             val imageSource = imageFile.toImageSource()
-            val decoder = SkiaRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
-                imageSource = imageSource,
-            )
+            val decoder = SkiaRegionDecoder(imageSource = imageSource)
             if (exceptedOk) {
                 val imageInfo = try {
                     decoder.imageInfo
@@ -151,15 +171,11 @@ class SkiaRegionDecoderTest {
 
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
-        SkiaRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
-            imageSource = imageSource,
-        ).apply {
+        SkiaRegionDecoder(imageSource = imageSource).apply {
             assertEquals(imageFile.imageInfo, this.imageInfo)
         }
 
         SkiaRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
@@ -171,12 +187,12 @@ class SkiaRegionDecoderTest {
     fun testPrepareAndClose() = runTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
-        SkiaRegionDecoder(SubsamplingImage(imageSource), imageSource).use {
+        SkiaRegionDecoder(imageSource).use {
             it.prepare()
         }
 
         assertFailsWith(UnsupportedOperationException::class) {
-            SkiaRegionDecoder(SubsamplingImage(TestImageSource()), TestImageSource()).use {
+            SkiaRegionDecoder(TestImageSource()).use {
                 it.prepare()
             }
         }
@@ -186,16 +202,12 @@ class SkiaRegionDecoderTest {
     fun testCopy() = runTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
-        SkiaRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
-            imageSource = imageSource,
-        ).apply {
+        SkiaRegionDecoder(imageSource = imageSource).apply {
             assertEquals(imageFile.imageInfo, this.imageInfo)
             assertEquals(imageFile.imageInfo, this.copy().imageInfo)
         }
 
         SkiaRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
@@ -210,10 +222,7 @@ class SkiaRegionDecoderTest {
         val imageSource = imageFile.toImageSource()
         val fullRegion = IntRectCompat(0, 0, imageFile.size.width, imageFile.size.height)
         val region = IntRectCompat(200, 300, 703, 503)
-        SkiaRegionDecoder(
-            subsamplingImage = SubsamplingImage(imageSource),
-            imageSource = imageSource,
-        ).apply {
+        SkiaRegionDecoder(imageSource = imageSource).apply {
             assertEquals(
                 expected = imageFile.size,
                 actual = decodeRegion(sampleSize = 1, region = fullRegion).size
@@ -258,20 +267,14 @@ class SkiaRegionDecoderTest {
         // test exif orientation
         val bitmap1 = ComposeResImageFiles.exifNormal.let { imageFile ->
             val imageSource = imageFile.toImageSource()
-            SkiaRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
-                imageSource = imageSource,
-            )
+            SkiaRegionDecoder(imageSource = imageSource)
         }.decodeRegion(
             region = IntRectCompat(100, 200, 300, 300),
             sampleSize = 1
         )
         val bitmap2 = ComposeResImageFiles.exifRotate90.let { imageFile ->
             val imageSource = imageFile.toImageSource()
-            SkiaRegionDecoder(
-                subsamplingImage = SubsamplingImage(imageSource),
-                imageSource = imageSource,
-            )
+            SkiaRegionDecoder(imageSource = imageSource)
         }.decodeRegion(
             region = IntRectCompat(100, 200, 300, 300),
             sampleSize = 1
@@ -288,29 +291,23 @@ class SkiaRegionDecoderTest {
     fun testEqualsAndHashCode() = runTest {
         val imageSource1 = TestImageSource()
         val imageSource2 = TestImageSource()
-        val element1 = SkiaRegionDecoder(SubsamplingImage(imageSource1), imageSource1)
-        val element11 = SkiaRegionDecoder(SubsamplingImage(imageSource1), imageSource1)
-        val element2 = SkiaRegionDecoder(SubsamplingImage(imageSource2), imageSource1)
-        val element3 = SkiaRegionDecoder(SubsamplingImage(imageSource1), imageSource2)
+        val element1 = SkiaRegionDecoder(imageSource1)
+        val element11 = SkiaRegionDecoder(imageSource1)
+        val element2 = SkiaRegionDecoder(imageSource2)
 
         assertEquals(element1, element11)
         assertNotEquals(element1, element2)
-        assertNotEquals(element1, element3)
-        assertNotEquals(element2, element3)
 
         assertEquals(element1.hashCode(), element11.hashCode())
         assertNotEquals(element1.hashCode(), element2.hashCode())
-        assertNotEquals(element1.hashCode(), element3.hashCode())
-        assertNotEquals(element2.hashCode(), element3.hashCode())
     }
 
     @Test
     fun testToString() = runTest {
         val imageSource = TestImageSource()
-        val subsamplingImage = SubsamplingImage(imageSource)
-        val element = SkiaRegionDecoder(subsamplingImage, imageSource)
+        val element = SkiaRegionDecoder(imageSource)
         assertEquals(
-            "SkiaRegionDecoder(subsamplingImage=$subsamplingImage, imageSource=$imageSource)",
+            "SkiaRegionDecoder(imageSource=$imageSource)",
             element.toString()
         )
     }

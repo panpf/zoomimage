@@ -188,8 +188,6 @@ abstract interface com.github.panpf.zoomimage.subsampling/ImageSource { // com.g
 abstract interface com.github.panpf.zoomimage.subsampling/RegionDecoder : kotlin/AutoCloseable { // com.github.panpf.zoomimage.subsampling/RegionDecoder|null[0]
     abstract val imageInfo // com.github.panpf.zoomimage.subsampling/RegionDecoder.imageInfo|{}imageInfo[0]
         abstract fun <get-imageInfo>(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling/RegionDecoder.imageInfo.<get-imageInfo>|<get-imageInfo>(){}[0]
-    abstract val subsamplingImage // com.github.panpf.zoomimage.subsampling/RegionDecoder.subsamplingImage|{}subsamplingImage[0]
-        abstract fun <get-subsamplingImage>(): com.github.panpf.zoomimage.subsampling/SubsamplingImage // com.github.panpf.zoomimage.subsampling/RegionDecoder.subsamplingImage.<get-subsamplingImage>|<get-subsamplingImage>(){}[0]
 
     abstract fun copy(): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling/RegionDecoder.copy|copy(){}[0]
     abstract fun decodeRegion(com.github.panpf.zoomimage.util/IntRectCompat, kotlin/Int): org.jetbrains.skia/Bitmap // com.github.panpf.zoomimage.subsampling/RegionDecoder.decodeRegion|decodeRegion(com.github.panpf.zoomimage.util.IntRectCompat;kotlin.Int){}[0]
@@ -342,14 +340,12 @@ sealed interface com.github.panpf.zoomimage.subsampling/SubsamplingImageGenerate
 }
 
 final class com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder : com.github.panpf.zoomimage.subsampling/RegionDecoder { // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder|null[0]
-    constructor <init>(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource, com.github.panpf.zoomimage.subsampling/ImageInfo? = ..., kotlin/ByteArray? = ...) // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.<init>|<init>(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource;com.github.panpf.zoomimage.subsampling.ImageInfo?;kotlin.ByteArray?){}[0]
+    constructor <init>(com.github.panpf.zoomimage.subsampling/ImageSource, com.github.panpf.zoomimage.subsampling/ImageInfo? = ..., kotlin/ByteArray? = ...) // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.<init>|<init>(com.github.panpf.zoomimage.subsampling.ImageSource;com.github.panpf.zoomimage.subsampling.ImageInfo?;kotlin.ByteArray?){}[0]
 
     final val imageInfo // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageInfo|{}imageInfo[0]
         final fun <get-imageInfo>(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageInfo.<get-imageInfo>|<get-imageInfo>(){}[0]
     final val imageSource // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageSource|{}imageSource[0]
         final fun <get-imageSource>(): com.github.panpf.zoomimage.subsampling/ImageSource // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageSource.<get-imageSource>|<get-imageSource>(){}[0]
-    final val subsamplingImage // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.subsamplingImage|{}subsamplingImage[0]
-        final fun <get-subsamplingImage>(): com.github.panpf.zoomimage.subsampling/SubsamplingImage // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.subsamplingImage.<get-subsamplingImage>|<get-subsamplingImage>(){}[0]
 
     final fun close() // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.close|close(){}[0]
     final fun copy(): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.copy|copy(){}[0]
@@ -1841,7 +1837,7 @@ final suspend fun com.github.panpf.zoomimage.subsampling.internal/createTileDeco
 
 // Targets: [ios]
 final class com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder : com.github.panpf.zoomimage.subsampling/RegionDecoder { // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder|null[0]
-    constructor <init>(com.github.panpf.zoomimage.subsampling/SubsamplingImage, com.github.panpf.zoomimage.subsampling/ImageSource, kotlin/String, com.github.panpf.zoomimage.subsampling/ImageInfo? = ..., kotlin/ByteArray? = ...) // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.<init>|<init>(com.github.panpf.zoomimage.subsampling.SubsamplingImage;com.github.panpf.zoomimage.subsampling.ImageSource;kotlin.String;com.github.panpf.zoomimage.subsampling.ImageInfo?;kotlin.ByteArray?){}[0]
+    constructor <init>(com.github.panpf.zoomimage.subsampling/ImageSource, kotlin/String, com.github.panpf.zoomimage.subsampling/ImageInfo? = ..., kotlin/ByteArray? = ...) // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.<init>|<init>(com.github.panpf.zoomimage.subsampling.ImageSource;kotlin.String;com.github.panpf.zoomimage.subsampling.ImageInfo?;kotlin.ByteArray?){}[0]
 
     final val imageInfo // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageInfo|{}imageInfo[0]
         final fun <get-imageInfo>(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageInfo.<get-imageInfo>|<get-imageInfo>(){}[0]
@@ -1849,8 +1845,6 @@ final class com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder
         final fun <get-imageSource>(): com.github.panpf.zoomimage.subsampling/ImageSource // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageSource.<get-imageSource>|<get-imageSource>(){}[0]
     final val mimeType // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.mimeType|{}mimeType[0]
         final fun <get-mimeType>(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.mimeType.<get-mimeType>|<get-mimeType>(){}[0]
-    final val subsamplingImage // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.subsamplingImage|{}subsamplingImage[0]
-        final fun <get-subsamplingImage>(): com.github.panpf.zoomimage.subsampling/SubsamplingImage // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.subsamplingImage.<get-subsamplingImage>|<get-subsamplingImage>(){}[0]
 
     final fun close() // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.close|close(){}[0]
     final fun copy(): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.copy|copy(){}[0]
