@@ -32,6 +32,8 @@ import com.github.panpf.zoomimage.util.closeQuietly
 import com.github.panpf.zoomimage.util.isAnimatedWebPFile
 import com.github.panpf.zoomimage.util.isAvifFile
 import com.github.panpf.zoomimage.util.isHeifFile
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import okio.IOException
 import okio.buffer
 import java.io.BufferedInputStream
@@ -54,24 +56,34 @@ class AndroidRegionDecoder(
     }
     private var inputStream: BufferedInputStream? = null
     private var bitmapRegionDecoder: BitmapRegionDecoder? = null
+    private var _imageInfo: ImageInfo? = imageInfo
+    private val imageInfoLock = SynchronizedObject()
 
-    override val imageInfo: ImageInfo by lazy { imageInfo ?: decodeImageInfo() }
+    override fun getImageInfo(): ImageInfo {
+        val imageInfo = this._imageInfo
+        if (imageInfo != null) return imageInfo
 
-    private fun decodeImageInfo(): ImageInfo {
-        // Consistent with the format supported by BitmapRegionDecoder
-        val headerBytes = imageSource.read(100) ?: throw IOException("Unable to read image header")
-        val yes = when {
-            isAnimatedWebPFile(headerBytes) -> VERSION.SDK_INT >= 26
-            isHeifFile(headerBytes) -> VERSION.SDK_INT >= 27
-            isAvifFile(headerBytes) -> VERSION.SDK_INT >= 37
-            else -> true
+        return synchronized(imageInfoLock) {
+            val imageInfo2 = this._imageInfo
+            if (imageInfo2 != null) return imageInfo2
+
+            // Consistent with the format supported by BitmapRegionDecoder
+            val headerBytes =
+                imageSource.read(100) ?: throw IOException("Unable to read image header")
+            val yes = when {
+                isAnimatedWebPFile(headerBytes) -> VERSION.SDK_INT >= 26
+                isHeifFile(headerBytes) -> VERSION.SDK_INT >= 27
+                isAvifFile(headerBytes) -> VERSION.SDK_INT >= 37
+                else -> true
+            }
+            if (!yes) {
+                throw Exception("Unsupported image format")
+            }
+            val imageInfo = imageSource.decodeImageInfo()
+            exifOrientationHelper.applyToImageInfo(imageInfo).apply {
+                this@AndroidRegionDecoder._imageInfo = this
+            }
         }
-        if (!yes) {
-            throw Exception("Unsupported image format")
-        }
-        val imageInfo = imageSource.decodeImageInfo()
-        val correctedImageInfo = exifOrientationHelper.applyToImageInfo(imageInfo)
-        return correctedImageInfo
     }
 
     override fun prepare() {
@@ -100,6 +112,7 @@ class AndroidRegionDecoder(
         val options = BitmapFactory.Options().apply {
             inSampleSize = sampleSize
         }
+        val imageInfo = getImageInfo()
         val originalRegion = exifOrientationHelper
             .applyToRect(region, imageInfo.size, reverse = true)
         val bitmap = bitmapRegionDecoder!!.decodeRegion(originalRegion.toAndroidRect(), options)
@@ -116,7 +129,7 @@ class AndroidRegionDecoder(
     override fun copy(): RegionDecoder {
         return AndroidRegionDecoder(
             imageSource = imageSource,
-            imageInfo = imageInfo,
+            imageInfo = _imageInfo,
         )
     }
 

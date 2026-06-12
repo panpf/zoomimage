@@ -61,7 +61,7 @@ suspend fun createTileDecoder(
             val imageSource = subsamplingImage.imageSource.create()
             val regionDecoder = regionDecoderFactory.create(subsamplingImage, imageSource)
             try {
-                val imageInfo = regionDecoder.imageInfo
+                val imageInfo = regionDecoder.getImageInfo()
                 if (externalImageInfo == null || externalImageInfo != imageInfo) {
                     checkImageInfo(imageInfo, regionDecoderFactory, contentSize)
                 }

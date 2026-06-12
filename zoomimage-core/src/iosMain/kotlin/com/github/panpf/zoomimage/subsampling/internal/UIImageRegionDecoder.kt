@@ -36,6 +36,8 @@ import com.github.panpf.zoomimage.util.isVersionAtLeast
 import com.github.panpf.zoomimage.util.isWebPFile
 import com.github.panpf.zoomimage.util.toBitmap
 import com.github.panpf.zoomimage.util.toNSData
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.Image
 import platform.UIKit.UIImage
@@ -54,20 +56,28 @@ class UIImageRegionDecoder(
     bytes: ByteArray? = null,
 ) : RegionDecoder {
 
-    private val data: ByteArray by lazy {
-        bytes ?: imageSource.toByteArray()
-    }
+    private val data: ByteArray by lazy { bytes ?: imageSource.toByteArray() }
     private val uiImage: UIImage by lazy {
         val uiImage = UIImage.imageWithData(data.toNSData())
             ?.correctExifOrientation()
         requireNotNull(uiImage) { "Failed to decode image" }
     }
+    private var _imageInfo: ImageInfo? = imageInfo
+    private val imageInfoLock = SynchronizedObject()
 
-    override val imageInfo: ImageInfo by lazy { imageInfo ?: decodeImageInfo() }
+    override fun getImageInfo(): ImageInfo {
+        val imageInfo = this._imageInfo
+        if (imageInfo != null) return imageInfo
 
-    private fun decodeImageInfo(): ImageInfo {
-        val size = uiImage.intSizeCompat()
-        return ImageInfo(size, mimeType = mimeType)
+        return synchronized(imageInfoLock) {
+            val imageInfo2 = this._imageInfo
+            if (imageInfo2 != null) return imageInfo2
+
+            val size = uiImage.intSizeCompat()
+            ImageInfo(size, mimeType = mimeType).apply {
+                this@UIImageRegionDecoder._imageInfo = this
+            }
+        }
     }
 
     override fun prepare() {
@@ -86,7 +96,7 @@ class UIImageRegionDecoder(
         return UIImageRegionDecoder(
             imageSource = imageSource,
             mimeType = mimeType,
-            imageInfo = imageInfo,
+            imageInfo = _imageInfo,
             bytes = data,
         )
     }

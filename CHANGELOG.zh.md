@@ -14,6 +14,7 @@
 * fix: 修复 Float.isInRangeWithScale() 没有对 min 和 max 应用 scale 的 bug
 * break: RegionDecoder.Factory.create() 函数增加 suspend 修饰符
 * break: RegionDecoder 接口移除 subsamplingImage 属性
+* break: RegionDecoder 接口的 imageInfo 属性改成方法
 
 ## Android
 

@@ -26,6 +26,8 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.compareVersions
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.toSkiaRect
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Codec
@@ -48,28 +50,26 @@ class SkiaRegionDecoder(
     bytes: ByteArray? = null,
 ) : RegionDecoder {
 
-    private val bytes: ByteArray by lazy {
-        bytes ?: imageSource.toByteArray()
-    }
-
+    private val bytes: ByteArray by lazy { bytes ?: imageSource.toByteArray() }
     private val image: Image by lazy { Image.makeFromEncoded(this.bytes) }
+    private var _imageInfo: ImageInfo? = imageInfo
+    private val imageInfoLock = SynchronizedObject()
 
-    override val imageInfo: ImageInfo by lazy { imageInfo ?: decodeImageInfo() }
+    override fun getImageInfo(): ImageInfo {
+        val imageInfo = this._imageInfo
+        if (imageInfo != null) return imageInfo
 
-    private val regionRectBounds by lazy {
-        val imageInfo = this.imageInfo
-        IntRectCompat(0, 0, imageInfo.width, imageInfo.height)
-    }
+        return synchronized(imageInfoLock) {
+            val imageInfo2 = this._imageInfo
+            if (imageInfo2 != null) return imageInfo2
 
-    private fun decodeImageInfo(): ImageInfo {
-        val data = Data.makeFromBytes(bytes)
-        val encodedImageFormat = Codec.makeFromData(data).use { it.encodedImageFormat }
-        val mimeType = "image/${encodedImageFormat.name.lowercase()}"
-        return ImageInfo(
-            width = image.width,
-            height = image.height,
-            mimeType = mimeType
-        )
+            val data = Data.makeFromBytes(bytes)
+            val encodedImageFormat = Codec.makeFromData(data).use { it.encodedImageFormat }
+            val mimeType = "image/${encodedImageFormat.name.lowercase()}"
+            ImageInfo(width = image.width, height = image.height, mimeType = mimeType).apply {
+                this@SkiaRegionDecoder._imageInfo = this
+            }
+        }
     }
 
     override fun prepare() {
@@ -78,6 +78,13 @@ class SkiaRegionDecoder(
 
     override fun decodeRegion(region: IntRectCompat, sampleSize: Int): Bitmap {
         // Image will parse exif orientation and does not support closing
+        val imageInfo = this.getImageInfo()
+        val regionRectBounds = IntRectCompat(
+            left = 0,
+            top = 0,
+            right = imageInfo.width,
+            bottom = imageInfo.height
+        )
         val finalRegionRect = region.limitTo(regionRectBounds)
         val widthValue = finalRegionRect.width / sampleSize.toDouble()
         val heightValue = finalRegionRect.height / sampleSize.toDouble()
@@ -107,7 +114,7 @@ class SkiaRegionDecoder(
     override fun copy(): RegionDecoder {
         return SkiaRegionDecoder(
             imageSource = imageSource,
-            imageInfo = imageInfo,
+            imageInfo = _imageInfo,
             bytes = bytes,
         )
     }

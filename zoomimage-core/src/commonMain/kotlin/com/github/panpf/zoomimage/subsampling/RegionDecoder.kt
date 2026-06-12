@@ -28,7 +28,7 @@ interface RegionDecoder : AutoCloseable {
     /**
      * Image size, mimeType information
      */
-    val imageInfo: ImageInfo
+    fun getImageInfo(): ImageInfo
 
     /**
      * Make preparations before decoding, and more importantly, determine whether the current image is supported.

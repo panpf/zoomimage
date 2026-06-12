@@ -97,14 +97,14 @@ class UIImageRegionDecoderTest {
             subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
 
         UIImageRegionDecoder.Factory().create(
             subsamplingImage = SubsamplingImage(imageSource, ImageInfo(1, 1, "image/fake")),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
     }
 
@@ -194,14 +194,14 @@ class UIImageRegionDecoderTest {
             subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
 
         UIImageRegionDecoder.SupplementSkiaFactory().create(
             subsamplingImage = SubsamplingImage(imageSource, ImageInfo(1, 1, "image/fake")),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
     }
 
@@ -259,7 +259,7 @@ class UIImageRegionDecoderTest {
             )
             if (exceptedOk) {
                 val imageInfo = try {
-                    decoder.imageInfo
+                    decoder.getImageInfo()
                 } catch (e: Exception) {
                     throw Exception("Decode ImageInfo should succeed: ${imageFile.name}", e)
                 }
@@ -270,7 +270,7 @@ class UIImageRegionDecoderTest {
                 )
             } else {
                 assertFailsWith(exceptionClass = Exception::class, message = imageFile.name) {
-                    decoder.imageInfo
+                    decoder.getImageInfo()
                 }
             }
         }
@@ -281,14 +281,14 @@ class UIImageRegionDecoderTest {
             imageSource = imageSource,
             mimeType = imageFile.mimeType
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
 
         UIImageRegionDecoder(
             imageSource = imageSource,
             mimeType = "image/fake"
         ).apply {
-            assertEquals(ImageInfo(imageFile.size, "image/fake"), this.imageInfo)
+            assertEquals(ImageInfo(imageFile.size, "image/fake"), this.getImageInfo())
         }
 
         UIImageRegionDecoder(
@@ -296,7 +296,7 @@ class UIImageRegionDecoderTest {
             mimeType = "image/fake",
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.getImageInfo())
         }
     }
 
@@ -318,16 +318,16 @@ class UIImageRegionDecoderTest {
             imageSource = imageSource,
             mimeType = imageFile.mimeType
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
-            assertEquals(imageFile.imageInfo, this.copy().imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
+            assertEquals(imageFile.imageInfo, this.copy().getImageInfo())
         }
 
         UIImageRegionDecoder(
             imageSource = imageSource,
             mimeType = "image/fake"
         ).apply {
-            assertEquals(ImageInfo(imageFile.size, "image/fake"), this.imageInfo)
-            assertEquals(ImageInfo(imageFile.size, "image/fake"), this.copy().imageInfo)
+            assertEquals(ImageInfo(imageFile.size, "image/fake"), this.getImageInfo())
+            assertEquals(ImageInfo(imageFile.size, "image/fake"), this.copy().getImageInfo())
         }
 
         UIImageRegionDecoder(
@@ -335,8 +335,8 @@ class UIImageRegionDecoderTest {
             mimeType = "image/fake",
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.copy().imageInfo)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.getImageInfo())
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.copy().getImageInfo())
         }
     }
 

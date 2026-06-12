@@ -44,7 +44,7 @@ class TileDecoder(
     val decoderPoolSize: Int
         get() = decoderPool.size
 
-    val imageInfo: ImageInfo = regionDecoder.imageInfo
+    val imageInfo: ImageInfo = regionDecoder.getImageInfo()
 
     init {
         decoderPool.add(regionDecoder)

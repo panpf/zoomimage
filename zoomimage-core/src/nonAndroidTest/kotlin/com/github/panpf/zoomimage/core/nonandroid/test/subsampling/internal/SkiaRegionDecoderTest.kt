@@ -96,14 +96,14 @@ class SkiaRegionDecoderTest {
             subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
 
         SkiaRegionDecoder.Factory().create(
             subsamplingImage = SubsamplingImage(imageSource, ImageInfo(1, 1, "image/fake")),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
     }
 
@@ -153,7 +153,7 @@ class SkiaRegionDecoderTest {
             val decoder = SkiaRegionDecoder(imageSource = imageSource)
             if (exceptedOk) {
                 val imageInfo = try {
-                    decoder.imageInfo
+                    decoder.getImageInfo()
                 } catch (e: Exception) {
                     throw Exception("Decode ImageInfo should succeed: ${imageFile.name}", e)
                 }
@@ -164,7 +164,7 @@ class SkiaRegionDecoderTest {
                 )
             } else {
                 assertFailsWith(exceptionClass = Exception::class, message = imageFile.name) {
-                    decoder.imageInfo
+                    decoder.getImageInfo()
                 }
             }
         }
@@ -172,14 +172,14 @@ class SkiaRegionDecoderTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         SkiaRegionDecoder(imageSource = imageSource).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
 
         SkiaRegionDecoder(
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.getImageInfo())
         }
     }
 
@@ -203,16 +203,16 @@ class SkiaRegionDecoderTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         SkiaRegionDecoder(imageSource = imageSource).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
-            assertEquals(imageFile.imageInfo, this.copy().imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
+            assertEquals(imageFile.imageInfo, this.copy().getImageInfo())
         }
 
         SkiaRegionDecoder(
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.copy().imageInfo)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.getImageInfo())
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.copy().getImageInfo())
         }
     }
 

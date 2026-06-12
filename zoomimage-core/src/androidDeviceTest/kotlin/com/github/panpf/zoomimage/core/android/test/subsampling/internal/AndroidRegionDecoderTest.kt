@@ -99,14 +99,14 @@ class AndroidRegionDecoderTest {
             subsamplingImage = SubsamplingImage(imageSource),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
 
         AndroidRegionDecoder.Factory().create(
             subsamplingImage = SubsamplingImage(imageSource, ImageInfo(1, 1, "image/fake")),
             imageSource = imageSource
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
     }
 
@@ -158,7 +158,7 @@ class AndroidRegionDecoderTest {
                     && (Build.VERSION.SDK_INT == 36 || Build.VERSION.SDK_INT == 37)
             if (exceptedOk && !exceptedError) {
                 val imageInfo = try {
-                    decoder.imageInfo
+                    decoder.getImageInfo()
                 } catch (e: Exception) {
                     throw Exception("Decode ImageInfo should succeed: ${imageFile.name}", e)
                 }
@@ -169,7 +169,7 @@ class AndroidRegionDecoderTest {
                 )
             } else {
                 assertFailsWith(exceptionClass = Exception::class, message = imageFile.name) {
-                    decoder.imageInfo
+                    decoder.getImageInfo()
                 }
             }
         }
@@ -179,14 +179,14 @@ class AndroidRegionDecoderTest {
         AndroidRegionDecoder(
             imageSource = imageSource,
         ).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
         }
 
         AndroidRegionDecoder(
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.getImageInfo())
         }
     }
 
@@ -210,16 +210,16 @@ class AndroidRegionDecoderTest {
         val imageFile = ComposeResImageFiles.exifRotate90
         val imageSource = imageFile.toImageSource()
         AndroidRegionDecoder(imageSource = imageSource).apply {
-            assertEquals(imageFile.imageInfo, this.imageInfo)
-            assertEquals(imageFile.imageInfo, this.copy().imageInfo)
+            assertEquals(imageFile.imageInfo, this.getImageInfo())
+            assertEquals(imageFile.imageInfo, this.copy().getImageInfo())
         }
 
         AndroidRegionDecoder(
             imageSource = imageSource,
             imageInfo = ImageInfo(1, 1, "image/fake2")
         ).apply {
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.imageInfo)
-            assertEquals(ImageInfo(1, 1, "image/fake2"), this.copy().imageInfo)
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.getImageInfo())
+            assertEquals(ImageInfo(1, 1, "image/fake2"), this.copy().getImageInfo())
         }
     }
 

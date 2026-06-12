@@ -186,12 +186,10 @@ abstract interface com.github.panpf.zoomimage.subsampling/ImageSource { // com.g
 }
 
 abstract interface com.github.panpf.zoomimage.subsampling/RegionDecoder : kotlin/AutoCloseable { // com.github.panpf.zoomimage.subsampling/RegionDecoder|null[0]
-    abstract val imageInfo // com.github.panpf.zoomimage.subsampling/RegionDecoder.imageInfo|{}imageInfo[0]
-        abstract fun <get-imageInfo>(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling/RegionDecoder.imageInfo.<get-imageInfo>|<get-imageInfo>(){}[0]
-
     abstract fun copy(): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling/RegionDecoder.copy|copy(){}[0]
     abstract fun decodeRegion(com.github.panpf.zoomimage.util/IntRectCompat, kotlin/Int): org.jetbrains.skia/Bitmap // com.github.panpf.zoomimage.subsampling/RegionDecoder.decodeRegion|decodeRegion(com.github.panpf.zoomimage.util.IntRectCompat;kotlin.Int){}[0]
     abstract fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling/RegionDecoder.equals|equals(kotlin.Any?){}[0]
+    abstract fun getImageInfo(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling/RegionDecoder.getImageInfo|getImageInfo(){}[0]
     abstract fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling/RegionDecoder.hashCode|hashCode(){}[0]
     abstract fun prepare() // com.github.panpf.zoomimage.subsampling/RegionDecoder.prepare|prepare(){}[0]
     abstract fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling/RegionDecoder.toString|toString(){}[0]
@@ -342,8 +340,6 @@ sealed interface com.github.panpf.zoomimage.subsampling/SubsamplingImageGenerate
 final class com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder : com.github.panpf.zoomimage.subsampling/RegionDecoder { // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder|null[0]
     constructor <init>(com.github.panpf.zoomimage.subsampling/ImageSource, com.github.panpf.zoomimage.subsampling/ImageInfo? = ..., kotlin/ByteArray? = ...) // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.<init>|<init>(com.github.panpf.zoomimage.subsampling.ImageSource;com.github.panpf.zoomimage.subsampling.ImageInfo?;kotlin.ByteArray?){}[0]
 
-    final val imageInfo // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageInfo|{}imageInfo[0]
-        final fun <get-imageInfo>(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageInfo.<get-imageInfo>|<get-imageInfo>(){}[0]
     final val imageSource // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageSource|{}imageSource[0]
         final fun <get-imageSource>(): com.github.panpf.zoomimage.subsampling/ImageSource // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.imageSource.<get-imageSource>|<get-imageSource>(){}[0]
 
@@ -351,6 +347,7 @@ final class com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder : 
     final fun copy(): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.copy|copy(){}[0]
     final fun decodeRegion(com.github.panpf.zoomimage.util/IntRectCompat, kotlin/Int): org.jetbrains.skia/Bitmap // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.decodeRegion|decodeRegion(com.github.panpf.zoomimage.util.IntRectCompat;kotlin.Int){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.equals|equals(kotlin.Any?){}[0]
+    final fun getImageInfo(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.getImageInfo|getImageInfo(){}[0]
     final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.hashCode|hashCode(){}[0]
     final fun prepare() // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.prepare|prepare(){}[0]
     final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/SkiaRegionDecoder.toString|toString(){}[0]
@@ -1839,8 +1836,6 @@ final suspend fun com.github.panpf.zoomimage.subsampling.internal/createTileDeco
 final class com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder : com.github.panpf.zoomimage.subsampling/RegionDecoder { // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder|null[0]
     constructor <init>(com.github.panpf.zoomimage.subsampling/ImageSource, kotlin/String, com.github.panpf.zoomimage.subsampling/ImageInfo? = ..., kotlin/ByteArray? = ...) // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.<init>|<init>(com.github.panpf.zoomimage.subsampling.ImageSource;kotlin.String;com.github.panpf.zoomimage.subsampling.ImageInfo?;kotlin.ByteArray?){}[0]
 
-    final val imageInfo // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageInfo|{}imageInfo[0]
-        final fun <get-imageInfo>(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageInfo.<get-imageInfo>|<get-imageInfo>(){}[0]
     final val imageSource // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageSource|{}imageSource[0]
         final fun <get-imageSource>(): com.github.panpf.zoomimage.subsampling/ImageSource // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.imageSource.<get-imageSource>|<get-imageSource>(){}[0]
     final val mimeType // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.mimeType|{}mimeType[0]
@@ -1850,6 +1845,7 @@ final class com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder
     final fun copy(): com.github.panpf.zoomimage.subsampling/RegionDecoder // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.copy|copy(){}[0]
     final fun decodeRegion(com.github.panpf.zoomimage.util/IntRectCompat, kotlin/Int): org.jetbrains.skia/Bitmap // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.decodeRegion|decodeRegion(com.github.panpf.zoomimage.util.IntRectCompat;kotlin.Int){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.equals|equals(kotlin.Any?){}[0]
+    final fun getImageInfo(): com.github.panpf.zoomimage.subsampling/ImageInfo // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.getImageInfo|getImageInfo(){}[0]
     final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.hashCode|hashCode(){}[0]
     final fun prepare() // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.prepare|prepare(){}[0]
     final fun toString(): kotlin/String // com.github.panpf.zoomimage.subsampling.internal/UIImageRegionDecoder.toString|toString(){}[0]

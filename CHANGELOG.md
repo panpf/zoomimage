@@ -16,6 +16,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * fix: Fixed the bug that Float.isInRangeWithScale() did not apply scale to min and max
 * break: The suspend modifier should be added to the RegionDecoder.Factory.create() function
 * break: RegionDecoder interface removes subsamplingImage property
+* break: The imageInfo attribute of the RegionDecoder interface is changed to a method
 
 ## Android
 
