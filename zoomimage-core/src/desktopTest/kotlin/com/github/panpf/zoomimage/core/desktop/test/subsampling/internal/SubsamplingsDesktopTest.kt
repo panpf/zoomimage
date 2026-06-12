@@ -166,8 +166,7 @@ class SubsamplingDesktopTest {
             contentSize = hugeLongQmshtImageFile.size / 32f,
             regionDecoders = emptyList(),
         ).getOrThrow().apply {
-            assertEquals(hugeLongQmshtImageFile.size * 2, imageInfo.size)
-            assertEquals("image/png", imageInfo.mimeType)
+            assertEquals(hugeLongQmshtImageFile.imageInfo, imageInfo)
         }
     }
 }

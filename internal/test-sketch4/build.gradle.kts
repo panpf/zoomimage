@@ -12,7 +12,6 @@ kotlin {
             api(projects.internal.testCore)
             api(projects.internal.testSketch4Core)
             api(libs.panpf.sketch4.singleton)
-            api(libs.panpf.sketch4.compose.resources)
         }
     }
 }

@@ -11,7 +11,10 @@ class DecodesIosTest {
     @Test
     fun testDefaultRegionDecoders() {
         assertEquals(
-            expected = listOf(UIImageRegionDecoder.Factory(), SkiaRegionDecoder.Factory()),
+            expected = listOf(
+                UIImageRegionDecoder.SupplementSkiaFactory(),
+                SkiaRegionDecoder.Factory()
+            ),
             actual = defaultRegionDecoders()
         )
     }

@@ -11,6 +11,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.internal.testCore)
             api(libs.panpf.sketch4.core)
+            api(libs.panpf.sketch4.compose.resources)
         }
     }
 }
