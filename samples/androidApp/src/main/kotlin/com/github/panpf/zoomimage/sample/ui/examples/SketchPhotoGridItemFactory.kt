@@ -27,7 +27,6 @@ import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.state.IconDrawableStateImage
 import com.github.panpf.zoomimage.sample.NavMainDirections
-import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.serialization.json.Json
@@ -57,14 +56,14 @@ class SketchPhotoGridItemFactory(val fragment: Fragment) :
         imageView.loadImage(sketchImageUri) {
             placeholder(
                 IconDrawableStateImage(
-                    icon = R.drawable.ic_image_outline,
-                    background = R.color.placeholder_bg
+                    icon = com.github.panpf.zoomimage.sample.compose.R.drawable.ic_image_outline,
+                    background = com.github.panpf.zoomimage.sample.compose.R.color.placeholder_bg
                 )
             )
             error(
                 IconDrawableStateImage(
-                    icon = R.drawable.ic_error_baseline,
-                    background = R.color.placeholder_bg
+                    icon = com.github.panpf.zoomimage.sample.compose.R.drawable.ic_error_baseline,
+                    background = com.github.panpf.zoomimage.sample.compose.R.color.placeholder_bg
                 )
             )
             crossfade()

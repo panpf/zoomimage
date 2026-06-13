@@ -88,10 +88,14 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
                     PhotoPalette(
                         palette = it.result.simplePalette,
                         primaryColor = ResourcesCompat.getColor(
-                            resources, R.color.md_theme_primary, null
+                            resources,
+                            com.github.panpf.zoomimage.sample.compose.R.color.md_theme_primary,
+                            null
                         ),
                         tertiaryColor = ResourcesCompat.getColor(
-                            resources, R.color.md_theme_tertiary, null
+                            resources,
+                            com.github.panpf.zoomimage.sample.compose.R.color.md_theme_tertiary,
+                            null
                         ),
                     )
                 )

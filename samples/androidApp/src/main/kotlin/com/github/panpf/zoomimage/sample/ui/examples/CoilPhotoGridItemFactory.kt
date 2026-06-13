@@ -28,7 +28,6 @@ import coil3.request.error
 import coil3.request.placeholder
 import coil3.result
 import com.github.panpf.zoomimage.sample.NavMainDirections
-import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.model.Photo
@@ -59,14 +58,16 @@ class CoilPhotoGridItemFactory(val fragment: Fragment) : BasePhotoGridItemFactor
             placeholder(
                 drawable = ResourcesCompat.getColor(
                     /* res = */ imageView.context.resources,
-                    /* id = */ R.color.md_theme_primaryContainer,
+                    /* id = */
+                    com.github.panpf.zoomimage.sample.compose.R.color.md_theme_primaryContainer,
                     /* theme = */ null
                 ).toDrawable()
             )
             error(
                 drawable = ResourcesCompat.getColor(
                     /* res = */ imageView.context.resources,
-                    /* id = */ R.color.md_theme_errorContainer,
+                    /* id = */
+                    com.github.panpf.zoomimage.sample.compose.R.color.md_theme_errorContainer,
                     /* theme = */ null
                 ).toDrawable()
             )
