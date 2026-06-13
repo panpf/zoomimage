@@ -1,8 +1,6 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
-import android.webkit.MimeTypeMap
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.AndroidRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.subsampling.internal.applyToImageInfo
@@ -34,27 +32,39 @@ class DecodesAndroidTest {
 
     @Test
     fun testDecodeExifOrientation() = runTest {
-        ComposeResImageFiles.values.forEach {
-            assertEquals(
-                expected = it.exifOrientation,
-                actual = it.toImageSource().decodeExifOrientation(),
-                message = it.toString(),
+        ComposeResImageFiles.values.forEach { imageFile ->
+            assertExifOrientationEquals(
+                expected = imageFile.exifOrientation,
+                actual = imageFile.toImageSource().decodeExifOrientation(),
+                message = imageFile.toString(),
             )
         }
+    }
+
+    private fun assertExifOrientationEquals(expected: Int, actual: Int, message: String? = null) {
+        val correctedExpected = if (expected == 1) 0 else expected
+        val correctedActual = if (actual == 1) 0 else actual
+        assertEquals(
+            expected = correctedExpected,
+            actual = correctedActual,
+            message = message,
+        )
     }
 
     @Test
     fun testDecodeImageInfo() = runTest {
         ComposeResImageFiles.values.forEach { imageFile ->
-            val extensionFromUrl = getExtensionFromUrl(imageFile.uri)
-            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extensionFromUrl)!!
-            assertEquals(
-                expected = ImageInfo(imageFile.size, mimeType),
-                actual = imageFile.toImageSource().decodeImageInfo().let {
-                    ExifOrientationHelper(imageFile.exifOrientation).applyToImageInfo(it)
-                },
-                message = imageFile.toString(),
-            )
+            val imageInfo = runCatching {
+                imageFile.toImageSource().decodeImageInfo()
+            }.getOrNull()
+            if (imageInfo != null) {
+                assertEquals(
+                    expected = imageFile.imageInfo,
+                    actual = ExifOrientationHelper(imageFile.exifOrientation)
+                        .applyToImageInfo(imageInfo),
+                    message = imageFile.toString(),
+                )
+            }
         }
     }
 

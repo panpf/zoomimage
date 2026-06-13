@@ -225,7 +225,7 @@ class AndroidRegionDecoderTest {
 
     @Test
     fun testDecodeRegion() = runTest {
-        val imageFile = ComposeResImageFiles.hugeCard
+        val imageFile = ComposeResImageFiles.dog
         val imageSource = imageFile.toImageSource()
         val fullRegion = IntRectCompat(0, 0, imageFile.size.width, imageFile.size.height)
         val region = IntRectCompat(200, 300, 703, 503)
