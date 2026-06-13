@@ -41,6 +41,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * Upgrade to okio 3.17.0
 * Upgrade to sketch 4.5.0-beta03
 * Upgrade to glide 5.0.7
+* Upgrade to coil 3.4.0
 
 # 1.4.0
 

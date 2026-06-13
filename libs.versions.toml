@@ -24,7 +24,7 @@ buildkonfig = "0.21.2"
 dokka = "2.2.0"
 
 coil2 = "2.7.0"
-coil3 = "3.2.0" # TODO Upgrade coil
+coil3 = "3.4.0"
 
 glide = "5.0.7"
 glide-ktx = "1.0.0-beta09"
