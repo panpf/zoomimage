@@ -28,6 +28,10 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * new: Added PhotoAssetImageSource to support decoding images from PhotoAsset
 * new: Added UIImageRegionDecoder to support heif and avif images
 
+## jvm
+
+* change: jvmTarget upgraded to 11
+
 ## Dependencies
 
 * Upgrade to kotlin 2.3.20

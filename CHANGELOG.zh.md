@@ -26,6 +26,10 @@
 * new: 新增 PhotoAssetImageSource 支持从 PhotoAsset 解码图片
 * new: 新增 UIImageRegionDecoder 支持 heif 和 avif 图片
 
+## jvm
+
+* change: jvmTarget 升级到 11
+
 ## Dependencies
 
 * 升级 kotlin 2.3.20
