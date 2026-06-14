@@ -1,4 +1,4 @@
-name: Deploy Publish Release
+name: Release Version
 
 on:
   push:
