@@ -18,19 +18,17 @@ kotlin {
     }
 }
 
-val appId = "com.github.panpf.zoomimage.sample"
-val appName = "ZoomImage Sample"
 compose.desktop {
     application {
         mainClass = "com.github.panpf.zoomimage.sample.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = appName
+            packageName = "ZoomImage"
             packageVersion = convertDesktopPackageVersion(property("versionName").toString())
             vendor = "panpfpanpf@outlook.com"
             description = "Image Zoom Library Sample App"
             macOS {
-                bundleID = appId
+                bundleID = "com.github.panpf.zoomimage.sample"
                 iconFile.set(project.file("icons/icon-macos.icns"))
             }
             windows {
