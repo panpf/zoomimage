@@ -18,17 +18,19 @@ kotlin {
     }
 }
 
+val appId = "com.github.panpf.zoomimage.sample"
+val appName = "ZoomImage"
 compose.desktop {
     application {
         mainClass = "com.github.panpf.zoomimage.sample.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "ZoomImage"
+            packageName = appName
             packageVersion = convertDesktopPackageVersion(property("versionName").toString())
             vendor = "panpfpanpf@outlook.com"
             description = "Image Zoom Library Sample App"
             macOS {
-                bundleID = "com.github.panpf.zoomimage.sample"
+                bundleID = appId
                 iconFile.set(project.file("icons/icon-macos.icns"))
             }
             windows {
@@ -46,6 +48,54 @@ compose.desktop {
             obfuscate.set(true) // Obfuscate the code
             optimize.set(true) // proguard optimization, enabled by default
             configurationFiles.from(project.file("compose-desktop.pro"))
+        }
+    }
+}
+
+tasks.configureEach {
+    val targetTaskNames = listOf(
+        "packageReleaseMsi", "packageReleaseExe",
+        "packageReleaseDmg", "packageReleasePkg",
+        "packageReleaseDeb", "packageReleaseRpm"
+    )
+    val targetExtensions = listOf(
+        "msi", "exe",
+        "dmg", "pkg",
+        "deb", "rpm"
+    )
+    if (name in targetTaskNames) {
+        doLast {
+            val composeBinariesDir =
+                project.layout.buildDirectory.dir("compose/binaries").get().asFile
+            composeBinariesDir.walkTopDown()
+                .filter { it.isFile && it.extension in targetExtensions }
+                .forEach { file ->
+                    val fileName = file.name
+                    var newFileName = fileName
+                    if (fileName.endsWith("deb") || fileName.endsWith("rpm")) {
+                        // deb or rpm packages will convert all uppercase letters to lowercase by default, so case sensitivity must be ignored here.
+                        val lowercaseAppName = appName.lowercase()
+                        if (newFileName.contains(lowercaseAppName, ignoreCase = false)) {
+                            newFileName = newFileName.replace(lowercaseAppName, "zoomimage-sample")
+                        }
+
+                        // zoomimage-sample_1.5.0001_amd64.deb -> zoomimage-sample-1.5.0001-amd64.deb
+                        newFileName = newFileName.replace("_", "-")
+                    } else {
+                        if (newFileName.contains(appName, ignoreCase = false)) {
+                            newFileName = newFileName.replace(appName, "zoomimage-sample")
+                        }
+                    }
+
+                    if (newFileName != fileName) {
+                        val newFile = file.parentFile.resolve(newFileName)
+                        if (file.renameTo(newFile)) {
+                            logger.lifecycle("Rename succedd. '$file' -> '${newFile.name}'")
+                        } else {
+                            logger.error("Rename failed. '$file'")
+                        }
+                    }
+                }
         }
     }
 }
