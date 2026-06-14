@@ -70,7 +70,7 @@ jobs:
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: apk-files
+          name: android-files
           path: samples/androidApp/build/outputs/apk/release/*.apk
 
   package-ios:
@@ -129,7 +129,7 @@ jobs:
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: deb-files
+          name: linux-files
           path: samples/desktopApp/build/compose/binaries/main-release/deb/*.deb
 
   package-macos:
@@ -154,7 +154,7 @@ jobs:
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: dmg-files
+          name: macos-files
           path: samples/desktopApp/build/compose/binaries/main-release/dmg/*.dmg
 
   package-windows:
@@ -179,7 +179,7 @@ jobs:
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: msi-files
+          name: windows-files
           path: samples/desktopApp/build/compose/binaries/main-release/msi/*.msi
 
   package-js:
@@ -332,7 +332,7 @@ jobs:
       - name: Download APK artifacts
         uses: actions/download-artifact@v4
         with:
-          name: apk-files
+          name: android-files
           path: ./downloaded
 
       - name: Download ios artifacts
@@ -344,19 +344,19 @@ jobs:
       - name: Download deb artifacts
         uses: actions/download-artifact@v4
         with:
-          name: deb-files
+          name: linux-files
           path: ./downloaded
 
       - name: Download dmg artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dmg-files
+          name: macos-files
           path: ./downloaded
 
       - name: Download msi artifacts
         uses: actions/download-artifact@v4
         with:
-          name: msi-files
+          name: windows-files
           path: ./downloaded
 
       - name: Download js-browser artifacts
