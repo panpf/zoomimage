@@ -49,6 +49,7 @@ internal class ScaleDragGestureDetector(
     private var canDragged = true
     private var lastGestureFocus: OffsetCompat? = null
     private var pointCount = 0
+    private var lastPointCount = 0
     private var scaleFactor: Float? = null
 
     init {
@@ -103,16 +104,22 @@ internal class ScaleDragGestureDetector(
                 firstTouch = null
                 lastGestureFocus = null
                 scaleFactor = null
+                lastPointCount = 0
                 scaleDetector.onTouchEvent(ev)
             }
 
             MotionEvent.ACTION_MOVE -> {
                 scaleDetector.onTouchEvent(ev)
+                
+                // Detect pointer count change (e.g., 2->1 or 1->2)
+                val pointCountChanged = (pointCount != lastPointCount)
+                lastPointCount = pointCount
+                
                 if (pointCount > 1) {
                     val scaleFactor = this@ScaleDragGestureDetector.scaleFactor ?: 1f
                     val scaleFocus = OffsetCompat(scaleDetector.focusX, scaleDetector.focusY)
                     val lastGestureFocus = lastGestureFocus
-                    val panChange = if (lastGestureFocus != null)
+                    val panChange = if (lastGestureFocus != null && !pointCountChanged)
                         scaleFocus - lastGestureFocus else OffsetCompat.Zero
                     onGestureListener.onGesture(
                         scaleFactor = scaleFactor,
@@ -126,7 +133,13 @@ internal class ScaleDragGestureDetector(
                     // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
                     val firstTouch = firstTouch
                     val lastTouch = lastTouch
-                    if (firstTouch != null && lastTouch != null) {
+                    
+                    // Reset baseline on pointer count change to avoid using stale coordinates
+                    if (pointCountChanged) {
+                        this@ScaleDragGestureDetector.firstTouch = touch
+                        this@ScaleDragGestureDetector.lastTouch = touch
+                        this@ScaleDragGestureDetector.lastGestureFocus = touch
+                    } else if (firstTouch != null && lastTouch != null) {
                         if (!isDragging) {
                             val d = touch - firstTouch
                             val dx = d.x
