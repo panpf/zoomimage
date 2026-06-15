@@ -564,8 +564,8 @@ public final class com/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalcula
 	public final fun copy (FF)Lcom/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalculator;
 	public static synthetic fun copy$default (Lcom/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalculator;FFILjava/lang/Object;)Lcom/github/panpf/zoomimage/zoom/DefaultMouseWheelScaleCalculator;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getStepScaleFactor ()F
-	public final fun getStepScrollDelta ()F
+	public final fun getMouseWheelScrollMultiplier ()F
+	public final fun getScalingSensitivity ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -580,6 +580,6 @@ public final class com/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator$Com
 }
 
 public final class com/github/panpf/zoomimage/zoom/MouseWheelScaleCalculator_desktopKt {
-	public static final fun platformMouseWheelStepScrollDelta ()F
+	public static final fun platformMouseWheelScrollMultiplier ()F
 }
 

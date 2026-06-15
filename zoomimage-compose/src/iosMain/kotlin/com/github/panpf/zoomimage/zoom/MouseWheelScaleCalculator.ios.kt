@@ -16,5 +16,4 @@
 
 package com.github.panpf.zoomimage.zoom
 
-actual fun platformMouseWheelStepScrollDelta(): Float =
-    1.2f   // Not used, inherited from desktop platform
+actual fun platformMouseWheelScrollMultiplier(): Float = 1f

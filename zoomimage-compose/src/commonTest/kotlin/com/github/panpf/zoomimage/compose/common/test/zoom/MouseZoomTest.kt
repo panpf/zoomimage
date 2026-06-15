@@ -100,8 +100,8 @@ class MouseZoomTest {
             )
 
             val myMouseWheelScaleCalculator = DefaultMouseWheelScaleCalculator(
-                stepScrollDelta = 0.5f,
-                stepScaleFactor = 0.5f
+                mouseWheelScrollMultiplier = 10f,
+                scalingSensitivity = 0.5f
             )
             zoomable.setMouseWheelScaleCalculator(myMouseWheelScaleCalculator)
 

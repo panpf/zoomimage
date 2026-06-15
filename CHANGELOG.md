@@ -2,6 +2,13 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+## Multiplatform
+
+* break: Refactor DefaultMouseWheelScaleCalculator to support smooth scrolling, note that the role
+  of its constructor parameters has completely changed
+
 # 1.5.0-alpha01
 
 ## Multiplatform

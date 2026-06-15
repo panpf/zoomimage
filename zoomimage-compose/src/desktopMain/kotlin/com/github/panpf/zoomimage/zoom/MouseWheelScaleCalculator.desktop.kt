@@ -16,4 +16,4 @@
 
 package com.github.panpf.zoomimage.zoom
 
-actual fun platformMouseWheelStepScrollDelta(): Float = 1.2f
+actual fun platformMouseWheelScrollMultiplier(): Float = 1f

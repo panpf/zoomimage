@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+## Multiplatform
+
+* break: 重构 DefaultMouseWheelScaleCalculator 以支持平滑滚动，请注意其构造参数的作用已完全改变
+
 # 1.5.0-alpha01
 
 ## Multiplatform

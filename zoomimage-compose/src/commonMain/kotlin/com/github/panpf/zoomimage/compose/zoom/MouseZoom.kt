@@ -84,7 +84,7 @@ internal class MouseZoomNode(
                     coroutineScope.launch {
                         zoomable.scale(
                             targetScale = newScale,
-                            animated = true,
+                            animated = false,
                             centroidContentPointF = contentPosition
                         )
                     }
