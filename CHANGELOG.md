@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+## Android
+
+* fix: pointer switch jump on ACTION_POINTER_UP
+
 # 1.5.0-alpha02
 
 ## Multiplatform

@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+## Android
+
+* fix: 修复 ACTION_POINTER_UP 时缩放中心跳跃的 bug
+
 # 1.5.0-alpha02
 
 ## Multiplatform
