@@ -93,7 +93,7 @@
   <div class="breadcrumbs"><a href="../../index.html">zoomimage-compose</a><span class="delimiter">/</span><a href="../index.html">com.github.panpf.zoomimage.zoom</a><span class="delimiter">/</span><span class="current">DefaultMouseWheelScaleCalculator</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Default</span><wbr><span>Mouse</span><wbr><span>Wheel</span><wbr><span>Scale</span><wbr><span><span>Calculator</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">DefaultMouseWheelScaleCalculator</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>stepScrollDelta<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>platformMouseWheelStepScrollDelta()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>stepScaleFactor<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.3f</span></span></span><span class="token punctuation">)</span> : <a href="../-mouse-wheel-scale-calculator/index.html">MouseWheelScaleCalculator</a></div><p class="paragraph">Calculate the scroll wheel scaling according to the step principle. The <span data-unresolved-link="com.github.panpf.zoomimage.zoom/DefaultMouseWheelScaleCalculator//#kotlin.Float#kotlin.Float/PointingToCallableParameters(0)/">stepScrollDelta</span> distance increases or decreases the <span data-unresolved-link="com.github.panpf.zoomimage.zoom/DefaultMouseWheelScaleCalculator//#kotlin.Float#kotlin.Float/PointingToCallableParameters(1)/">stepScaleFactor</span> scaling ratio for each scroll.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">DefaultMouseWheelScaleCalculator</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>mouseWheelScrollMultiplier<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>platformMouseWheelScrollMultiplier()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>scalingSensitivity<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.4f</span></span></span><span class="token punctuation">)</span> : <a href="../-mouse-wheel-scale-calculator/index.html">MouseWheelScaleCalculator</a></div><p class="paragraph">Default implementation of <a href="../-mouse-wheel-scale-calculator/index.html">MouseWheelScaleCalculator</a> that provides a smooth and intuitive zooming experience based on the mouse wheel scroll delta. It normalizes the scroll delta using a platform-specific multiplier and applies a scaling sensitivity to calculate the new scale factor.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -110,7 +110,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">stepScrollDelta<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>platformMouseWheelStepScrollDelta()<span class="token punctuation">, </span></span><span class="parameter ">stepScaleFactor<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.3f</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mouseWheelScrollMultiplier<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>platformMouseWheelScrollMultiplier()<span class="token punctuation">, </span></span><span class="parameter ">scalingSensitivity<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.4f</span></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -119,32 +119,32 @@
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="tableheader">Properties</h2>
-        <div class="table"><a data-name="1747460397%2FProperties%2F-695390234" anchor-label="stepScaleFactor" id="1747460397%2FProperties%2F-695390234" data-filterable-set=":zoomimage-compose/commonMain"></a>
+        <div class="table"><a data-name="-853691332%2FProperties%2F-695390234" anchor-label="mouseWheelScrollMultiplier" id="-853691332%2FProperties%2F-695390234" data-filterable-set=":zoomimage-compose/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":zoomimage-compose/commonMain" data-filterable-set=":zoomimage-compose/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="step-scale-factor.html"><span>step</span><wbr><span>Scale</span><wbr><span><span>Factor</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1747460397%2FProperties%2F-695390234"></span>
+                  <div><a href="mouse-wheel-scroll-multiplier.html"><span>mouse</span><wbr><span>Wheel</span><wbr><span>Scroll</span><wbr><span><span>Multiplier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-853691332%2FProperties%2F-695390234"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="step-scale-factor.html">stepScaleFactor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="mouse-wheel-scroll-multiplier.html">mouseWheelScrollMultiplier</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="2086256571%2FProperties%2F-695390234" anchor-label="stepScrollDelta" id="2086256571%2FProperties%2F-695390234" data-filterable-set=":zoomimage-compose/commonMain"></a>
+<a data-name="-1931004056%2FProperties%2F-695390234" anchor-label="scalingSensitivity" id="-1931004056%2FProperties%2F-695390234" data-filterable-set=":zoomimage-compose/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":zoomimage-compose/commonMain" data-filterable-set=":zoomimage-compose/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="step-scroll-delta.html"><span>step</span><wbr><span>Scroll</span><wbr><span><span>Delta</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2086256571%2FProperties%2F-695390234"></span>
+                  <div><a href="scaling-sensitivity.html"><span>scaling</span><wbr><span><span>Sensitivity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1931004056%2FProperties%2F-695390234"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="step-scroll-delta.html">stepScrollDelta</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":zoomimage-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scaling-sensitivity.html">scalingSensitivity</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div></div></div>
                 </div>
               </div>
             </div>
