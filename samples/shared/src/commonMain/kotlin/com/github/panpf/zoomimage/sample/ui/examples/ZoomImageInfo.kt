@@ -33,7 +33,7 @@ fun ZoomImageInfo(photo: Photo, zoomState: ZoomState) {
                         rotation: ${zoomable.transform.rotation.roundToInt()}
                         mimeType: ${subsampling.imageInfo?.mimeType}
                     """.trimIndent()
-                add(InfoItem("Base", baseInfo))
+                add(InfoItem("Base: ", baseInfo))
 
                 val scaleFormatted = zoomable.transform.scale.toShortString()
                 val baseScaleFormatted = zoomable.baseTransform.scale.toShortString()
@@ -49,7 +49,7 @@ fun ZoomImageInfo(photo: Photo, zoomState: ZoomState) {
                         userScale: $userScaleFormatted
                         scales: $scales
                     """.trimIndent()
-                add(InfoItem("Scale：", scaleInfo))
+                add(InfoItem("Scale: ", scaleInfo))
 
                 val offsetInfo = """
                         offset: ${zoomable.transform.offset.round().toShortString()}
@@ -58,7 +58,7 @@ fun ZoomImageInfo(photo: Photo, zoomState: ZoomState) {
                         userOffsetBounds: ${zoomable.userOffsetBoundsRectF.round().toShortString()}
                         edge: ${zoomable.scrollEdge.toShortString()}
                     """.trimIndent()
-                add(InfoItem("Offset：", offsetInfo))
+                add(InfoItem("Offset: ", offsetInfo))
 
                 val displayAndVisibleInfo = """
                         contentBaseDisplay: ${
@@ -70,7 +70,7 @@ fun ZoomImageInfo(photo: Photo, zoomState: ZoomState) {
                         contentDisplay: ${zoomable.contentDisplayRectF.round().toShortString()}
                         contentVisible: ${zoomable.contentVisibleRectF.round().toShortString()}
                     """.trimIndent()
-                add(InfoItem("Display&Visible：", displayAndVisibleInfo))
+                add(InfoItem("Display&Visible: ", displayAndVisibleInfo))
 
                 val foregroundTiles = subsampling.foregroundTiles
                 val loadedTileCount = foregroundTiles.count { it.tileImage != null }
@@ -85,13 +85,13 @@ fun ZoomImageInfo(photo: Photo, zoomState: ZoomState) {
                         "${it.key}:${it.value.toShortString()}"
                     }
                 val tileInfo = """
-                        tileGridSizeMap：$tileGridSizeMapString
-                        sampleSize：${subsampling.sampleSize}
-                        imageLoadRect：${subsampling.imageLoadRect.toShortString()}
-                        foreground：size=${foregroundTiles.size}, load=$loadedTileCount, bytes=$loadedTileBytes
-                        background：size=${backgroundTiles.size}, load=$backgroundTilesLoadedCount, bytes=$backgroundTilesLoadedBytes
+                        tileGridSizeMap: $tileGridSizeMapString
+                        sampleSize: ${subsampling.sampleSize}
+                        imageLoadRect: ${subsampling.imageLoadRect.toShortString()}
+                        foreground: size=${foregroundTiles.size}, load=$loadedTileCount, bytes=$loadedTileBytes
+                        background: size=${backgroundTiles.size}, load=$backgroundTilesLoadedCount, bytes=$backgroundTilesLoadedBytes
                     """.trimIndent()
-                add(InfoItem("Tiles：", tileInfo))
+                add(InfoItem("Tiles: ", tileInfo))
             }.toImmutableList()
         }
     }
