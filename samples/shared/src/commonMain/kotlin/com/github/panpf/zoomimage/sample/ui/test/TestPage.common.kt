@@ -27,14 +27,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.github.panpf.zoomimage.sample.Res
 import com.github.panpf.zoomimage.sample.ic_github
 import com.github.panpf.zoomimage.sample.ui.LocalNavBackStack
-import com.github.panpf.zoomimage.sample.ui.components.AutoLinkText
 import com.github.panpf.zoomimage.sample.util.Platform
 import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
@@ -153,6 +155,10 @@ fun ProjectInfoItem() {
             modifier = Modifier.size(20.dp)
         )
         Spacer(Modifier.size(10.dp))
-        AutoLinkText(text = "https://github.com/panpf/zoomimage")
+        Text(text = buildAnnotatedString {
+            withLink(LinkAnnotation.Url("https://github.com/panpf/zoomimage")) {
+                append("https://github.com/panpf/zoomimage")
+            }
+        })
     }
 }

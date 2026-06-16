@@ -77,8 +77,6 @@ expect class AppSettings(context: PlatformContext) {
 
     val scalesCalculatorName: SettingsStateFlow<String>
     val fixedScalesCalculatorMultiple: SettingsStateFlow<String>
-    // stateCombine will cause UI lag
-//    val scalesCalculator: StateFlow<ScalesCalculator>
 
 
     /* ------------------------------------------ Zoom Offset -------------------------------------------- */
@@ -233,7 +231,7 @@ abstract class BaseAppSettings(val context: PlatformContext) {
             ScalesCalculator.MULTIPLE.toString()
         )
     }
-    // stateCombine will cause UI lag
+    // TODO stateCombine will cause UI lag
 //    val scalesCalculator: StateFlow<ScalesCalculator> =
 //        stateCombine(listOf(scalesCalculatorName, scalesMultiple)) {
 //            val scalesCalculatorName: String = it[0]

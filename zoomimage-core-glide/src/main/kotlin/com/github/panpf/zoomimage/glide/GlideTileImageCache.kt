@@ -37,8 +37,8 @@ class GlideTileImageCache(private val glide: Glide) : TileImageCache {
         createGlideEngine(glide)
     }
 
-    @Suppress("INACCESSIBLE_TYPE")
     override fun get(key: String): TileImage? {
+        @Suppress("INFERRED_INVISIBLE_RETURN_TYPE_WARNING")
         val engineKey = newEngineKey(key)
         val resource =
             glideEngine?.loadFromMemory(key = engineKey, isMemoryCacheable = true) ?: return null
@@ -55,6 +55,8 @@ class GlideTileImageCache(private val glide: Glide) : TileImageCache {
         val glideEngine = glideEngine ?: return null
         tileImage as BitmapTileImage
         val bitmap = tileImage.bitmap
+
+        @Suppress("INFERRED_INVISIBLE_RETURN_TYPE_WARNING")
         val engineKey = newEngineKey(key)
         val resource = glideEngine.put(bitmap, engineKey)
         return GlideBitmapTileImage(resource = EngineResourceWrapper(resource))

@@ -29,6 +29,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImageModelEqualityDelegate
 import coil3.compose.AsyncImagePainter.Companion.DefaultTransform
@@ -129,15 +130,18 @@ internal fun rememberSizeResolver(contentScale: ContentScale): SizeResolver {
     }
 }
 
+@Suppress("ComposableNaming")
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 @NonRestartableComposable
 @ReadOnlyComposable
-internal inline fun AsyncImageState(
+internal fun AsyncImageState(
     model: Any?,
     imageLoader: ImageLoader,
 ) = AsyncImageState(model, LocalAsyncImageModelEqualityDelegate.current, imageLoader)
 
 /** Wrap [AsyncImage]'s unstable arguments to make them stable. */
+@OptIn(ExperimentalCoilApi::class)
 @Stable
 internal class AsyncImageState(
     val model: Any?,

@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,14 +48,7 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
                 true
             }
     ) {
-        ScrollableTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.pagerTabIndicatorOffset3(pagerState, tabPositions),
-                )
-            }
-        ) {
+        SecondaryScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
             pagerItems.forEachIndexed { index, item ->
                 Tab(
                     selected = index == pagerState.currentPage,

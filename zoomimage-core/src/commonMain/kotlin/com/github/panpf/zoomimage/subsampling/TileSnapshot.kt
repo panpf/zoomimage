@@ -29,8 +29,8 @@ data class TileSnapshot(
     val srcRect: IntRectCompat,
     val sampleSize: Int,
     val tileImage: TileImage?,
-    @TileState val state: Int,
-    @TileImageFrom val from: Int,
+    @field:TileState @param:TileState val state: Int,
+    @field:TileImageFrom @param:TileImageFrom val from: Int,
     val alpha: Int,
 )
 

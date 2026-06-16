@@ -16,7 +16,6 @@ fun PagingListAppendState(pagingItems: LazyPagingItems<*>) {
                 is LoadState.Loading -> AppendState.Loading
                 is LoadState.Error -> AppendState.Error { pagingItems.retry() }
                 is LoadState.NotLoading -> if (loadState.endOfPaginationReached) AppendState.End else null
-                else -> null
             }
         }
     }
