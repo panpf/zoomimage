@@ -4,6 +4,10 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 # new
 
+## Multiplatform
+
+* improve: Extend the constructor and copy function of ScrollBarSpec
+
 ## Android
 
 * new: ZoomImageView adds scrollBarSideMargin and scrollBarEndsMargin XML properties

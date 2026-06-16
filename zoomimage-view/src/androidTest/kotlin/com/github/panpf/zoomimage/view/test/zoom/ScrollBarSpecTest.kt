@@ -39,6 +39,144 @@ class ScrollBarSpecTest {
             )
         }
 
+        ScrollBarSpec(color = Color.RED, size = 300f).apply {
+            assertEquals(
+                expected = Color.RED,
+                actual = color
+            )
+            assertEquals(
+                expected = 300f,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsetsTypeMask
+            )
+        }
+
+        ScrollBarSpec(Color.RED, 300f).apply {
+            assertEquals(
+                expected = Color.RED,
+                actual = color
+            )
+            assertEquals(
+                expected = 300f,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsetsTypeMask
+            )
+        }
+
+        ScrollBarSpec(color = Color.RED).apply {
+            assertEquals(
+                expected = Color.RED,
+                actual = color
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsetsTypeMask
+            )
+        }
+
+        ScrollBarSpec(Color.RED).apply {
+            assertEquals(
+                expected = Color.RED,
+                actual = color
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsetsTypeMask
+            )
+        }
+
+        ScrollBarSpec(size = 300f).apply {
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_COLOR,
+                actual = color
+            )
+            assertEquals(
+                expected = 300f,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsetsTypeMask
+            )
+        }
+
+        ScrollBarSpec(300f).apply {
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_COLOR,
+                actual = color
+            )
+            assertEquals(
+                expected = 300f,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsetsTypeMask
+            )
+        }
+
         ScrollBarSpec(
             color = Color.BLUE,
             size = 150f,
@@ -137,6 +275,89 @@ class ScrollBarSpecTest {
             )
             assertEquals(
                 expected = null,
+                actual = windowInsetsTypeMask
+            )
+        }
+    }
+
+    @Test
+    fun testCopy() {
+        ScrollBarSpec.Default.apply {
+            assertEquals(expected = ScrollBarSpec.DEFAULT_COLOR, actual = color)
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(expected = null, actual = windowInsetsTypeMask)
+        }.copy(color = Color.GRAY).apply {
+            assertEquals(expected = Color.GRAY, actual = color)
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(expected = null, actual = windowInsetsTypeMask)
+        }.copy(size = 300f).apply {
+            assertEquals(expected = Color.GRAY, actual = color)
+            assertEquals(expected = 300f, actual = size)
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+                actual = endsMargin
+            )
+            assertEquals(expected = null, actual = windowInsetsTypeMask)
+        }.copy(margin = 500f).apply {
+            assertEquals(expected = Color.GRAY, actual = color)
+            assertEquals(expected = 300f, actual = size)
+            assertEquals(expected = 500f, actual = sideMargin)
+            assertEquals(expected = 1000f, actual = endsMargin)
+            assertEquals(expected = null, actual = windowInsetsTypeMask)
+        }.copy(sideMargin = 400f).apply {
+            assertEquals(expected = Color.GRAY, actual = color)
+            assertEquals(expected = 300f, actual = size)
+            assertEquals(expected = 400f, actual = sideMargin)
+            assertEquals(expected = 1000f, actual = endsMargin)
+            assertEquals(expected = null, actual = windowInsetsTypeMask)
+        }.copy(endsMargin = 200f).apply {
+            assertEquals(expected = Color.GRAY, actual = color)
+            assertEquals(expected = 300f, actual = size)
+            assertEquals(expected = 400f, actual = sideMargin)
+            assertEquals(expected = 200f, actual = endsMargin)
+            assertEquals(expected = null, actual = windowInsetsTypeMask)
+        }.copy(windowInsetsTypeMask = WindowInsetsCompat.Type.systemBars()).apply {
+            assertEquals(expected = Color.GRAY, actual = color)
+            assertEquals(expected = 300f, actual = size)
+            assertEquals(expected = 400f, actual = sideMargin)
+            assertEquals(expected = 200f, actual = endsMargin)
+            assertEquals(
+                expected = WindowInsetsCompat.Type.systemBars(),
+                actual = windowInsetsTypeMask
+            )
+        }.copy(color = Color.RED, size = 700f).apply {
+            assertEquals(expected = Color.RED, actual = color)
+            assertEquals(expected = 700f, actual = size)
+            assertEquals(expected = 400f, actual = sideMargin)
+            assertEquals(expected = 200f, actual = endsMargin)
+            assertEquals(
+                expected = WindowInsetsCompat.Type.systemBars(),
                 actual = windowInsetsTypeMask
             )
         }

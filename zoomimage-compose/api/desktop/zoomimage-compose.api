@@ -291,17 +291,30 @@ public class com/github/panpf/zoomimage/compose/zoom/ScaleKeyHandler : com/githu
 public final class com/github/panpf/zoomimage/compose/zoom/ScrollBarSpec {
 	public static final field $stable I
 	public static final field Companion Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (JFFFLandroidx/compose/foundation/layout/WindowInsets;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (JFFFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (JFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (JFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component2-D9Ej5fM ()F
 	public final fun component3-D9Ej5fM ()F
 	public final fun component4-D9Ej5fM ()F
 	public final fun component5 ()Landroidx/compose/foundation/layout/WindowInsets;
+	public final fun copy-0680j_4 (F)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+	public static synthetic fun copy-0680j_4$default (Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;FILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+	public final fun copy-8_81llA (J)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+	public static synthetic fun copy-8_81llA$default (Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;JILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
 	public final fun copy-fUABb90 (JFF)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
 	public static synthetic fun copy-fUABb90$default (Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;JFFILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+	public final fun copy-l07J4OM (JF)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
+	public static synthetic fun copy-l07J4OM$default (Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;JFILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
 	public final fun copy-mlbO7Is (JFFFLandroidx/compose/foundation/layout/WindowInsets;)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
 	public static synthetic fun copy-mlbO7Is$default (Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;JFFFLandroidx/compose/foundation/layout/WindowInsets;ILjava/lang/Object;)Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;
 	public fun equals (Ljava/lang/Object;)Z

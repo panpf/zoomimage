@@ -74,7 +74,7 @@ data class ScrollBarSpec(
         color: Color = DEFAULT_COLOR,
 
         /**
-         * Scroll bar size, default to 3 dp
+         * Scroll bar size
          */
         size: Dp = DEFAULT_SIZE,
 
@@ -90,6 +90,62 @@ data class ScrollBarSpec(
         windowInsets = null
     )
 
+    // In order to automatically adapt the new constructor when recompiling
+    constructor(
+        /**
+         * Scroll bar color, which defaults to translucent gray
+         */
+        color: Color = DEFAULT_COLOR,
+
+        /**
+         * Scroll bar size
+         */
+        size: Dp = DEFAULT_SIZE,
+    ) : this(
+        color = color,
+        size = size,
+        sideMargin = DEFAULT_SIDE_MARGIN,
+        endsMargin = DEFAULT_ENDS_MARGIN,
+        windowInsets = null
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    constructor(
+        /**
+         * Scroll bar color, which defaults to translucent gray
+         */
+        color: Color = DEFAULT_COLOR,
+    ) : this(
+        color = color,
+        size = DEFAULT_SIZE,
+        sideMargin = DEFAULT_SIDE_MARGIN,
+        endsMargin = DEFAULT_ENDS_MARGIN,
+        windowInsets = null
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    constructor(
+        /**
+         * Scroll bar size
+         */
+        size: Dp = DEFAULT_SIZE,
+    ) : this(
+        color = DEFAULT_COLOR,
+        size = size,
+        sideMargin = DEFAULT_SIDE_MARGIN,
+        endsMargin = DEFAULT_ENDS_MARGIN,
+        windowInsets = null
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    constructor() : this(
+        color = DEFAULT_COLOR,
+        size = DEFAULT_SIZE,
+        sideMargin = DEFAULT_SIDE_MARGIN,
+        endsMargin = DEFAULT_ENDS_MARGIN,
+        windowInsets = null
+    )
+
     // For keep binary compatibility
     @Deprecated("This function is only for binary compatibility, please use the copy function with sideMargin and endsMargin parameters instead")
     fun copy(
@@ -100,6 +156,36 @@ data class ScrollBarSpec(
         color = color,
         size = size,
         margin = margin,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    fun copy(
+        color: Color = this.color,
+        size: Dp = this.size,
+    ) = ScrollBarSpec(
+        color = color,
+        size = size,
+        sideMargin = sideMargin,
+        endsMargin = endsMargin,
+        windowInsets = windowInsets,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    fun copy(color: Color = this.color) = ScrollBarSpec(
+        color = color,
+        size = size,
+        sideMargin = sideMargin,
+        endsMargin = endsMargin,
+        windowInsets = windowInsets,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    fun copy(size: Dp = this.size) = ScrollBarSpec(
+        color = color,
+        size = size,
+        sideMargin = sideMargin,
+        endsMargin = endsMargin,
+        windowInsets = windowInsets,
     )
 
     companion object {

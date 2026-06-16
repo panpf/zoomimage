@@ -40,6 +40,144 @@ class ScrollBarSpecTest {
             )
         }
 
+        ScrollBarSpec(color = Color.Red, size = 300.dp).apply {
+            assertEquals(
+                expected = Color.Red,
+                actual = color
+            )
+            assertEquals(
+                expected = 300.dp,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsets
+            )
+        }
+
+        ScrollBarSpec(Color.Red, 300.dp).apply {
+            assertEquals(
+                expected = Color.Red,
+                actual = color
+            )
+            assertEquals(
+                expected = 300.dp,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsets
+            )
+        }
+
+        ScrollBarSpec(color = Color.Red).apply {
+            assertEquals(
+                expected = Color.Red,
+                actual = color
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsets
+            )
+        }
+
+        ScrollBarSpec(Color.Red).apply {
+            assertEquals(
+                expected = Color.Red,
+                actual = color
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsets
+            )
+        }
+
+        ScrollBarSpec(size = 300.dp).apply {
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_COLOR,
+                actual = color
+            )
+            assertEquals(
+                expected = 300.dp,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsets
+            )
+        }
+
+        ScrollBarSpec(300.dp).apply {
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_COLOR,
+                actual = color
+            )
+            assertEquals(
+                expected = 300.dp,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(
+                expected = null,
+                actual = windowInsets
+            )
+        }
+
         ScrollBarSpec(
             color = Color.Blue,
             size = 150.dp,
@@ -144,6 +282,89 @@ class ScrollBarSpecTest {
             )
             assertEquals(
                 expected = null,
+                actual = windowInsets
+            )
+        }
+    }
+
+    @Test
+    fun testCopy() {
+        ScrollBarSpec.Default.apply {
+            assertEquals(expected = ScrollBarSpec.DEFAULT_COLOR, actual = color)
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(expected = null, actual = windowInsets)
+        }.copy(color = Color.Gray).apply {
+            assertEquals(expected = Color.Gray, actual = color)
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIZE,
+                actual = size
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(expected = null, actual = windowInsets)
+        }.copy(size = 300.dp).apply {
+            assertEquals(expected = Color.Gray, actual = color)
+            assertEquals(expected = 300.dp, actual = size)
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_SIDE_MARGIN,
+                actual = sideMargin
+            )
+            assertEquals(
+                expected = ScrollBarSpec.DEFAULT_ENDS_MARGIN,
+                actual = endsMargin
+            )
+            assertEquals(expected = null, actual = windowInsets)
+        }.copy(margin = 500.dp).apply {
+            assertEquals(expected = Color.Gray, actual = color)
+            assertEquals(expected = 300.dp, actual = size)
+            assertEquals(expected = 500.dp, actual = sideMargin)
+            assertEquals(expected = 1000.dp, actual = endsMargin)
+            assertEquals(expected = null, actual = windowInsets)
+        }.copy(sideMargin = 400.dp).apply {
+            assertEquals(expected = Color.Gray, actual = color)
+            assertEquals(expected = 300.dp, actual = size)
+            assertEquals(expected = 400.dp, actual = sideMargin)
+            assertEquals(expected = 1000.dp, actual = endsMargin)
+            assertEquals(expected = null, actual = windowInsets)
+        }.copy(endsMargin = 200.dp).apply {
+            assertEquals(expected = Color.Gray, actual = color)
+            assertEquals(expected = 300.dp, actual = size)
+            assertEquals(expected = 400.dp, actual = sideMargin)
+            assertEquals(expected = 200.dp, actual = endsMargin)
+            assertEquals(expected = null, actual = windowInsets)
+        }.copy(windowInsets = WindowInsets(10.dp, 20.dp, 30.dp, 40.dp)).apply {
+            assertEquals(expected = Color.Gray, actual = color)
+            assertEquals(expected = 300.dp, actual = size)
+            assertEquals(expected = 400.dp, actual = sideMargin)
+            assertEquals(expected = 200.dp, actual = endsMargin)
+            assertEquals(
+                expected = WindowInsets(10.dp, 20.dp, 30.dp, 40.dp),
+                actual = windowInsets
+            )
+        }.copy(color = Color.Red, size = 700.dp).apply {
+            assertEquals(expected = Color.Red, actual = color)
+            assertEquals(expected = 700.dp, actual = size)
+            assertEquals(expected = 400.dp, actual = sideMargin)
+            assertEquals(expected = 200.dp, actual = endsMargin)
+            assertEquals(
+                expected = WindowInsets(10.dp, 20.dp, 30.dp, 40.dp),
                 actual = windowInsets
             )
         }

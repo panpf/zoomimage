@@ -223,8 +223,12 @@ final class com.github.panpf.zoomimage.compose.zoom.internal/ComposeAnimationAda
 }
 
 final class com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec { // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec|null[0]
+    constructor <init>() // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.<init>|<init>(){}[0]
+    constructor <init>(androidx.compose.ui.graphics/Color = ...) // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.<init>|<init>(androidx.compose.ui.graphics.Color){}[0]
+    constructor <init>(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.unit/Dp = ...) // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.<init>|<init>(androidx.compose.ui.graphics.Color;androidx.compose.ui.unit.Dp){}[0]
     constructor <init>(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ...) // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.<init>|<init>(androidx.compose.ui.graphics.Color;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
     constructor <init>(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.foundation.layout/WindowInsets? = ...) // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.<init>|<init>(androidx.compose.ui.graphics.Color;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.foundation.layout.WindowInsets?){}[0]
+    constructor <init>(androidx.compose.ui.unit/Dp = ...) // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.<init>|<init>(androidx.compose.ui.unit.Dp){}[0]
 
     final val color // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.color|{}color[0]
         final fun <get-color>(): androidx.compose.ui.graphics/Color // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.color.<get-color>|<get-color>(){}[0]
@@ -244,8 +248,11 @@ final class com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec { // com.githu
     final fun component3(): androidx.compose.ui.unit/Dp // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.component3|component3(){}[0]
     final fun component4(): androidx.compose.ui.unit/Dp // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.component4|component4(){}[0]
     final fun component5(): androidx.compose.foundation.layout/WindowInsets? // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.component5|component5(){}[0]
+    final fun copy(androidx.compose.ui.graphics/Color = ...): com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.copy|copy(androidx.compose.ui.graphics.Color){}[0]
+    final fun copy(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.unit/Dp = ...): com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.copy|copy(androidx.compose.ui.graphics.Color;androidx.compose.ui.unit.Dp){}[0]
     final fun copy(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ...): com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.copy|copy(androidx.compose.ui.graphics.Color;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
     final fun copy(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.foundation.layout/WindowInsets? = ...): com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.copy|copy(androidx.compose.ui.graphics.Color;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.foundation.layout.WindowInsets?){}[0]
+    final fun copy(androidx.compose.ui.unit/Dp = ...): com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.copy|copy(androidx.compose.ui.unit.Dp){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.github.panpf.zoomimage.compose.zoom/ScrollBarSpec.toString|toString(){}[0]

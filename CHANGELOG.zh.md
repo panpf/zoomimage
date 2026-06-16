@@ -4,6 +4,10 @@
 
 # new
 
+## Multiplatform
+
+* improve: 扩展 ScrollBarSpec 的构造函数和 copy 函数
+
 ## Android
 
 * new: ZoomImageView 新增 scrollBarSideMargin 和 scrollBarEndsMargin XML 属性

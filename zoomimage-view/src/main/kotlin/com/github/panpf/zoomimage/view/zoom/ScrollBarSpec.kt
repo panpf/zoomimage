@@ -73,7 +73,7 @@ data class ScrollBarSpec(
         color: Int = DEFAULT_COLOR,
 
         /**
-         * Scroll bar size, default to 3 dp
+         * Scroll bar size
          */
         size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
 
@@ -89,6 +89,62 @@ data class ScrollBarSpec(
         windowInsetsTypeMask = null,
     )
 
+    // In order to automatically adapt the new constructor when recompiling
+    constructor(
+        /**
+         * Scroll bar color, which defaults to translucent gray
+         */
+        color: Int = DEFAULT_COLOR,
+
+        /**
+         * Scroll bar size
+         */
+        size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+    ) : this(
+        color = color,
+        size = size,
+        sideMargin = DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+        endsMargin = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+        windowInsetsTypeMask = null,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    constructor(
+        /**
+         * Scroll bar color, which defaults to translucent gray
+         */
+        color: Int = DEFAULT_COLOR,
+    ) : this(
+        color = color,
+        size = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+        sideMargin = DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+        endsMargin = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+        windowInsetsTypeMask = null,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    constructor(
+        /**
+         * Scroll bar size
+         */
+        size: Float = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+    ) : this(
+        color = DEFAULT_COLOR,
+        size = size,
+        sideMargin = DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+        endsMargin = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+        windowInsetsTypeMask = null,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    constructor() : this(
+        color = DEFAULT_COLOR,
+        size = DEFAULT_SIZE * Resources.getSystem().displayMetrics.density,
+        sideMargin = DEFAULT_SIDE_MARGIN * Resources.getSystem().displayMetrics.density,
+        endsMargin = DEFAULT_ENDS_MARGIN * Resources.getSystem().displayMetrics.density,
+        windowInsetsTypeMask = null,
+    )
+
     // For keep binary compatibility
     @Deprecated("This function is only for binary compatibility, please use the copy function with sideMargin and endsMargin parameters instead")
     fun copy(
@@ -99,6 +155,36 @@ data class ScrollBarSpec(
         color = color,
         size = size,
         margin = margin,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    fun copy(
+        color: Int = this.color,
+        size: Float = this.size,
+    ) = ScrollBarSpec(
+        color = color,
+        size = size,
+        sideMargin = sideMargin,
+        endsMargin = endsMargin,
+        windowInsetsTypeMask = windowInsetsTypeMask,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    fun copy(color: Int = this.color) = ScrollBarSpec(
+        color = color,
+        size = size,
+        sideMargin = sideMargin,
+        endsMargin = endsMargin,
+        windowInsetsTypeMask = windowInsetsTypeMask,
+    )
+
+    // In order to automatically adapt the new constructor when recompiling
+    fun copy(size: Float = this.size) = ScrollBarSpec(
+        color = color,
+        size = size,
+        sideMargin = sideMargin,
+        endsMargin = endsMargin,
+        windowInsetsTypeMask = windowInsetsTypeMask,
     )
 
     companion object {
