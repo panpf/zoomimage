@@ -5,10 +5,10 @@ set -e
 
 cd ../../
 
-./test_desktop.sh
-./test_js.sh
-./test_wasmJs.sh
-./test_android.sh
-./test_ios.sh
+./gradlew connectedAndroidTest
+./gradlew iosSimulatorArm64Test
+./gradlew desktopTest
+./gradlew jsBrowserTest
+./gradlew wasmJsBrowserTest
 
 echo "✅  All tests are passed successfully."
