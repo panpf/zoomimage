@@ -12,7 +12,7 @@ import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.fromAsset
@@ -229,7 +229,8 @@ class ZoomImageViewTest {
             )
             assertFalse(actual = zoomImageView.subsampling.readyState.value)
 
-            val bitmapSize = IntSizeCompat(7557, 5669).div(16)
+            val imageFile = AssetImageFiles.hugeChina
+            val bitmapSize = imageFile.size.div(16)
             withContext(Dispatchers.Main) {
                 val bitmap = Bitmap
                     .createBitmap(bitmapSize.width, bitmapSize.height, Bitmap.Config.ARGB_8888)
@@ -239,7 +240,7 @@ class ZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
-                    .fromAsset(zoomImageView.context, ComposeResImageFiles.hugeCard.name)
+                    .fromAsset(zoomImageView.context, imageFile.name)
                 zoomImageView.setSubsamplingImage(imageSource)
             }
             Thread.sleep(500)
@@ -270,7 +271,7 @@ class ZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
-                    .fromAsset(zoomImageView.context, ComposeResImageFiles.hugeCard.name)
+                    .fromAsset(zoomImageView.context, imageFile.name)
                 zoomImageView.setSubsamplingImage(imageSource.toFactory())
             }
             Thread.sleep(500)
