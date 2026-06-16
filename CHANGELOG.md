@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+## Android
+
+* new: ZoomImageView adds scrollBarSideMargin and scrollBarEndsMargin XML properties
+
 # 1.5.0-beta01
 
 ## Android

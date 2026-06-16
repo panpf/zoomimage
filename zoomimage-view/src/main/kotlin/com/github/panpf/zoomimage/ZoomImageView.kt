@@ -362,7 +362,22 @@ open class ZoomImageView @JvmOverloads constructor(
                 array.hasValue(styleable.ZoomImageView_scrollBarColor)
                 || array.hasValue(styleable.ZoomImageView_scrollBarSize)
                 || array.hasValue(styleable.ZoomImageView_scrollBarMargin)
+                || array.hasValue(styleable.ZoomImageView_scrollBarSideMargin)
+                || array.hasValue(styleable.ZoomImageView_scrollBarEndsMargin)
             ) {
+                val margin = array.getDimension(styleable.ZoomImageView_scrollBarMargin, -1f)
+                val sideMargin =
+                    array.getDimension(styleable.ZoomImageView_scrollBarSideMargin, -1f)
+                val endsMargin =
+                    array.getDimension(styleable.ZoomImageView_scrollBarEndsMargin, -1f)
+                val (finalSideMain, finalEndsMargin) = if (sideMargin > 0f) {
+                    sideMargin to if (endsMargin > 0f) endsMargin else sideMargin * 2
+                } else if (margin > 0f) {
+                    margin to margin * 2
+                } else {
+                    ScrollBarSpec.DEFAULT_SIDE_MARGIN * resources.displayMetrics.density to
+                            ScrollBarSpec.DEFAULT_ENDS_MARGIN * resources.displayMetrics.density
+                }
                 scrollBar = ScrollBarSpec(
                     color = array.getColor(
                         styleable.ZoomImageView_scrollBarColor,
@@ -372,10 +387,8 @@ open class ZoomImageView @JvmOverloads constructor(
                         styleable.ZoomImageView_scrollBarSize,
                         ScrollBarSpec.DEFAULT_SIZE * resources.displayMetrics.density
                     ),
-                    margin = array.getDimension(
-                        styleable.ZoomImageView_scrollBarMargin,
-                        ScrollBarSpec.DEFAULT_MARGIN * resources.displayMetrics.density
-                    ),
+                    sideMargin = finalSideMain,
+                    endsMargin = finalEndsMargin,
                 )
             }
         } finally {

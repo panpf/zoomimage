@@ -217,7 +217,7 @@ class ZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(1000)
 
             assertEquals(
                 expected = "516 x 516",
@@ -236,14 +236,14 @@ class ZoomImageViewTest {
                     .createBitmap(bitmapSize.width, bitmapSize.height, Bitmap.Config.ARGB_8888)
                 zoomImageView.setImageDrawable(BitmapDrawable(zoomImageView.resources, bitmap))
             }
-            Thread.sleep(100)
+            Thread.sleep(1000)
 
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
                     .fromAsset(zoomImageView.context, imageFile.name)
                 zoomImageView.setSubsamplingImage(imageSource)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertEquals(
                 expected = "516 x 516",
@@ -258,7 +258,7 @@ class ZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 zoomImageView.setSubsamplingImage(null as ImageSource?)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             assertEquals(
                 expected = "516 x 516",
                 actual = zoomImageView.zoomable.containerSizeState.value.toString()
@@ -274,7 +274,7 @@ class ZoomImageViewTest {
                     .fromAsset(zoomImageView.context, imageFile.name)
                 zoomImageView.setSubsamplingImage(imageSource.toFactory())
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertEquals(
                 expected = "516 x 516",
@@ -1193,13 +1193,15 @@ class ZoomImageViewTest {
                 expected = ScrollBarSpec(
                     color = Color.parseColor("#FF0000"),
                     size = 55f,
-                    margin = 17f,
+                    sideMargin = 17f,
+                    endsMargin = 34f,
                 ),
                 actual = LayoutInflater.from(context)
                     .inflate(R.layout.zoom_image_disabled_scroll_bar_style, null)
                     .let { it as ZoomImageView }
                     .scrollBar
             )
+
             assertEquals(
                 expected = null,
                 actual = LayoutInflater.from(context)
@@ -1207,14 +1209,42 @@ class ZoomImageViewTest {
                     .let { it as ZoomImageView }
                     .scrollBar
             )
+
             assertEquals(
                 expected = ScrollBarSpec(
                     color = Color.parseColor("#FF0000"),
                     size = 55f,
-                    margin = 17f,
+                    sideMargin = 17f,
+                    endsMargin = 34f,
                 ),
                 actual = LayoutInflater.from(context)
                     .inflate(R.layout.zoom_image_disabled_scroll_bar_false_style, null)
+                    .let { it as ZoomImageView }
+                    .scrollBar
+            )
+
+            assertEquals(
+                expected = ScrollBarSpec(
+                    color = Color.parseColor("#FF0000"),
+                    size = 55f,
+                    sideMargin = 20f,
+                    endsMargin = 40f
+                ),
+                actual = LayoutInflater.from(context)
+                    .inflate(R.layout.zoom_image_disabled_scroll_bar_side_marin, null)
+                    .let { it as ZoomImageView }
+                    .scrollBar
+            )
+
+            assertEquals(
+                expected = ScrollBarSpec(
+                    color = Color.parseColor("#FF0000"),
+                    size = 55f,
+                    sideMargin = 20f,
+                    endsMargin = 50f
+                ),
+                actual = LayoutInflater.from(context)
+                    .inflate(R.layout.zoom_image_disabled_scroll_bar_side_marin2, null)
                     .let { it as ZoomImageView }
                     .scrollBar
             )

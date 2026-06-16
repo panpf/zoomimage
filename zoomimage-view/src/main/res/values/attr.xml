@@ -49,5 +49,7 @@
         <attr name="scrollBarColor" format="color|reference" />
         <attr name="scrollBarSize" format="dimension|reference" />
         <attr name="scrollBarMargin" format="dimension|reference" />
+        <attr name="scrollBarSideMargin" format="dimension|reference" />
+        <attr name="scrollBarEndsMargin" format="dimension|reference" />
     </declare-styleable>
 </resources>

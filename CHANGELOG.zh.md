@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+## Android
+
+* new: ZoomImageView 新增 scrollBarSideMargin 和 scrollBarEndsMargin XML 属性
+
 # 1.5.0-beta01
 
 ## Android
