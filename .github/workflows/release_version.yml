@@ -10,7 +10,7 @@ env:
   JAVA_DISTRIBUTION: zulu
 
 jobs:
-  checks:
+  check-abi:
     name: Checks
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -29,27 +29,44 @@ jobs:
       - name: Check binary compatibility
         run: ./gradlew checkKotlinAbi || { exit_code=$?; printf "*** ZoomImage's public API has changed. If this change is intentional, run './gradlew updateKotlinAbi' and commit the new API files. ***"; exit $exit_code; }
 
-  #  test:
-  #    name: Unit tests
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - uses: actions/checkout@v6
-  #      - uses: actions/setup-java@v5
-  #        with:
-  #          distribution: ${{ env.JAVA_DISTRIBUTION }}
-  #          java-version: ${{ env.JAVA_VERSION }}
-  #      - uses: gradle/actions/setup-gradle@v6
-  #        continue-on-error: true
-  #        timeout-minutes: 5
-  #        with:
-  #          cache-overwrite-existing: true
-  #
-  #      - name: Run desktop test
-  #        run: ./gradlew desktopTest
+  test-desktop:
+    name: Desktop Unit tests
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
+
+      - name: Run desktop test
+        run: ./gradlew desktopTest
+
+  test-ios:
+    name: iOS Unit tests
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
+
+      - name: Run ios test
+        run: ./gradlew iosSimulatorArm64Test
 
   package-android:
     name: Package android
-    needs: [ checks ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -75,7 +92,6 @@ jobs:
 
   package-ios:
     name: Package iOS
-    needs: [ checks ]
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
@@ -109,7 +125,6 @@ jobs:
 
   package-linux:
     name: Package linux desktop
-    needs: [ checks ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -134,7 +149,6 @@ jobs:
 
   package-macos:
     name: Package macOS desktop
-    needs: [ checks ]
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
@@ -159,7 +173,6 @@ jobs:
 
   package-windows:
     name: Package windows desktop
-    needs: [ checks ]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
@@ -184,7 +197,6 @@ jobs:
 
   package-js:
     name: Package js browser
-    needs: [ checks ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -218,7 +230,6 @@ jobs:
 
   package-wasm-js:
     name: Package wasmJs browser
-    needs: [ checks ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -252,7 +263,7 @@ jobs:
 
   deploy-api-docs:
     name: Deploy API docs
-    needs: [ package-android, package-ios, package-linux, package-macos, package-windows, package-js, package-wasm-js ]
+    needs: [ check-abi, test-desktop, test-ios, package-android, package-ios, package-linux, package-macos, package-windows, package-js, package-wasm-js ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -330,43 +341,43 @@ jobs:
       contents: write
     steps:
       - name: Download APK artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: android-files
           path: ./downloaded
 
       - name: Download ios artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ios-files
           path: ./downloaded
 
       - name: Download deb artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux-files
           path: ./downloaded
 
       - name: Download dmg artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macos-files
           path: ./downloaded
 
       - name: Download msi artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: windows-files
           path: ./downloaded
 
       - name: Download js-browser artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: js-browser-files
           path: ./downloaded
 
       - name: Download wasm-js-browser artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: wasm-js-browser-files
           path: ./downloaded
