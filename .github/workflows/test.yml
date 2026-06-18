@@ -8,7 +8,7 @@ env:
 
 jobs:
   test-desktop:
-    name: Unit tests
+    name: Desktop Unit tests
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
@@ -26,7 +26,7 @@ jobs:
         run: ./gradlew desktopTest
 
   test-ios:
-    name: Unit tests
+    name: iOS Unit tests
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
