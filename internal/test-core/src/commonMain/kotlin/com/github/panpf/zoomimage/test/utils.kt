@@ -14,3 +14,5 @@ public inline fun <T> Iterable<T>.allFold(operation: (t1: T, t2: T) -> Boolean):
     }
     return result
 }
+
+expect fun isGitHubActions(): Boolean
