@@ -2,8 +2,7 @@ package com.github.panpf.zoomimage.test
 
 import com.github.panpf.zoomimage.test.core.BuildKonfig
 
-
-public inline fun <T> Iterable<T>.allFold(operation: (t1: T, t2: T) -> Boolean): Boolean {
+inline fun <T> Iterable<T>.allFold(operation: (t1: T, t2: T) -> Boolean): Boolean {
     var result = true
     var last: T? = null
     this.forEach {
@@ -17,5 +16,4 @@ public inline fun <T> Iterable<T>.allFold(operation: (t1: T, t2: T) -> Boolean):
     return result
 }
 
-//expect fun isGitHubActions(): Boolean
 fun isGitHubActions(): Boolean = BuildKonfig.IS_GITHUB_ACTIONS
