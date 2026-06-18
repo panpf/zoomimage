@@ -41,6 +41,6 @@ jobs:
           cache-overwrite-existing: true
 
       - name: Run ios test
-        run:
+        run: |
           export SIMCTL_CHILD_GITHUB_ACTIONS="true"
           ./gradlew iosSimulatorArm64Test
