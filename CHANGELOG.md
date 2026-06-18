@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.5.0-beta02
 
 ## Multiplatform
 
