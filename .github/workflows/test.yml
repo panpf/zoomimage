@@ -42,3 +42,5 @@ jobs:
 
       - name: Run ios test
         run: ./gradlew iosSimulatorArm64Test
+        env:
+          GITHUB_ACTIONS: true
