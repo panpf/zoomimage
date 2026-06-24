@@ -11,7 +11,7 @@ jobs:
     name: Android Unit tests
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         #        api-level: [ 21, 23, 26, 29, 31, 34, 37 ]
         api-level: [ 21, 23, 26, 29, 31, 34 ]
