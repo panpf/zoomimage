@@ -46,5 +46,5 @@ jobs:
           api-level: ${{ matrix.api-level }}
           arch: ${{ steps.avd-info.outputs.arch }}
           target: ${{ steps.avd-info.outputs.target }}
-          profile: Pixel 5
+          profile: pixel # from command 'avdmanager list device'
           script: mv .github/debug.keystore ~/.android; ./gradlew connectedDebugAndroidTest
