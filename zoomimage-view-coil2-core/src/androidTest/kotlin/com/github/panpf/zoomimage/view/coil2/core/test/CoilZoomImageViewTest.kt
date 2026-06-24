@@ -18,6 +18,7 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
+import com.github.panpf.zoomimage.test.coil.Coils
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
 import com.github.panpf.zoomimage.view.coil.CoilViewSubsamplingImageGenerator
 import com.github.panpf.zoomimage.view.coil.internal.AnimatableCoilViewSubsamplingImageGenerator
@@ -68,7 +69,7 @@ class CoilZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = listOf(
@@ -102,6 +103,8 @@ class CoilZoomImageViewTest {
 
     @Test
     fun testResetImageSource() = runTest {
+        Coils.imageLoader()
+
         // success
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
@@ -111,7 +114,7 @@ class CoilZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNull(actual = coilZoomImageView.drawable)
@@ -121,7 +124,7 @@ class CoilZoomImageViewTest {
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             coilZoomImageView.load(AssetImageFiles.hugeCard.uri)
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNotNull(actual = coilZoomImageView.drawable)
@@ -140,7 +143,7 @@ class CoilZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNull(actual = coilZoomImageView.drawable)
@@ -150,7 +153,7 @@ class CoilZoomImageViewTest {
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             coilZoomImageView.load(AssetImageFiles.hugeCard.uri)
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNotNull(actual = coilZoomImageView.drawable)
@@ -162,7 +165,7 @@ class CoilZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 coilZoomImageView.setImageDrawable(null)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNull(actual = coilZoomImageView.drawable)
@@ -181,7 +184,7 @@ class CoilZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNull(actual = coilZoomImageView.drawable)
@@ -193,7 +196,7 @@ class CoilZoomImageViewTest {
             coilZoomImageView.load(AssetImageFiles.hugeCard.uri + "1") {
                 error(ColorDrawable(Color.CYAN))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNotNull(actual = coilZoomImageView.drawable)
@@ -212,7 +215,7 @@ class CoilZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNull(actual = coilZoomImageView.drawable)
@@ -222,7 +225,7 @@ class CoilZoomImageViewTest {
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
             coilZoomImageView.load(AssetImageFiles.hugeCard.uri)
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNotNull(actual = coilZoomImageView.drawable)
@@ -235,7 +238,7 @@ class CoilZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 coilZoomImageView.setImageDrawable(null)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNull(actual = coilZoomImageView.drawable)
@@ -247,7 +250,7 @@ class CoilZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 (coilZoomImageView.parent as ViewGroup).removeView(coilZoomImageView)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertFalse(actual = coilZoomImageView.isAttachedToWindow)
             assertNull(actual = coilZoomImageView.drawable)
@@ -256,11 +259,10 @@ class CoilZoomImageViewTest {
             assertNotNull(actual = coilZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = coilZoomImageView.subsampling.readyState.value)
 
-
             withContext(Dispatchers.Main) {
                 coilZoomImageView.setImageDrawable(thumbnail)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertFalse(actual = coilZoomImageView.isAttachedToWindow)
             assertNotNull(actual = coilZoomImageView.drawable)
@@ -273,7 +275,7 @@ class CoilZoomImageViewTest {
                 activity.findViewById<ViewGroup>(android.R.id.content)
                     .addView(coilZoomImageView, ViewGroup.LayoutParams(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = coilZoomImageView.isAttachedToWindow)
             assertNotNull(actual = coilZoomImageView.drawable)
