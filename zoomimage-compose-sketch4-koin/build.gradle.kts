@@ -19,12 +19,12 @@ kotlin {
         commonTest.dependencies {
             implementation(projects.internal.testCompose)
             implementation(projects.internal.testKoin)
-            implementation(projects.internal.testSketch4Core)
+            implementation(projects.internal.testSketch4)
         }
         androidDeviceTest.dependencies {
             implementation(projects.internal.testCompose)
             implementation(projects.internal.testKoin)
-            implementation(projects.internal.testSketch4Core)
+            implementation(projects.internal.testSketch4)
         }
     }
 }

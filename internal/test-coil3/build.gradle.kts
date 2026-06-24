@@ -11,9 +11,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.internal.testCore)
             api(projects.internal.utilsCoil3)
-            api(projects.zoomimageComposeCoil3Core)
-            api(projects.zoomimageComposeResources)
-            api(libs.coil3)
+            api(libs.coil3) // Singleton
         }
     }
 }

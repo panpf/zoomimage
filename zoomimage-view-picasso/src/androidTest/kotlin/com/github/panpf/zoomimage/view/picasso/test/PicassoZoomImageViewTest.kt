@@ -10,7 +10,7 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.PicassoZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.picasso.PicassoSubsamplingImageGenerator
 import com.github.panpf.zoomimage.picasso.internal.EnginePicassoSubsamplingImageGenerator
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
@@ -119,7 +119,7 @@ class PicassoZoomImageViewTest {
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                picassoZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri) {
+                picassoZoomImageView.loadImage(AssetImageFiles.hugeCard.uri) {
                     fit()
                     centerInside()
                 }
@@ -149,7 +149,7 @@ class PicassoZoomImageViewTest {
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                picassoZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri) {
+                picassoZoomImageView.loadImage(AssetImageFiles.hugeCard.uri) {
                     fit()
                     centerInside()
                 }
@@ -189,7 +189,7 @@ class PicassoZoomImageViewTest {
             assertFalse(actual = picassoZoomImageView.subsampling.readyState.value)
 
             withContext(Dispatchers.Main) {
-                picassoZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri + "1") {
+                picassoZoomImageView.loadImage(AssetImageFiles.hugeCard.uri + "1") {
                     fit()
                     centerInside()
                     error(ColorDrawable(Color.CYAN))

@@ -240,7 +240,7 @@ class ZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
-                    .fromAsset(zoomImageView.context, imageFile.name)
+                    .fromAsset(zoomImageView.context, imageFile.fileName)
                 zoomImageView.setSubsamplingImage(imageSource)
             }
             Thread.sleep(1000)
@@ -271,7 +271,7 @@ class ZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 val imageSource = ImageSource
-                    .fromAsset(zoomImageView.context, imageFile.name)
+                    .fromAsset(zoomImageView.context, imageFile.fileName)
                 zoomImageView.setSubsamplingImage(imageSource.toFactory())
             }
             Thread.sleep(1000)

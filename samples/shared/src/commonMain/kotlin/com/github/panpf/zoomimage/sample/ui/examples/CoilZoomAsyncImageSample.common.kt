@@ -15,18 +15,15 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
 import coil3.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
-import com.github.panpf.zoomimage.compose.coil.CoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.rememberCoilZoomState
-import com.github.panpf.zoomimage.sample.image.ComposeResourceCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.capturable
 import com.github.panpf.zoomimage.sample.ui.util.findPlaceholderFromMemoryCache
+import com.github.panpf.zoomimage.util.coil.platformCoilComposeSubsamplingImageGenerators
 import kotlinx.collections.immutable.toImmutableList
-
-expect fun platformCoilComposeSubsamplingImageGenerator(): List<CoilComposeSubsamplingImageGenerator>?
 
 @Composable
 fun CoilZoomAsyncImageSample(
@@ -39,9 +36,7 @@ fun CoilZoomAsyncImageSample(
         photoPaletteState = photoPaletteState,
         createZoomState = {
             val extensionsModelToImageSources = remember {
-                platformCoilComposeSubsamplingImageGenerator().orEmpty()
-                    .plus(ComposeResourceCoilComposeSubsamplingImageGenerator())
-                    .toImmutableList()
+                platformCoilComposeSubsamplingImageGenerators().toImmutableList()
             }
             rememberCoilZoomState(subsamplingImageGenerators = extensionsModelToImageSources)
         },

@@ -16,7 +16,7 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -126,7 +126,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri)
+            sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -155,7 +155,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri)
+            sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -196,7 +196,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri + "1") {
+            sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri + "1") {
                 error(IntColorFetcher(Color.CYAN))
             }
             Thread.sleep(500)
@@ -227,7 +227,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.loadImage(ComposeResImageFiles.hugeCard.uri)
+            sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)

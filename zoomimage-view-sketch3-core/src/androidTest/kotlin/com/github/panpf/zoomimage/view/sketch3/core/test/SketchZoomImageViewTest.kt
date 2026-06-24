@@ -3,13 +3,10 @@ package com.github.panpf.zoomimage.view.sketch3.core.test
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.displayImage
-import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.util.SketchUtils
@@ -17,7 +14,7 @@ import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.tools4j.reflect.ktx.getFieldValue
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -127,7 +124,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.displayImage(convertAssetUri(ComposeResImageFiles.hugeCard.uri))
+            sketchZoomImageView.displayImage(AssetImageFiles.hugeCard.sketch3Uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -156,7 +153,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.displayImage(convertAssetUri(ComposeResImageFiles.hugeCard.uri))
+            sketchZoomImageView.displayImage(AssetImageFiles.hugeCard.sketch3Uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -197,7 +194,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.displayImage(convertAssetUri(ComposeResImageFiles.hugeCard.uri) + "1") {
+            sketchZoomImageView.displayImage(AssetImageFiles.hugeCard.sketch3Uri + "1") {
                 error(ColorDrawable(Color.CYAN))
             }
             Thread.sleep(500)
@@ -228,7 +225,7 @@ class SketchZoomImageViewTest {
             assertNull(actual = sketchZoomImageView.subsampling.tileImageCacheState.value)
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
-            sketchZoomImageView.displayImage(convertAssetUri(ComposeResImageFiles.hugeCard.uri))
+            sketchZoomImageView.displayImage(AssetImageFiles.hugeCard.sketch3Uri)
             Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
@@ -290,28 +287,6 @@ class SketchZoomImageViewTest {
             assertTrue(actual = sketchZoomImageView.subsampling.readyState.value)
         }
     }
-
-    private fun convertAssetUri(uri: String): String {
-        val uri1 = uri.toUri()
-        if (isAssetUri4(uri1)) {
-            val fileName = uri1.pathSegments.drop(1).joinToString("/")
-            return newAssetUri(fileName)
-        }
-        return uri
-    }
-
-    /**
-     * Check if the uri is a android asset uri
-     *
-     * Support 'file:///android_asset/test.png' uri
-     */
-    private fun isAssetUri4(uri: Uri): Boolean =
-        "file".equals(uri.scheme, ignoreCase = true)
-                && uri.authority?.takeIf { it.isNotEmpty() } == null
-                && "android_asset".equals(
-            uri.pathSegments.firstOrNull(),
-            ignoreCase = true
-        )
 
     class TestSketchViewSubsamplingImageGenerator : SketchViewSubsamplingImageGenerator {
 

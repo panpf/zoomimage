@@ -2,16 +2,14 @@ package com.github.panpf.zoomimage.test.coil
 
 import coil3.ImageLoader
 import coil3.PlatformContext
-import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceUriFetcher
-import com.github.panpf.zoomimage.images.coil.CoilKotlinResourceUriKeyer
+import com.github.panpf.zoomimage.util.coil.CoilComposeResourceUriFetcher
+import com.github.panpf.zoomimage.util.coil.CoilKotlinResourceUriFetcher
 
 actual fun newImageLoader(context: PlatformContext): ImageLoader {
     return ImageLoader.Builder(context).apply {
         components {
             add(CoilComposeResourceUriFetcher.Factory())
-            add(CoilComposeResourceUriKeyer())
             add(CoilKotlinResourceUriFetcher.Factory())
-            add(CoilKotlinResourceUriKeyer())
         }
     }.build()
 }

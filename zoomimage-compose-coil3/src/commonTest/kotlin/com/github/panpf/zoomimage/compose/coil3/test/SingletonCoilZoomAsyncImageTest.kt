@@ -23,12 +23,11 @@ import coil3.size.Precision.EXACT
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
-import com.github.panpf.zoomimage.images.coil.platformComposeSubsamplingImageGenerators
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.coil.Coils
-import com.github.panpf.zoomimage.test.coil.ComposeResourceCoilComposeSubsamplingImageGenerator
 import com.github.panpf.zoomimage.test.waitMillis
+import com.github.panpf.zoomimage.util.coil.platformCoilComposeSubsamplingImageGenerators
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -52,9 +51,7 @@ class SingletonCoilZoomAsyncImageTest {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
                         val subsamplingImageGenerators = remember {
-                            platformComposeSubsamplingImageGenerators()
-                                .plus(ComposeResourceCoilComposeSubsamplingImageGenerator())
-                                .toImmutableList()
+                            platformCoilComposeSubsamplingImageGenerators().toImmutableList()
                         }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
@@ -127,9 +124,7 @@ class SingletonCoilZoomAsyncImageTest {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
                         val subsamplingImageGenerators = remember {
-                            platformComposeSubsamplingImageGenerators()
-                                .plus(ComposeResourceCoilComposeSubsamplingImageGenerator())
-                                .toImmutableList()
+                            platformCoilComposeSubsamplingImageGenerators().toImmutableList()
                         }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
@@ -200,9 +195,7 @@ class SingletonCoilZoomAsyncImageTest {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
                         val subsamplingImageGenerators = remember {
-                            platformComposeSubsamplingImageGenerators()
-                                .plus(ComposeResourceCoilComposeSubsamplingImageGenerator())
-                                .toImmutableList()
+                            platformCoilComposeSubsamplingImageGenerators().toImmutableList()
                         }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }
@@ -275,9 +268,7 @@ class SingletonCoilZoomAsyncImageTest {
                 CompositionLocalProvider(LocalDensity provides Density(1f)) {
                     TestLifecycle {
                         val subsamplingImageGenerators = remember {
-                            platformComposeSubsamplingImageGenerators()
-                                .plus(ComposeResourceCoilComposeSubsamplingImageGenerator())
-                                .toImmutableList()
+                            platformCoilComposeSubsamplingImageGenerators().toImmutableList()
                         }
                         val zoomState = rememberCoilZoomState(subsamplingImageGenerators)
                             .apply { zoomStateHolder = this }

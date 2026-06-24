@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.os.Build
 import androidx.core.graphics.get
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.test.newBitmapRegionDecoderInstanceCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.closeQuietly
 import kotlinx.coroutines.test.runTest
@@ -25,7 +26,7 @@ class BitmapRegionDecoderTest {
             imageFile.toImageSource().openSource().buffer().inputStream()
         var decoder: BitmapRegionDecoder? = null
         try {
-            decoder = BitmapRegionDecoder.newInstance(inputStream, false)!!
+            decoder = newBitmapRegionDecoderInstanceCompat(inputStream)
             val srcRect = Rect(
                 /* left = */ imageSize.width - tileSize.width,
                 /* top = */ imageSize.height - tileSize.height,
@@ -54,7 +55,7 @@ class BitmapRegionDecoderTest {
             imageFile.toImageSource().openSource().buffer().inputStream()
         var decoder: BitmapRegionDecoder? = null
         try {
-            decoder = BitmapRegionDecoder.newInstance(inputStream, false)!!
+            decoder = newBitmapRegionDecoderInstanceCompat(inputStream)
             val srcRect = Rect(
                 imageSize.width - tileSize.width,
                 imageSize.height - tileSize.height,
@@ -91,7 +92,7 @@ class BitmapRegionDecoderTest {
             imageFile.toImageSource().openSource().buffer().inputStream()
         var decoder: BitmapRegionDecoder? = null
         try {
-            decoder = BitmapRegionDecoder.newInstance(inputStream, false)!!
+            decoder = newBitmapRegionDecoderInstanceCompat(inputStream)
             val srcRect = Rect(
                 imageSize.width - tileSize.width,
                 imageSize.height - tileSize.height,

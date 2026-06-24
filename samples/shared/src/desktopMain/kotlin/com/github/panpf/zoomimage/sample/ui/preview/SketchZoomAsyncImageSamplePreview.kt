@@ -5,8 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.github.panpf.sketch.fetch.newComposeResourceUri
-import com.github.panpf.zoomimage.sample.Res
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
@@ -17,10 +16,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @Composable
 fun SketchZoomAsyncImageSamplePreview() {
     val colorScheme = MaterialTheme.colorScheme
-    val photo = remember {
-        val sketchImageUri = newComposeResourceUri(Res.getUri("files/huge_china.jpg"))
-        Photo(sketchImageUri)
-    }
+    val photo = remember { Photo(ComposeResImageFiles.hugeCard.uri) }
     SketchZoomAsyncImageSample(
         photo = photo,
         photoPaletteState = mutableStateOf(PhotoPalette(colorScheme)),

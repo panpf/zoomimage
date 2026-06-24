@@ -16,7 +16,15 @@ class PhotoViewPagerTestFragment : BaseToolbarBindingFragment<FragmentTabPagerBi
     ) {
         toolbar.title = "PhotoView (Pager)"
 
-        val images = AssetImageFiles.values
+        val images = arrayOf(
+            AssetImageFiles.cat,
+            AssetImageFiles.dog,
+            AssetImageFiles.longEnd,
+            AssetImageFiles.longWhale,
+            AssetImageFiles.hugeChina,
+            AssetImageFiles.hugeLongComic,
+            AssetImageFiles.hugeLongQmsht,
+        )
         val dataList = images.map { it.uri }
         val tabTitles = images.map {
             it.name.substring(0, it.name.indexOf(".")).uppercase()

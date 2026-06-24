@@ -9,7 +9,8 @@ kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.utils.coil3")
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.zoomimageCoreCoil3)
+            api(projects.zoomimageComposeCoil3Core)
+            api(projects.zoomimageComposeResources)
         }
     }
 }

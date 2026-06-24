@@ -17,27 +17,27 @@ class AssetImageSourceTest {
     @Test
     fun testFromAsset() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val name = AssetImageFiles.cat.name
+        val fileName = AssetImageFiles.cat.fileName
         assertEquals(
-            expected = AssetImageSource(context, name),
-            actual = ImageSource.fromAsset(context, name)
+            expected = AssetImageSource(context, fileName),
+            actual = ImageSource.fromAsset(context, fileName)
         )
     }
 
     @Test
     fun testKey() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val name = AssetImageFiles.cat.name
+        val fileName = AssetImageFiles.cat.fileName
         assertEquals(
-            expected = "file:///android_asset/$name",
-            actual = AssetImageSource(context, name).key
+            expected = "file:///android_asset/$fileName",
+            actual = AssetImageSource(context, fileName).key
         )
     }
 
     @Test
     fun testOpenSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        AssetImageSource(context, AssetImageFiles.cat.name)
+        AssetImageSource(context, AssetImageFiles.cat.fileName)
             .openSource().buffer()
             .use { it.readByteArray() }
     }
@@ -45,13 +45,13 @@ class AssetImageSourceTest {
     @Test
     fun testEqualsAndHashCode() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val name = AssetImageFiles.cat.name
-        val name2 = "${name}_fake"
+        val fileName = AssetImageFiles.cat.fileName
+        val fileName2 = "${fileName}_fake"
 
-        val source1 = AssetImageSource(context, name)
-        val source12 = AssetImageSource(context, name)
-        val source2 = AssetImageSource(context, name2)
-        val source22 = AssetImageSource(context, name2)
+        val source1 = AssetImageSource(context, fileName)
+        val source12 = AssetImageSource(context, fileName)
+        val source2 = AssetImageSource(context, fileName2)
+        val source22 = AssetImageSource(context, fileName2)
 
         assertEquals(expected = source1, actual = source1)
         assertEquals(expected = source1, actual = source12)
@@ -70,11 +70,11 @@ class AssetImageSourceTest {
     @Test
     fun testToString() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val name = AssetImageFiles.cat.name
+        val fileName = AssetImageFiles.cat.fileName
 
         assertEquals(
-            expected = "AssetImageSource('$name')",
-            actual = AssetImageSource(context, name).toString()
+            expected = "AssetImageSource('$fileName')",
+            actual = AssetImageSource(context, fileName).toString()
         )
     }
 }

@@ -15,7 +15,7 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.glide.GlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.glide.internal.AnimatableGlideSubsamplingImageGenerator
 import com.github.panpf.zoomimage.glide.internal.EngineGlideSubsamplingImageGenerator
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.subsampling.SubsamplingImageGenerateResult
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
@@ -117,7 +117,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ComposeResImageFiles.hugeCard.uri)
+                    .load(AssetImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
             Thread.sleep(500)
@@ -148,7 +148,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ComposeResImageFiles.hugeCard.uri)
+                    .load(AssetImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
             Thread.sleep(500)
@@ -190,7 +190,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ComposeResImageFiles.hugeCard.uri + "1")
+                    .load(AssetImageFiles.hugeCard.uri + "1")
                     .error(ColorDrawable(Color.CYAN))
                     .into(glideZoomImageView)
             }
@@ -222,7 +222,7 @@ class GlideZoomImageViewTest {
 
             withContext(Dispatchers.Main) {
                 Glide.with(glideZoomImageView)
-                    .load(ComposeResImageFiles.hugeCard.uri)
+                    .load(AssetImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
             Thread.sleep(500)

@@ -1,10 +1,12 @@
 package com.github.panpf.zoomimage.test
 
 import android.graphics.Bitmap
+import android.graphics.BitmapRegionDecoder
 import android.os.Build
 import android.widget.ImageView
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import java.io.InputStream
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import kotlin.math.max
@@ -45,7 +47,6 @@ internal fun ImageView.ScaleType.computeScaleFactor(
         }
 
         ImageView.ScaleType.MATRIX -> ScaleFactorCompat(1.0f, 1.0f)
-        else -> ScaleFactorCompat(scaleX = 1.0f, scaleY = 1.0f)
     }
 }
 
@@ -56,7 +57,6 @@ internal val Bitmap.allocationByteCountCompat: Int
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> this.allocationByteCount
         else -> this.byteCount
     }
-
 
 
 /**
@@ -144,7 +144,7 @@ internal fun Long.formatFileSize(
 
 @Suppress("USELESS_ELVIS")
 internal val Bitmap.configOrNull: Bitmap.Config?
-    get() = config ?: null
+    get() = config
 
 /**
  * Convert the object to a hexadecimal string
@@ -161,3 +161,12 @@ fun Any.toHexString(): String = this.hashCode().toString(16)
 fun Bitmap.toLogString(): String = "Bitmap@${toHexString()}(${width}x${height},$config)"
 
 fun isVersionAtLeast(api: Int): Boolean = Build.VERSION.SDK_INT >= api
+
+fun newBitmapRegionDecoderInstanceCompat(input: InputStream): BitmapRegionDecoder {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        BitmapRegionDecoder.newInstance(input)
+    } else {
+        @Suppress("DEPRECATION")
+        BitmapRegionDecoder.newInstance(input, false)
+    }!!
+}

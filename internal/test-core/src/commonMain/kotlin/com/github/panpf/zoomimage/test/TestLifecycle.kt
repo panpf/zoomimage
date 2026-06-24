@@ -29,7 +29,6 @@ class TestLifecycle(initialState: State = State.RESUMED) : Lifecycle() {
                     State.STARTED -> Event.ON_START
                     State.RESUMED -> Event.ON_RESUME
                     State.DESTROYED -> Event.ON_DESTROY
-                    else -> throw IllegalArgumentException("Unknown state: $value")
                 }
                 field = value
                 observers.forEach {

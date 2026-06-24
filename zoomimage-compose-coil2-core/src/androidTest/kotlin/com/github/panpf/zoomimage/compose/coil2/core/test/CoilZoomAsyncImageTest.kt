@@ -26,7 +26,7 @@ import coil.request.SuccessResult
 import coil.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.coil.Coils
@@ -56,7 +56,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ComposeResImageFiles.longEnd.uri)
+                                data(AssetImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -127,7 +127,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ComposeResImageFiles.longEnd.uri)
+                                data(AssetImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -196,7 +196,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ComposeResImageFiles.longEnd.uri)
+                                data(AssetImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -267,7 +267,7 @@ class CoilZoomAsyncImageTest {
                             .apply { zoomStateHolder = this }
                         CoilZoomAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).apply {
-                                data(ComposeResImageFiles.longEnd.uri)
+                                data(AssetImageFiles.longEnd.uri)
                                 precision(Precision.EXACT)
                                 memoryCachePolicy(CachePolicy.DISABLED)
                             }.build(),
@@ -339,7 +339,7 @@ class CoilZoomAsyncImageTest {
                         }
                         LaunchedEffect(Unit) {
                             val request = ImageRequest.Builder(context)
-                                .data(ComposeResImageFiles.dog.uri)
+                                .data(AssetImageFiles.dog.uri)
                                 .size(1100, 733)
                                 .precision(Precision.EXACT)
                                 .build()
@@ -362,7 +362,7 @@ class CoilZoomAsyncImageTest {
                             CoilZoomAsyncImage(
                                 modifier = Modifier.size(500.dp),
                                 model = ImageRequest.Builder(context)
-                                    .data(ComposeResImageFiles.dog.uri)
+                                    .data(AssetImageFiles.dog.uri)
                                     .placeholderMemoryCacheKey(bigImageMemoryCacheKey1)
                                     .memoryCachePolicy(CachePolicy.DISABLED)
                                     .size(1100 / 2, 733 / 2)

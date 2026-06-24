@@ -7,10 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.github.panpf.sketch.fetch.newComposeResourceUri
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.sample.Res
+import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.examples.ZoomImageTool
@@ -24,10 +23,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 fun ZoomImageToolPreview() {
     val zoomState = rememberZoomState()
     val colorScheme = MaterialTheme.colorScheme
-    val photo = remember {
-        val sketchImageUri = newComposeResourceUri(Res.getUri("files/huge_china.jpg"))
-        Photo(sketchImageUri)
-    }
+    val photo = remember { Photo(ComposeResImageFiles.hugeCard.uri) }
     ZoomImageTool(
         photo = photo,
         zoomableState = zoomState.zoomable,

@@ -5,7 +5,7 @@ import android.widget.ImageView
 import androidx.lifecycle.Lifecycle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.tools4a.test.ktx.getActivitySync
-import com.github.panpf.zoomimage.images.ComposeResImageFiles
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileState
@@ -158,7 +158,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -353,7 +353,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
@@ -378,7 +378,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
@@ -425,7 +425,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
@@ -453,7 +453,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
@@ -498,7 +498,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             delayUntil(1000) { !subsampling.readyState.value }
@@ -523,7 +523,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             delayUntil(1000) { subsampling.readyState.value }
@@ -548,7 +548,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
                 subsampling.setLifecycle(TestLifecycle(Lifecycle.State.CREATED))
             }
             Thread.sleep(500)
@@ -577,7 +577,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -606,7 +606,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -638,7 +638,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             delayUntil(2000) { subsampling.readyState.value }
@@ -667,7 +667,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -700,7 +700,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -735,7 +735,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             Thread.sleep(1000)
@@ -767,7 +767,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -803,7 +803,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -842,7 +842,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -904,7 +904,7 @@ class SubsamplingEngineTest {
             }
                 .apply { subsamplingHolder = this }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {
@@ -959,7 +959,7 @@ class SubsamplingEngineTest {
                 SubsamplingEngine(zoomable)
             }
             withContext(Dispatchers.Main) {
-                subsampling.setImage(ComposeResImageFiles.hugeLongComic.toImageSource())
+                subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
             Thread.sleep(500)
             withContext(Dispatchers.Main) {

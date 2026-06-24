@@ -20,8 +20,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.datasource.AssetDataSource
 import com.github.panpf.sketch.datasource.DataFrom
-import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.request.LoadRequest
+import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import kotlinx.coroutines.runBlocking
@@ -61,10 +61,10 @@ class SketchImageSourceFactoryTest {
         val sketch = Sketch.Builder(context).build()
         SketchImageSource.Factory(
             sketch = sketch,
-            request = LoadRequest(context, newAssetUri(ComposeResImageFiles.dog.name))
+            request = LoadRequest(context, AssetImageFiles.dog.sketch3Uri)
         ).let { runBlocking { it.create() } }.apply {
             assertTrue(
-                this.dataSource is AssetDataSource,
+                actual = this.dataSource is AssetDataSource,
                 message = "${this.dataSource}"
             )
             assertEquals(DataFrom.LOCAL, this.dataSource.dataFrom)
