@@ -15,6 +15,9 @@ kotlin {
             api(libs.jetbrains.compose.runtime)
             api(libs.jetbrains.compose.components.resources)
         }
+        androidMain.dependencies {
+            api(libs.androidx.core)
+        }
         desktopMain {
             dependencies {
                 api(libs.appdirs)

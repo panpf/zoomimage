@@ -3,52 +3,66 @@ package com.github.panpf.zoomimage.images
 import android.content.Context
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okio.buffer
 import java.io.File
 
-class ContentImageFiles private constructor(val context: Context) {
+class ContentImageFiles private constructor() {
 
     companion object {
 
-        suspend fun create(context: Context): ContentImageFiles {
-            saveToExternalFilesDir(context)
-            return ContentImageFiles(context)
-        }
+        private var _instance: ContentImageFiles? = null
+        private val lock = Mutex()
 
-        suspend fun saveToExternalFilesDir(context: Context) = withContext(Dispatchers.IO) {
-            val assetsDir = File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
-            if (!assetsDir.exists()) {
-                assetsDir.mkdirs()
+        suspend fun getInstance(context: Context): ContentImageFiles {
+            val instance = _instance
+            if (instance != null) {
+                return instance
             }
-            ComposeResImageFiles.values.forEach {
-                val file = File(assetsDir, it.name)
-                if (!file.exists()) {
-                    try {
-                        it.toImageSource().openSource().buffer().inputStream().use { inputStream ->
-                            file.outputStream().use { outputStream ->
-                                inputStream.copyTo(outputStream)
-                            }
+            lock.withLock {
+                val instance1 = _instance
+                if (instance1 != null) {
+                    return instance1
+                }
+
+                val assetsDir =
+                    File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
+                if (!assetsDir.exists()) {
+                    assetsDir.mkdirs()
+                }
+                ComposeResImageFiles.values.forEach {
+                    val file = File(assetsDir, it.name)
+                    if (!file.exists()) {
+                        try {
+                            it.toImageSource().openSource().buffer().inputStream()
+                                .use { inputStream ->
+                                    file.outputStream().use { outputStream ->
+                                        inputStream.copyTo(outputStream)
+                                    }
+                                }
+                        } catch (e: Exception) {
+                            file.delete()
+                            throw Exception("Failed to copy ${it.name} to ${file.absolutePath}", e)
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        file.delete()
                     }
                 }
+                val newInstance = ContentImageFiles()
+                _instance = newInstance
+                return newInstance
             }
         }
     }
 
-    val cat = ComposeResImageFiles.cat.toContentImageFile(context)
-    val dog = ComposeResImageFiles.dog.toContentImageFile(context)
-    val anim = ComposeResImageFiles.anim.toContentImageFile(context)
-    val longEnd = ComposeResImageFiles.longEnd.toContentImageFile(context)
-    val longWhale = ComposeResImageFiles.longWhale.toContentImageFile(context)
-    val hugeChina = ComposeResImageFiles.hugeChina.toContentImageFile(context)
-    val hugeCard = ComposeResImageFiles.hugeCard.toContentImageFile(context)
-    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toContentImageFile(context)
-    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toContentImageFile(context)
+    val cat = ComposeResImageFiles.cat.toContentImageFile()
+    val dog = ComposeResImageFiles.dog.toContentImageFile()
+    val anim = ComposeResImageFiles.anim.toContentImageFile()
+    val longEnd = ComposeResImageFiles.longEnd.toContentImageFile()
+    val longWhale = ComposeResImageFiles.longWhale.toContentImageFile()
+    val hugeChina = ComposeResImageFiles.hugeChina.toContentImageFile()
+    val hugeCard = ComposeResImageFiles.hugeCard.toContentImageFile()
+    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toContentImageFile()
+    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toContentImageFile()
 
     val all = listOf(
         cat,
@@ -65,7 +79,6 @@ class ContentImageFiles private constructor(val context: Context) {
 
 class ContentImageFile(
     override val name: String,
-    override val uri: String,
     override val size: IntSizeCompat,
     override val length: Long,
     override val mimeType: String,
@@ -73,17 +86,17 @@ class ContentImageFile(
     override val exifOrientation: Int = ExifOrientation.UNDEFINED,
 ) : ImageFile {
 
+    override val uri =
+        "content://com.github.panpf.zoomimage.images.fileprovider/asset_images/${this.name}"
+
     override val imageInfo: ImageInfo = ImageInfo(size = size, mimeType = mimeType)
 
     override fun toString(): String =
         "ContentImageFile(name='$name', uri='$uri', size=$size, exifOrientation=$exifOrientation)"
 }
 
-fun ComposeResImageFile.toContentImageFile(
-    context: Context,
-): ContentImageFile = ContentImageFile(
+fun ComposeResImageFile.toContentImageFile(): ContentImageFile = ContentImageFile(
     name = this.name,
-    uri = "content://${context.packageName}.fileprovider/asset_images/${this.name}",
     size = this.size,
     length = this.length,
     mimeType = this.mimeType,

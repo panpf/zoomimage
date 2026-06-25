@@ -18,7 +18,7 @@ class ContentImageSourceTest {
     @Test
     fun testFromContent() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.create(context)
+        val contentImages = ContentImageFiles.getInstance(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 
@@ -41,7 +41,7 @@ class ContentImageSourceTest {
     @Test
     fun testKey() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.create(context)
+        val contentImages = ContentImageFiles.getInstance(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 
@@ -58,7 +58,7 @@ class ContentImageSourceTest {
     @Test
     fun testOpenSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.create(context)
+        val contentImages = ContentImageFiles.getInstance(context)
         val uri1 = contentImages.cat.uri.toUri()
         ContentImageSource(context, uri1).openSource().buffer().use {
             it.readByteArray()
@@ -68,7 +68,7 @@ class ContentImageSourceTest {
     @Test
     fun testEqualsAndHashCode() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.create(context)
+        val contentImages = ContentImageFiles.getInstance(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 
@@ -94,7 +94,7 @@ class ContentImageSourceTest {
     @Test
     fun testToString() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.create(context)
+        val contentImages = ContentImageFiles.getInstance(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 

@@ -15,7 +15,7 @@ actual suspend fun buildPlatformBuiltinPhotoList(sketch: Sketch): List<String> {
         ComposeResImageFiles.horse,
         ComposeResImageFiles.anim,
         ComposeResImageFiles.longEnd,
-        ContentImageFiles.create(sketch.context).longWhale,
+        ContentImageFiles.getInstance(sketch.context).longWhale,
         ComposeResImageFiles.hugeChina,
         AndroidResourceImageFiles.hugeCard,
         AndroidLocalImageFiles.with(sketch.context).hugeLongQmsht,
