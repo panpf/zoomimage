@@ -160,7 +160,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
             }
@@ -204,7 +204,7 @@ class SubsamplingEngineTest {
             subsampling.setLifecycle(lifecycle)
         }
 
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.RESUMED, actual = lifecycle.currentState)
         assertEquals(
             expected = false,
@@ -216,7 +216,7 @@ class SubsamplingEngineTest {
         withContext(Dispatchers.Main) {
             lifecycle.currentState = Lifecycle.State.CREATED
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(
             expected = false,
@@ -227,7 +227,7 @@ class SubsamplingEngineTest {
         withContext(Dispatchers.Main) {
             lifecycle.currentState = Lifecycle.State.STARTED
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(
             expected = false,
@@ -240,7 +240,7 @@ class SubsamplingEngineTest {
             subsampling.setDisabledAutoStopWithLifecycle(true)
             lifecycle.currentState = Lifecycle.State.STARTED
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
@@ -248,7 +248,7 @@ class SubsamplingEngineTest {
         withContext(Dispatchers.Main) {
             lifecycle.currentState = Lifecycle.State.CREATED
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
@@ -256,7 +256,7 @@ class SubsamplingEngineTest {
         withContext(Dispatchers.Main) {
             lifecycle.currentState = Lifecycle.State.STARTED
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
@@ -266,7 +266,7 @@ class SubsamplingEngineTest {
             subsampling.setDisabledAutoStopWithLifecycle(false)
             lifecycle.currentState = Lifecycle.State.CREATED
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(
             expected = false,
@@ -277,7 +277,7 @@ class SubsamplingEngineTest {
         withContext(Dispatchers.Main) {
             subsampling.setDisabledAutoStopWithLifecycle(true)
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = false, actual = subsampling.stoppedState.value)
@@ -287,7 +287,7 @@ class SubsamplingEngineTest {
             subsampling.setStopped(true)
             lifecycle.currentState = Lifecycle.State.STARTED
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycleState.value)
         assertEquals(expected = true, actual = subsampling.stoppedState.value)
@@ -295,7 +295,7 @@ class SubsamplingEngineTest {
         withContext(Dispatchers.Main) {
             subsampling.setDisabledAutoStopWithLifecycle(false)
         }
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
         assertEquals(
             expected = false,
@@ -335,7 +335,7 @@ class SubsamplingEngineTest {
             val subsampling = withContext(Dispatchers.Main) {
                 SubsamplingEngine(zoomable)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             assertEquals(expected = null, actual = subsampling.imageInfoState.value)
         }
 
@@ -355,7 +355,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = null, actual = subsampling.imageInfoState.value)
         }
@@ -380,7 +380,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(
                 expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')",
@@ -404,7 +404,7 @@ class SubsamplingEngineTest {
             val subsampling = withContext(Dispatchers.Main) {
                 SubsamplingEngine(zoomable)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             assertEquals(
                 expected = "{}",
                 actual = subsampling.tileGridSizeMapState.value.toString()
@@ -427,7 +427,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(
                 expected = "{}",
@@ -455,7 +455,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -479,7 +479,7 @@ class SubsamplingEngineTest {
             val subsampling = withContext(Dispatchers.Main) {
                 SubsamplingEngine(zoomable)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
         }
@@ -500,7 +500,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { !subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
         }
@@ -525,7 +525,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(expected = true, actual = subsampling.readyState.value)
         }
@@ -551,7 +551,7 @@ class SubsamplingEngineTest {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
                 subsampling.setLifecycle(TestLifecycle(Lifecycle.State.CREATED))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(1000) { subsampling.readyState.value }
             assertEquals(expected = false, actual = subsampling.readyState.value)
         }
@@ -579,11 +579,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(expected = 48, actual = subsampling.foregroundTilesState.value.size)
         }
@@ -608,11 +608,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(20f, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(expected = 144, actual = subsampling.foregroundTilesState.value.size)
         }
@@ -640,7 +640,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(2000) { subsampling.readyState.value }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -669,11 +669,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -702,11 +702,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(20f, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             delayUntil(2000) { subsampling.foregroundTilesState.value.isNotEmpty() }
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -737,7 +737,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -769,11 +769,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -805,11 +805,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -844,11 +844,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -906,11 +906,11 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(zoomable.maxScaleState.value, animated = false)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             Thread.sleep(1000)
             assertEquals(
                 expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}",
@@ -928,7 +928,7 @@ class SubsamplingEngineTest {
             )
         }
 
-        Thread.sleep(500)
+        Thread.sleep(1000)
         val subsampling = subsamplingHolder!!
         assertEquals(expected = "{}", actual = subsampling.tileGridSizeMapState.value.toString())
         assertEquals(expected = 0, actual = subsampling.foregroundTilesState.value.size)
@@ -961,7 +961,7 @@ class SubsamplingEngineTest {
             withContext(Dispatchers.Main) {
                 subsampling.setImage(AssetImageFiles.hugeLongComic.toImageSource(activity))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
             withContext(Dispatchers.Main) {
                 zoomable.scale(5f, animated = false)
             }

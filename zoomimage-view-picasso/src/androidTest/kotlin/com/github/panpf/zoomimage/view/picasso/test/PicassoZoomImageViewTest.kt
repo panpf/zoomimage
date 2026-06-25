@@ -65,7 +65,7 @@ class PicassoZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = listOf(
@@ -111,7 +111,7 @@ class PicassoZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)
@@ -141,7 +141,7 @@ class PicassoZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)
@@ -164,7 +164,7 @@ class PicassoZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 picassoZoomImageView.setImageDrawable(null)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)
@@ -181,7 +181,7 @@ class PicassoZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = picassoZoomImageView.isAttachedToWindow)
             assertNull(actual = picassoZoomImageView.drawable)

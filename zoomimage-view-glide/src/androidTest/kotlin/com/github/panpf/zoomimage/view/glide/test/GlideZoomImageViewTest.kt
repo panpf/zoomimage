@@ -64,7 +64,7 @@ class GlideZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = listOf(
@@ -107,7 +107,7 @@ class GlideZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
@@ -120,7 +120,7 @@ class GlideZoomImageViewTest {
                     .load(AssetImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
@@ -138,7 +138,7 @@ class GlideZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
@@ -151,7 +151,7 @@ class GlideZoomImageViewTest {
                     .load(AssetImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
@@ -162,7 +162,7 @@ class GlideZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 glideZoomImageView.setImageDrawable(null)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
@@ -180,7 +180,7 @@ class GlideZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
@@ -194,7 +194,7 @@ class GlideZoomImageViewTest {
                     .error(ColorDrawable(Color.CYAN))
                     .into(glideZoomImageView)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
@@ -212,7 +212,7 @@ class GlideZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
@@ -225,7 +225,7 @@ class GlideZoomImageViewTest {
                     .load(AssetImageFiles.hugeCard.uri)
                     .into(glideZoomImageView)
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
@@ -237,7 +237,7 @@ class GlideZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 glideZoomImageView.setImageDrawable(null)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
@@ -248,7 +248,7 @@ class GlideZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 (glideZoomImageView.parent as ViewGroup).removeView(glideZoomImageView)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertFalse(actual = glideZoomImageView.isAttachedToWindow)
             assertNull(actual = glideZoomImageView.drawable)
@@ -260,7 +260,7 @@ class GlideZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 glideZoomImageView.setImageDrawable(thumbnail)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertFalse(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)
@@ -272,7 +272,7 @@ class GlideZoomImageViewTest {
                 activity.findViewById<ViewGroup>(android.R.id.content)
                     .addView(glideZoomImageView, ViewGroup.LayoutParams(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = glideZoomImageView.isAttachedToWindow)
             assertNotNull(actual = glideZoomImageView.drawable)

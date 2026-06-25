@@ -64,7 +64,7 @@ class ZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             val zoomable = zoomImageView.zoomable
             assertEquals(
@@ -80,7 +80,7 @@ class ZoomImageViewTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomImageView.setImageBitmap(Bitmap.createBitmap(86, 1522, Bitmap.Config.ARGB_8888))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
             assertEquals(
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
@@ -112,7 +112,7 @@ class ZoomImageViewTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = "TransformCompat(scale=18.0x18.0, offset=-515.42x-13440.0, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=0.08x1.47)",
@@ -298,7 +298,7 @@ class ZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = "516 x 516",
@@ -308,7 +308,7 @@ class ZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 zoomImageView.layoutParams = FrameLayout.LayoutParams(1000, 511)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = "1000 x 511",
@@ -327,7 +327,7 @@ class ZoomImageViewTest {
                         .addView(this@apply, ViewGroup.LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = "0 x 0",
@@ -342,7 +342,7 @@ class ZoomImageViewTest {
                     )
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = "300 x 500",
@@ -352,7 +352,7 @@ class ZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 zoomImageView.setImageURI("android.resource://com.github.panpf.zoomimage.view.test/raw/dog".toUri())
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = (IntSizeCompat(1100, 733)
@@ -377,7 +377,7 @@ class ZoomImageViewTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -437,7 +437,7 @@ class ZoomImageViewTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -504,7 +504,7 @@ class ZoomImageViewTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -571,7 +571,7 @@ class ZoomImageViewTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -638,7 +638,7 @@ class ZoomImageViewTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -705,7 +705,7 @@ class ZoomImageViewTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),

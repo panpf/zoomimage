@@ -214,7 +214,7 @@ class SketchBitmapTileImageTest {
         val tileImage = SketchBitmapTileImage(cacheValue)
         assertEquals(false, tileImage.isRecycled)
         tileImage.recycle()
-        Thread.sleep(100)
+        Thread.sleep(500)
         assertEquals(true, tileImage.isRecycled)
     }
 

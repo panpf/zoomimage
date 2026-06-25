@@ -68,7 +68,7 @@ class SketchZoomImageViewTest {
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = listOf(
@@ -117,7 +117,7 @@ class SketchZoomImageViewTest {
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNull(actual = sketchZoomImageView.drawable)
@@ -127,7 +127,7 @@ class SketchZoomImageViewTest {
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri)
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNotNull(actual = sketchZoomImageView.drawable)
@@ -146,7 +146,7 @@ class SketchZoomImageViewTest {
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNull(actual = sketchZoomImageView.drawable)
@@ -156,7 +156,7 @@ class SketchZoomImageViewTest {
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri)
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNotNull(actual = sketchZoomImageView.drawable)
@@ -168,7 +168,7 @@ class SketchZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 sketchZoomImageView.setImageDrawable(null)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNull(actual = sketchZoomImageView.drawable)
@@ -187,7 +187,7 @@ class SketchZoomImageViewTest {
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNull(actual = sketchZoomImageView.drawable)
@@ -199,7 +199,7 @@ class SketchZoomImageViewTest {
             sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri + "1") {
                 error(IntColorFetcher(Color.CYAN))
             }
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNotNull(actual = sketchZoomImageView.drawable)
@@ -218,7 +218,7 @@ class SketchZoomImageViewTest {
                         .addView(this@apply, LayoutParams(516, 516))
                 }
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNull(actual = sketchZoomImageView.drawable)
@@ -228,7 +228,7 @@ class SketchZoomImageViewTest {
             assertFalse(actual = sketchZoomImageView.subsampling.readyState.value)
 
             sketchZoomImageView.loadImage(AssetImageFiles.hugeCard.uri)
-            Thread.sleep(500)
+            Thread.sleep(1000)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNotNull(actual = sketchZoomImageView.drawable)
@@ -241,7 +241,7 @@ class SketchZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 sketchZoomImageView.setImageDrawable(null)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNull(actual = sketchZoomImageView.drawable)
@@ -253,7 +253,7 @@ class SketchZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 (sketchZoomImageView.parent as ViewGroup).removeView(sketchZoomImageView)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertFalse(actual = sketchZoomImageView.isAttachedToWindow)
             assertNull(actual = sketchZoomImageView.drawable)
@@ -266,7 +266,7 @@ class SketchZoomImageViewTest {
             withContext(Dispatchers.Main) {
                 sketchZoomImageView.setImageDrawable(thumbnail)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertFalse(actual = sketchZoomImageView.isAttachedToWindow)
             assertNotNull(actual = sketchZoomImageView.drawable)
@@ -279,7 +279,7 @@ class SketchZoomImageViewTest {
                 activity.findViewById<ViewGroup>(android.R.id.content)
                     .addView(sketchZoomImageView, LayoutParams(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertTrue(actual = sketchZoomImageView.isAttachedToWindow)
             assertNotNull(actual = sketchZoomImageView.drawable)

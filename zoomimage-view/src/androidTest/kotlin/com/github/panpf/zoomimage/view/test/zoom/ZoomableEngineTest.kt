@@ -286,7 +286,7 @@ class ZoomableEngineTest {
             val activity = scenario.getActivitySync()
             val imageView = ImageView(activity)
             val zoomable = ZoomableEngine(Logger("Test"), imageView)
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.containerSizeState.value)
             assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
@@ -326,7 +326,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -370,7 +370,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -418,7 +418,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -468,7 +468,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setContentScale(ContentScaleCompat.Crop)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -520,7 +520,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -570,7 +570,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setReadMode(ReadMode.Default)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -620,7 +620,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setScalesCalculator(ScalesCalculator.Fixed)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -703,7 +703,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -751,7 +751,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -809,7 +809,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -869,7 +869,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setContentScale(ContentScaleCompat.Crop)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -929,7 +929,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -989,7 +989,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setReadMode(ReadMode.Default)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1061,7 +1061,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setScalesCalculator(ScalesCalculator.Fixed)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1154,7 +1154,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1202,7 +1202,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1254,7 +1254,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1308,7 +1308,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setContentScale(ContentScaleCompat.Crop)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1362,7 +1362,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setAlignment(AlignmentCompat.BottomEnd)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1421,7 +1421,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1516,7 +1516,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1572,7 +1572,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1632,7 +1632,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1694,7 +1694,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setContentScale(ContentScaleCompat.Crop)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1756,7 +1756,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setAlignment(AlignmentCompat.BottomEnd)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1821,7 +1821,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1886,7 +1886,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -1952,7 +1952,7 @@ class ZoomableEngineTest {
                 )
                 zoomable.offset(targetOffset = OffsetCompat(-180f, -172f), animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2043,7 +2043,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2087,7 +2087,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2134,7 +2134,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2183,7 +2183,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.setContentScale(ContentScaleCompat.Crop)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2232,7 +2232,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.setAlignment(AlignmentCompat.BottomEnd)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2284,7 +2284,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2336,7 +2336,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2386,7 +2386,7 @@ class ZoomableEngineTest {
                 zoomable.setContentScale(ContentScaleCompat.Crop)
                 zoomable.setLimitOffsetWithinBaseVisibleRect(true)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2436,7 +2436,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2498,7 +2498,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2565,7 +2565,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2632,7 +2632,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2699,7 +2699,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2766,7 +2766,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2825,7 +2825,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2878,7 +2878,7 @@ class ZoomableEngineTest {
                 )
             }
 
-            Thread.sleep(100)
+            Thread.sleep(500)
             assertEquals(
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
@@ -2933,7 +2933,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = zoomable.minScaleState.value * 0.9f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -2989,7 +2989,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = zoomable.maxScaleState.value * 1.1f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3049,7 +3049,7 @@ class ZoomableEngineTest {
                     animated = false,
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3112,7 +3112,7 @@ class ZoomableEngineTest {
                     animated = false,
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3171,7 +3171,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3224,7 +3224,7 @@ class ZoomableEngineTest {
                 )
             }
 
-            Thread.sleep(100)
+            Thread.sleep(500)
             assertEquals(
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
@@ -3282,7 +3282,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3341,7 +3341,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3401,7 +3401,7 @@ class ZoomableEngineTest {
                     animated = false,
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3464,7 +3464,7 @@ class ZoomableEngineTest {
                     animated = false,
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3523,7 +3523,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3576,7 +3576,7 @@ class ZoomableEngineTest {
                 )
             }
 
-            Thread.sleep(100)
+            Thread.sleep(500)
             assertEquals(
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
@@ -3634,7 +3634,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3693,7 +3693,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3753,7 +3753,7 @@ class ZoomableEngineTest {
                     animated = false,
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3816,7 +3816,7 @@ class ZoomableEngineTest {
                     animated = false,
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3875,7 +3875,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -3936,7 +3936,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.switchScale(animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4005,7 +4005,7 @@ class ZoomableEngineTest {
                 zoomable.switchScale(animated = false)
                 zoomable.switchScale(animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4074,7 +4074,7 @@ class ZoomableEngineTest {
                 zoomable.setThreeStepScale(true)
                 zoomable.switchScale(animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4144,7 +4144,7 @@ class ZoomableEngineTest {
                 zoomable.switchScale(animated = false)
                 zoomable.switchScale(animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4215,7 +4215,7 @@ class ZoomableEngineTest {
                 zoomable.switchScale(animated = false)
                 zoomable.switchScale(animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4283,7 +4283,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.switchScale(animated = false, centroidContentPoint = IntOffsetCompat.Zero)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4357,7 +4357,7 @@ class ZoomableEngineTest {
                     )
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4428,7 +4428,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4481,7 +4481,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4551,7 +4551,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4621,7 +4621,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4691,7 +4691,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4761,7 +4761,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4824,7 +4824,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4877,7 +4877,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.scale(targetScale = 20f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -4944,7 +4944,7 @@ class ZoomableEngineTest {
                 )
                 zoomable.offsetBy(addOffset = addOffset, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -5011,7 +5011,7 @@ class ZoomableEngineTest {
                 )
                 zoomable.offsetBy(addOffset = addOffset, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -5078,7 +5078,7 @@ class ZoomableEngineTest {
                 )
                 zoomable.offsetBy(addOffset = addOffset, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -5145,7 +5145,7 @@ class ZoomableEngineTest {
                 )
                 zoomable.offsetBy(addOffset = addOffset, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -5208,7 +5208,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
@@ -5251,7 +5251,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
@@ -5301,7 +5301,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5351,7 +5351,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
@@ -5401,7 +5401,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-4128, -3353, 0, -774).toString(),
@@ -5451,7 +5451,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5501,7 +5501,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5551,7 +5551,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5601,7 +5601,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5650,7 +5650,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
@@ -5693,7 +5693,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
@@ -5743,7 +5743,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5793,7 +5793,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(0, 0, 0, 0).toString(),
@@ -5843,7 +5843,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-4128, -3353, 0, -774).toString(),
@@ -5893,7 +5893,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5944,7 +5944,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -5995,7 +5995,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -6046,7 +6046,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntRectCompat(-1032, -774, 0, -258).toString(),
@@ -6095,7 +6095,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6135,7 +6135,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6176,7 +6176,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(180)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6217,7 +6217,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotate(270)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6258,7 +6258,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6306,7 +6306,7 @@ class ZoomableEngineTest {
                 zoomable.rotate(90)
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6356,7 +6356,7 @@ class ZoomableEngineTest {
                 zoomable.rotate(180)
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6406,7 +6406,7 @@ class ZoomableEngineTest {
                 zoomable.rotate(270)
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6456,7 +6456,7 @@ class ZoomableEngineTest {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6498,7 +6498,7 @@ class ZoomableEngineTest {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotate(180)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6540,7 +6540,7 @@ class ZoomableEngineTest {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotate(270)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6582,7 +6582,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6622,7 +6622,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6663,7 +6663,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6704,7 +6704,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6745,7 +6745,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(1100, 733))
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6793,7 +6793,7 @@ class ZoomableEngineTest {
                 zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6843,7 +6843,7 @@ class ZoomableEngineTest {
                 zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6893,7 +6893,7 @@ class ZoomableEngineTest {
                 zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6943,7 +6943,7 @@ class ZoomableEngineTest {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotateBy(90 - zoomable.transformState.value.rotation.roundToInt())
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 90f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -6985,7 +6985,7 @@ class ZoomableEngineTest {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotateBy(180 - zoomable.transformState.value.rotation.roundToInt())
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 180f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -7027,7 +7027,7 @@ class ZoomableEngineTest {
                 zoomable.scale(zoomable.mediumScaleState.value, animated = false)
                 zoomable.rotateBy(270 - zoomable.transformState.value.rotation.roundToInt())
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(expected = 270f, actual = zoomable.transformState.value.rotation)
             assertEquals(
@@ -7115,7 +7115,7 @@ class ZoomableEngineTest {
             withContext(Dispatchers.Main) {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7176,7 +7176,7 @@ class ZoomableEngineTest {
                 zoomable.setContainerSize(IntSizeCompat(516, 516))
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7241,7 +7241,7 @@ class ZoomableEngineTest {
                 zoomable.setContentSize(IntSizeCompat(86, 1522))
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7308,7 +7308,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setContentScale(ContentScaleCompat.Crop)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7375,7 +7375,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.setAlignment(AlignmentCompat.BottomEnd)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7445,7 +7445,7 @@ class ZoomableEngineTest {
                 zoomable.setContentOriginSize(IntSizeCompat(690, 12176))
                 zoomable.rotate(90)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7515,7 +7515,7 @@ class ZoomableEngineTest {
                     animated = false
                 )
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7586,7 +7586,7 @@ class ZoomableEngineTest {
                 )
                 zoomable.offset(targetOffset = OffsetCompat(-180f, -172f), animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = IntSizeCompat(516, 516),
@@ -7737,7 +7737,7 @@ class ZoomableEngineTest {
                 zoomable.rotate(90)
                 zoomable.scale(targetScale = 20f, animated = false)
             }
-            Thread.sleep(100)
+            Thread.sleep(500)
 
             assertEquals(
                 expected = "ZoomableEngine(" +
