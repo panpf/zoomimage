@@ -10,7 +10,10 @@ plugins {
     id("org.jetbrains.kotlinx.atomicfu")
 }
 
-kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.sample.compose")
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.sample.compose") {
+    // Glide useds 'java.util.function.Supplier', for compatibility with Android 24-
+    enableCoreLibraryDesugaring = true
+}
 
 kotlin {
     applyMyHierarchyTemplate()
@@ -124,5 +127,9 @@ compose.resources {
 }
 
 dependencies {
-    androidRuntimeClasspath(libs.jetbrains.compose.ui.tooling)  // For compose preview
+    // For compose preview
+    androidRuntimeClasspath(libs.jetbrains.compose.ui.tooling)
+
+    // Glide useds 'java.util.function.Supplier', for compatibility with Android 24-
+    coreLibraryDesugaring(libs.android.desugarJdkLibs)
 }

@@ -32,6 +32,7 @@ androidApplication(
         }
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -49,6 +50,11 @@ androidApplication(
     buildFeatures {
         buildConfig = true
         viewBinding = true
+    }
+
+    compileOptions {
+        // Glide useds 'java.util.function.Supplier', for compatibility with Android 24-
+        isCoreLibraryDesugaringEnabled = true
     }
 }
 
@@ -89,4 +95,7 @@ dependencies {
     ksp(libs.glide.ksp)
 
     debugImplementation(libs.leakcanary)
+
+    // Glide useds 'java.util.function.Supplier', for compatibility with Android 24-
+    coreLibraryDesugaring(libs.android.desugarJdkLibs)
 }
