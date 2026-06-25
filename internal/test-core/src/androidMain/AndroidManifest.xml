@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <application>
+    <application android:largeHeap="true">
         <activity android:name="com.github.panpf.zoomimage.test.TestActivity" />
     </application>
 </manifest>
