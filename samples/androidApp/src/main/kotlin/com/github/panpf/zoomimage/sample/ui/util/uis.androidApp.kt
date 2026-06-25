@@ -51,7 +51,6 @@ internal fun ScaleType.computeScaleFactor(
         }
 
         ScaleType.MATRIX -> ScaleFactorCompat(1.0f, 1.0f)
-        else -> ScaleFactorCompat(scaleX = 1.0f, scaleY = 1.0f)
     }
 }
 
