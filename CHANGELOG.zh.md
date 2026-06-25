@@ -2,6 +2,14 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+## Android
+
+* fix: 修复
+  zoomimage-compose-coil2、zoomimage-compose-coil2-core、zoomimage-compose-glide、zoomimage-compose-sketch3、zoomimage-compose-sketch3-core
+  模块最低版本没有升级到 23 的问题
+
 # 1.5.0-beta02
 
 ## Multiplatform
