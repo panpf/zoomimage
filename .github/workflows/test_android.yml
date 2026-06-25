@@ -46,7 +46,9 @@ jobs:
           arch: ${{ steps.avd-info.outputs.arch }}
           target: ${{ steps.avd-info.outputs.target }}
           profile: pixel # from command 'avdmanager list device'
-          script: mv .github/debug.keystore ~/.android; internal/test_android_21.sh
+          script: |
+            mv .github/debug.keystore ~/.android
+            internal/test_android_21.sh
 
   test-android-23p:
     name: Android Unit tests
@@ -88,4 +90,6 @@ jobs:
           arch: ${{ steps.avd-info.outputs.arch }}
           target: ${{ steps.avd-info.outputs.target }}
           profile: pixel # from command 'avdmanager list device'
-          script: mv .github/debug.keystore ~/.android; internal/test_android.sh
+          script: |
+            mv .github/debug.keystore ~/.android
+            internal/test_android.sh

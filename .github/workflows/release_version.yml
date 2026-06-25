@@ -104,7 +104,9 @@ jobs:
           arch: ${{ steps.avd-info.outputs.arch }}
           target: ${{ steps.avd-info.outputs.target }}
           profile: pixel # from command 'avdmanager list device'
-          script: mv .github/debug.keystore ~/.android; internal/test_android_21.sh
+          script: |
+            mv .github/debug.keystore ~/.android
+            internal/test_android_21.sh
 
   test-android-23p:
     name: Android Unit tests
@@ -146,7 +148,9 @@ jobs:
           arch: ${{ steps.avd-info.outputs.arch }}
           target: ${{ steps.avd-info.outputs.target }}
           profile: pixel # from command 'avdmanager list device'
-          script: mv .github/debug.keystore ~/.android; internal/test_android.sh
+          script: |
+            mv .github/debug.keystore ~/.android
+            internal/test_android.sh
 
   package-android:
     name: Package android
@@ -189,7 +193,11 @@ jobs:
           cache-overwrite-existing: true
 
       - name: Run package
-        run: xcodebuild -project samples/iosApp/iosApp.xcodeproj -scheme iosApp -destination 'generic/platform=iOS Simulator' ARCHS=arm64 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath samples/shared/build/ios/outputs/
+        run: xcodebuild \
+          -project samples/iosApp/iosApp.xcodeproj \
+          -scheme iosApp \
+          -destination 'generic/platform=iOS Simulator' ARCHS=arm64 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
+          -derivedDataPath samples/shared/build/ios/outputs/
 
       - name: Read version name
         id: version_name_step
@@ -198,7 +206,10 @@ jobs:
           echo "version_name=$versionName" >> $GITHUB_OUTPUT
 
       - name: Compress
-        run: cd samples/shared/build/ios/outputs/Build/Products/Debug-iphonesimulator; zip -r "zoomimage-sample-${{ steps.version_name_step.outputs.version_name }}.app.zip" "ZoomImage.app"; cd -
+        run: |
+          cd samples/shared/build/ios/outputs/Build/Products/Debug-iphonesimulator
+          zip -r "zoomimage-sample-${{ steps.version_name_step.outputs.version_name }}.app.zip" "ZoomImage.app"
+          cd -
 
       - name: Upload ios artifacts
         uses: actions/upload-artifact@v7
@@ -303,7 +314,10 @@ jobs:
           echo "version_name=$versionName" >> $GITHUB_OUTPUT
 
       - name: Compress
-        run: cd samples/jsApp/build/dist/js/productionExecutable; zip -r "zoomimage-sample-js-${{ steps.version_name_step.outputs.version_name }}.zip" *; cd -
+        run: |
+          cd samples/jsApp/build/dist/js/productionExecutable
+          zip -r "zoomimage-sample-js-${{ steps.version_name_step.outputs.version_name }}.zip" *
+          cd -
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v7
@@ -336,7 +350,10 @@ jobs:
           echo "version_name=$versionName" >> $GITHUB_OUTPUT
 
       - name: Compress
-        run: cd samples/wasmJsApp/build/dist/wasmJs/productionExecutable; zip -r "zoomimage-sample-wasmJs-${{ steps.version_name_step.outputs.version_name }}.zip" *; cd -
+        run: |
+          cd samples/wasmJsApp/build/dist/wasmJs/productionExecutable
+          zip -r "zoomimage-sample-wasmJs-${{ steps.version_name_step.outputs.version_name }}.zip" *
+          cd -
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v7
