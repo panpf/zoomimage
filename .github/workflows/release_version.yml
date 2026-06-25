@@ -66,7 +66,7 @@ jobs:
         run: internal/test_ios.sh
 
   test-android-21:
-    name: Android Unit tests on API 21
+    name: Android Unit tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -107,7 +107,7 @@ jobs:
           script: mv .github/debug.keystore ~/.android; internal/test_android_21.sh
 
   test-android-23p:
-    name: Android Unit tests on API 23+
+    name: Android Unit tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
