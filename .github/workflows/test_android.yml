@@ -47,6 +47,9 @@ jobs:
           arch: ${{ steps.avd-info.outputs.arch }}
           target: ${{ steps.avd-info.outputs.target }}
           profile: pixel # from command 'avdmanager list device'
+          ram-size: 2048M
+          heap-size: 512M
+          #          disable-animations: true
           script: |
             mv .github/debug.keystore ~/.android
             internal/test_android.sh
