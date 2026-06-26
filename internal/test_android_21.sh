@@ -3,8 +3,8 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-rootDir="${PWD%/internal/*}"
-cd $rootDir
+rootDir="${PWD%/internal*}"
+cd "$rootDir"
 
 # The following modules support running tests on Android 21
 ./gradlew \
