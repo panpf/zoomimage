@@ -236,7 +236,7 @@ class SubsamplingStateTest {
                         .apply { subsamplingHolder = this }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             val lifecycle = lifecycleHolder!!
             assertEquals(expected = Lifecycle.State.RESUMED, actual = lifecycle.currentState)
@@ -247,7 +247,7 @@ class SubsamplingStateTest {
             GlobalScope.launch(Dispatchers.Main) {
                 lifecycle.currentState = Lifecycle.State.CREATED
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
             assertEquals(expected = false, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = true, actual = subsampling.stopped)
@@ -255,7 +255,7 @@ class SubsamplingStateTest {
             GlobalScope.launch(Dispatchers.Main) {
                 lifecycle.currentState = Lifecycle.State.STARTED
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
             assertEquals(expected = false, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = false, actual = subsampling.stopped)
@@ -265,7 +265,7 @@ class SubsamplingStateTest {
                 subsampling.setDisabledAutoStopWithLifecycle(true)
                 lifecycle.currentState = Lifecycle.State.STARTED
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
             assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = false, actual = subsampling.stopped)
@@ -273,7 +273,7 @@ class SubsamplingStateTest {
             GlobalScope.launch(Dispatchers.Main) {
                 lifecycle.currentState = Lifecycle.State.CREATED
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
             assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = false, actual = subsampling.stopped)
@@ -281,7 +281,7 @@ class SubsamplingStateTest {
             GlobalScope.launch(Dispatchers.Main) {
                 lifecycle.currentState = Lifecycle.State.STARTED
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
             assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = false, actual = subsampling.stopped)
@@ -291,7 +291,7 @@ class SubsamplingStateTest {
                 subsampling.setDisabledAutoStopWithLifecycle(false)
                 lifecycle.currentState = Lifecycle.State.CREATED
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
             assertEquals(expected = false, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = true, actual = subsampling.stopped)
@@ -299,7 +299,7 @@ class SubsamplingStateTest {
             GlobalScope.launch(Dispatchers.Main) {
                 subsampling.setDisabledAutoStopWithLifecycle(true)
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.CREATED, actual = lifecycle.currentState)
             assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = false, actual = subsampling.stopped)
@@ -309,7 +309,7 @@ class SubsamplingStateTest {
                 subsampling.setStopped(true)
                 lifecycle.currentState = Lifecycle.State.STARTED
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
             assertEquals(expected = true, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = true, actual = subsampling.stopped)
@@ -317,7 +317,7 @@ class SubsamplingStateTest {
             GlobalScope.launch(Dispatchers.Main) {
                 subsampling.setDisabledAutoStopWithLifecycle(false)
             }
-            waitMillis(100)
+            waitMillis(500)
             assertEquals(expected = Lifecycle.State.STARTED, actual = lifecycle.currentState)
             assertEquals(expected = false, actual = subsampling.disabledAutoStopWithLifecycle)
             assertEquals(expected = false, actual = subsampling.stopped)
@@ -350,7 +350,7 @@ class SubsamplingStateTest {
                     rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             assertEquals(expected = null, actual = subsampling.imageInfo)
         }
@@ -368,7 +368,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(expected = null, actual = subsampling.imageInfo)
@@ -390,7 +390,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 1000) { subsampling.ready }
             assertEquals(
@@ -411,7 +411,7 @@ class SubsamplingStateTest {
                     rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             assertEquals(
                 expected = "{}",
@@ -432,7 +432,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(
@@ -457,7 +457,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 1000) { subsampling.ready }
             assertEquals(
@@ -478,7 +478,7 @@ class SubsamplingStateTest {
                     rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(expected = false, actual = subsampling.ready)
@@ -497,7 +497,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 1000) { !subsampling.ready }
             assertEquals(expected = false, actual = subsampling.ready)
@@ -519,7 +519,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 1000) { subsampling.ready }
             assertEquals(expected = true, actual = subsampling.ready)
@@ -558,7 +558,7 @@ class SubsamplingStateTest {
 //                    rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
 //                }
 //            }
-//            waitMillis(100)
+//            waitMillis(500)
 //            val subsampling = subsamplingHolder!!
 //            waitUntil(timeoutMillis = 1000) { !subsampling.ready }
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
@@ -581,7 +581,7 @@ class SubsamplingStateTest {
 //                    subsampling.setImage(hugeLongComicImageSource)
 //                }
 //            }
-//            waitMillis(100)
+//            waitMillis(500)
 //            val subsampling = subsamplingHolder!!
 //            waitUntil(timeoutMillis = 1000) { subsampling.ready }
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
@@ -609,7 +609,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = 48, actual = subsampling.foregroundTiles.size)
@@ -636,7 +636,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = 144, actual = subsampling.foregroundTiles.size)
@@ -660,7 +660,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 2000) { subsampling.ready }
             assertEquals(
@@ -691,7 +691,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(
@@ -722,7 +722,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitUntil(timeoutMillis = 2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(
@@ -749,7 +749,7 @@ class SubsamplingStateTest {
                     subsampling.setImage(hugeLongComicImageSource)
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(
@@ -783,7 +783,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(
@@ -817,7 +817,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(
@@ -855,7 +855,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(
@@ -911,7 +911,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
-            waitMillis(100)
+            waitMillis(500)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(
