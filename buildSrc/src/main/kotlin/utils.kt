@@ -55,9 +55,6 @@ val publicModules = setOf(
     "zoomimage-view-sketch4-koin",
 )
 
-val Project.lowMinSdk: Int
-    get() = intProperty("lowMinSdk")
-
 val Project.minSdk: Int
     get() = intProperty("minSdk")
 

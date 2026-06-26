@@ -6,9 +6,7 @@
 
 ## Android
 
-* fix: 修复
-  zoomimage-compose-coil2、zoomimage-compose-coil2-core、zoomimage-compose-glide、zoomimage-compose-sketch3、zoomimage-compose-sketch3-core
-  模块最低版本没有升级到 23 的问题
+* change: 所有模块的 Android 平台最低版本升级到 23
 
 # 1.5.0-beta02
 
@@ -48,7 +46,7 @@
 
 ## Android
 
-* 所有 compose 模块最低版本升级到 23
+* change: 所有 compose 模块最低版本升级到 23
 
 ## iOS
 

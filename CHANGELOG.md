@@ -6,9 +6,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Android
 
-* fix: Fixed the issue where the minimum version of zoomimage-compose-coil2,
-  zoomimage-compose-coil2-core, zoomimage-compose-glide, zoomimage-compose-sketch3,
-  zoomimage-compose-sketch3-core modules was not upgraded to 23
+* change: The minimum Android platform version of all modules has been upgraded to 23
 
 # 1.5.0-beta02
 
@@ -51,7 +49,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Android
 
-* The minimum version of all compose modules has been upgraded to 23
+* change: The minimum version of all compose modules has been upgraded to 23
 
 ## iOS
 
