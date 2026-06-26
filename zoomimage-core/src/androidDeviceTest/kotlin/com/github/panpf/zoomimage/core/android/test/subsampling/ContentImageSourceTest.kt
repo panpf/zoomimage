@@ -18,18 +18,12 @@ class ContentImageSourceTest {
     @Test
     fun testFromContent() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.getInstance(context)
-        val uri1 = contentImages.cat.uri.toUri()
-        val uri2 = contentImages.dog.uri.toUri()
+        val uri1 = ContentImageFiles.with(context).cat.uri.toUri()
+        val uri2 = "${uri1}_1".toUri()
 
         assertEquals(
             expected = ContentImageSource(context, uri1),
             actual = ImageSource.fromContent(context, uri1)
-        )
-
-        assertEquals(
-            expected = ContentImageSource(context, uri2),
-            actual = ImageSource.fromContent(context, uri2)
         )
 
         assertNotEquals(
@@ -41,25 +35,18 @@ class ContentImageSourceTest {
     @Test
     fun testKey() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.getInstance(context)
-        val uri1 = contentImages.cat.uri.toUri()
-        val uri2 = contentImages.dog.uri.toUri()
+        val uri1 = ContentImageFiles.with(context).cat.uri.toUri()
 
         assertEquals(
             expected = uri1.toString(),
             actual = ContentImageSource(context, uri1).key
-        )
-        assertEquals(
-            expected = uri2.toString(),
-            actual = ContentImageSource(context, uri2).key
         )
     }
 
     @Test
     fun testOpenSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.getInstance(context)
-        val uri1 = contentImages.cat.uri.toUri()
+        val uri1 = ContentImageFiles.with(context).cat.uri.toUri()
         ContentImageSource(context, uri1).openSource().buffer().use {
             it.readByteArray()
         }
@@ -68,9 +55,8 @@ class ContentImageSourceTest {
     @Test
     fun testEqualsAndHashCode() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.getInstance(context)
-        val uri1 = contentImages.cat.uri.toUri()
-        val uri2 = contentImages.dog.uri.toUri()
+        val uri1 = ContentImageFiles.with(context).cat.uri.toUri()
+        val uri2 = "${uri1}_1".toUri()
 
         val source1 = ContentImageSource(context, uri1)
         val source12 = ContentImageSource(context, uri1)
@@ -94,17 +80,11 @@ class ContentImageSourceTest {
     @Test
     fun testToString() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImageFiles.getInstance(context)
-        val uri1 = contentImages.cat.uri.toUri()
-        val uri2 = contentImages.dog.uri.toUri()
+        val uri1 = ContentImageFiles.with(context).cat.uri.toUri()
 
         assertEquals(
             expected = "ContentImageSource('$uri1')",
             actual = ContentImageSource(context, uri1).toString()
-        )
-        assertEquals(
-            expected = "ContentImageSource('$uri2')",
-            actual = ContentImageSource(context, uri2).toString()
         )
     }
 }

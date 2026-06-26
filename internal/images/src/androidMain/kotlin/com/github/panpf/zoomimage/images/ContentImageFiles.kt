@@ -5,76 +5,53 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import okio.buffer
+import okio.Path.Companion.toOkioPath
 import java.io.File
 
 class ContentImageFiles private constructor() {
 
     companion object {
 
-        private var _instance: ContentImageFiles? = null
+        private var instance: ContentImageFiles? = null
         private val lock = Mutex()
 
-        suspend fun getInstance(context: Context): ContentImageFiles {
-            val instance = _instance
-            if (instance != null) {
-                return instance
-            }
-            lock.withLock {
-                val instance1 = _instance
-                if (instance1 != null) {
-                    return instance1
+        suspend fun with(context: Context): ContentImageFiles {
+            return instance ?: lock.withLock {
+                instance ?: run {
+                    val cacheDir =
+                        File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
+                    saveImageToExternalFilesDir(
+//                        imageFiles = ComposeResImageFiles.values.toList(),
+                        imageFiles = listOf(element = ComposeResImageFiles.cat),
+                        cacheDir = cacheDir.toOkioPath()
+                    )
+                    ContentImageFiles().also { instance = it }
                 }
-
-                val assetsDir =
-                    File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
-                if (!assetsDir.exists()) {
-                    assetsDir.mkdirs()
-                }
-                ComposeResImageFiles.values.forEach {
-                    val file = File(assetsDir, it.name)
-                    if (!file.exists()) {
-                        try {
-                            it.toImageSource().openSource().buffer().inputStream()
-                                .use { inputStream ->
-                                    file.outputStream().use { outputStream ->
-                                        inputStream.copyTo(outputStream)
-                                    }
-                                }
-                        } catch (e: Exception) {
-                            file.delete()
-                            throw Exception("Failed to copy ${it.name} to ${file.absolutePath}", e)
-                        }
-                    }
-                }
-                val newInstance = ContentImageFiles()
-                _instance = newInstance
-                return newInstance
             }
         }
     }
 
     val cat = ComposeResImageFiles.cat.toContentImageFile()
-    val dog = ComposeResImageFiles.dog.toContentImageFile()
-    val anim = ComposeResImageFiles.anim.toContentImageFile()
-    val longEnd = ComposeResImageFiles.longEnd.toContentImageFile()
-    val longWhale = ComposeResImageFiles.longWhale.toContentImageFile()
-    val hugeChina = ComposeResImageFiles.hugeChina.toContentImageFile()
-    val hugeCard = ComposeResImageFiles.hugeCard.toContentImageFile()
-    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toContentImageFile()
-    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toContentImageFile()
-
-    val all = listOf(
-        cat,
-        dog,
-        anim,
-        longEnd,
-        longWhale,
-        hugeChina,
-        hugeCard,
-        hugeLongQmsht,
-        hugeLongComic
-    )
+//    val dog = ComposeResImageFiles.dog.toContentImageFile()
+//    val anim = ComposeResImageFiles.anim.toContentImageFile()
+//    val longEnd = ComposeResImageFiles.longEnd.toContentImageFile()
+//    val longWhale = ComposeResImageFiles.longWhale.toContentImageFile()
+//    val hugeChina = ComposeResImageFiles.hugeChina.toContentImageFile()
+//    val hugeCard = ComposeResImageFiles.hugeCard.toContentImageFile()
+//    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toContentImageFile()
+//    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toContentImageFile()
+//
+//    val all = listOf(
+//        cat,
+//        dog,
+//        anim,
+//        longEnd,
+//        longWhale,
+//        hugeChina,
+//        hugeCard,
+//        hugeLongQmsht,
+//        hugeLongComic
+//    )
 }
 
 class ContentImageFile(

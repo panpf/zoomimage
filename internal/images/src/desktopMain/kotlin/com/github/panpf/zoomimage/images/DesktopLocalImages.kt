@@ -2,108 +2,87 @@ package com.github.panpf.zoomimage.images
 
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import net.harawata.appdirs.AppDirsFactory
 import okio.ByteString.Companion.encodeUtf8
-import okio.FileSystem
-import okio.Path
-import okio.Path.Companion.toPath
-import okio.buffer
+import okio.Path.Companion.toOkioPath
 import java.io.File
 import java.net.URI
 import java.nio.file.Paths
 
-class DesktopLocalImages private constructor() {
+class DesktopLocalImages private constructor(cacheDir: File) {
 
     companion object {
 
         private var instance: DesktopLocalImages? = null
+        private val lock = Mutex()
 
         suspend fun with(): DesktopLocalImages {
-            saveToExternalFilesDir()
-            return instance ?: synchronized(this) {
-                instance ?: DesktopLocalImages().also { instance = it }
-            }
-        }
-
-        suspend fun saveToExternalFilesDir() = withContext(Dispatchers.IO) {
-            val fileSystem = FileSystem.SYSTEM
-            val outDir = appCacheDirectory().resolve("zoomimage-files")
-            if (!fileSystem.exists(outDir)) {
-                fileSystem.createDirectories(outDir)
-            }
-            ComposeResImageFiles.values.forEach {
-                val file = outDir.resolve(it.name)
-                if (!fileSystem.exists(file)) {
-                    try {
-                        it.toImageSource().openSource()
-                            .buffer().use { input ->
-                                fileSystem.sink(file).buffer().use { output ->
-                                    output.writeAll(input)
-                                }
-                            }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        fileSystem.delete(file)
-                    }
+            return instance ?: lock.withLock {
+                instance ?: run {
+                    val cacheDir = appCacheDirectory().resolve("zoomimage-files")
+                    saveImageToExternalFilesDir(
+//                        imageFiles = ComposeResImageFiles.values.toList(),
+                        imageFiles = listOf(element = ComposeResImageFiles.cat),
+                        cacheDir = cacheDir.toOkioPath()
+                    )
+                    DesktopLocalImages(cacheDir).also { instance = it }
                 }
             }
         }
     }
 
-    private val cacheDir = File("${appCacheDirectory().resolve("zoomimage-files")}")
-
     val cat = ComposeResImageFiles.cat.toLocalImageFile(cacheDir)
-    val dog = ComposeResImageFiles.dog.toLocalImageFile(cacheDir)
-    val anim = ComposeResImageFiles.anim.toLocalImageFile(cacheDir)
-    val longEnd = ComposeResImageFiles.longEnd.toLocalImageFile(cacheDir)
-    val longWhale = ComposeResImageFiles.longWhale.toLocalImageFile(cacheDir)
-    val hugeChina = ComposeResImageFiles.hugeChina.toLocalImageFile(cacheDir)
-    val hugeCard = ComposeResImageFiles.hugeCard.toLocalImageFile(cacheDir)
-    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toLocalImageFile(cacheDir)
-    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toLocalImageFile(cacheDir)
-
-    val exifFlipHorizontal = ComposeResImageFiles.exifFlipHorizontal.toLocalImageFile(cacheDir)
-    val exifFlipVertical = ComposeResImageFiles.exifFlipVertical.toLocalImageFile(cacheDir)
-    val exifNormal = ComposeResImageFiles.exifNormal.toLocalImageFile(cacheDir)
-    val exifRotate90 = ComposeResImageFiles.exifRotate90.toLocalImageFile(cacheDir)
-    val exifRotate180 = ComposeResImageFiles.exifRotate180.toLocalImageFile(cacheDir)
-    val exifRotate270 = ComposeResImageFiles.exifRotate270.toLocalImageFile(cacheDir)
-    val exifTranspose = ComposeResImageFiles.exifTranspose.toLocalImageFile(cacheDir)
-    val exifTransverse = ComposeResImageFiles.exifTransverse.toLocalImageFile(cacheDir)
-
-    val exifs = arrayOf(
-        exifFlipHorizontal,
-        exifFlipVertical,
-        exifNormal,
-        exifRotate90,
-        exifRotate180,
-        exifRotate270,
-        exifTranspose,
-        exifTransverse,
-    )
-
-    val all = listOf(
-        cat,
-        dog,
-        anim,
-        longEnd,
-        longWhale,
-        hugeChina,
-        hugeCard,
-        hugeLongQmsht,
-        hugeLongComic,
-
-        exifFlipHorizontal,
-        exifFlipVertical,
-        exifNormal,
-        exifRotate90,
-        exifRotate180,
-        exifRotate270,
-        exifTranspose,
-        exifTransverse,
-    )
+//    val dog = ComposeResImageFiles.dog.toLocalImageFile(cacheDir)
+//    val anim = ComposeResImageFiles.anim.toLocalImageFile(cacheDir)
+//    val longEnd = ComposeResImageFiles.longEnd.toLocalImageFile(cacheDir)
+//    val longWhale = ComposeResImageFiles.longWhale.toLocalImageFile(cacheDir)
+//    val hugeChina = ComposeResImageFiles.hugeChina.toLocalImageFile(cacheDir)
+//    val hugeCard = ComposeResImageFiles.hugeCard.toLocalImageFile(cacheDir)
+//    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toLocalImageFile(cacheDir)
+//    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toLocalImageFile(cacheDir)
+//
+//    val exifFlipHorizontal = ComposeResImageFiles.exifFlipHorizontal.toLocalImageFile(cacheDir)
+//    val exifFlipVertical = ComposeResImageFiles.exifFlipVertical.toLocalImageFile(cacheDir)
+//    val exifNormal = ComposeResImageFiles.exifNormal.toLocalImageFile(cacheDir)
+//    val exifRotate90 = ComposeResImageFiles.exifRotate90.toLocalImageFile(cacheDir)
+//    val exifRotate180 = ComposeResImageFiles.exifRotate180.toLocalImageFile(cacheDir)
+//    val exifRotate270 = ComposeResImageFiles.exifRotate270.toLocalImageFile(cacheDir)
+//    val exifTranspose = ComposeResImageFiles.exifTranspose.toLocalImageFile(cacheDir)
+//    val exifTransverse = ComposeResImageFiles.exifTransverse.toLocalImageFile(cacheDir)
+//
+//    val exifs = arrayOf(
+//        exifFlipHorizontal,
+//        exifFlipVertical,
+//        exifNormal,
+//        exifRotate90,
+//        exifRotate180,
+//        exifRotate270,
+//        exifTranspose,
+//        exifTransverse,
+//    )
+//
+//    val all = listOf(
+//        cat,
+//        dog,
+//        anim,
+//        longEnd,
+//        longWhale,
+//        hugeChina,
+//        hugeCard,
+//        hugeLongQmsht,
+//        hugeLongComic,
+//
+//        exifFlipHorizontal,
+//        exifFlipVertical,
+//        exifNormal,
+//        exifRotate90,
+//        exifRotate180,
+//        exifRotate270,
+//        exifTranspose,
+//        exifTransverse,
+//    )
 }
 
 class DesktopLocalImageFile(
@@ -134,7 +113,7 @@ fun ComposeResImageFile.toLocalImageFile(
     exifOrientation = this.exifOrientation
 )
 
-fun appCacheDirectory(): Path {
+fun appCacheDirectory(): File {
     val appName = (getComposeResourcesPath() ?: getJarPath(DesktopLocalImages::class.java))
         ?.md5()
         ?: throw UnsupportedOperationException(
@@ -147,7 +126,7 @@ fun appCacheDirectory(): Path {
             /* appVersion = */ null,
             /* appAuthor = */ null,
         )
-    ) { "Failed to get the cache directory of the App" }.toPath()
+    ) { "Failed to get the cache directory of the App" }.let { File(it) }
 }
 
 /**

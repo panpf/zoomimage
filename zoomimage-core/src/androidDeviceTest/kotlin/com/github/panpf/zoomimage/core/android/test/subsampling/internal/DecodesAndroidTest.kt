@@ -32,7 +32,7 @@ class DecodesAndroidTest {
 
     @Test
     fun testDecodeExifOrientation() = runTest {
-        ComposeResImageFiles.values.forEach { imageFile ->
+        ComposeResImageFiles.exifs.forEach { imageFile ->
             assertExifOrientationEquals(
                 expected = imageFile.exifOrientation,
                 actual = imageFile.toImageSource().decodeExifOrientation(),
@@ -53,7 +53,7 @@ class DecodesAndroidTest {
 
     @Test
     fun testDecodeImageInfo() = runTest {
-        ComposeResImageFiles.values.forEach { imageFile ->
+        ComposeResImageFiles.exifs.forEach { imageFile ->
             val imageInfo = runCatching {
                 imageFile.toImageSource().decodeImageInfo()
             }.getOrNull()

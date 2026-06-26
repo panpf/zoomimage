@@ -30,10 +30,10 @@ import okio.buffer
 
 actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
     return listOf(
-        "FILE" to AndroidLocalImageFiles.with(context).cat.uri,
+        "FILE" to AndroidLocalImageFiles.with(context).hugeLongQmsht.uri,
         "ASSET" to AssetImageFiles.longEnd.uri,
         "BYTES" to HttpImageFiles.hugeLongComic.uri,
-        "CONTENT" to ContentImageFiles.getInstance(context).hugeLongQmsht.uri,
+        "CONTENT" to ContentImageFiles.with(context).cat.uri,
         "RES" to AndroidResourceImageFiles.hugeCard.uri,
         "RES_COMPOSE" to ComposeResImageFiles.hugeChina.uri,
     )

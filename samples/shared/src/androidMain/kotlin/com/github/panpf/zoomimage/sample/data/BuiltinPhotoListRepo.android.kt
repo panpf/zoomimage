@@ -9,13 +9,14 @@ import com.github.panpf.zoomimage.images.HttpImageFiles
 
 actual suspend fun buildPlatformBuiltinPhotoList(sketch: Sketch): List<String> {
     return listOf(
+        ContentImageFiles.with(sketch.context).cat,
         ComposeResImageFiles.cat,
         ComposeResImageFiles.dog,
         ComposeResImageFiles.giraffe,
         ComposeResImageFiles.horse,
         ComposeResImageFiles.anim,
         ComposeResImageFiles.longEnd,
-        ContentImageFiles.getInstance(sketch.context).longWhale,
+        ComposeResImageFiles.longWhale,
         ComposeResImageFiles.hugeChina,
         AndroidResourceImageFiles.hugeCard,
         AndroidLocalImageFiles.with(sketch.context).hugeLongQmsht,

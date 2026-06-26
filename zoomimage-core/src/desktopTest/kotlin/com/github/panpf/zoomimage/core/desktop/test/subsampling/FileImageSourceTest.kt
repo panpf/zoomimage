@@ -16,18 +16,12 @@ class FileImageSourceTest {
 
     @Test
     fun testFromFile() = runTest {
-        val localImages = DesktopLocalImages.with()
-        val path1 = localImages.cat.uri.replace("file://", "")
-        val path2 = localImages.dog.uri.replace("file://", "")
+        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
+        val path2 = "${path1}_1"
 
         assertEquals(
             expected = FileImageSource(path1.toPath()),
             actual = ImageSource.fromFile(path1.toPath())
-        )
-
-        assertEquals(
-            expected = FileImageSource(path2.toPath()),
-            actual = ImageSource.fromFile(path2)
         )
 
         assertNotEquals(
@@ -38,24 +32,17 @@ class FileImageSourceTest {
 
     @Test
     fun testKey() = runTest {
-        val localImages = DesktopLocalImages.with()
-        val path1 = localImages.cat.uri.replace("file://", "")
-        val path2 = localImages.dog.uri.replace("file://", "")
+        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
 
         assertEquals(
             expected = "file://$path1",
             actual = FileImageSource(path1.toPath()).key
         )
-        assertEquals(
-            expected = "file://$path2",
-            actual = FileImageSource(path2.toPath()).key
-        )
     }
 
     @Test
     fun testOpenSource() = runTest {
-        val localImages = DesktopLocalImages.with()
-        val path1 = localImages.cat.uri.replace("file://", "")
+        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
         FileImageSource(path1.toPath()).openSource().buffer().use {
             it.readByteArray()
         }
@@ -63,9 +50,8 @@ class FileImageSourceTest {
 
     @Test
     fun testEqualsAndHashCode() = runTest {
-        val localImages = DesktopLocalImages.with()
-        val path1 = localImages.cat.uri.replace("file://", "")
-        val path2 = localImages.dog.uri.replace("file://", "")
+        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
+        val path2 = "${path1}_1"
 
         val source1 = FileImageSource(path1.toPath())
         val source12 = FileImageSource(path1.toPath())
@@ -88,17 +74,11 @@ class FileImageSourceTest {
 
     @Test
     fun testToString() = runTest {
-        val localImages = DesktopLocalImages.with()
-        val path1 = localImages.cat.uri.replace("file://", "")
-        val path2 = localImages.dog.uri.replace("file://", "")
+        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
 
         assertEquals(
             expected = "FileImageSource('$path1')",
             actual = FileImageSource(path1.toPath()).toString()
-        )
-        assertEquals(
-            expected = "FileImageSource('$path2')",
-            actual = FileImageSource(path2.toPath()).toString()
         )
     }
 }

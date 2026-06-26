@@ -4,7 +4,7 @@ plugins {
 }
 
 addMultiplatformTargets(KmpTarget.entries.toTypedArray())
-kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.test.coil")
+kmpAndroidLibrary(nameSpace = "com.github.panpf.zoomimage.test.coil3")
 
 kotlin {
     sourceSets {

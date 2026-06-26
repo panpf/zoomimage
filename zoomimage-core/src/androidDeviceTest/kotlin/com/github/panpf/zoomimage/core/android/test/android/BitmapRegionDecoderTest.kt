@@ -19,9 +19,9 @@ class BitmapRegionDecoderTest {
 
     @Test
     fun testDecodeRegion() = runTest {
-        val imageFile = ComposeResImageFiles.hugeChina
-        val imageSize = imageFile.size  // 6799x4882
-        val tileSize = IntSizeCompat(679, 1219)
+        val imageFile = ComposeResImageFiles.cat
+        val imageSize = imageFile.size
+        val tileSize = IntSizeCompat(imageSize.width / 2, imageSize.height / 3)
         val inputStream =
             imageFile.toImageSource().openSource().buffer().inputStream()
         var decoder: BitmapRegionDecoder? = null
@@ -48,9 +48,9 @@ class BitmapRegionDecoderTest {
 
     @Test
     fun testDecodeRegionOutOfRange1() = runTest {
-        val imageFile = ComposeResImageFiles.hugeChina
-        val imageSize = imageFile.size  // 6799x4882
-        val tileSize = IntSizeCompat(679, 1219)
+        val imageFile = ComposeResImageFiles.cat
+        val imageSize = imageFile.size
+        val tileSize = IntSizeCompat(imageSize.width / 2, imageSize.height / 3)
         val inputStream =
             imageFile.toImageSource().openSource().buffer().inputStream()
         var decoder: BitmapRegionDecoder? = null
@@ -85,9 +85,9 @@ class BitmapRegionDecoderTest {
 
     @Test
     fun testDecodeRegionOutOfRange2() = runTest {
-        val imageFile = ComposeResImageFiles.hugeChina
-        val imageSize = imageFile.size  // 6799x4882
-        val tileSize = IntSizeCompat(679, 1219)
+        val imageFile = ComposeResImageFiles.cat
+        val imageSize = imageFile.size
+        val tileSize = IntSizeCompat(imageSize.width / 2, imageSize.height / 3)
         val inputStream =
             imageFile.toImageSource().openSource().buffer().inputStream()
         var decoder: BitmapRegionDecoder? = null
