@@ -8,6 +8,10 @@
 
 * change: 所有模块的 Android 平台最低版本升级到 23
 
+## Dependencies
+
+* 升级 sketch 4.5.0-rc01
+
 # 1.5.0-beta02
 
 ## Multiplatform

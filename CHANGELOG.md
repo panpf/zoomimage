@@ -8,6 +8,10 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 * change: The minimum Android platform version of all modules has been upgraded to 23
 
+## Dependencies
+
+* Upgrade to sketch 4.5.0-rc01
+
 # 1.5.0-beta02
 
 ## Multiplatform
