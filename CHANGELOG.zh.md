@@ -2,6 +2,53 @@
 
 翻译：[English](CHANGELOG.md)
 
+# 1.5.0 Stable
+
+## Multiplatform
+
+* break: RegionDecoder.Factory.create() 函数增加 suspend 修饰符
+* break: RegionDecoder 接口移除 subsamplingImage 属性
+* break: RegionDecoder 接口的 imageInfo 属性改成方法
+* break: 重构 DefaultMouseWheelScaleCalculator 以支持平滑滚动，请注意其构造参数的作用已完全改变
+* fix: 修复 Float.isInRangeWithScale() 没有对 min 和 max 应用 scale 的 bug
+* improve: 解码 tile 后 simpleSize 为 1 验证尺寸时误差放宽 1
+  个像素。[#114](https://github.com/panpf/zoomimage/issues/114)
+* improve: 扩展 ScrollBarSpec 的构造函数和 copy 函数
+* new: 现在滚动条支持 WindowInsets，通过 ScrollBarSpec 的 windowInsets 或 windowInsetsTypeMask
+  参数开启即可，详情请参考文档 [scrollbar.zh.md](docs/scrollbar.zh.md)
+* new: ScrollBarSpec 增加 Medium、Large 配置模板
+
+## Android
+
+* fix: 修复 ACTION_POINTER_UP 时缩放中心跳跃的 bug
+* change: 所有模块的 Android 平台最低版本升级到 23
+* new: ZoomImageView 新增 scrollBarSideMargin 和 scrollBarEndsMargin XML 属性
+
+## iOS
+
+* change: 不再支持 iosX64 平台
+* new: 新增 PhotoAssetImageSource 支持从 PhotoAsset 解码图片
+* new: 新增 UIImageRegionDecoder 支持 heif 和 avif 图片
+
+## jvm
+
+* change: jvmTarget 升级到 11
+
+## Dependencies
+
+* 升级 kotlin 2.3.20
+* 升级 jetbrains compose 1.10.3
+* 升级 jetbrains lifecycle 2.10.0
+* 升级 jetbrains skiko 0.9.37.4
+* 升级 androidx compose 1.10.5
+* 升级 androidx exifinterface 1.4.2
+* 升级 kotlinx collections immutable 0.4.0
+* 升级 kotlinx coroutines 1.11.0
+* 升级 okio 3.17.0
+* 升级 sketch 4.5.0
+* 升级 glide 5.0.7
+* 升级 coil 3.4.0
+
 # 1.5.0-rc01
 
 ## Android
@@ -38,15 +85,15 @@
 
 ## Multiplatform
 
-* new: 现在滚动条支持 WindowInsets，通过 ScrollBarSpec 的 windowInsets 或 windowInsetsTypeMask
-  参数开启即可，详情请参考文档 [scrollbar.zh.md](docs/scrollbar.zh.md)
-* new: ScrollBarSpec 增加 Medium、Large 配置模板
-* improve: 解码 tile 后 simpleSize 为 1 验证尺寸时误差放宽 1
-  个像素。[#114](https://github.com/panpf/zoomimage/issues/114)
-* fix: 修复 Float.isInRangeWithScale() 没有对 min 和 max 应用 scale 的 bug
 * break: RegionDecoder.Factory.create() 函数增加 suspend 修饰符
 * break: RegionDecoder 接口移除 subsamplingImage 属性
 * break: RegionDecoder 接口的 imageInfo 属性改成方法
+* fix: 修复 Float.isInRangeWithScale() 没有对 min 和 max 应用 scale 的 bug
+* improve: 解码 tile 后 simpleSize 为 1 验证尺寸时误差放宽 1
+  个像素。[#114](https://github.com/panpf/zoomimage/issues/114)
+* new: 现在滚动条支持 WindowInsets，通过 ScrollBarSpec 的 windowInsets 或 windowInsetsTypeMask
+  参数开启即可，详情请参考文档 [scrollbar.zh.md](docs/scrollbar.zh.md)
+* new: ScrollBarSpec 增加 Medium、Large 配置模板
 
 ## Android
 

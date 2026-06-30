@@ -2,6 +2,56 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# 1.5.0 Stable
+
+## Multiplatform
+
+* break: The suspend modifier should be added to the RegionDecoder.Factory.create() function
+* break: RegionDecoder interface removes subsamplingImage property
+* break: The imageInfo attribute of the RegionDecoder interface is changed to a method
+* break: Refactor DefaultMouseWheelScaleCalculator to support smooth scrolling, note that the role
+  of its constructor parameters has completely changed
+* fix: Fixed the bug that Float.isInRangeWithScale() did not apply scale to min and max
+* improve: After decoding the tile, simpleSize is 1 and the error is relaxed by 1 pixel when
+  verifying the size. [#114](https://github.com/panpf/zoomimage/issues/114)
+* improve: Extend the constructor and copy function of ScrollBarSpec
+* new: The scroll bar now supports WindowInsets, which can be turned on through the
+  windowInsets or windowInsetsTypeMask parameter of ScrollBarSpec. Please refer to the documentation
+  for
+  details. [scrollbar.md](docs/scrollbar.md)
+* new: ScrollBarSpec adds Medium, Large, configuration templates
+
+## Android
+
+* fix: pointer switch jump on ACTION_POINTER_UP
+* change: The minimum Android platform version of all modules has been upgraded to 23
+* new: ZoomImageView adds scrollBarSideMargin and scrollBarEndsMargin XML properties
+
+## iOS
+
+* change: iosX64 platform is no longer supported
+* new: Added PhotoAssetImageSource to support decoding images from PhotoAsset
+* new: Added UIImageRegionDecoder to support heif and avif images
+
+## jvm
+
+* change: jvmTarget upgraded to 11
+
+## Dependencies
+
+* Upgrade to kotlin 2.3.20
+* Upgrade to jetbrains compose 1.10.3
+* Upgrade to jetbrains lifecycle 2.10.0
+* Upgrade to jetbrains skiko 0.9.37.4
+* Upgrade to androidx compose 1.10.5
+* Upgrade to androidx exifinterface 1.4.2
+* Upgrade to kotlinx collections immutable 0.4.0
+* Upgrade to kotlinx coroutines 1.11.0
+* Upgrade to okio 3.17.0
+* Upgrade to sketch 4.5.0
+* Upgrade to glide 5.0.7
+* Upgrade to coil 3.4.0
+
 # 1.5.0-rc01
 
 ## Android
@@ -39,17 +89,17 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Multiplatform
 
+* break: The suspend modifier should be added to the RegionDecoder.Factory.create() function
+* break: RegionDecoder interface removes subsamplingImage property
+* break: The imageInfo attribute of the RegionDecoder interface is changed to a method
+* fix: Fixed the bug that Float.isInRangeWithScale() did not apply scale to min and max
+* improve: After decoding the tile, simpleSize is 1 and the error is relaxed by 1 pixel when
+  verifying the size. [#114](https://github.com/panpf/zoomimage/issues/114)
 * new: The scroll bar now supports WindowInsets, which can be turned on through the
   windowInsets or windowInsetsTypeMask parameter of ScrollBarSpec. Please refer to the documentation
   for
   details. [scrollbar.md](docs/scrollbar.md)
 * new: ScrollBarSpec adds Medium, Large, configuration templates
-* improve: After decoding the tile, simpleSize is 1 and the error is relaxed by 1 pixel when
-  verifying the size. [#114](https://github.com/panpf/zoomimage/issues/114)
-* fix: Fixed the bug that Float.isInRangeWithScale() did not apply scale to min and max
-* break: The suspend modifier should be added to the RegionDecoder.Factory.create() function
-* break: RegionDecoder interface removes subsamplingImage property
-* break: The imageInfo attribute of the RegionDecoder interface is changed to a method
 
 ## Android
 
