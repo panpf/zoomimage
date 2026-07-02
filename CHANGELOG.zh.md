@@ -11,6 +11,7 @@
 * depend: 升级 jetbrains lifecycle 2.11.0-beta01
 * depend: 升级 koin 4.2.1
 * depend: 升级 kotlin 2.4.0
+* depend: 升级 sketch 4.6.0-alpha01
 * depend: 升级 skiko 0.144.6
 
 # 1.5.0 Stable

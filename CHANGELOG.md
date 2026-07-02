@@ -10,7 +10,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * depend: Upgrade to jetbrains compose 1.11.1
 * depend: Upgrade to jetbrains lifecycle 2.11.0-beta01
 * depend: Upgrade to koin 4.2.1
-* depend: Upgrade to kotlin 2.4.0
+* depend: Upgrade to sketch 4.6.0-alpha01
 * depend: Upgrade to skiko 0.144.6
 
 # 1.5.0 Stable
