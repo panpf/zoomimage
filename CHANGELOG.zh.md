@@ -6,6 +6,7 @@
 
 ## Dependencies
 
+* depend: 升级 coil 3.5.0
 * depend: 升级 jetbrains compose 1.11.1
 * depend: 升级 jetbrains lifecycle 2.11.0-beta01
 * depend: 升级 koin 4.2.1

@@ -6,6 +6,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Dependencies
 
+* depend: Upgrade to coil 3.5.0
 * depend: Upgrade to jetbrains compose 1.11.1
 * depend: Upgrade to jetbrains lifecycle 2.11.0-beta01
 * depend: Upgrade to koin 4.2.1
