@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.6.0-alpha01
 
 ## Dependencies
 
