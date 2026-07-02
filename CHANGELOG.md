@@ -2,6 +2,16 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+## Dependencies
+
+* depend: Upgrade to jetbrains compose 1.11.1
+* depend: Upgrade to jetbrains lifecycle 2.11.0-beta01
+* depend: Upgrade to koin 4.2.1
+* depend: Upgrade to kotlin 2.4.0
+* depend: Upgrade to skiko 0.144.6
+
 # 1.5.0 Stable
 
 ## Multiplatform
@@ -39,18 +49,18 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Dependencies
 
-* Upgrade to kotlin 2.3.20
-* Upgrade to jetbrains compose 1.10.3
-* Upgrade to jetbrains lifecycle 2.10.0
-* Upgrade to jetbrains skiko 0.9.37.4
-* Upgrade to androidx compose 1.10.5
-* Upgrade to androidx exifinterface 1.4.2
-* Upgrade to kotlinx collections immutable 0.4.0
-* Upgrade to kotlinx coroutines 1.11.0
-* Upgrade to okio 3.17.0
-* Upgrade to sketch 4.5.0
-* Upgrade to glide 5.0.7
-* Upgrade to coil 3.4.0
+* depend: Upgrade to kotlin 2.3.20
+* depend: Upgrade to jetbrains compose 1.10.3
+* depend: Upgrade to jetbrains lifecycle 2.10.0
+* depend: Upgrade to jetbrains skiko 0.9.37.4
+* depend: Upgrade to androidx compose 1.10.5
+* depend: Upgrade to androidx exifinterface 1.4.2
+* depend: Upgrade to kotlinx collections immutable 0.4.0
+* depend: Upgrade to kotlinx coroutines 1.11.0
+* depend: Upgrade to okio 3.17.0
+* depend: Upgrade to sketch 4.5.0
+* depend: Upgrade to glide 5.0.7
+* depend: Upgrade to coil 3.4.0
 
 # 1.5.0-rc01
 
@@ -60,7 +70,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Dependencies
 
-* Upgrade to sketch 4.5.0-rc01
+* depend: Upgrade to sketch 4.5.0-rc01
 
 # 1.5.0-beta02
 
@@ -117,18 +127,18 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Dependencies
 
-* Upgrade to kotlin 2.3.20
-* Upgrade to jetbrains compose 1.10.3
-* Upgrade to jetbrains lifecycle 2.10.0
-* Upgrade to jetbrains skiko 0.9.37.4
-* Upgrade to androidx compose 1.10.5
-* Upgrade to androidx exifinterface 1.4.2
-* Upgrade to kotlinx collections immutable 0.4.0
-* Upgrade to kotlinx coroutines 1.11.0
-* Upgrade to okio 3.17.0
-* Upgrade to sketch 4.5.0
-* Upgrade to glide 5.0.7
-* Upgrade to coil 3.4.0
+* depend: Upgrade to kotlin 2.3.20
+* depend: Upgrade to jetbrains compose 1.10.3
+* depend: Upgrade to jetbrains lifecycle 2.10.0
+* depend: Upgrade to jetbrains skiko 0.9.37.4
+* depend: Upgrade to androidx compose 1.10.5
+* depend: Upgrade to androidx exifinterface 1.4.2
+* depend: Upgrade to kotlinx collections immutable 0.4.0
+* depend: Upgrade to kotlinx coroutines 1.11.0
+* depend: Upgrade to okio 3.17.0
+* depend: Upgrade to sketch 4.5.0
+* depend: Upgrade to glide 5.0.7
+* depend: Upgrade to coil 3.4.0
 
 # 1.4.0
 

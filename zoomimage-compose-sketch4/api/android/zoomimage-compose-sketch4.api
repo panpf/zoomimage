@@ -1,0 +1,5 @@
+public final class com/github/panpf/zoomimage/SingletonSketchZoomAsyncImageKt {
+	public static final fun SketchZoomAsyncImage-zBTABjA (Lcom/github/panpf/sketch/request/ImageRequest;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lcom/github/panpf/sketch/AsyncImageState;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;ILcom/github/panpf/zoomimage/SketchZoomState;Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun SketchZoomAsyncImage-zBTABjA (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lcom/github/panpf/sketch/AsyncImageState;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;ILcom/github/panpf/zoomimage/SketchZoomState;Lcom/github/panpf/zoomimage/compose/zoom/ScrollBarSpec;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+}
+

@@ -1,0 +1,12 @@
+public class com/github/panpf/zoomimage/GlideZoomImageView : com/github/panpf/zoomimage/ZoomImageView {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun newLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	protected fun onAttachedToWindow ()V
+	public fun onDrawableChanged (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
+	public final fun setSubsamplingImageGenerators (Ljava/util/List;)V
+	public final fun setSubsamplingImageGenerators ([Lcom/github/panpf/zoomimage/glide/GlideSubsamplingImageGenerator;)V
+}
+

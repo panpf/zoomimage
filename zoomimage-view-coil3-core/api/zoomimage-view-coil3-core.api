@@ -1,0 +1,35 @@
+public class com/github/panpf/zoomimage/CoilZoomImageView : com/github/panpf/zoomimage/ZoomImageView {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun newLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	protected fun onAttachedToWindow ()V
+	public fun onDrawableChanged (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
+	public final fun setSubsamplingImageGenerators (Ljava/util/List;)V
+	public final fun setSubsamplingImageGenerators ([Lcom/github/panpf/zoomimage/view/coil/CoilViewSubsamplingImageGenerator;)V
+}
+
+public abstract interface class com/github/panpf/zoomimage/view/coil/CoilViewSubsamplingImageGenerator {
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun generateImage (Landroid/content/Context;Lcoil3/ImageLoader;Lcoil3/request/SuccessResult;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun hashCode ()I
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/view/coil/internal/AnimatableCoilViewSubsamplingImageGenerator : com/github/panpf/zoomimage/view/coil/CoilViewSubsamplingImageGenerator {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun generateImage (Landroid/content/Context;Lcoil3/ImageLoader;Lcoil3/request/SuccessResult;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/view/coil/internal/EngineCoilViewSubsamplingImageGenerator : com/github/panpf/zoomimage/view/coil/CoilViewSubsamplingImageGenerator {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun generateImage (Landroid/content/Context;Lcoil3/ImageLoader;Lcoil3/request/SuccessResult;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

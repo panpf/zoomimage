@@ -1,0 +1,76 @@
+public final class com/bumptech/glide/GlidesKt {
+	public static final fun getInternalGlideContext (Lcom/bumptech/glide/Glide;)Lcom/bumptech/glide/GlideContext;
+	public static final fun getInternalModel (Lcom/bumptech/glide/RequestBuilder;)Ljava/lang/Object;
+	public static final fun getInternalModel (Lcom/bumptech/glide/request/Request;)Ljava/lang/Object;
+	public static final fun getInternalModel (Lcom/bumptech/glide/request/SingleRequest;)Ljava/lang/Object;
+	public static final fun getInternalModel (Lcom/bumptech/glide/request/ThumbnailRequestCoordinator;)Ljava/lang/Object;
+	public static final fun getRequestFromView (Landroid/widget/ImageView;)Lcom/bumptech/glide/request/Request;
+}
+
+public final class com/github/panpf/zoomimage/glide/GlideHttpImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> (Lcom/bumptech/glide/load/model/GlideUrl;Lkotlin/jvm/functions/Function0;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGlideUrl ()Lcom/bumptech/glide/load/model/GlideUrl;
+	public fun getKey ()Ljava/lang/String;
+	public final fun getOpenSource ()Lkotlin/jvm/functions/Function0;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/glide/GlideHttpImageSource$Factory : com/github/panpf/zoomimage/subsampling/ImageSource$Factory {
+	public fun <init> (Lcom/bumptech/glide/Glide;Lcom/bumptech/glide/load/model/GlideUrl;)V
+	public fun <init> (Lcom/bumptech/glide/Glide;Ljava/lang/String;)V
+	public fun create (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGlide ()Lcom/bumptech/glide/Glide;
+	public final fun getGlideUrl ()Lcom/bumptech/glide/load/model/GlideUrl;
+	public fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/glide/GlideSubsamplingImageGenerator {
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun generateImage (Landroid/content/Context;Lcom/bumptech/glide/Glide;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun hashCode ()I
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/glide/GlideTileImageCache : com/github/panpf/zoomimage/subsampling/TileImageCache {
+	public fun <init> (Lcom/bumptech/glide/Glide;)V
+	public fun get (Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public fun put (Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/TileImage;Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+}
+
+public final class com/github/panpf/zoomimage/glide/internal/AnimatableGlideSubsamplingImageGenerator : com/github/panpf/zoomimage/glide/GlideSubsamplingImageGenerator {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun generateImage (Landroid/content/Context;Lcom/bumptech/glide/Glide;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/glide/internal/EngineGlideSubsamplingImageGenerator : com/github/panpf/zoomimage/glide/GlideSubsamplingImageGenerator {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun generateImage (Landroid/content/Context;Lcom/bumptech/glide/Glide;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/glide/internal/GlideAsFileImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> (Landroid/content/Context;Ljava/lang/Object;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContext ()Landroid/content/Context;
+	public fun getKey ()Ljava/lang/String;
+	public final fun getModel ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/glide/internal/Glide_other_utilsKt {
+	public static final fun modelToImageSource (Landroid/content/Context;Lcom/bumptech/glide/Glide;Ljava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
+}
+

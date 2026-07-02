@@ -1,0 +1,99 @@
+public class com/github/panpf/zoomimage/SketchZoomImageView : com/github/panpf/zoomimage/view/sketch/internal/AbsStateZoomImageView {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun newLogger ()Lcom/github/panpf/zoomimage/util/Logger;
+	protected fun onAttachedToWindow ()V
+	public fun onDrawableChanged (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
+	public final fun setSubsamplingImageGenerators (Ljava/util/List;)V
+	public final fun setSubsamplingImageGenerators ([Lcom/github/panpf/zoomimage/view/sketch/SketchViewSubsamplingImageGenerator;)V
+}
+
+public abstract interface class com/github/panpf/zoomimage/view/sketch/SketchViewSubsamplingImageGenerator {
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun generateImage (Lcom/github/panpf/sketch/Sketch;Lcom/github/panpf/sketch/request/ImageResult$Success;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun hashCode ()I
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public abstract class com/github/panpf/zoomimage/view/sketch/internal/AbsAbilityZoomImageView : com/github/panpf/zoomimage/ZoomImageView, com/github/panpf/sketch/ability/ViewAbilityContainer {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addViewAbility (Lcom/github/panpf/sketch/ability/ViewAbility;)V
+	public final fun getImageMatrix ()Landroid/graphics/Matrix;
+	public fun getListener ()Lcom/github/panpf/sketch/request/Listener;
+	public fun getProgressListener ()Lcom/github/panpf/sketch/request/ProgressListener;
+	public final fun getScaleType ()Landroid/widget/ImageView$ScaleType;
+	public fun getViewAbilityList ()Ljava/util/List;
+	protected fun onAttachedToWindow ()V
+	protected fun onDetachedFromWindow ()V
+	protected fun onDraw (Landroid/graphics/Canvas;)V
+	public fun onDrawForeground (Landroid/graphics/Canvas;)V
+	protected fun onLayout (ZIIII)V
+	protected fun onRestoreInstanceState (Landroid/os/Parcelable;)V
+	protected fun onSaveInstanceState ()Landroid/os/Parcelable;
+	protected fun onSizeChanged (IIII)V
+	public fun onTouchEvent (Landroid/view/MotionEvent;)Z
+	protected fun onVisibilityChanged (Landroid/view/View;I)V
+	public fun removeViewAbility (Lcom/github/panpf/sketch/ability/ViewAbility;)V
+	public fun setImageDrawable (Landroid/graphics/drawable/Drawable;)V
+	public final fun setImageMatrix (Landroid/graphics/Matrix;)V
+	public fun setImageURI (Landroid/net/Uri;)V
+	public final fun setOnClickListener (Landroid/view/View$OnClickListener;)V
+	public final fun setOnLongClickListener (Landroid/view/View$OnLongClickListener;)V
+	public final fun setScaleType (Landroid/widget/ImageView$ScaleType;)V
+	public final fun superGetImageMatrix ()Landroid/graphics/Matrix;
+	public final fun superGetScaleType ()Landroid/widget/ImageView$ScaleType;
+	public final fun superSetImageMatrix (Landroid/graphics/Matrix;)V
+	public final fun superSetOnClickListener (Landroid/view/View$OnClickListener;)V
+	public final fun superSetOnLongClickListener (Landroid/view/View$OnLongClickListener;)V
+	public final fun superSetScaleType (Landroid/widget/ImageView$ScaleType;)V
+}
+
+public final class com/github/panpf/zoomimage/view/sketch/internal/AbsAbilityZoomImageView$SavedState : android/view/View$BaseSavedState {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public static final field Companion Lcom/github/panpf/zoomimage/view/sketch/internal/AbsAbilityZoomImageView$SavedState$Companion;
+	public final fun getAbilityListStateBundle ()Landroid/os/Bundle;
+	public final fun setAbilityListStateBundle (Landroid/os/Bundle;)V
+	public fun toString ()Ljava/lang/String;
+	public fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class com/github/panpf/zoomimage/view/sketch/internal/AbsAbilityZoomImageView$SavedState$Companion {
+}
+
+public class com/github/panpf/zoomimage/view/sketch/internal/AbsStateZoomImageView : com/github/panpf/zoomimage/view/sketch/internal/AbsAbilityZoomImageView, com/github/panpf/sketch/request/ImageOptionsProvider {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addListener (Lcom/github/panpf/sketch/request/Listener;)V
+	public final fun addProgressListener (Lcom/github/panpf/sketch/request/ProgressListener;)V
+	public fun getImageOptions ()Lcom/github/panpf/sketch/request/ImageOptions;
+	public fun getListener ()Lcom/github/panpf/sketch/request/Listener;
+	public fun getProgressListener ()Lcom/github/panpf/sketch/request/ProgressListener;
+	public fun getRequestState ()Lcom/github/panpf/sketch/request/RequestState;
+	public final fun removeListener (Lcom/github/panpf/sketch/request/Listener;)V
+	public final fun removeProgressListener (Lcom/github/panpf/sketch/request/ProgressListener;)V
+	public fun setImageOptions (Lcom/github/panpf/sketch/request/ImageOptions;)V
+}
+
+public final class com/github/panpf/zoomimage/view/sketch/internal/AnimatableSketchViewSubsamplingImageGenerator : com/github/panpf/zoomimage/view/sketch/SketchViewSubsamplingImageGenerator {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun generateImage (Lcom/github/panpf/sketch/Sketch;Lcom/github/panpf/sketch/request/ImageResult$Success;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/view/sketch/internal/EngineSketchViewSubsamplingImageGenerator : com/github/panpf/zoomimage/view/sketch/SketchViewSubsamplingImageGenerator {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun generateImage (Lcom/github/panpf/sketch/Sketch;Lcom/github/panpf/sketch/request/ImageResult$Success;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

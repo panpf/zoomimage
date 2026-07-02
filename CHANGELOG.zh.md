@@ -2,6 +2,16 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+## Dependencies
+
+* depend: 升级 jetbrains compose 1.11.1
+* depend: 升级 jetbrains lifecycle 2.11.0-beta01
+* depend: 升级 koin 4.2.1
+* depend: 升级 kotlin 2.4.0
+* depend: 升级 skiko 0.144.6
+
 # 1.5.0 Stable
 
 ## Multiplatform
@@ -36,18 +46,18 @@
 
 ## Dependencies
 
-* 升级 kotlin 2.3.20
-* 升级 jetbrains compose 1.10.3
-* 升级 jetbrains lifecycle 2.10.0
-* 升级 jetbrains skiko 0.9.37.4
-* 升级 androidx compose 1.10.5
-* 升级 androidx exifinterface 1.4.2
-* 升级 kotlinx collections immutable 0.4.0
-* 升级 kotlinx coroutines 1.11.0
-* 升级 okio 3.17.0
-* 升级 sketch 4.5.0
-* 升级 glide 5.0.7
-* 升级 coil 3.4.0
+* depend: 升级 kotlin 2.3.20
+* depend: 升级 jetbrains compose 1.10.3
+* depend: 升级 jetbrains lifecycle 2.10.0
+* depend: 升级 jetbrains skiko 0.9.37.4
+* depend: 升级 androidx compose 1.10.5
+* depend: 升级 androidx exifinterface 1.4.2
+* depend: 升级 kotlinx collections immutable 0.4.0
+* depend: 升级 kotlinx coroutines 1.11.0
+* depend: 升级 okio 3.17.0
+* depend: 升级 sketch 4.5.0
+* depend: 升级 glide 5.0.7
+* depend: 升级 coil 3.4.0
 
 # 1.5.0-rc01
 
@@ -57,7 +67,7 @@
 
 ## Dependencies
 
-* 升级 sketch 4.5.0-rc01
+* depend: 升级 sketch 4.5.0-rc01
 
 # 1.5.0-beta02
 
@@ -111,18 +121,18 @@
 
 ## Dependencies
 
-* 升级 kotlin 2.3.20
-* 升级 jetbrains compose 1.10.3
-* 升级 jetbrains lifecycle 2.10.0
-* 升级 jetbrains skiko 0.9.37.4
-* 升级 androidx compose 1.10.5
-* 升级 androidx exifinterface 1.4.2
-* 升级 kotlinx collections immutable 0.4.0
-* 升级 kotlinx coroutines 1.11.0
-* 升级 okio 3.17.0
-* 升级 sketch 4.5.0
-* 升级 glide 5.0.7
-* 升级 coil 3.4.0
+* depend: 升级 kotlin 2.3.20
+* depend: 升级 jetbrains compose 1.10.3
+* depend: 升级 jetbrains lifecycle 2.10.0
+* depend: 升级 jetbrains skiko 0.9.37.4
+* depend: 升级 androidx compose 1.10.5
+* depend: 升级 androidx exifinterface 1.4.2
+* depend: 升级 kotlinx collections immutable 0.4.0
+* depend: 升级 kotlinx coroutines 1.11.0
+* depend: 升级 okio 3.17.0
+* depend: 升级 sketch 4.5.0
+* depend: 升级 glide 5.0.7
+* depend: 升级 coil 3.4.0
 
 # 1.4.0
 

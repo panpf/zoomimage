@@ -1,0 +1,36 @@
+public final class com/github/panpf/zoomimage/picasso/PicassoHttpImageSource : com/github/panpf/zoomimage/subsampling/ImageSource {
+	public fun <init> (Lcom/squareup/picasso/Picasso;Landroid/net/Uri;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey ()Ljava/lang/String;
+	public final fun getPicasso ()Lcom/squareup/picasso/Picasso;
+	public final fun getUri ()Landroid/net/Uri;
+	public fun hashCode ()I
+	public fun openSource ()Lokio/Source;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/github/panpf/zoomimage/picasso/PicassoSubsamplingImageGenerator {
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun generateImage (Landroid/content/Context;Lcom/squareup/picasso/Picasso;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun hashCode ()I
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/picasso/PicassoTileImageCache : com/github/panpf/zoomimage/subsampling/TileImageCache {
+	public fun <init> (Lcom/squareup/picasso/Picasso;)V
+	public fun get (Ljava/lang/String;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+	public fun put (Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/TileImage;Ljava/lang/String;Lcom/github/panpf/zoomimage/subsampling/ImageInfo;)Lcom/github/panpf/zoomimage/subsampling/TileImage;
+}
+
+public final class com/github/panpf/zoomimage/picasso/internal/EnginePicassoSubsamplingImageGenerator : com/github/panpf/zoomimage/picasso/PicassoSubsamplingImageGenerator {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun generateImage (Landroid/content/Context;Lcom/squareup/picasso/Picasso;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/github/panpf/zoomimage/picasso/internal/Picasso_other_utilsKt {
+	public static final fun dataToImageSource (Landroid/content/Context;Lcom/squareup/picasso/Picasso;Ljava/lang/Object;)Lcom/github/panpf/zoomimage/subsampling/ImageSource$Factory;
+}
+
