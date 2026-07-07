@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+## Dependencies
+
+* depend: Upgrade to sketch 4.6.0-beta01
+
 # 1.6.0-alpha01
 
 ## Dependencies
