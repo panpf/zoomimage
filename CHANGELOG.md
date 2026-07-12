@@ -2,11 +2,20 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.6.0 Stable
+
+Changes since 1.6.0-beta01:
+
+* depend: Upgrade to sketch 4.6.0
 
 ## Dependencies
 
+* depend: Upgrade to kotlin 2.4.0
+* depend: Upgrade to jetbrains compose 1.11.1
+* depend: Upgrade to jetbrains lifecycle 2.11.0-beta01
+* depend: Upgrade to coil 3.5.0
 * depend: Upgrade to sketch 4.6.0
+* depend: Upgrade to skiko 0.144.6
 
 # 1.6.0-beta01
 
@@ -18,10 +27,10 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Dependencies
 
-* depend: Upgrade to coil 3.5.0
+* depend: Upgrade to kotlin 2.4.0
 * depend: Upgrade to jetbrains compose 1.11.1
 * depend: Upgrade to jetbrains lifecycle 2.11.0-beta01
-* depend: Upgrade to koin 4.2.1
+* depend: Upgrade to coil 3.5.0
 * depend: Upgrade to sketch 4.6.0-alpha01
 * depend: Upgrade to skiko 0.144.6
 

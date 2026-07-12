@@ -2,11 +2,20 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.6.0 Stable
+
+自 1.6.0-beta01 以来的更改：
+
+* depend: 升级 sketch 4.6.0
 
 ## Dependencies
 
+* depend: 升级 kotlin 2.4.0
+* depend: 升级 jetbrains compose 1.11.1
+* depend: 升级 jetbrains lifecycle 2.11.0-beta01
+* depend: 升级 coil 3.5.0
 * depend: 升级 sketch 4.6.0
+* depend: 升级 skiko 0.144.6
 
 # 1.6.0-beta01
 
@@ -18,11 +27,10 @@
 
 ## Dependencies
 
-* depend: 升级 coil 3.5.0
+* depend: 升级 kotlin 2.4.0
 * depend: 升级 jetbrains compose 1.11.1
 * depend: 升级 jetbrains lifecycle 2.11.0-beta01
-* depend: 升级 koin 4.2.1
-* depend: 升级 kotlin 2.4.0
+* depend: 升级 coil 3.5.0
 * depend: 升级 sketch 4.6.0-alpha01
 * depend: 升级 skiko 0.144.6
 
