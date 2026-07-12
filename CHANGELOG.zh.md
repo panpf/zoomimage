@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+## Dependencies
+
+* depend: 升级 sketch 4.6.0
+
 # 1.6.0-beta01
 
 ## Dependencies
