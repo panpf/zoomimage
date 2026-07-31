@@ -78,7 +78,7 @@ zoomImageView.setSubsamplingImage(imageSource)
 * [ContentImageSource]：从 Android 的 ContentProvider 加载图片。[ImageSource.fromContent(context,
   contentUri)][ContentImageSource]
 * [FileImageSource]：从文件加载图片。[ImageSource.fromFile(file)][FileImageSource]
-* [KotlinResourceImageSource]：从桌面或 ios 平台的 Kotlin
+* [KotlinResourceImageSource]：从桌面、iOS 或 macOS Native 平台的 Kotlin
   资源目录加载图片。[ImageSource.fromKotlinResource("huge_world.jpeg")][KotlinResourceImageSource]
 * [ResourceImageSource]：从 Android 的 res 目录加载图片。[ImageSource.fromResource(context,
   R.raw.huge_world)][ResourceImageSource]

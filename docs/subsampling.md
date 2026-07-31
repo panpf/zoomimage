@@ -91,7 +91,7 @@ follows:
 * [ContentImageSource]: Load images from Android's
   ContentProvider. [ImageSource.fromContent(context, contentUri)][ContentImageSource]
 * [FileImageSource]: Load image from file. [ImageSource.fromFile(file)][FileImageSource]
-* [KotlinResourceImageSource]: Load images from the Kotlin resource directory on desktop or ios
+* [KotlinResourceImageSource]: Load images from the Kotlin resource directory on desktop or Apple
   platforms. [ImageSource.fromKotlinResource("huge_world.jpeg")][KotlinResourceImageSource]
 * [ResourceImageSource]: Load images from Android's res
   directory. [ImageSource.fromResource(context, R.raw.huge_world)][ResourceImageSource]

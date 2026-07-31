@@ -20,9 +20,10 @@ kotlin {
 
     listOf(
         iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+        iosSimulatorArm64(),
+        macosArm64()
+    ).forEach { target ->
+        target.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
@@ -108,10 +109,10 @@ kotlin {
         desktopMain.dependencies {
             api(compose.desktop.currentOs)
         }
-        iosMain {
+        appleMain {
             // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
             // This may be a bug of kmp.
-            resources.srcDirs("../../internal/images/src/iosMain/resources")
+            resources.srcDirs("../../internal/images/src/appleMain/resources")
         }
         phoneMain.dependencies {
             api(libs.moko.permissions)

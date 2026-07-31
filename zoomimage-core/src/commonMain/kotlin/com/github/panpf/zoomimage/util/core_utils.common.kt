@@ -218,7 +218,7 @@ internal fun OffsetCompat.filterNegativeZeros(): OffsetCompat {
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread
  * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredMainThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredMainThread
- * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsIosTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredMainThread
  */
 internal expect fun requiredMainThread()
 
@@ -228,7 +228,7 @@ internal expect fun requiredMainThread()
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread
  * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredWorkThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredWorkThread
- * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsIosTest.testRequiredWorkThread
+ * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredWorkThread
  */
 internal expect fun requiredWorkThread()
 

@@ -34,6 +34,7 @@ import androidx.compose.ui.input.key.type
  * @see com.github.panpf.zoomimage.compose.desktop.test.util.KeyHandlerDesktopTest.testPlatformAssistKey
  * @see com.github.panpf.zoomimage.compose.jscommon.test.util.KeyHandlerJsCommonTest.testPlatformAssistKey
  * @see com.github.panpf.zoomimage.compose.ios.test.util.KeyHandlerIosTest.testPlatformAssistKey
+ * @see com.github.panpf.zoomimage.compose.macos.test.util.KeyHandlerMacosTest.testPlatformAssistKey
  */
 expect fun platformAssistKey(): AssistKey
 
