@@ -97,5 +97,7 @@ data class DefaultMouseWheelScaleCalculator(
 
 /**
  * Generally, the js platform scrolls faster than the desktop platform, about 30 times that of the desktop platform, so this function is used to provide a platform-related scroll increment multiplier to make the scroll increment of the js platform more reasonable.
+ *
+ * @see com.github.panpf.zoomimage.compose.apple.test.zoom.MouseWheelScaleCalculatorAppleTest.testPlatformMouseWheelScrollMultiplier
  */
 expect fun platformMouseWheelScrollMultiplier(): Float

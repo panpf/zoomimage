@@ -12,7 +12,7 @@ import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.images.HttpImageFiles
-import com.github.panpf.zoomimage.images.IOSLocalImages
+import com.github.panpf.zoomimage.images.AppleLocalImages
 import com.github.panpf.zoomimage.images.KotlinResImageFiles
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -27,7 +27,7 @@ import okio.use
 
 actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
     return listOf(
-        "FILE" to IOSLocalImages.with().cat.uri,
+        "FILE" to AppleLocalImages.with().cat.uri,
         "BYTES" to HttpImageFiles.hugeLongComic.uri,
         "RES_KOTLIN" to KotlinResImageFiles.dog.uri,
         "RES_COMPOSE" to ComposeResImageFiles.hugeChina.uri,

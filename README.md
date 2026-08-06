@@ -11,8 +11,8 @@ Translations: [简体中文](README.zh.md)
 ZoomImage is an gesture zoom viewing of images library specially designed for Compose Multiplatform
 and Android View. It has the following features and functions:
 
-* `Compose Multiplatform`. Support for Compose Multiplatform, which can be used on Android, macOS,
-  Windows, Linux and other platforms
+* `Compose Multiplatform`. Support for Compose Multiplatform on Android, iOS, macOS Native, JVM
+  desktop, web and other platforms
 * `Power`. Supports basic functions such as double-click scale, two-finger scale, single-finger
   scale, mouse wheel scale, keyboard scale, single-finger drag, inertial sliding, and keyboard drag.
 * `Locate`. Support for locate anywhere in the image and keeping it in the center of the screen
@@ -36,15 +36,15 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ## Multiplatform support
 
-| Function/Platform    | Android | iOS | Desktop | Web |
-|:---------------------|:-------:|:---:|:-------:|:---:|
-| Zoom                 |    ✅    |  ✅  |    ✅    |  ✅  |
-| Subsampling          |    ✅    |  ✅  |    ✅    |  ✅  |
-| Exif Orientation     |    ✅    |  ✅  |    ✅    |  ✅  |
-| Integrated [Sketch]  |    ✅    |  ✅  |    ✅    |  ✅  |
-| Integrated [Coil]    |    ✅    |  ✅  |    ✅    |  ✅  |
-| Integrated [Glide]   |    ✅    |  ❌  |    ❌    |  ❌  |
-| Integrated [Picasso] |    ✅    |  ❌  |    ❌    |  ❌  |
+| Function/Platform    | Android | iOS | macOS Native | Desktop (JVM) | Web |
+|:---------------------|:-------:|:---:|:------------:|:-------------:|:---:|
+| Zoom                 |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| Subsampling          |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| Exif Orientation     |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| Integrated [Sketch]  |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| Integrated [Coil]    |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| Integrated [Glide]   |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
+| Integrated [Picasso] |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
 
 ## Sample App
 
@@ -267,7 +267,8 @@ Please review the [CHANGELOG](CHANGELOG.md) file
 
 * Android: Emulator; Arm64; API 21-34
 * Desktop: macOS; 14.6.1; JDK 17
-* iOS: iphone 16 simulator; iOS 18.1
+* iOS: iPhone 16 Simulator; iOS 18.1
+* macOS Native: Apple Silicon; macOS 27 beta 4
 * Web: Chrome; 130
 
 ## Run Sample App

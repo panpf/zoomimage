@@ -23,7 +23,6 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.cValue
-import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
 import org.jetbrains.skia.Bitmap
@@ -42,10 +41,8 @@ import platform.CoreGraphics.CGImageGetWidth
 import platform.CoreGraphics.CGImageRelease
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.kCGBitmapByteOrder32Big
-import platform.Foundation.NSData
 import platform.Foundation.NSOperatingSystemVersion
 import platform.Foundation.NSProcessInfo
-import platform.Foundation.create
 import platform.Photos.PHAsset
 import platform.Photos.PHAssetMediaType
 import platform.Photos.PHAssetMediaTypeAudio
@@ -57,8 +54,6 @@ import platform.UIKit.UIGraphicsImageRendererFormat
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageOrientation
 import platform.UniformTypeIdentifiers.UTType
-import platform.darwin.ByteVar
-import platform.posix.memcpy
 import kotlin.math.ceil
 
 private const val RESOURCE_TYPE_PHOTO = 1L
@@ -435,33 +430,6 @@ fun UIImage.intSizeCompat(): IntSizeCompat {
     return size().useContents {
         IntSizeCompat(this.width.toInt(), this.height.toInt())
     }
-}
-
-/**
- * Convert a ByteArray to NSData by pinning the byte array and creating an NSData object that references the pinned memory.
- *
- * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testByteArrayToNSData
- */
-internal fun ByteArray.toNSData(): NSData {
-    return usePinned { pinned ->
-        NSData.create(bytes = pinned.addressOf(0), length = size.toULong())
-    }
-}
-
-/**
- * Convert an NSData to ByteArray by creating a new ByteArray of the appropriate size and copying the bytes from the NSData into it using memcpy.
- *
- * @see com.github.panpf.sketch.core.ios.test.util.IosPlatformUtilsTest.testNSDataToByteArray
- */
-internal fun NSData.toByteArray(): ByteArray {
-    val byteArray = ByteArray(length.toInt())
-    val byteVars = this.bytes?.reinterpret<ByteVar>()
-    if (byteVars != null) {
-        byteArray.usePinned { pinned ->
-            memcpy(pinned.addressOf(0), byteVars, this@toByteArray.length)
-        }
-    }
-    return byteArray
 }
 
 /**

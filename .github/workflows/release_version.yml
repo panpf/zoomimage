@@ -94,6 +94,24 @@ jobs:
       - name: Run ios test
         run: internal/test_ios.sh
 
+  test-macos-native:
+    name: macOS Native Unit tests
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
+
+      - name: Run macOS Native tests
+        run: internal/test_macos_native.sh
+
   test-desktop:
     name: Desktop Unit tests
     runs-on: macos-26
@@ -221,6 +239,30 @@ jobs:
           name: macos-files
           path: samples/desktopApp/build/compose/binaries/main-release/dmg/*.dmg
 
+  package-macos-native:
+    name: Package macOS Native
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v6
+        continue-on-error: true
+        timeout-minutes: 5
+        with:
+          cache-overwrite-existing: true
+
+      - name: Run package
+        run: internal/package_macos_native.sh
+
+      - name: Upload macOS Native artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: macos-native-files
+          path: samples/macosApp/build/compose/binaries/main/native-macosArm64-release-dmg/*.dmg
+
   package-windows:
     name: Package windows desktop
     runs-on: windows-latest
@@ -319,7 +361,7 @@ jobs:
 
   deploy-api-docs:
     name: Deploy API docs
-    needs: [ check-abi, test-android, test-ios, test-desktop, package-android, package-ios, package-linux, package-macos, package-windows, package-js, package-wasm-js ]
+    needs: [ check-abi, test-android, test-ios, test-macos-native, test-desktop, package-android, package-ios, package-linux, package-macos, package-macos-native, package-windows, package-js, package-wasm-js ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -418,6 +460,12 @@ jobs:
           name: macos-files
           path: ./downloaded
 
+      - name: Download macOS Native dmg artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: macos-native-files
+          path: ./downloaded
+
       - name: Download msi artifacts
         uses: actions/download-artifact@v8
         with:
@@ -445,7 +493,7 @@ jobs:
           body: |
             Please check the [CHANGELOG.md](https://github.com/panpf/zoomimage/blob/main/CHANGELOG.md) file for updated log.
 
-            Android, iOS, desktop and web packages, see the Assets attachment.
+            Android, iOS, macOS Native, desktop and web packages, see the Assets attachment.
 
             Web example：https://panpf.github.io/zoomimage/app.
           files: ./downloaded/*

@@ -10,7 +10,7 @@
 
 ZoomImage 是一个专为 Compose Multiplatform 和 Android View 设计的手势缩放查看图片的库，它有以下特点和功能：
 
-* `Compose Multiplatform`. 支持 Compose Multiplatform，可在 Android、macOS、Windows、Linux 等平台使用
+* `Compose Multiplatform`. 支持 Android、iOS、macOS Native、JVM 桌面端和 Web 等平台
 * `功能齐全`. 支持双击缩放、双指缩放、单指缩放、鼠标滚轮缩放、键盘缩放、单指拖动、惯性滑动、键盘拖动等基础功能
 * `定位`. 支持定位到图片的任意位置并保持在屏幕中央
 * `旋转`. 支持 0°, 90°, 180°, 270°, 360° 旋转图片
@@ -26,15 +26,15 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ### 多平台支持
 
-| 功能/平台            | Android | iOS | Desktop | Web |
-|:-----------------|:-------:|:---:|:-------:|:---:|
-| 缩放               |    ✅    |  ✅  |    ✅    |  ✅  |
-| 子采样              |    ✅    |  ✅  |    ✅    |  ✅  |
-| Exif Orientation |    ✅    |  ✅  |    ✅    |  ✅  |
-| 集成 [Sketch]      |    ✅    |  ✅  |    ✅    |  ✅  |
-| 集成 [Coil]        |    ✅    |  ✅  |    ✅    |  ✅  |
-| 集成 [Glide]       |    ✅    |  ❌  |    ❌    |  ❌  |
-| 集成 [Picasso]     |    ✅    |  ❌  |    ❌    |  ❌  |
+| 功能/平台            | Android | iOS | macOS Native | Desktop (JVM) | Web |
+|:-----------------|:-------:|:---:|:------------:|:-------------:|:---:|
+| 缩放               |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| 子采样              |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| Exif Orientation |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| 集成 [Sketch]      |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| 集成 [Coil]        |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
+| 集成 [Glide]       |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
+| 集成 [Picasso]     |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
 
 ## 示例 App
 
@@ -253,7 +253,8 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 * Android: Emulator; Arm64; API 21-34
 * Desktop: macOS; 14.6.1; JDK 17
-* iOS: iphone 16 simulator; iOS 18.1
+* iOS: iPhone 16 Simulator; iOS 18.1
+* macOS Native: Apple Silicon; macOS 27 beta 4
 * Web: Chrome; 130
 
 ## 运行示例 App
