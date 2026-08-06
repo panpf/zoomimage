@@ -44,7 +44,7 @@ actual fun requiredMainThread() {
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread
  */
 actual fun requiredWorkThread() {
-    check(isMainThread()) {
+    check(!isMainThread()) {
         "This method must be executed in the work thread"
     }
 }
