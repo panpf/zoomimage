@@ -17,11 +17,18 @@
 package com.github.panpf.zoomimage.util
 
 /**
+ * Returns true if currently on the main thread
+ *
+ * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testPlatformIsMainThread
+ */
+internal actual fun platformIsMainThread() = true
+
+/**
  * Check if the current thread is the UI thread
  *
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredMainThread
  */
-internal actual fun requiredMainThread() {
+actual fun requiredMainThread() {
 
 }
 
@@ -30,6 +37,6 @@ internal actual fun requiredMainThread() {
  *
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredWorkThread
  */
-internal actual fun requiredWorkThread() {
+actual fun requiredWorkThread() {
 
 }

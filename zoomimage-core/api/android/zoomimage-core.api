@@ -559,6 +559,15 @@ public final class com/github/panpf/zoomimage/util/AndroidLogPipeline : com/gith
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/github/panpf/zoomimage/util/Core_utils_androidKt {
+	public static final fun requiredMainThread ()V
+	public static final fun requiredWorkThread ()V
+}
+
+public final class com/github/panpf/zoomimage/util/Core_utils_commonKt {
+	public static final fun setMainThreadChecker (Lkotlin/jvm/functions/Function0;)V
+}
+
 public final class com/github/panpf/zoomimage/util/Coroutines_nonJsCommonKt {
 	public static final fun ioCoroutineDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
 }

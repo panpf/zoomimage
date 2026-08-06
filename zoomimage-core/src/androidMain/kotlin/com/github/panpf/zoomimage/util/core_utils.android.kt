@@ -21,12 +21,19 @@ import android.os.Build
 import android.os.Looper
 
 /**
+ * Returns true if currently on the main thread
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testPlatformIsMainThread
+ */
+internal actual fun platformIsMainThread() = Looper.myLooper() == Looper.getMainLooper()
+
+/**
  * Check if the current thread is the UI thread
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread
  */
-internal actual fun requiredMainThread() {
-    check(Looper.myLooper() == Looper.getMainLooper()) {
+actual fun requiredMainThread() {
+    check(isMainThread()) {
         "This method must be executed in the UI thread"
     }
 }
@@ -36,8 +43,8 @@ internal actual fun requiredMainThread() {
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread
  */
-internal actual fun requiredWorkThread() {
-    check(Looper.myLooper() != Looper.getMainLooper()) {
+actual fun requiredWorkThread() {
+    check(isMainThread()) {
         "This method must be executed in the work thread"
     }
 }

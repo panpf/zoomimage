@@ -20,43 +20,17 @@ import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.view.util.applyTransform
 import com.github.panpf.zoomimage.view.util.findLifecycle
 import com.github.panpf.zoomimage.view.util.intrinsicSize
-import com.github.panpf.zoomimage.view.util.requiredMainThread
-import com.github.panpf.zoomimage.view.util.requiredWorkThread
 import com.github.panpf.zoomimage.view.util.rtlFlipped
 import com.github.panpf.zoomimage.view.util.scale
 import com.github.panpf.zoomimage.view.util.toAlignment
 import com.github.panpf.zoomimage.view.util.toContentScale
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class ViewPlatformUtilsTest {
-
-    @Test
-    fun testRequiredMainThread() {
-        assertFailsWith(IllegalStateException::class) {
-            requiredMainThread()
-        }
-        runBlocking(Dispatchers.Main) {
-            requiredMainThread()
-        }
-    }
-
-    @Test
-    fun testRequiredWorkThread() {
-        requiredWorkThread()
-
-        assertFailsWith(IllegalStateException::class) {
-            runBlocking(Dispatchers.Main) {
-                requiredWorkThread()
-            }
-        }
-    }
 
     @Test
     fun testRectScale() {

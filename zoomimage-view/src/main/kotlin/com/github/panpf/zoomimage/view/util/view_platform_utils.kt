@@ -21,7 +21,6 @@ import android.content.ContextWrapper
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Looper
 import android.view.View
 import android.widget.ImageView.ScaleType
 import androidx.lifecycle.Lifecycle
@@ -32,23 +31,6 @@ import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import kotlin.math.roundToInt
-
-/**
- * Check if the current thread is the main thread, otherwise throw an exception.
- *
- * @see com.github.panpf.zoomimage.view.test.util.ViewPlatformUtilsTest.testRequiredMainThread
- */
-internal fun requiredMainThread() {
-    check(Looper.myLooper() == Looper.getMainLooper()) {
-        "This method must be executed in the UI thread"
-    }
-}
-
-internal fun requiredWorkThread() {
-    check(Looper.myLooper() != Looper.getMainLooper()) {
-        "This method must be executed in the work thread"
-    }
-}
 
 /**
  * Scale the [Rect] by [scale].

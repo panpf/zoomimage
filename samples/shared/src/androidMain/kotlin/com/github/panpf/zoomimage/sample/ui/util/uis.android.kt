@@ -23,7 +23,6 @@ import android.content.res.Resources.Theme
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Looper
 import android.view.MotionEvent
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -99,19 +98,6 @@ fun Context.getWindowBackgroundColor(): Int {
 
 fun Context.isNightMode(): Boolean {
     return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-}
-
-
-fun requiredMainThread() {
-    check(Looper.myLooper() == Looper.getMainLooper()) {
-        "This method must be executed in the UI thread"
-    }
-}
-
-fun requiredWorkThread() {
-    check(Looper.myLooper() != Looper.getMainLooper()) {
-        "This method must be executed in the work thread"
-    }
 }
 
 fun getPointerIndex(action: Int): Int {

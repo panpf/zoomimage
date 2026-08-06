@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.util
 
+import kotlinx.atomicfu.atomic
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.round
@@ -212,25 +213,63 @@ internal fun OffsetCompat.filterNegativeZeros(): OffsetCompat {
     return this
 }
 
-/**
- * Check if the current thread is the UI thread
- *
- * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread
- * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredMainThread
- * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredMainThread
- * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredMainThread
- */
-internal expect fun requiredMainThread()
+private val mainThreadChecker = atomic<(() -> Boolean)?>(null)
 
 /**
- * Check if the current thread is the work thread
+ * Returns true if currently on the main thread, if the [mainThreadChecker] is set,
+ * it will be used to determine whether it is the main thread,
+ * otherwise it will use the platform's default method to determine whether it is the main thread
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsIosTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testIsMainThread
+ */
+internal fun isMainThread(): Boolean =
+    mainThreadChecker.value?.invoke() ?: platformIsMainThread()
+
+/**
+ * Set the main thread checker, if set, it will be used to determine whether it is the main thread,
+ * otherwise it will use the platform's default method to determine whether it is the main thread
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsAppleTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testIsMainThread
+ */
+fun setMainThreadChecker(checker: (() -> Boolean)?) {
+    mainThreadChecker.value = checker
+}
+
+/**
+ * Returns true if currently on the main thread, using the platform's default method
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testPlatformIsMainThread
+ * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsAppleTest.testPlatformIsMainThread
+ * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testPlatformIsMainThread
+ * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testPlatformIsMainThread
+ */
+internal expect fun platformIsMainThread(): Boolean
+
+/**
+ * Throws an exception if not currently on the main thread
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredMainThread
+ */
+expect fun requiredMainThread()
+
+/**
+ * Throws an exception if not currently on the work thread
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread
+ * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredWorkThread
  * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredWorkThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredWorkThread
- * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredWorkThread
  */
-internal expect fun requiredWorkThread()
+expect fun requiredWorkThread()
 
 /**
  * If one of the size is a thumbnail of the other size, it returns true.

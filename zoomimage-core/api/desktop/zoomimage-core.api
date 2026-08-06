@@ -483,7 +483,12 @@ public abstract interface class com/github/panpf/zoomimage/subsampling/internal/
 	public abstract fun setContentOriginSize-grz_zgQ (J)V
 }
 
+public final class com/github/panpf/zoomimage/util/Core_utils_commonKt {
+	public static final fun setMainThreadChecker (Lkotlin/jvm/functions/Function0;)V
+}
+
 public final class com/github/panpf/zoomimage/util/Core_utils_desktopKt {
+	public static final fun requiredMainThread ()V
 	public static final fun requiredWorkThread ()V
 }
 

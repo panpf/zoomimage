@@ -18,13 +18,21 @@ package com.github.panpf.zoomimage.util
 
 import javax.swing.SwingUtilities
 
+
+/**
+ * Returns true if currently on the main thread
+ *
+ * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testPlatformIsMainThread
+ */
+internal actual fun platformIsMainThread() = SwingUtilities.isEventDispatchThread()
+
 /**
  * Throws an exception if not currently on the main thread
  *
  * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredMainThread
  */
-internal actual fun requiredMainThread() {
-    check(SwingUtilities.isEventDispatchThread()) {
+actual fun requiredMainThread() {
+    check(isMainThread()) {
         "This method must be executed in the UI thread"
     }
 }
@@ -35,7 +43,7 @@ internal actual fun requiredMainThread() {
  * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredWorkThread
  */
 actual fun requiredWorkThread() {
-    check(!SwingUtilities.isEventDispatchThread()) {
+    check(!isMainThread()) {
         "This method must be executed in the work thread"
     }
 }

@@ -17,12 +17,19 @@
 package com.github.panpf.zoomimage.util
 
 /**
+ * Returns true if currently on the main thread
+ *
+ * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testPlatformIsMainThread
+ */
+internal actual fun platformIsMainThread() = platform.Foundation.NSThread.isMainThread
+
+/**
  * Throws an exception if not currently on the main thread
  *
  * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredMainThread
  */
-internal actual fun requiredMainThread() {
-    check(platform.Foundation.NSThread.isMainThread) {
+actual fun requiredMainThread() {
+    check(isMainThread()) {
         "This method must be executed in the UI thread"
     }
 }
@@ -33,7 +40,7 @@ internal actual fun requiredMainThread() {
  * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredWorkThread
  */
 actual fun requiredWorkThread() {
-    check(!platform.Foundation.NSThread.isMainThread) {
+    check(!isMainThread()) {
         "This method must be executed in the work thread"
     }
 }

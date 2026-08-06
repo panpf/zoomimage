@@ -5,14 +5,17 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.util.isAndSupportHardware
+import com.github.panpf.zoomimage.util.isMainThread
+import com.github.panpf.zoomimage.util.platformIsMainThread
 import com.github.panpf.zoomimage.util.requiredMainThread
 import com.github.panpf.zoomimage.util.requiredWorkThread
 import com.github.panpf.zoomimage.util.safeConfig
+import com.github.panpf.zoomimage.util.setMainThreadChecker
 import com.github.panpf.zoomimage.util.toLogString
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import okio.buffer
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,21 +26,84 @@ import kotlin.test.assertTrue
 class CoreUtilsAndroidTest {
 
     @Test
-    fun testRequiredMainThread() {
-        assertFailsWith(IllegalStateException::class) {
-            requiredMainThread()
+    fun testIsMainThread() = runTest {
+        withContext(Dispatchers.Main) {
+            assertTrue(isMainThread())
         }
-        runBlocking(Dispatchers.Main) {
-            requiredMainThread()
+        withContext(Dispatchers.IO) {
+            assertFalse(isMainThread())
+
+            setMainThreadChecker { true }
+            try {
+                assertTrue(isMainThread())
+            } finally {
+                setMainThreadChecker(null)
+            }
+
+            assertFalse(isMainThread())
         }
     }
 
     @Test
-    fun testRequiredWorkThread() {
-        requiredWorkThread()
+    fun testPlatformIsMainThread() = runTest {
+        withContext(Dispatchers.Main) {
+            assertTrue(platformIsMainThread())
+        }
+        withContext(Dispatchers.IO) {
+            assertFalse(platformIsMainThread())
 
-        assertFailsWith(IllegalStateException::class) {
-            runBlocking(Dispatchers.Main) {
+            setMainThreadChecker { true }
+            try {
+                assertFalse(platformIsMainThread())
+            } finally {
+                setMainThreadChecker(null)
+            }
+
+            assertFalse(platformIsMainThread())
+        }
+    }
+
+    @Test
+    fun testRequiredMainThread() = runTest {
+        withContext(Dispatchers.Main) {
+            requiredMainThread()
+        }
+        withContext(Dispatchers.IO) {
+            assertFailsWith(IllegalStateException::class) {
+                requiredMainThread()
+            }
+
+            setMainThreadChecker { true }
+            try {
+                requiredMainThread()
+            } finally {
+                setMainThreadChecker(null)
+            }
+
+            assertFailsWith(IllegalStateException::class) {
+                requiredMainThread()
+            }
+        }
+    }
+
+    @Test
+    fun testRequiredWorkThread() = runTest {
+        withContext(Dispatchers.IO) {
+            requiredWorkThread()
+        }
+        withContext(Dispatchers.Main) {
+            assertFailsWith(IllegalStateException::class) {
+                requiredWorkThread()
+            }
+
+            setMainThreadChecker { false }
+            try {
+                requiredWorkThread()
+            } finally {
+                setMainThreadChecker(null)
+            }
+
+            assertFailsWith(IllegalStateException::class) {
                 requiredWorkThread()
             }
         }
