@@ -2,6 +2,17 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# 1.7.0-alpha01
+
+## New Features
+
+* Added support for macosArm64 platform
+* Added setMainThreadChecker() function to customize main thread checking logic
+
+## Dependencies
+
+* depend: Upgrade to sketch 4.7.0-alpha01
+
 # 1.6.0 Stable
 
 Changes since 1.6.0-beta01:

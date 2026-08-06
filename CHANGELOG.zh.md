@@ -2,6 +2,17 @@
 
 翻译：[English](CHANGELOG.md)
 
+# 1.7.0-alpha01
+
+## 新特性
+
+* 增加对 macosArm64 平台的支持
+* 新增 setMainThreadChecker() 函数，可以自定义检查主线程的逻辑
+
+## Dependencies
+
+* depend: 升级 sketch 4.7.0-alpha01
+
 # 1.6.0 Stable
 
 自 1.6.0-beta01 以来的更改：
