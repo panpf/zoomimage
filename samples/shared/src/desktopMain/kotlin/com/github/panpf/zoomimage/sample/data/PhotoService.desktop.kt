@@ -91,7 +91,7 @@ actual class PhotoService actual constructor(val sketch: Sketch) {
 
         val userHomeDir = File(System.getProperty("user.home"))
         val userPicturesDir = File(userHomeDir, "Pictures")
-        val outDir = File(userPicturesDir, "sketch4").apply { mkdirs() }
+        val outDir = File(userPicturesDir, "zoomimage").apply { mkdirs() }
         val fileExtension = MimeTypeMap.getExtensionFromUrl(imageUri)
             ?: MimeTypeMap.getExtensionFromMimeType(fetchResult.mimeType ?: "")
             ?: "jpeg"
