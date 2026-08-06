@@ -1,4 +1,3 @@
-import org.gradle.api.tasks.Sync
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.desktop.application.tasks.AbstractNativeMacApplicationPackageAppDirTask
 
@@ -82,5 +81,39 @@ listOf("Debug", "Release").forEach { buildType ->
     }
     tasks.named("run${buildType}ExecutableMacosArm64") {
         dependsOn(copyResourcesTask)
+    }
+}
+
+tasks.configureEach {
+    val targetTaskNames = listOf(
+        "packageDmgNativeDebugMacosArm64", "packageDmgNativeReleaseMacosArm64",
+        "packagePkgNativeDebugMacosArm64", "packagePkgNativeReleaseMacosArm64",
+    )
+    val targetExtensions = listOf(
+        "dmg", "pkg",
+    )
+    if (name in targetTaskNames) {
+        doLast {
+            val composeBinariesDir =
+                project.layout.buildDirectory.dir("compose/binaries").get().asFile
+            composeBinariesDir.walkTopDown()
+                .filter { it.isFile && it.extension in targetExtensions }
+                .forEach { file ->
+                    val fileName = file.name
+                    var newFileName = fileName
+                    if (newFileName.contains(appName, ignoreCase = false)) {
+                        newFileName = newFileName.replace(appName, "zoomimage-sample")
+                    }
+
+                    if (newFileName != fileName) {
+                        val newFile = file.parentFile.resolve(newFileName)
+                        if (file.renameTo(newFile)) {
+                            logger.lifecycle("Rename succedd. '$file' -> '${newFile.name}'")
+                        } else {
+                            logger.error("Rename failed. '$file'")
+                        }
+                    }
+                }
+        }
     }
 }
