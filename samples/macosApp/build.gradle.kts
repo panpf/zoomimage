@@ -102,13 +102,13 @@ tasks.configureEach {
                     val fileName = file.name
                     var newFileName = fileName
                     if (newFileName.contains(appName, ignoreCase = false)) {
-                        newFileName = newFileName.replace(appName, "zoomimage-sample")
+                        newFileName = newFileName.replace(appName, "zoomimage-sample-native")
                     }
 
                     if (newFileName != fileName) {
                         val newFile = file.parentFile.resolve(newFileName)
                         if (file.renameTo(newFile)) {
-                            logger.lifecycle("Rename succedd. '$file' -> '${newFile.name}'")
+                            logger.lifecycle("Rename successful. '$file' -> '${newFile.name}'")
                         } else {
                             logger.error("Rename failed. '$file'")
                         }

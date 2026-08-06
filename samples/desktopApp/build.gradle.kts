@@ -83,14 +83,14 @@ tasks.configureEach {
                         newFileName = newFileName.replace("_", "-")
                     } else {
                         if (newFileName.contains(appName, ignoreCase = false)) {
-                            newFileName = newFileName.replace(appName, "zoomimage-sample")
+                            newFileName = newFileName.replace(appName, "zoomimage-sample-jvm")
                         }
                     }
 
                     if (newFileName != fileName) {
                         val newFile = file.parentFile.resolve(newFileName)
                         if (file.renameTo(newFile)) {
-                            logger.lifecycle("Rename succedd. '$file' -> '${newFile.name}'")
+                            logger.lifecycle("Rename successful. '$file' -> '${newFile.name}'")
                         } else {
                             logger.error("Rename failed. '$file'")
                         }
