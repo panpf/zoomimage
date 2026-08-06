@@ -1,14 +1,14 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
-$dokka.location:com.github.panpf.zoomimage.subsampling//fromKotlinResource/com.github.panpf.zoomimage.subsampling.ImageSource.Companion#kotlin.String/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]from-kotlin-resource.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource///PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/index.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/KotlinResourceImageSource/#kotlin.String/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/-kotlin-resource-image-source.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/equals/#kotlin.Any?/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/equals.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/hashCode/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/hash-code.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/key/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/key.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/openSource/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/open-source.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/resourcePath/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/resource-path.html
-$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/toString/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[ios]-kotlin-resource-image-source/to-string.html
+$dokka.location:com.github.panpf.zoomimage.subsampling//fromKotlinResource/com.github.panpf.zoomimage.subsampling.ImageSource.Companion#kotlin.String/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]from-kotlin-resource.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource///PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/index.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/KotlinResourceImageSource/#kotlin.String/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/-kotlin-resource-image-source.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/equals/#kotlin.Any?/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/equals.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/hashCode/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/hash-code.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/key/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/key.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/openSource/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/open-source.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/resourcePath/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/resource-path.html
+$dokka.location:com.github.panpf.zoomimage.subsampling/KotlinResourceImageSource/toString/#/PointingToDeclaration/zoomimage-core/com.github.panpf.zoomimage.subsampling/[desktop]-kotlin-resource-image-source/to-string.html
 module:zoomimage-compose
 com.github.panpf.zoomimage
 com.github.panpf.zoomimage.compose
