@@ -5,8 +5,6 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import okio.Path.Companion.toOkioPath
-import java.io.File
 
 class ContentImageFiles private constructor() {
 
@@ -18,13 +16,7 @@ class ContentImageFiles private constructor() {
         suspend fun with(context: Context): ContentImageFiles {
             return instance ?: lock.withLock {
                 instance ?: run {
-                    val cacheDir =
-                        File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
-                    saveImageToExternalFilesDir(
-//                        imageFiles = ComposeResImageFiles.values.toList(),
-                        imageFiles = listOf(element = ComposeResImageFiles.cat),
-                        cacheDir = cacheDir.toOkioPath()
-                    )
+                    LocalImageFiles.with(context)   // Required
                     ContentImageFiles().also { instance = it }
                 }
             }
@@ -32,26 +24,26 @@ class ContentImageFiles private constructor() {
     }
 
     val cat = ComposeResImageFiles.cat.toContentImageFile()
-//    val dog = ComposeResImageFiles.dog.toContentImageFile()
-//    val anim = ComposeResImageFiles.anim.toContentImageFile()
-//    val longEnd = ComposeResImageFiles.longEnd.toContentImageFile()
-//    val longWhale = ComposeResImageFiles.longWhale.toContentImageFile()
-//    val hugeChina = ComposeResImageFiles.hugeChina.toContentImageFile()
-//    val hugeCard = ComposeResImageFiles.hugeCard.toContentImageFile()
-//    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toContentImageFile()
-//    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toContentImageFile()
-//
-//    val all = listOf(
-//        cat,
-//        dog,
-//        anim,
-//        longEnd,
-//        longWhale,
-//        hugeChina,
-//        hugeCard,
-//        hugeLongQmsht,
-//        hugeLongComic
-//    )
+    val dog = ComposeResImageFiles.dog.toContentImageFile()
+    val anim = ComposeResImageFiles.anim.toContentImageFile()
+    val longEnd = ComposeResImageFiles.longEnd.toContentImageFile()
+    val longWhale = ComposeResImageFiles.longWhale.toContentImageFile()
+    val hugeChina = ComposeResImageFiles.hugeChina.toContentImageFile()
+    val hugeCard = ComposeResImageFiles.hugeCard.toContentImageFile()
+    val hugeLongQmsht = ComposeResImageFiles.hugeLongQmsht.toContentImageFile()
+    val hugeLongComic = ComposeResImageFiles.hugeLongComic.toContentImageFile()
+
+    val all = listOf(
+        cat,
+        dog,
+        anim,
+        longEnd,
+        longWhale,
+        hugeChina,
+        hugeCard,
+        hugeLongQmsht,
+        hugeLongComic
+    )
 }
 
 class ContentImageFile(
@@ -64,7 +56,7 @@ class ContentImageFile(
 ) : ImageFile {
 
     override val uri =
-        "content://com.github.panpf.zoomimage.images.fileprovider/asset_images/${this.name}"
+        "content://com.github.panpf.zoomimage.images.fileprovider/images/${this.name}"
 
     override val imageInfo: ImageInfo = ImageInfo(size = size, mimeType = mimeType)
 

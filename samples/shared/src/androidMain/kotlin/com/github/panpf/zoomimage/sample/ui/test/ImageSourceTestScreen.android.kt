@@ -11,12 +11,12 @@ import com.github.panpf.sketch.fetch.ResourceUriFetcher
 import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
-import com.github.panpf.zoomimage.images.AndroidLocalImageFiles
 import com.github.panpf.zoomimage.images.AndroidResourceImageFiles
 import com.github.panpf.zoomimage.images.AssetImageFiles
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.images.ContentImageFiles
 import com.github.panpf.zoomimage.images.HttpImageFiles
+import com.github.panpf.zoomimage.images.LocalImageFiles
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
@@ -25,12 +25,13 @@ import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import com.github.panpf.zoomimage.util.MyPlatformContext
 import kotlinx.coroutines.withContext
 import okio.buffer
 
-actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
+actual suspend fun getImageSourceTestItems(context: MyPlatformContext): List<Pair<String, String>> {
     return listOf(
-        "FILE" to AndroidLocalImageFiles.with(context).hugeLongQmsht.uri,
+        "FILE" to LocalImageFiles.with(context).hugeLongQmsht.uri,
         "ASSET" to AssetImageFiles.longEnd.uri,
         "BYTES" to HttpImageFiles.hugeLongComic.uri,
         "CONTENT" to ContentImageFiles.with(context).cat.uri,

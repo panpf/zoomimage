@@ -15,11 +15,12 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromByteArray
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.toFactory
+import com.github.panpf.zoomimage.util.MyPlatformContext
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.use
 
-actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
+actual suspend fun getImageSourceTestItems(context: MyPlatformContext): List<Pair<String, String>> {
     return listOf(
         "BYTES" to HttpImageFiles.hugeLongComic.uri,
         "RES_COMPOSE" to ComposeResImageFiles.hugeChina.uri,

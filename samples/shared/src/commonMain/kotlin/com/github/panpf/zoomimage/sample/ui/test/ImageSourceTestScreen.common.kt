@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.fetch.Fetcher
@@ -20,12 +19,14 @@ import com.github.panpf.sketch.request.RequestContext
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.sample.LocalMyPlatformContext
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.components.HorizontalTabPager
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.util.MyPlatformContext
 
-expect suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>>
+expect suspend fun getImageSourceTestItems(context: MyPlatformContext): List<Pair<String, String>>
 
 suspend fun sketchImageUriToZoomImageImageSource(
     sketch: Sketch,
@@ -47,7 +48,7 @@ expect suspend fun sketchFetcherToZoomImageImageSource(
 @Composable
 fun ImageSourceTestScreen() {
     ToolbarScaffold("ImageSource") {
-        val context = LocalPlatformContext.current
+        val context = LocalMyPlatformContext.current
         var imageSourceTestItems by remember { mutableStateOf<List<Pair<String, String>>?>(null) }
         LaunchedEffect(Unit) {
             imageSourceTestItems = getImageSourceTestItems(context)

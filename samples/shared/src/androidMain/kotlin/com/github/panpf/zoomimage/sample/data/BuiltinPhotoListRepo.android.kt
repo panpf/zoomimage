@@ -1,16 +1,16 @@
 package com.github.panpf.zoomimage.sample.data
 
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.zoomimage.images.AndroidLocalImageFiles
 import com.github.panpf.zoomimage.images.AndroidResourceImageFiles
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.images.ContentImageFiles
 import com.github.panpf.zoomimage.images.HttpImageFiles
+import com.github.panpf.zoomimage.images.LocalImageFiles
 
 actual suspend fun buildPlatformBuiltinPhotoList(sketch: Sketch): List<String> {
+    // TODO Use multiple ImageFiles so you can directly test various Fetchers on the Local page.
     return listOf(
         ContentImageFiles.with(sketch.context).cat,
-        ComposeResImageFiles.cat,
         ComposeResImageFiles.dog,
         ComposeResImageFiles.giraffe,
         ComposeResImageFiles.horse,
@@ -19,7 +19,7 @@ actual suspend fun buildPlatformBuiltinPhotoList(sketch: Sketch): List<String> {
         ComposeResImageFiles.longWhale,
         ComposeResImageFiles.hugeChina,
         AndroidResourceImageFiles.hugeCard,
-        AndroidLocalImageFiles.with(sketch.context).hugeLongQmsht,
+        LocalImageFiles.with(sketch.context).hugeLongQmsht,
         HttpImageFiles.hugeLongComic,
     ).plus(ComposeResImageFiles.exifs)
         .map { it.uri }

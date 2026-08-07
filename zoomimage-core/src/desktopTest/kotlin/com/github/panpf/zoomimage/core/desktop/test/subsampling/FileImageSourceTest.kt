@@ -1,9 +1,10 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling
 
-import com.github.panpf.zoomimage.images.DesktopLocalImages
+import com.github.panpf.zoomimage.images.LocalImageFiles
 import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromFile
+import com.github.panpf.zoomimage.util.MyPlatformContext
 import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
 import okio.buffer
@@ -16,7 +17,7 @@ class FileImageSourceTest {
 
     @Test
     fun testFromFile() = runTest {
-        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
+        val path1 = LocalImageFiles.with(MyPlatformContext.INSTANCE).cat.uri.replace("file://", "")
         val path2 = "${path1}_1"
 
         assertEquals(
@@ -32,7 +33,7 @@ class FileImageSourceTest {
 
     @Test
     fun testKey() = runTest {
-        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
+        val path1 = LocalImageFiles.with(MyPlatformContext.INSTANCE).cat.uri.replace("file://", "")
 
         assertEquals(
             expected = "file://$path1",
@@ -42,7 +43,7 @@ class FileImageSourceTest {
 
     @Test
     fun testOpenSource() = runTest {
-        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
+        val path1 = LocalImageFiles.with(MyPlatformContext.INSTANCE).cat.uri.replace("file://", "")
         FileImageSource(path1.toPath()).openSource().buffer().use {
             it.readByteArray()
         }
@@ -50,7 +51,7 @@ class FileImageSourceTest {
 
     @Test
     fun testEqualsAndHashCode() = runTest {
-        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
+        val path1 = LocalImageFiles.with(MyPlatformContext.INSTANCE).cat.uri.replace("file://", "")
         val path2 = "${path1}_1"
 
         val source1 = FileImageSource(path1.toPath())
@@ -74,7 +75,7 @@ class FileImageSourceTest {
 
     @Test
     fun testToString() = runTest {
-        val path1 = DesktopLocalImages.with().cat.uri.replace("file://", "")
+        val path1 = LocalImageFiles.with(MyPlatformContext.INSTANCE).cat.uri.replace("file://", "")
 
         assertEquals(
             expected = "FileImageSource('$path1')",

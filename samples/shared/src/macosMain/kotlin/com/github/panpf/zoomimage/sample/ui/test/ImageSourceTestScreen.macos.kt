@@ -9,23 +9,24 @@ import com.github.panpf.sketch.fetch.KotlinResourceUriFetcher
 import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
-import com.github.panpf.zoomimage.images.AppleLocalImages
 import com.github.panpf.zoomimage.images.ComposeResImageFiles
 import com.github.panpf.zoomimage.images.HttpImageFiles
 import com.github.panpf.zoomimage.images.KotlinResImageFiles
+import com.github.panpf.zoomimage.images.LocalImageFiles
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromByteArray
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import com.github.panpf.zoomimage.util.MyPlatformContext
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.use
 
-actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
+actual suspend fun getImageSourceTestItems(context: MyPlatformContext): List<Pair<String, String>> {
     return listOf(
-        "FILE" to AppleLocalImages.with().cat.uri,
+        "FILE" to LocalImageFiles.with(context).cat.uri,
         "BYTES" to HttpImageFiles.hugeLongComic.uri,
         "RES_KOTLIN" to KotlinResImageFiles.dog.uri,
         "RES_COMPOSE" to ComposeResImageFiles.hugeChina.uri,
