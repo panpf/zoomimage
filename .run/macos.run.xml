@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration name="zoomimage [:samples:macosApp:runDebugExecutableMacosArm64]" default="false"
+    <configuration name="samples [macos]" default="false"
         factoryName="Gradle" type="GradleRunConfiguration">
         <ExternalSystemSettings>
             <option name="executionName" />

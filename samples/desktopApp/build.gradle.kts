@@ -76,7 +76,8 @@ tasks.configureEach {
                         // deb or rpm packages will convert all uppercase letters to lowercase by default, so case sensitivity must be ignored here.
                         val lowercaseAppName = appName.lowercase()
                         if (newFileName.contains(lowercaseAppName, ignoreCase = false)) {
-                            newFileName = newFileName.replace(lowercaseAppName, "zoomimage-sample")
+                            newFileName =
+                                newFileName.replace(lowercaseAppName, "zoomimage-sample-jvm")
                         }
 
                         // zoomimage-sample_1.5.0001_amd64.deb -> zoomimage-sample-1.5.0001-amd64.deb
