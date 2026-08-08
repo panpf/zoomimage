@@ -66,6 +66,12 @@
 # Obfuscation breaks coroutines/ktor for some reason
 -dontobfuscate
 
+
+# ----------------------------------------- navigation3 ------------------------------------------------- #
+-keep class androidx.navigation3.** { *; }
+-keep class androidx.navigationevent.** { *; }
+
+
 # ----------------------------------------- App Ruls --------------------------------------------- #
 # Change here com.github.panpf.zoomimage.sample
 -keepclassmembers @kotlinx.serialization.Serializable class com.github.panpf.zoomimage.sample.** {
