@@ -23,7 +23,7 @@ appdirs = "1.5.0"
 
 buildkonfig = "0.22.0"
 
-dokka = "2.2.0"
+dokka = "2.2.0" # TODO Sync Wraning: sourceSets collection in Kotlin Android is deprecated. Kotlin Source Sets collection in Android extension should not be used and is deprecated now.
 
 coil2 = "2.7.0"
 coil3 = "3.5.0"
