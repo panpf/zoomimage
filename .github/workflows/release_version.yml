@@ -145,6 +145,8 @@ jobs:
         with:
           cache-overwrite-existing: true
       - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Run package
         run: internal/package_android.sh
@@ -419,6 +421,8 @@ jobs:
         with:
           cache-overwrite-existing: true
       - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Run publish
         env:
