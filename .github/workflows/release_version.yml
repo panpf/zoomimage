@@ -273,7 +273,7 @@ jobs:
       - name: Zip
         run: |
           cd samples/shared/build/ios/outputs/Build/Products/Debug-iphonesimulator
-          zip -r "zoomimage-sample-${{ steps.version_name_step.outputs.version_name }}.app.zip" "ZoomImage.app"
+          zip -r "zoomimage-sample-ios-${{ steps.version_name_step.outputs.version_name }}.app.zip" "ZoomImage.app"
           cd -
 
       - name: Upload iOS artifacts
@@ -430,7 +430,7 @@ jobs:
       - name: Zip
         run: |
           cd samples/jsApp/build/dist/js/productionExecutable
-          zip -r "zoomimage-sample-js-${{ steps.version_name_step.outputs.version_name }}.zip" *
+          zip -r "zoomimage-sample-js-browser-${{ steps.version_name_step.outputs.version_name }}.zip" *
           cd -
 
       - name: Upload js browser artifacts
@@ -471,7 +471,7 @@ jobs:
       - name: Zip
         run: |
           cd samples/wasmJsApp/build/dist/wasmJs/productionExecutable
-          zip -r "zoomimage-sample-wasmJs-${{ steps.version_name_step.outputs.version_name }}.zip" *
+          zip -r "zoomimage-sample-wasmJs-browser-${{ steps.version_name_step.outputs.version_name }}.zip" *
           cd -
 
       - name: Upload wasmJs browser artifacts
