@@ -19,8 +19,6 @@ androidx-test-runner = "1.7.0"
 androidx-vectordrawable = "1.2.0"
 android-desugarJdkLibs = "2.1.5"
 
-appdirs = "1.5.0"
-
 buildkonfig = "0.22.0"
 
 dokka = "2.2.0" # TODO Sync Wraning: sourceSets collection in Kotlin Android is deprecated. Kotlin Source Sets collection in Android extension should not be used and is deprecated now.
@@ -62,7 +60,7 @@ okio = "3.17.0"
 
 panpf-assemblyadapter4 = "4.1.0"
 panpf-sketch3 = "3.3.2"
-panpf-sketch4 = "4.7.0-alpha01"
+panpf-sketch4 = "4.7.0-alpha02"
 panpf-tools4a = "1.0.0"
 panpf-tools4j = "1.0.0"
 panpf-tools4k = "1.0.1"
@@ -112,8 +110,6 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
 androidx-vectordrawable-animated = { module = "androidx.vectordrawable:vectordrawable-animated", version.ref = "androidx-vectordrawable" }
 android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "android-desugarJdkLibs" }
-
-appdirs = { module = "net.harawata:appdirs", version.ref = "appdirs" }
 
 coil2 = { module = "io.coil-kt:coil", version.ref = "coil2" }
 coil2-base = { module = "io.coil-kt:coil-base", version.ref = "coil2" }

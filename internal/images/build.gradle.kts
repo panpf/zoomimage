@@ -18,11 +18,6 @@ kotlin {
         androidMain.dependencies {
             api(libs.androidx.core)
         }
-        desktopMain {
-            dependencies {
-                api(libs.appdirs)
-            }
-        }
     }
 }
 

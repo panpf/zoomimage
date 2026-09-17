@@ -71,10 +71,6 @@
 -keep class androidx.navigation3.** { *; }
 -keep class androidx.navigationevent.** { *; }
 
-# TODO 升级 sketch 1.7.0-alpha02 之后就不需要了
-# ----------------------------------------- jna --------------------------------------------- #
--keep class com.sun.jna.** { *; }
-
 
 # ----------------------------------------- App Ruls --------------------------------------------- #
 # Change here com.github.panpf.zoomimage.sample
