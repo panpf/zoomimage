@@ -17,7 +17,7 @@ kotlin {
         commonTest.dependencies {
             implementation(projects.internal.testCore)
         }
-        desktopTest.dependencies {
+        jvmTest.dependencies {
             implementation(libs.coil3.network.ktor)
             implementation(libs.ktor.client.java)
         }

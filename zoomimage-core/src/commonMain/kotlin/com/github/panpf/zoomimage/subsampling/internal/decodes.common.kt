@@ -31,7 +31,7 @@ expect fun defaultRegionDecoder(): RegionDecoder.Factory
  * Get the platform's default RegionDecoder List
  *
  * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDefaultRegionDecoders
- * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.DecodesDesktopTest.testDefaultRegionDecoders
+ * @see com.github.panpf.zoomimage.core.jvm.test.subsampling.internal.DecodesJvmTest.testDefaultRegionDecoders
  * @see com.github.panpf.zoomimage.core.ios.test.subsampling.internal.DecodesIosTest.testDefaultRegionDecoders
  * @see com.github.panpf.zoomimage.core.macos.test.subsampling.internal.DecodesMacosTest.testDefaultRegionDecoders
  * @see com.github.panpf.zoomimage.core.jscommon.test.subsampling.internal.DecodesJsCommonTest.testDefaultRegionDecoders

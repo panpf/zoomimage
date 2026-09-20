@@ -15,7 +15,7 @@ A clear and concise description of what the bug is.
 Select of the platforms below:
 
 - Android
-- Desktop
+- JVM
 
 **Affected components**
 
@@ -36,7 +36,7 @@ Select of the components below:
 - zoomimage version*:
 - Kotlin version*:
 - Compose version(s)* (Jetpack/Multiplatform):
-- JDK version(Only Desktop):
+- JDK version(Only JVM):
 
 **Running Devices**
 

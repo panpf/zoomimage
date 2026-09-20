@@ -222,7 +222,7 @@ private val mainThreadChecker = atomic<(() -> Boolean)?>(null)
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testIsMainThread
  * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsIosTest.testIsMainThread
- * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.jvm.test.util.CoreUtilsJvmTest.testIsMainThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testIsMainThread
  */
 internal fun isMainThread(): Boolean =
@@ -234,7 +234,7 @@ internal fun isMainThread(): Boolean =
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testIsMainThread
  * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsAppleTest.testIsMainThread
- * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testIsMainThread
+ * @see com.github.panpf.zoomimage.core.jvm.test.util.CoreUtilsJvmTest.testIsMainThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testIsMainThread
  */
 fun setMainThreadChecker(checker: (() -> Boolean)?) {
@@ -246,7 +246,7 @@ fun setMainThreadChecker(checker: (() -> Boolean)?) {
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testPlatformIsMainThread
  * @see com.github.panpf.zoomimage.core.ios.test.util.CoreUtilsAppleTest.testPlatformIsMainThread
- * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testPlatformIsMainThread
+ * @see com.github.panpf.zoomimage.core.jvm.test.util.CoreUtilsJvmTest.testPlatformIsMainThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testPlatformIsMainThread
  */
 internal expect fun platformIsMainThread(): Boolean
@@ -256,7 +256,7 @@ internal expect fun platformIsMainThread(): Boolean
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread
  * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredMainThread
- * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredMainThread
+ * @see com.github.panpf.zoomimage.core.jvm.test.util.CoreUtilsJvmTest.testRequiredMainThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredMainThread
  */
 expect fun requiredMainThread()
@@ -266,7 +266,7 @@ expect fun requiredMainThread()
  *
  * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread
  * @see com.github.panpf.zoomimage.core.apple.test.util.CoreUtilsAppleTest.testRequiredWorkThread
- * @see com.github.panpf.zoomimage.core.desktop.test.util.CoreUtilsDesktopTest.testRequiredWorkThread
+ * @see com.github.panpf.zoomimage.core.jvm.test.util.CoreUtilsJvmTest.testRequiredWorkThread
  * @see com.github.panpf.zoomimage.core.jscommon.test.util.CoreUtilsJsCommonTest.testRequiredWorkThread
  */
 expect fun requiredWorkThread()

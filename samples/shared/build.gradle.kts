@@ -29,7 +29,7 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+    jvm()
 
     js {
         browser()
@@ -106,7 +106,7 @@ kotlin {
         nonAndroidMain.dependencies {
             api(libs.panpf.sketch4.animated.gif)
         }
-        desktopMain.dependencies {
+        jvmMain.dependencies {
             api(compose.desktop.currentOs)
         }
         appleMain {

@@ -26,15 +26,15 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ### 多平台支持
 
-| 功能/平台            | Android | iOS | macOS Native | Desktop (JVM) | Web |
-|:-----------------|:-------:|:---:|:------------:|:-------------:|:---:|
-| 缩放               |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| 子采样              |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| Exif Orientation |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| 集成 [Sketch]      |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| 集成 [Coil]        |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| 集成 [Glide]       |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
-| 集成 [Picasso]     |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
+| 功能/平台            | Android | iOS | macOS Native | JVM | Web |
+|:-----------------|:-------:|:---:|:------------:|:---:|:---:|
+| 缩放               |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| 子采样              |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| Exif Orientation |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| 集成 [Sketch]      |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| 集成 [Coil]        |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| 集成 [Glide]       |    ✅    |  ❌  |      ❌       |  ❌  |  ❌  |
+| 集成 [Picasso]     |    ✅    |  ❌  |      ❌       |  ❌  |  ❌  |
 
 ## 示例 App
 
@@ -252,9 +252,9 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 ## 测试平台
 
 * Android: Emulator; Arm64; API 21-34
-* Desktop: macOS; 14.6.1; JDK 17
+* JVM: macOS 26; JDK 17
 * iOS: iPhone 16 Simulator; iOS 18.1
-* macOS Native: Apple Silicon; macOS 27 beta 4
+* macOS Native: Apple Silicon; macOS 26
 * Web: Chrome; 130
 
 ## 运行示例 App

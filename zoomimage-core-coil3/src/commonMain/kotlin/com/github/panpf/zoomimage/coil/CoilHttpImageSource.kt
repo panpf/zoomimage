@@ -29,7 +29,7 @@ import okio.Source
 /**
  * [ImageSource] implementation for Coil's HTTP requests.
  *
- * @see com.github.panpf.zoomimage.core.coil3.desktop.test.CoilHttpImageSourceTest
+ * @see com.github.panpf.zoomimage.core.coil3.jvm.test.CoilHttpImageSourceTest
  */
 @Suppress("RedundantConstructorKeyword")
 class CoilHttpImageSource constructor(
@@ -59,7 +59,7 @@ class CoilHttpImageSource constructor(
     }
 
     /**
-     * @see com.github.panpf.zoomimage.core.coil3.desktop.test.CoilHttpImageSourceFactoryTest
+     * @see com.github.panpf.zoomimage.core.coil3.jvm.test.CoilHttpImageSourceFactoryTest
      */
     class Factory constructor(
         val context: PlatformContext,

@@ -182,7 +182,7 @@ jobs:
           cache-overwrite-existing: true
 
       - name: Run jvm test
-        run: ./gradlew desktopTest --continue
+        run: ./gradlew jvmTest --continue
 
   test-macos-native:
     name: Test macOS Native
@@ -309,7 +309,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: jvm-linux-artifacts
-          path: samples/desktopApp/build/compose/binaries/main-release/deb/*.deb
+          path: samples/jvmApp/build/compose/binaries/main-release/deb/*.deb
 
   package-jvm-macos:
     name: Package JVM macOS
@@ -338,7 +338,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: jvm-macos-artifacts
-          path: samples/desktopApp/build/compose/binaries/main-release/dmg/*.dmg
+          path: samples/jvmApp/build/compose/binaries/main-release/dmg/*.dmg
 
   package-jvm-windows:
     name: Package JVM Windows
@@ -361,13 +361,13 @@ jobs:
           cache-overwrite-existing: true
 
       - name: Run package
-        run: ./gradlew samples:desktopApp:packageReleaseDistributionForCurrentOS
+        run: ./gradlew samples:jvmApp:packageReleaseDistributionForCurrentOS
 
       - name: Upload JVM Windows artifacts
         uses: actions/upload-artifact@v7
         with:
           name: jvm-windows-artifacts
-          path: samples/desktopApp/build/compose/binaries/main-release/msi/*.msi
+          path: samples/jvmApp/build/compose/binaries/main-release/msi/*.msi
 
   package-macos-native:
     name: Package macOS Native

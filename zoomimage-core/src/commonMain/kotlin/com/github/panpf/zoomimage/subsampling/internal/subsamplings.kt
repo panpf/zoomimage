@@ -37,7 +37,7 @@ import kotlin.math.abs
  * Create [TileDecoder]. If the image type is not supported or the thumbnail size is larger than the
  * original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.
  *
- * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.SubsamplingDesktopTest.testCreateTileDecoder
+ * @see com.github.panpf.zoomimage.core.jvm.test.subsampling.internal.SubsamplingJvmTest.testCreateTileDecoder
  */
 @MainThread
 suspend fun createTileDecoder(

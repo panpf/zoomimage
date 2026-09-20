@@ -23,7 +23,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 
 /**
  * @see com.github.panpf.zoomimage.core.coil3.android.test.internal.CoilCoreUtilsAndroidTest.testDataToImageSource
- * @see com.github.panpf.zoomimage.core.coil3.desktop.test.internal.CoilCoreUtilsDesktopTest.testDataToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.jvm.test.internal.CoilCoreUtilsJvmTest.testDataToImageSource
  * @see com.github.panpf.zoomimage.core.coil3.apple.test.internal.CoilCoreUtilsAppleTest.testDataToImageSource
  * @see com.github.panpf.zoomimage.core.coil3.jscommon.test.internal.CoilCoreUtilsJsCommonTest.testDataToImageSource
  */
@@ -35,7 +35,7 @@ expect suspend fun dataToImageSource(
 
 /**
  * @see com.github.panpf.zoomimage.core.coil3.android.test.internal.CoilCoreUtilsAndroidTest.testDataToImageSource
- * @see com.github.panpf.zoomimage.core.coil3.desktop.test.internal.CoilCoreUtilsDesktopTest.testDataToImageSource
+ * @see com.github.panpf.zoomimage.core.coil3.jvm.test.internal.CoilCoreUtilsJvmTest.testDataToImageSource
  * @see com.github.panpf.zoomimage.core.coil3.apple.test.internal.CoilCoreUtilsAppleTest.testDataToImageSource
  * @see com.github.panpf.zoomimage.core.coil3.jscommon.test.internal.CoilCoreUtilsJsCommonTest.testDataToImageSource
  */

@@ -31,7 +31,7 @@ import androidx.compose.ui.input.key.type
  * Get the platform-specific assist key. For example, macOS is usually meta, and other platforms are usually ctrl.
  *
  * @see com.github.panpf.zoomimage.compose.android.test.util.KeyHandlerAndroidTest.testPlatformAssistKey
- * @see com.github.panpf.zoomimage.compose.desktop.test.util.KeyHandlerDesktopTest.testPlatformAssistKey
+ * @see com.github.panpf.zoomimage.compose.jvm.test.util.KeyHandlerJvmTest.testPlatformAssistKey
  * @see com.github.panpf.zoomimage.compose.jscommon.test.util.KeyHandlerJsCommonTest.testPlatformAssistKey
  * @see com.github.panpf.zoomimage.compose.ios.test.util.KeyHandlerIosTest.testPlatformAssistKey
  * @see com.github.panpf.zoomimage.compose.macos.test.util.KeyHandlerMacosTest.testPlatformAssistKey

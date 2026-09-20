@@ -53,7 +53,7 @@ include(":zoomimage-view-sketch4-koin")
  * Private Modules
  */
 include(":samples:androidApp")
-include(":samples:desktopApp")
+include(":samples:jvmApp")
 include(":samples:jsApp")
 include(":samples:macosApp")
 include(":samples:shared")

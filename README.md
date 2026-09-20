@@ -36,19 +36,19 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ## Multiplatform support
 
-| Function/Platform    | Android | iOS | macOS Native | Desktop (JVM) | Web |
-|:---------------------|:-------:|:---:|:------------:|:-------------:|:---:|
-| Zoom                 |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| Subsampling          |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| Exif Orientation     |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| Integrated [Sketch]  |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| Integrated [Coil]    |    ✅    |  ✅  |      ✅       |       ✅       |  ✅  |
-| Integrated [Glide]   |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
-| Integrated [Picasso] |    ✅    |  ❌  |      ❌       |       ❌       |  ❌  |
+| Function/Platform    | Android | iOS | macOS Native | JVM | Web |
+|:---------------------|:-------:|:---:|:------------:|:---:|:---:|
+| Zoom                 |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| Subsampling          |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| Exif Orientation     |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| Integrated [Sketch]  |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| Integrated [Coil]    |    ✅    |  ✅  |      ✅       |  ✅  |  ✅  |
+| Integrated [Glide]   |    ✅    |  ❌  |      ❌       |  ❌  |  ❌  |
+| Integrated [Picasso] |    ✅    |  ❌  |      ❌       |  ❌  |  ❌  |
 
 ## Sample App
 
-* For Android, iOS, desktop version, and web deployable packages, please go to
+* For Android, iOS, jvm, macOS, and web deployable packages, please go to
   the [Releases](https://github.com/panpf/zoomimage/releases) page to download.
 * Web example：https://panpf.github.io/zoomimage/app
 
@@ -266,9 +266,9 @@ Please review the [CHANGELOG](CHANGELOG.md) file
 ## Test Platform
 
 * Android: Emulator; Arm64; API 21-34
-* Desktop: macOS; 14.6.1; JDK 17
+* JVM: macOS 26; JDK 17
 * iOS: iPhone 16 Simulator; iOS 18.1
-* macOS Native: Apple Silicon; macOS 27 beta 4
+* macOS Native: Apple Silicon; macOS 26
 * Web: Chrome; 130
 
 ## Run Sample App

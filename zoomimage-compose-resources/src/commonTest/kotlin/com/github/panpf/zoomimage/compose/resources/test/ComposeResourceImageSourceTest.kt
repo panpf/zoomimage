@@ -31,7 +31,7 @@ class ComposeResourceImageSourceTest {
         )
 
         val okResourcePath3 =
-            "file:/Users/panpf/Workspace/zoomimage/samples/shared/build/processedResources/desktop/main/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
+            "file:/Users/panpf/Workspace/zoomimage/samples/shared/build/processedResources/jvm/main/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg"
         assertEquals(
             expected = okResourcePath,
             actual = ImageSource.fromComposeResource(okResourcePath3).resourcePath
