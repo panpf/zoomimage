@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ZoomImage</string>
+    <string name="app_name">ZoomImage Sample</string>
 
     <string name="loading">LOADING…</string>
     <string name="load_end">THE END</string>

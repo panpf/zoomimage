@@ -55,6 +55,12 @@ val publicModules = setOf(
     "zoomimage-view-sketch4-koin",
 )
 
+val Project.sampleAppId: String
+    get() = stringProperty("sampleAppId")
+
+val Project.sampleAppName: String
+    get() = stringProperty("sampleAppName")
+
 val Project.minSdk: Int
     get() = intProperty("minSdk")
 

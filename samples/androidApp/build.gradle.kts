@@ -9,10 +9,7 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-androidApplication(
-    nameSpace = "com.github.panpf.zoomimage.sample",
-    applicationId = "com.github.panpf.zoomimage.sample"
-) {
+androidApplication(nameSpace = project.sampleAppId) {
     defaultConfig {
         buildConfigField("String", "VERSION_NAME", "\"${property("versionName").toString()}\"")
         buildConfigField("int", "VERSION_CODE", property("versionCode").toString())
@@ -69,7 +66,7 @@ androidComponents {
 }
 //// Another solution, you can only modify the prefix, AGP will automatically add the variant name
 //base {
-//    archivesName = "sketch-sample-${android.defaultConfig.versionName}"
+//    archivesName = "zoomimage-sample-${android.defaultConfig.versionName}"
 //}
 
 dependencies {

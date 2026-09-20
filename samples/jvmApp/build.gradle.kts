@@ -18,19 +18,17 @@ kotlin {
     }
 }
 
-val appId = "com.github.panpf.zoomimage.sample"
-val appName = "ZoomImage"
 compose.desktop {
     application {
         mainClass = "com.github.panpf.zoomimage.sample.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = appName
+            packageName = project.sampleAppName
             packageVersion = convertDesktopPackageVersion(property("versionName").toString())
             vendor = "panpfpanpf@outlook.com"
             description = "Image Zoom Library Sample App"
             macOS {
-                bundleID = appId
+                bundleID = project.sampleAppId
                 iconFile.set(project.file("icons/icon-macos.icns"))
             }
             windows {
@@ -72,25 +70,26 @@ tasks.configureEach {
             composeBinariesDir.walkTopDown()
                 .filter { it.isFile && it.extension in targetExtensions }
                 .forEach { file ->
+                    /*
+                     * ZoomImage Sample-4.7.0012.msi, ZoomImage Sample-4.7.0012.exe
+                     * ZoomImage Sample-4.7.0012.dmg, ZoomImage Sample-4.7.0012.pkg
+                     * zoomimage-sample_4.7.0012_amd64.deb, zoomimage-sample_4.7.0012_amd64.rpm
+                     */
                     val fileName = file.name
-                    var newFileName = fileName
-                    val platformType = when (file.extension) {
-                        "deb", "rpm" -> "-linux"
-                        "dmg", "pkg" -> "-macos"
-                        "msi", "exe" -> "-windows"
-                        else -> ""
-                    }
+                    var newFileName = fileName.replace(oldValue = "_", newValue = "-")
+                    val (oldValue, platformType) = when (file.extension) {
+                        "msi", "exe" -> project.sampleAppName to "-windows"
+                        "dmg", "pkg" -> project.sampleAppName to "-macos"
+                        "deb", "rpm" -> project.sampleAppName.lowercase()
+                            .replace(" ", "-") to "-linux"
 
-                    // deb or rpm packages will convert all uppercase letters to lowercase by default, so case sensitivity must be ignored here.
+                        else -> throw IllegalArgumentException("Unsupported file extension: ${file.extension}")
+                    }
                     newFileName = newFileName.replace(
-                        oldValue = appName,
-                        newValue = "sketch-sample-jvm${platformType}",
+                        oldValue = oldValue,
+                        newValue = "zoomimage-sample-jvm${platformType}",
                         ignoreCase = true
                     )
-
-                    // sketch-sample_1.5.0001_amd64.deb -> sketch-sample-1.5.0001-amd64.deb
-                    newFileName = newFileName.replace(oldValue = "_", newValue = "-")
-
                     if (newFileName != fileName) {
                         val newFile = file.parentFile.resolve(newFileName)
                         if (file.renameTo(newFile)) {

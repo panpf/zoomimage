@@ -17,10 +17,11 @@
 package com.github.panpf.zoomimage.sample.util
 
 import com.github.panpf.sketch.PlatformContext
+import com.github.panpf.zoomimage.sample.AppInfos
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
 
 actual fun createSettings(context: PlatformContext): Settings {
-    val delegate = java.util.prefs.Preferences.userRoot().node("com.github.panpf.zoomimage.sample")
+    val delegate = java.util.prefs.Preferences.userRoot().node(AppInfos.SAMPLE_APP_ID)
     return PreferencesSettings(delegate)
 }

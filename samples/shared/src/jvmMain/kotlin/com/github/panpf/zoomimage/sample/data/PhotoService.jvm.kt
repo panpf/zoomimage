@@ -10,6 +10,7 @@ import com.github.panpf.sketch.request.RequestContext
 import com.github.panpf.sketch.util.MimeTypeMap
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.sketch.util.toUri
+import com.github.panpf.zoomimage.sample.AppInfos
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.image.photoUri2PhotoInfo
 import com.github.panpf.zoomimage.sample.ui.model.Photo
@@ -91,7 +92,7 @@ actual class PhotoService actual constructor(val sketch: Sketch) {
 
         val userHomeDir = File(System.getProperty("user.home"))
         val userPicturesDir = File(userHomeDir, "Pictures")
-        val outDir = File(userPicturesDir, "zoomimage").apply { mkdirs() }
+        val outDir = File(userPicturesDir, AppInfos.SAMPLE_APP_NAME).apply { mkdirs() }
         val fileExtension = MimeTypeMap.getExtensionFromUrl(imageUri)
             ?: MimeTypeMap.getExtensionFromMimeType(fetchResult.mimeType ?: "")
             ?: "jpeg"

@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.panpf.zoomimage.sample.AppInfos
 import com.github.panpf.zoomimage.sample.AppSettings
 import com.github.panpf.zoomimage.sample.compose.R
 import com.github.panpf.zoomimage.sample.ui.components.DarkModeSwitch
@@ -33,7 +34,7 @@ actual fun VerHomeHeader() {
         TopAppBar(
             title = {
                 Column {
-                    Text(text = "ZoomImage")
+                    Text(text = AppInfos.SAMPLE_APP_NAME)
                     Text(text = "Compose", fontSize = 15.sp)
                 }
             },
