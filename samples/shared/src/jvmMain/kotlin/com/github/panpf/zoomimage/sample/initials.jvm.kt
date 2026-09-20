@@ -5,11 +5,11 @@ import coil3.SingletonImageLoader
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.DiskCache
-import com.github.panpf.sketch.util.AppDirs
 import com.github.panpf.zoomimage.sample.util.PexelsCompatibleInterceptor
+import com.github.panpf.zoomimage.util.AppDirs
 import com.github.panpf.zoomimage.util.coil.CoilComposeResourceUriFetcher
 import com.github.panpf.zoomimage.util.coil.CoilKotlinResourceUriFetcher
-import okio.Path.Companion.toOkioPath
+import okio.Path.Companion.toPath
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
@@ -33,12 +33,12 @@ actual fun platformModule(context: PlatformContext): Module = module {
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
     downloadCacheOptions {
         DiskCache.Options(
-            appCacheDirectory = AppDirs.getCacheDir("ZoomImageSample").toOkioPath()
+            appCacheDirectory = AppDirs.getCacheDir(AppInfos.SAMPLE_APP_NAME).toPath()
         )
     }
     resultCacheOptions {
         DiskCache.Options(
-            appCacheDirectory = AppDirs.getCacheDir("ZoomImageSample").toOkioPath()
+            appCacheDirectory = AppDirs.getCacheDir(AppInfos.SAMPLE_APP_NAME).toPath()
         )
     }
 
