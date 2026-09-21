@@ -103,8 +103,10 @@ internal class MouseZoomNode(
      * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testCalculateScale
      */
     internal fun calculateScale(scrollDelta: Float): Float {
+        val platformDefaultReverseMultiple =
+            if (platformDefaultReverseMouseWheelScale()) -1f else 1f
         val reverseMultiple = if (zoomable.reverseMouseWheelScale) -1f else 1f
-        val reversedScrollDelta = scrollDelta * reverseMultiple
+        val reversedScrollDelta = scrollDelta * platformDefaultReverseMultiple * reverseMultiple
         val currentScale = zoomable.transform.scaleX
         val oldConverter = zoomable.mouseWheelScaleScrollDeltaConverter
         val mouseWheelScaleCalculator = zoomable.mouseWheelScaleCalculator
@@ -130,3 +132,11 @@ internal class MouseZoomNode(
         return zoomable.touchPointToContentPointF(pointerPosition)
     }
 }
+
+/**
+ * Returns the default value for reversing the mouse wheel scale on the current platform.
+ *
+ * @see com.github.panpf.zoomimage.compose.macos.test.zoom.MouseZoomMacosTest.testPlatformDefaultReverseMouseWheelScale
+ * @see com.github.panpf.zoomimage.compose.nonmacos.test.zoom.MouseZoomNonMacosTest.testPlatformDefaultReverseMouseWheelScale
+ */
+expect fun platformDefaultReverseMouseWheelScale(): Boolean

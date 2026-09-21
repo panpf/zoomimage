@@ -4,6 +4,10 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 # new
 
+## macOS
+
+* fix: Fixed the bug that the default mouse wheel zoom direction was reversed on macOS
+
 ## Dependencies
 
 * depend: Upgrade to androidx compose 1.12.0

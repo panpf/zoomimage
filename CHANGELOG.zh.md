@@ -4,6 +4,10 @@
 
 # new
 
+## macOS
+
+* fix: 修复 macOS 平台默认的鼠标滚轮缩放方向相反的 bug
+
 ## Dependencies
 
 * depend: 升级 androidx compose 1.12.0
