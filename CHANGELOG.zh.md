@@ -11,7 +11,7 @@
 * depend: 升级 jetbrains compose 1.12.0
 * depend: 升级 jetbrains lifecycle 2.11.0
 * depend: 升级 jetbrains skiko 0.150.1
-* depend: 升级 sketch 4.7.0-alpha02
+* depend: 升级 sketch 4.7.0-beta01
 
 # 1.7.0-alpha01
 
