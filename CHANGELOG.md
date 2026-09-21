@@ -6,6 +6,11 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## Dependencies
 
+* depend: Upgrade to androidx compose 1.12.0
+* depend: Upgrade to androidx lifecycle 2.11.0
+* depend: Upgrade to jetbrains compose 1.12.0
+* depend: Upgrade to jetbrains lifecycle 2.11.0
+* depend: Upgrade to jetbrains skiko 0.150.1
 * depend: Upgrade to sketch 4.7.0-alpha02
 
 # 1.7.0-alpha01
