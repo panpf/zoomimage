@@ -238,6 +238,10 @@ public final class com/github/panpf/zoomimage/compose/zoom/MouseZoomKt {
 	public static final fun mouseZoom (Landroidx/compose/ui/Modifier;Lcom/github/panpf/zoomimage/compose/zoom/ZoomableState;)Landroidx/compose/ui/Modifier;
 }
 
+public final class com/github/panpf/zoomimage/compose/zoom/MouseZoom_nonMacosKt {
+	public static final fun platformDefaultReverseMouseWheelScale ()Z
+}
+
 public final class com/github/panpf/zoomimage/compose/zoom/MoveArrow : java/lang/Enum {
 	public static final field Down Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
 	public static final field Left Lcom/github/panpf/zoomimage/compose/zoom/MoveArrow;
