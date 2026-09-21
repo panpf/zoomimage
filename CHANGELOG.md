@@ -12,6 +12,7 @@ Translations: [简体中文](CHANGELOG.zh.md)
 * depend: Upgrade to jetbrains lifecycle 2.11.0
 * depend: Upgrade to jetbrains skiko 0.150.1
 * depend: Upgrade to sketch 4.7.0-beta01
+* depend: Upgrade to coil 3.6.0
 
 # 1.7.0-alpha01
 

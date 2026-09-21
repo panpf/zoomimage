@@ -24,7 +24,7 @@ buildkonfig = "0.23.0"
 dokka = "2.2.0" # TODO Sync Wraning: sourceSets collection in Kotlin Android is deprecated. Kotlin Source Sets collection in Android extension should not be used and is deprecated now.
 
 coil2 = "2.7.0"
-coil3 = "3.5.0"
+coil3 = "3.6.0"
 
 glide = "5.0.7"
 glide-ktx = "1.0.0-beta09"
