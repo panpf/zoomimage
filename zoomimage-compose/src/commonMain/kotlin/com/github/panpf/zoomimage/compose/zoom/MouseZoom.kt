@@ -79,7 +79,9 @@ internal class MouseZoomNode(
                     val scrollDeltaY = event.changes.fastFold(0f) { acc, c ->
                         acc + c.scrollDelta.y
                     }
-                    val newScale = calculateScale(scrollDeltaY)
+                    val platformDefaultReverseMultiple =
+                        if (platformDefaultReverseMouseWheelScale()) -1f else 1f
+                    val newScale = calculateScale(scrollDeltaY * platformDefaultReverseMultiple)
                     val contentPosition = contentPoint(pointerPosition)
                     coroutineScope.launch {
                         zoomable.scale(
@@ -103,10 +105,8 @@ internal class MouseZoomNode(
      * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testCalculateScale
      */
     internal fun calculateScale(scrollDelta: Float): Float {
-        val platformDefaultReverseMultiple =
-            if (platformDefaultReverseMouseWheelScale()) -1f else 1f
         val reverseMultiple = if (zoomable.reverseMouseWheelScale) -1f else 1f
-        val reversedScrollDelta = scrollDelta * platformDefaultReverseMultiple * reverseMultiple
+        val reversedScrollDelta = scrollDelta * reverseMultiple
         val currentScale = zoomable.transform.scaleX
         val oldConverter = zoomable.mouseWheelScaleScrollDeltaConverter
         val mouseWheelScaleCalculator = zoomable.mouseWheelScaleCalculator
