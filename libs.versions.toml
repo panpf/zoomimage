@@ -26,9 +26,9 @@ dokka = "2.2.0" # TODO Sync Wraning: sourceSets collection in Kotlin Android is 
 coil2 = "2.7.0"
 coil3 = "3.6.0"
 
-glide = "5.0.7"
-glide-ktx = "1.0.0-beta09"
-glide-compose = "1.0.0-beta09"
+glide = "5.0.9"
+glide-ktx = "1.0.0-beta10"
+glide-compose = "1.0.0-beta10"
 google-accompanist = "0.37.3"
 google-material = "1.14.0"
 gradle-maven-publish-plugin = "0.37.0"

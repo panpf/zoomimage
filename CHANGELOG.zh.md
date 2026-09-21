@@ -13,6 +13,8 @@
 * depend: 升级 jetbrains skiko 0.150.1
 * depend: 升级 sketch 4.7.0-beta01
 * depend: 升级 coil 3.6.0
+* depend: 升级 glide 5.0.9
+* depend: 升级 glide-compose 1.0.0-beta10
 
 # 1.7.0-alpha01
 
