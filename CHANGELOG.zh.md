@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+# new
+
+* depend: 升级 sketch 4.7.0
+
 # 1.7.0-beta01
 
 ## macOS

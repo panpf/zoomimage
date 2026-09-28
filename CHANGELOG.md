@@ -2,6 +2,10 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
+# new
+
+* depend: Upgrade to sketch 4.7.0
+
 # 1.7.0-beta01
 
 ## macOS
