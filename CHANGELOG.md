@@ -2,9 +2,24 @@
 
 Translations: [简体中文](CHANGELOG.zh.md)
 
-# new
+# 1.7.0 Stable
 
+## New Features
+
+* new: Added support for macosArm64 platform
+* new: Added setMainThreadChecker() function to customize main thread checking logic
+
+## Dependencies
+
+* depend: Upgrade to androidx compose 1.12.0
+* depend: Upgrade to androidx lifecycle 2.11.0
+* depend: Upgrade to jetbrains compose 1.12.0
+* depend: Upgrade to jetbrains lifecycle 2.11.0
+* depend: Upgrade to jetbrains skiko 0.150.1
 * depend: Upgrade to sketch 4.7.0
+* depend: Upgrade to coil 3.6.0
+* depend: Upgrade to glide 5.0.9
+* depend: Upgrade to glide-compose 1.0.0-beta10
 
 # 1.7.0-beta01
 
@@ -28,8 +43,8 @@ Translations: [简体中文](CHANGELOG.zh.md)
 
 ## New Features
 
-* Added support for macosArm64 platform
-* Added setMainThreadChecker() function to customize main thread checking logic
+* new: Added support for macosArm64 platform
+* new: Added setMainThreadChecker() function to customize main thread checking logic
 
 ## Dependencies
 

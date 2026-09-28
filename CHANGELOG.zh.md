@@ -2,9 +2,24 @@
 
 翻译：[English](CHANGELOG.md)
 
-# new
+# 1.7.0 Stable
 
+## 新特性
+
+* new: 增加对 macosArm64 平台的支持
+* new: 新增 setMainThreadChecker() 函数，可以自定义检查主线程的逻辑
+
+## Dependencies
+
+* depend: 升级 androidx compose 1.12.0
+* depend: 升级 androidx lifecycle 2.11.0
+* depend: 升级 jetbrains compose 1.12.0
+* depend: 升级 jetbrains lifecycle 2.11.0
+* depend: 升级 jetbrains skiko 0.150.1
 * depend: 升级 sketch 4.7.0
+* depend: 升级 coil 3.6.0
+* depend: 升级 glide 5.0.9
+* depend: 升级 glide-compose 1.0.0-beta10
 
 # 1.7.0-beta01
 
@@ -28,8 +43,8 @@
 
 ## 新特性
 
-* 增加对 macosArm64 平台的支持
-* 新增 setMainThreadChecker() 函数，可以自定义检查主线程的逻辑
+* new: 增加对 macosArm64 平台的支持
+* new: 新增 setMainThreadChecker() 函数，可以自定义检查主线程的逻辑
 
 ## Dependencies
 
