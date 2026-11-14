@@ -21,6 +21,8 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import com.github.panpf.zoomimage.subsampling.BitmapTileImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -157,6 +159,14 @@ class ExifOrientationHelper(val exifOrientation: Int) {
         val canvas = Canvas(outBitmap)
         val paint = Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG)
         canvas.drawBitmap(bitmap, matrix, paint)
+        // Drawing onto a Canvas drops the HDR gainmap, so rotate/flip it the same way and carry it over.
+        // The gainmap is not rescaled, so its edges stay aligned with the tile (no SDR seams).
+        if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            bitmap.gainmap?.let { gainmap ->
+                gainmap.gainmapContents = applyToBitmap(gainmap.gainmapContents, reverse)
+                outBitmap.gainmap = gainmap
+            }
+        }
         return outBitmap
     }
 
